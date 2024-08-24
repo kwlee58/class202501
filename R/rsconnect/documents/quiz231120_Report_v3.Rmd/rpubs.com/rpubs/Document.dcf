@@ -1,0 +1,11 @@
+name: Document
+title:
+username:
+account: rpubs
+server: rpubs.com
+envVars: rpubs.com
+hostUrl: https://api.rpubs.com/api/v1/document/1123954/78fe4cb44a474f539fe64d0cbc4143d0
+appId: https://api.rpubs.com/api/v1/document/1123954/78fe4cb44a474f539fe64d0cbc4143d0
+bundleId: http://rpubs.com/publish/claim/1123954/6e82ade5feaa4946aaf5d06ed0e7ef7c
+url: 1701616544.6301
+version: 1
