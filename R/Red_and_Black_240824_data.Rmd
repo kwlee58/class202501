@@ -179,7 +179,7 @@ Xsum_min
 
 <!--
 ```{r, save}
-saveRDS(class_roll, file = "./class_roll0824.RDS")
+saveRDS(class_roll, file = "./class_roll240824.RDS")
 save.image("./red_and_black_240824_data.RData")
 ```
 -->
