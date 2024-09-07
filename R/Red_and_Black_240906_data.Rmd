@@ -21,7 +21,7 @@ panderOptions('table.split.table', Inf)
 
 ```{r, data}
 class_roll <- read_excel("./data/class_roll240906.xlsx", 
-                        range = "B1:I814")
+                        range = "B1:H814")
 str(class_roll)
 names(class_roll) <- c("college", "dept", "id", "name", "status", "email", "cell_no")
 class_roll$status <- ifelse(is.na(class_roll$status), "휴학", class_roll$status)

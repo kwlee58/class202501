@@ -18,7 +18,8 @@ panderOptions('table.split.table', Inf)
 ### Data
 
 ```{r, data, echo = FALSE}
-load("./red_and_black_240824_data.RData")
+class_roll <- readRDS("./class_roll240824.RDS")
+# load("./red_and_black_240824_data.RData")
 ```
 
 ### 전체 출석부

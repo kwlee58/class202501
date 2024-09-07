@@ -22,6 +22,7 @@ panderOptions('table.alignment.default', 'right')
 
 ```{r, data, echo = FALSE, results = 'hide'}
 class_roll0824 <- readRDS("./class_roll240824.RDS")
+# class_roll <- readRDS("./class_roll240906.RDS")
 load("./red_and_black_240906_data.RData")
 str(class_roll)
 str(class_roll0824)
@@ -35,7 +36,8 @@ str(class_roll0824)
 id_out <- setdiff(class_roll0824$id, class_roll$id)
 id_new <- setdiff(class_roll$id, class_roll0824$id)
 N_new <- length(id_new)
-id_stay <- setdiff(class_roll0824$id, id_out)
+# id_stay <- setdiff(class_roll0824$id, id_out)
+id_stay <- intersect(class_roll0824$id, class_roll$id)
 # class_roll0824[class_roll0824$id %in% id_out, c("id", "group")] %>%
 #   pander(row.names = FALSE)
 class_roll0824$group %>%
@@ -43,20 +45,6 @@ class_roll0824$group %>%
   table %>%
   pander
 ```
-
-<!--
-## 학년
-
-```{r, echo= FALSE, eval = FALSE}
-tbl0 <- class_roll$year %>%
-  table(class_roll$group, .) 
-tbl0 %>%
-  pander
-tbl0 %>%
-  chisq.test(simulate.p.value = FALSE) %>%
-  pander
-```
--->
 
 ## 학번
 
@@ -74,36 +62,6 @@ tbl1 %>%
 #   chisq.test(simulate.p.value = FALSE) %>%
 #   pander
 ```
-
-
-<!--
-### 학번 홀짝
-
-```{r, echo = FALSE}
-tbl2 <- class_roll$id %>%
-  as.numeric %>%
-  `%%`(2) %>%
-  factor(levels = c(1, 0), labels = c("홀", "짝")) %>%
-  table(class_roll$group, .) 
-tbl2 %>%
-  pander
-tbl2 %>%
-  chisq.test(simulate.p.value = FALSE) %>%
-  pander
-```
-
-### 학적 상태
-
-```{r, echo = FALSE}
-tbl3 <- class_roll$status %>%
-  table(class_roll$group, .) 
-tbl3 %>%
-  pander
-tbl3 %>%
-  chisq.test(simulate.p.value = FALSE) %>%
-pander
-```
--->
 
 ## e-mail 서비스업체
 
