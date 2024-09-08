@@ -59,7 +59,7 @@ Xmin
 ## Plot
 
 ```{r, echo = FALSE}
-hist(Xsum, prob = TRUE, nclass = 20, xlim = c(0, 50), ylim = c(0, 0.08))
+hist(Xsum, prob = TRUE, nclass = 50, xlim = c(0, 50), ylim = c(0, 0.08))
 x <- seq(0, 50, by = 0.1)
 lines(x, dchisq(x, df = 16), col = "red")
 legend("topright", inset = 0.05, legend = c("Xsum", "Chi-square(16)"), col = c("black", "red"), lty = 1)
