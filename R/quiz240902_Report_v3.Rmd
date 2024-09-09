@@ -58,7 +58,7 @@ class_roll <-
 #Quiz  rbind(class_roll0824, class_roll_id_new[, -10], class_roll_id_new2)
 quiz <- 
   read_excel("./data/quiz240902.xlsx",
-             range = "A2:K554",
+             range = "A2:K584",
              col_names = FALSE)
 names(quiz) <- c("time", "email", "dept", "id", "name", "Q1", "Q2", "Q3", "group", "Q4_R", "Q4_B")
 # wrong_gr <- which(class_roll$group != quiz$group)
