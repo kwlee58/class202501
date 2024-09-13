@@ -7,14 +7,11 @@ output: html_document
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
-# install.packages("pander", repos = "https://cran.rstudio.com")
-# install.packages("xlsx", repos = "https://cran.rstudio.com")
-# install.packages("readxl", repos = "https://cran.rstudio.com")
-# library(xlsx)
 library(readxl)
 library(pander)
 library(knitr)
 library(magrittr)
+library(dplyr)
 panderOptions('table.split.table', Inf)
 panderOptions('table.alignment.rownames', 'left')
 panderOptions('table.alignment.default', 'right')
@@ -22,79 +19,84 @@ options(width=180)
 ```
 
 ```{r, data, echo = FALSE, message = FALSE, results = 'hide'}
-# load("./red_and_black_230906_data.RData")
-## 2월26일자 랜덤화 출석부
-class_roll0824 <- readRDS("./class_roll240824.RDS")
-## 3월8일자 랜덤화 출석부
-class_roll0906 <- readRDS("./class_roll240906.RDS")
-## 3월8일자 신규 수강생의 학번
+## 8월24일자 랜덤화 출석부
+class_roll0824 <- readRDS("./class_roll240824.RDS") %>%
+  select(dept, id, name, status, email, cell_no, group)
+## 9월6일자 랜덤화 출석부
+class_roll0906 <- readRDS("./class_roll240906.RDS") %>%
+  select(dept, id, name, status, email, cell_no, group)
+## 9월6일자 신규 수강생의 학번
 id_new <- setdiff(class_roll0906$id, class_roll0824$id)
-## 2월26일 출석부에는 있지만 수강신청변경으로 나간 사람들의 학번
+## 8월24일 출석부에는 있지만 수강신청변경으로 나간 사람들의 학번
 id_out <- setdiff(class_roll0824$id, class_roll0906$id)
+## 8월24일, 9월6일 양 출석부에 등장하는 사람들의 학번
+id_stay <- intersect(class_roll0824$id, class_roll0906$id)
 ## 새로 들어 온 사람들만의 출석부
-class_roll_id_new <- class_roll0906[class_roll0906$id %in% id_new, ]
-## 2024년 2학기 수강신청 완료 시점과 출석부 확인 시점이 달랐을 때 코드
-# class_roll_id_group <- rbind(class_roll0824[, c("id", "name", "group")], class_roll_id_new[, c("id", "name", "group")])
+class_roll_id_new <- class_roll0906 %>%
+  filter(id %in% id_new)
 ## 폐강 과목으로 인한 신규 수강인원 반영 출석부
-class_roll0907 <- 
-  read_excel("./data/class_roll240907.xlsx", range = "B1:H814")
-str(class_roll0907)
-names(class_roll0907) <- 
-  c("college", "dept", "id", "name", "status", "email", "cell_no")
+class_roll0913 <- 
+  read_excel("./data/class_roll240913.xlsx", range = "B1:G814")
+str(class_roll0913)
+names(class_roll0913) <- 
+  c("dept", "id", "name", "status", "email", "cell_no")
 ## 새로 들어온 사람들의 학번
 id_new2 <- 
-  setdiff(class_roll0907$id, class_roll0906$id)
+  setdiff(class_roll0913$id, class_roll0906$id)
 ## 새로 들어온 사람들 출석부
-class_roll_id_new2 <-
-  class_roll0907[class_roll0907$id %in% id_new2, ]
+class_roll_id_new2 <- class_roll0913 %>%
+  filter(id %in% id_new2)
 ## 새로 들어온 사람들 그룹은 직접 지정
-# class_roll_id_new2$group <- c("Red", "Black", "Red", "Black")
-# na_gr <- which(is.na(class_roll$group)) 
-# class_roll[na_gr, "group"] <- c("Red", "Black")
-# saveRDS(class_roll, file = "./class_roll_240906.RDS")
-## 2월26일, 3월8일 통합 랜덤화 출석부 (기존 수강생들은 2월26일 Red, Black 적용))563
+class_roll_id_new2$group <- c("Red", "Black")
+## 8월24일, 9월6일 통합 랜덤화 출석부 (기존 수강생들은 8월24일 Red, Black 적용)
+## 8월24일 등록하고 나간 수강생 중에도 1주차 퀴즈는 수행하였을 가능성이 있기 때문에 0824 전체 적용 
 class_roll <- 
-  rbind(class_roll0824, class_roll_id_new[, -10])
-#Quiz  rbind(class_roll0824, class_roll_id_new[, -10], class_roll_id_new2)
+  rbind(class_roll0824, class_roll_id_new, class_roll_id_new2)
+saveRDS(class_roll, file = "./class_roll_240913_1st_wk.RDS")
+# Quiz Assortment  
 quiz <- 
   read_excel("./data/quiz240902.xlsx",
-             range = "A2:K584",
+             range = "A2:K665",
              col_names = FALSE)
 names(quiz) <- c("time", "email", "dept", "id", "name", "Q1", "Q2", "Q3", "group", "Q4_R", "Q4_B")
-# wrong_gr <- which(class_roll$group != quiz$group)
-# class_roll$name[wrong_gr]
-# class_roll$group[wrong_gr]
-# quiz$group[wrong_gr]
 str(quiz)
 quiz <- data.frame(quiz)
 class(quiz$id) <- "character"
-quiz$Q4_R[quiz$Q4_R == "납세자들의 과도한 세금 부담을 낮추기 위한 바람직한 논의이다"] <- "바람직한 논의이다"
-quiz$Q4_B[quiz$Q4_B == "상위 계층에 감세 혜택을 집중시킬 수 있는 부적절한 논의이다"] <- "부적절한 논의이다"
+quiz %<>%
+  mutate(Q4_R = if_else(Q4_R == "납세자들의 과도한 세금 부담을 낮추기 위한 바람직한 논의이다",
+                        "바람직한 논의이다", Q4_R))
+quiz %<>%
+  mutate(Q4_B = if_else(Q4_B == "상위 계층에 감세 혜택을 집중시킬 수 있는 부적절한 논의이다",
+                        "부적절한 논의이다", Q4_B))
 quiz$Q4 <- ifelse(is.na(quiz$Q4_R), quiz$Q4_B, quiz$Q4_R)
-quiz[quiz$id %in% id_new, c("id", "name", "group")]
+quiz %>%
+  filter(id %in% id_new) %>%
+  select(id, name, group)
 setdiff(class_roll$id, quiz$id)
 # quiz$group <- class_roll$group[match(quiz$id, class_roll$id)]
 sapply(quiz[, c("Q1", "Q2", "Q3", "Q4")], table, useNA = "ifany")
 which(quiz$Q2 == "가  ")
 which(quiz$Q3 == "나 ")
 quiz$dept <- factor(quiz$dept)
-# quiz$year <- factor(quiz$year)
 quiz$group <- factor(quiz$group, 
                      levels = c("Red", "Black"))
 quiz$Q1 <- factor(quiz$Q1, 
-#                      levels = c("가", "나", "다", "라"), 
-                      levels = c("통계학", "통계", "자료", "통계청", "정보"))
+                  levels = c("통계학", "통계", "자료", "통계청", "정보"))
 quiz$Q2 <- factor(quiz$Q2, 
-#                       levels = c("가", "나", "다", "라"), 
-                      levels = c("통계학", "통계", "자료", "통계청", "정보"))
+                  levels = c("통계학", "통계", "자료", "통계청", "정보"))
 quiz$Q3 <- factor(quiz$Q3, 
-#                       levels = c("가", "나", "다", "라"), 
-                      levels = c("통계학", "통계", "자료", "통계청", "정보"))
+                  levels = c("통계학", "통계", "자료", "통계청", "정보"))
 quiz$Q4 <- factor(quiz$Q4, 
-                      levels = c("바람직한 논의이다", "부적절한 논의이다", "모름/무응답"))
+                  levels = c("바람직한 논의이다", "부적절한 논의이다", "모름/무응답"))
 table(quiz$Q4, useNA = "ifany")
 #> 학번 잘못 써서 고생시키는 녀석들 찾아내는 코드
-quiz[quiz$id %in% setdiff(quiz$id, class_roll$id), c("id", "name", "dept")]
+wrong_id <- setdiff(quiz$id, class_roll$id)
+quiz %>%
+  filter(id %in% wrong_id) %>%
+  select(id, name, dept)
+# quiz[quiz$id %in% setdiff(quiz$id, class_roll$id), c("id", "name", "dept")]
+#> 찾아서 수정하는 코드
+
 #> 불참자들
 absentee <- 
   class_roll[class_roll$id %in% setdiff(class_roll$id, quiz$id), c("id", "name", "group")] %>%
@@ -111,7 +113,7 @@ str(quiz)
 
 ## Red, Black을 잘못 표시한 사람들
 
-랜덤화출석부(2월 26일 기준)에 있는 Red, Black 과 실제 구글예습설문지에 올린 Red, Black 이 다른 사람들의 분포를 파악해 보았습니다. 랜덤화 효과는 여기서도 작동하고 있는 걸 알 수 있습니다. Red를 Black 이라고 한 사람의 수효(10명)과 Black을 Red 라고 한 사람의 수효(10명)이 같습니다 group 을 잘못 기억하고 있는 사람들의 수효조차 Red, Black 에 비슷하게 나뉘었습니다. 
+랜덤화출석부(8월 24일 기준)에 있는 Red, Black 과 실제 구글예습설문지에 올린 Red, Black 이 다른 사람들의 분포를 파악해 보았습니다. 랜덤화 효과는 여기서도 작동하고 있는 걸 알 수 있습니다. Red를 Black 이라고 한 사람의 수효(9명)과 Black을 Red 라고 한 사람의 수효(5명)의 차이는 확률법칙으로 충분히 설명됩니다. group 을 잘못 기억하고 있는 사람들의 수효조차 Red, Black 에 비슷하게 나뉘었습니다. 
 
 ```{r, wrong group, echo = FALSE}
 quiz$group2 <- class_roll$group[match(quiz$id, class_roll$id)]
@@ -124,9 +126,9 @@ wrong_group <- which(quiz$group != quiz$group2)
 #   `[`(order(.$name), ) %>%
 #   `colnames<-`(c("학번", "이름", "랜덤화출석부", "구글예습퀴즈")) %>%
 #   pander(row.names = FALSE)
-quiz[wrong_group, c("time", "id", "name", "group2", "group")] %>%
+quiz[wrong_group, c("time", "id", "group2", "group")] %>%
   `[`(order(.$time), ) %>%
-  `colnames<-`(c("제출시간", "학번", "이름", "랜덤화출석부", "구글예습퀴즈")) %>%
+  `colnames<-`(c("제출시간", "학번", "랜덤화출석부", "구글예습퀴즈")) %>%
   pander(row.names = FALSE)
 wrong_tbl <- table("랜덤화출석부" = quiz$group2, 
                    "구글예습퀴즈" = quiz$group)
@@ -335,7 +337,7 @@ max(quiz$hours, na.rm = TRUE)
 
 ### 분포표 (Red, Black 은 닮았는가?)
 
-```{r, echo = FALSE}
+```{r, echo = FALSE, warning = FALSE}
 N <- nrow(quiz)
 days_tbl <- quiz$days %>%
   cut(breaks = c(0:14), include.lowest = TRUE) %>%
@@ -347,7 +349,7 @@ days_tbl %>%
 quiz$days %>%
   cut(breaks = c(0:14), include.lowest = TRUE) %>%
   table(quiz$group, .) %>%
-  chisq.test(simulate.p.value = FALSE) %>%
+  chisq.test(simulate.p.value = TRUE) %>%
   pander
 ```
 
@@ -363,7 +365,7 @@ b <-
   rev %>%
   barplot(space = 0, names.arg = rep(c("월", "화", "수", "목", "금", "토", "일"), 2),
           col = c(rep("white", 13), "pink"),
-          ylim = c(0, 400)) 
+          ylim = c(0, 200)) 
 text(x = b[14, 1], y = sum(days_tbl[, 1]), 
      labels = paste0(sum(days_tbl[, 1]), "명"), pos = 3)
 text(x = b[14, 1], y = sum(days_tbl[, 1]) / 2, 
@@ -402,7 +404,6 @@ m2 + geom_text(aes(x = center, y = 1.05),
                                   family = "KoPubWorldDotum Bold")) 
 ggsave("./pics/Quiz230904_submission_2.png", dpi = 120, width = 960, height = 840, units = "px")
 ```
-
 
 <!--
 ### % 합계

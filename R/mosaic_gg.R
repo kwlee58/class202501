@@ -68,7 +68,8 @@ m <-
            stat = "identity", 
            col = "white", 
            linewidth = 1, 
-           position = position_stack(reverse = TRUE)) +
+           position = position_stack(reverse = TRUE),
+           na.rm = TRUE) +
 #  geom_text(aes(x = center, 
 #                y = 1.05), 
 #            family = "KoPubWorldDotum Medium",
@@ -77,7 +78,8 @@ m <-
                 y = label_height), 
             label = format(ifelse(tbl_df[, 3] == 0, "", tbl_df[, 3]), 
                            big.mark = ","), 
-            position = position_identity()) +
+            position = position_identity(),
+            na.rm = TRUE) +
   scale_x_continuous(breaks = x_breaks, 
                      label = x_label) + 
   scale_y_continuous(breaks = y_breaks,
