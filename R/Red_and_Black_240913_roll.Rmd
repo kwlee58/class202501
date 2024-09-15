@@ -1,5 +1,5 @@
 ---
-title: "랜덤화 출석부(240906)"
+title: "랜덤화 출석부(240913)"
 output: html_document
 ---
 
@@ -22,6 +22,7 @@ panderOptions('table.split.table', Inf)
 
 ```{r, data, echo = FALSE}
 class_roll0824 <- readRDS("./class_roll_240824.RDS")
+class_roll_id_new2 <- readRDS("./class_roll_240913_id_new2.RDS")
 # class_roll <- readRDS("./class_roll_240906.RDS")
 load("./red_and_black_240906_data.RData")
 ```
@@ -37,6 +38,17 @@ class_roll %>%
 #  rename("학번" = id, "이름" = name, "그룹" = group) %>%
 #  setNames(c("학번", "이름", "그룹")) %>%
   pander(caption = "가나다순", col.names = c("학번", "이름", "그룹"), row.names = FALSE)
+```
+
+## 수강변경 이후 들어온 사람들
+
+```{r, echo = FALSE}
+class_roll_id_new2 %>%
+  arrange(name) %>%
+  select(id, name, group) %>%
+#  rename("학번" = id, "이름" = name, "그룹" = group) %>%
+#  setNames(c("학번", "이름", "그룹")) %>%
+  pander(col.names = c("학번", "이름", "그룹"), row.names = FALSE)
 ```
 
 ## 그룹이 바뀐 사람들
@@ -64,7 +76,7 @@ wide_class_roll %>%
   filter(group_changed == TRUE) %>%
   select(id, name, group_0824, group_0906) %>%
   arrange(name) %>%
-  pander(col.names = c("학번", "이름", "8월24일 그룹", "9월6일 그룹"))
+  pander(caption = "가나다순", col.names = c("학번", "이름", "8월24일 그룹", "9월6일 그룹"))
 
 # 교차표
 cross_tab <- table(wide_class_roll$group_0824, wide_class_roll$group_0906)
@@ -83,7 +95,7 @@ wide_class_roll %>%
   filter(group_changed == FALSE) %>%
   select(id, name, group_0824, group_0906) %>%
   arrange(name) %>%
-  pander(col.names = c("학번", "이름", "8월24일 그룹", "9월6일 그룹"))
+  pander(caption = "가나다순", col.names = c("학번", "이름", "8월24일 그룹", "9월6일 그룹"))
 ```
 
 ## 전체 랜덤화 출석부 (9월6일 기준)

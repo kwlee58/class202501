@@ -21,7 +21,7 @@ panderOptions('table.alignment.default', 'right')
 <!--# Data Reading-->
 
 ```{r, data, echo = FALSE, results = 'hide'}
-class_roll <- readRDS("./class_roll240824.RDS")
+class_roll <- readRDS("./class_roll_240824.RDS")
 # load("./red_and_black_240824_data.RData")
 str(class_roll)
 ```

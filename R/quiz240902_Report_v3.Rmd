@@ -20,10 +20,10 @@ options(width=180)
 
 ```{r, data, echo = FALSE, message = FALSE, results = 'hide'}
 ## 8월24일자 랜덤화 출석부
-class_roll0824 <- readRDS("./class_roll240824.RDS") %>%
+class_roll0824 <- readRDS("./class_roll_240824.RDS") %>%
   select(dept, id, name, status, email, cell_no, group)
 ## 9월6일자 랜덤화 출석부
-class_roll0906 <- readRDS("./class_roll240906.RDS") %>%
+class_roll0906 <- readRDS("./class_roll_240906.RDS") %>%
   select(dept, id, name, status, email, cell_no, group)
 ## 9월6일자 신규 수강생의 학번
 id_new <- setdiff(class_roll0906$id, class_roll0824$id)
@@ -53,12 +53,14 @@ class_roll_id_new2$group <- c("Red", "Black")
 class_roll <- 
   rbind(class_roll0824, class_roll_id_new, class_roll_id_new2)
 saveRDS(class_roll, file = "./class_roll_240913_1st_wk.RDS")
+saveRDS(class_roll_id_new2, file = "./class_roll_240913_id_new2.RDS")
 # Quiz Assortment  
 quiz <- 
   read_excel("./data/quiz240902.xlsx",
-             range = "A2:K665",
+             range = "A2:K707",
              col_names = FALSE)
-names(quiz) <- c("time", "email", "dept", "id", "name", "Q1", "Q2", "Q3", "group", "Q4_R", "Q4_B")
+names(quiz) <- 
+  c("time", "email", "dept", "id", "name", "Q1", "Q2", "Q3", "group", "Q4_R", "Q4_B")
 str(quiz)
 quiz <- data.frame(quiz)
 class(quiz$id) <- "character"
@@ -93,10 +95,15 @@ table(quiz$Q4, useNA = "ifany")
 wrong_id <- setdiff(quiz$id, class_roll$id)
 quiz %>%
   filter(id %in% wrong_id) %>%
-  select(id, name, dept)
+  select(id, name, dept, email)
 # quiz[quiz$id %in% setdiff(quiz$id, class_roll$id), c("id", "name", "dept")]
 #> 찾아서 수정하는 코드
-
+# quiz$id <- 
+#   class_roll$id[match(quiz$email, class_roll$email)]
+quiz <- quiz %>%
+  left_join(class_roll %>% select(email, id), by = "email", suffix = c("", "_correct")) %>%
+  mutate(id = if_else(!is.na(id_correct), id_correct, id)) %>%
+  select(-id_correct)
 #> 불참자들
 absentee <- 
   class_roll[class_roll$id %in% setdiff(class_roll$id, quiz$id), c("id", "name", "group")] %>%
@@ -117,7 +124,7 @@ str(quiz)
 
 ```{r, wrong group, echo = FALSE}
 quiz$group2 <- class_roll$group[match(quiz$id, class_roll$id)]
-## 8/22 출석부에 나오고, 퀴즈도 수행하였지만 9/1 출석부에는 없는 사람
+## 8/24 출석부에 나오고, 퀴즈도 수행하였지만 9/6 출석부에는 없는 사람
 # which(is.na(quiz$group2)) %>%
 #   quiz[., c("id", "name", "group", "group2")]
 quiz[quiz$id == "20211104", "group2"] <- "Red"
@@ -349,7 +356,7 @@ days_tbl %>%
 quiz$days %>%
   cut(breaks = c(0:14), include.lowest = TRUE) %>%
   table(quiz$group, .) %>%
-  chisq.test(simulate.p.value = TRUE) %>%
+  chisq.test(simulate.p.value = FALSE) %>%
   pander
 ```
 

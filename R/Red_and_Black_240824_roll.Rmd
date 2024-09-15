@@ -18,7 +18,7 @@ panderOptions('table.split.table', Inf)
 ### Data
 
 ```{r, data, echo = FALSE}
-class_roll <- readRDS("./class_roll240824.RDS")
+class_roll <- readRDS("./class_roll_240824.RDS")
 # load("./red_and_black_240824_data.RData")
 ```
 

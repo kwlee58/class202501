@@ -7,13 +7,11 @@ output: html_document
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
-# install.packages("pander", repos = "https://cran.rstudio.com")
-# install.packages("xlsx", repos = "https://cran.rstudio.com")
-# library(xlsx)
 library(readxl)
 library(pander)
 library(knitr)
 library(magrittr)
+library(dplyr)
 panderOptions('table.split.table', Inf)
 panderOptions('table.alignment.rownames', 'left')
 panderOptions('table.alignment.default', 'right')
@@ -22,7 +20,7 @@ options(width=180)
 
 ```{r message=FALSE, data, echo=FALSE, results='hide'}
 class_roll0906 <- 
-  readRDS("./class_roll240906.RDS")
+  readRDS("./class_roll_240906.RDS")
 class_roll0913 <- 
   read_excel("./data/class_roll240913.xlsx", range = "B1:G814")
 str(class_roll0913)
@@ -30,14 +28,14 @@ names(class_roll0913) <-
   c("dept", "id", "name", "status", "email", "cell_no")
 class_roll0913$group <- 
   class_roll0906$group[match(class_roll0913$id, class_roll0906$id)]
-# 폐강으로 인하여 들어 온 수강생들의 그룹 설정
+#> 폐강으로 인하여 들어 온 수강생들의 그룹 설정
 na_gr <- which(is.na(class_roll0913$group)) 
 class_roll0913[na_gr, "group"] <- c("Red", "Black")
 saveRDS(class_roll0913, file = "./class_roll_240913.RDS")
 class_roll <- class_roll0913
 quiz <- 
   read_excel("./data/quiz240909.xlsx",
-             range = "A2:N318",
+             range = "A2:N401",
              col_names = FALSE)
 names(quiz) <- 
   c("time", "email", "dept", "id", "name", 
@@ -47,10 +45,6 @@ quiz <- data.frame(quiz)
 class(quiz$id) <- "character"
 class(quiz$Q3) <- "character"
 class(quiz$Q4) <- "character"
-# quiz$Q7_R[quiz$Q7_R == "잘못했다는 응답이 잘했다는 응답보다 매우 적다"] <- "부정적 응답이 긍정적 응답보다 매우 적다"
-# quiz$Q7_R[quiz$Q7_R == "잘못했다는 응답이 잘했다는 응답과 비슷하다"] <- "부정적 응답이 긍정적 응답과 비슷하다"
-# quiz$Q7_B[quiz$Q7_B == "반대한다는 응답이 찬성한다는 응답보다 매우 적다"] <- "부정적 응답이 긍정적 응답보다 매우 적다"
-# quiz$Q7_B[quiz$Q7_B == "반대한다는 응답이 찬성한다는 응답과 비슷하다"] <- "부정적 응답이 긍정적 응답과 비슷하다"
 quiz$Q7 <- ifelse(is.na(quiz$Q7_R), quiz$Q7_B, quiz$Q7_R)
 quiz$dept <- factor(quiz$dept)
 quiz$group <- 
@@ -87,15 +81,34 @@ quiz$Q7 <-
                     "제대로 보여주고 있지 않다",
                     "모름/응답거절"))
 #> 학번 잘못 써서 고생시키는 녀석들 찾아내는 코드
-quiz[quiz$id %in% setdiff(quiz$id, class_roll$id), c("id", "name", "dept", "group")]
+quiz %>%
+  anti_join(class_roll, by = "id") %>%
+  select(id, name, group)
+wrong_id <- setdiff(quiz$id, class_roll$id)
+quiz %>%
+  filter(id %in% wrong_id) %>%
+  select(id, name, dept, email)
+# quiz[quiz$id %in% setdiff(quiz$id, class_roll$id), c("id", "name", "dept", "group")]
+#> 틀린 학번 수정하여 되돌리기
+quiz <- quiz %>%
+  left_join(class_roll %>% select(email, id), by = "email", suffix = c("", "_correct")) %>%
+  mutate(id = if_else(!is.na(id_correct), id_correct, id)) %>%
+  select(-id_correct)
 #> 불참자들
-absentee <- 
-  class_roll[class_roll$id %in% setdiff(class_roll$id, quiz$id), c("id", "name", "group")] %>%
-  `[`(order(.$name), ) 
+absentee <- class_roll %>%
+  anti_join(quiz, by = "id") %>%
+  select(id, name, group) %>%
+  arrange(name)
+# absentee <- 
+#   class_roll[class_roll$id %in% setdiff(class_roll$id, quiz$id), c("id", "name", "group")] %>%
+#   `[`(order(.$name), ) 
 absentee %>%
   pander(row.names = FALSE) 
-absentee$group %>%
-  table
+absentee %>%
+  count(group) %>%
+  print()
+# absentee$group %>%
+#   table
 #> 마감기한으로부터 제출시점의 기간
 quiz$days <- 
   as.numeric(difftime("2024-09-23 09:00:00", quiz$time, units = 'days'))
@@ -113,17 +126,37 @@ pander(summary(quiz))
 랜덤화출석부에 있는 Red, Black 과 실제 구글예습퀴즈에 올린 Red, Black 이 여전히 다른 사람들이 있어서 파악해 보았습니다. Red를 Black 이라고 한 사람의 수효(23명)과 Black을 Red 라고 한 사람의 수효(24명)이 놀라울 정도로 닮았습니다. 랜덤화의 효과로 볼 수 있습니다.
 
 ```{r, wrong group, echo = FALSE}
-quiz$group2 <- class_roll$group[match(quiz$id, class_roll$id)]
-wrong_group <- which(quiz$group != quiz$group2)
+#> group2 생성
+quiz <- quiz %>%
+  left_join(class_roll %>% select(id, group), by = "id", suffix = c("", "_class_roll")) %>%
+  rename(group2 = group_class_roll)
+
+#> group 과 group2가 다른 행 필터링
+wrong_group <- quiz %>%
+  filter(group2 != group)
+
+#> 잘못된 그룹 정보 출력
+wrong_group %>%
+  select(time, id, name, group2, group) %>%
+  arrange(time) %>%
+  rename(제출시간 = time, 학번 = id, 이름 = name, 랜덤화출석부 = group2, 구글예습퀴즈 = group) %>%
+  pander(row.names = FALSE)
+
+#> 옛 코드
+# quiz$group2 <- class_roll$group[match(quiz$id, class_roll$id)]
+# wrong_group <- which(quiz$group != quiz$group2)
 # class_roll[wrong_group, c("id", "name", "group", "group2")] %>%
 #   `colnames<-`(c("학번", "이름", "랜덤화출석부", "구글예습퀴즈")) %>%
 #   pander
-quiz[wrong_group, c("time", "id", "name", "group2", "group")] %>%
-  `[`(order(.$time), ) %>%
-  `colnames<-`(c("제출시간", "학번", "이름", "랜덤화출석부", "구글예습퀴즈")) %>%
-  pander(row.name = FALSE)
+# quiz[wrong_group, c("time", "id", "name", "group2", "group")] %>%
+#   `[`(order(.$time), ) %>%
+#   `colnames<-`(c("제출시간", "학번", "이름", "랜덤화출석부", "구글예습퀴즈")) %>%
+#   pander(row.name = FALSE)
+
+#> 잘못된 그룹 정보의 테이블 생성 및 출력
 wrong_tbl <- 
   table("랜덤화출석부" = quiz$group2, "구글예습퀴즈" = quiz$group)
+
 wrong_tbl %>%
   pander(row.names = c("Red(랜덤화출석부)", "Black(랜덤화출석부)"), 
          col.names = c("Red(구글예습퀴즈)", "Black(구글예습퀴즈)"))
@@ -488,7 +521,7 @@ b <-
   rev %>%
   barplot(space = 0, names.arg = rep(c("월", "화", "수", "목", "금", "토", "일"), 2),
           col = c(rep("white", 12), "pink"),
-          ylim = c(0, 400)) 
+          ylim = c(0, 200)) 
 text(x = b[14, 1], y = sum(days_tbl[, 1]), 
      labels = paste0(sum(days_tbl[, 1]), "명"), pos = 3)
 text(x = b[14, 1], y = sum(days_tbl[, 1]) / 2, 
