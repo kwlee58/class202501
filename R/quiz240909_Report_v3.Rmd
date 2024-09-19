@@ -12,6 +12,7 @@ library(pander)
 library(knitr)
 library(magrittr)
 library(dplyr)
+library(stringdist)
 panderOptions('table.split.table', Inf)
 panderOptions('table.alignment.rownames', 'left')
 panderOptions('table.alignment.default', 'right')
@@ -35,7 +36,7 @@ saveRDS(class_roll0913, file = "./class_roll_240913.RDS")
 class_roll <- class_roll0913
 quiz <- 
   read_excel("./data/quiz240909.xlsx",
-             range = "A2:N401",
+             range = "A2:N546",
              col_names = FALSE)
 names(quiz) <- 
   c("time", "email", "dept", "id", "name", 
@@ -88,17 +89,37 @@ wrong_id <- setdiff(quiz$id, class_roll$id)
 quiz %>%
   filter(id %in% wrong_id) %>%
   select(id, name, dept, email)
-# quiz[quiz$id %in% setdiff(quiz$id, class_roll$id), c("id", "name", "dept", "group")]
-#> 틀린 학번 수정하여 되돌리기
 quiz <- quiz %>%
-  left_join(class_roll %>% select(email, id), by = "email", suffix = c("", "_correct")) %>%
-  mutate(id = if_else(!is.na(id_correct), id_correct, id)) %>%
-  select(-id_correct)
+  mutate(id = replace(id, name == "안현영", "20243414")) %>%
+  mutate(id = replace(id, name == "안준선", "20232728"))
+# quiz[quiz$name == "안현영", "id"] <- "20243414"
+# quiz[quiz$id %in% setdiff(quiz$id, class_roll$id), c("id", "name", "dept", "group")]
+
+#> 틀린 학번 수정하여 되돌리기
+# quiz <- quiz %>%
+#   #> `left_join`으로 `name`과 `dept`를 기준으로 교정 정보를 추가
+#   left_join(class_roll %>% select(id, name, dept), 
+#             by = "name", 
+#             suffix = c("", "_correct")) %>%
+#   #> `id_correct`가 있는 경우 이를 사용하여 `id`를 교정하고, 그렇지 않으면 기존의 `id`를 유지
+#   mutate(id = if_else(!is.na(id_correct) & id != id_correct, id_correct, id)) %>%
+#   #> 임시로 추가된 `id_correct` 열 제거
+#   select(-id_correct)
+#> 중복 제출자
+quiz %>%
+  filter(duplicated(id)) %>%
+  select(id, name)
+# which(duplicated(quiz$id)) %>%
+#   quiz[., c("id", "name")]
+quiz[quiz$name == "최재혁", ] #> 최재혁이 중복 제출한 경우
+quiz <- quiz %>% 
+  arrange(id, desc(time)) %>%
+  distinct(id, .keep_all = TRUE)
 #> 불참자들
 absentee <- class_roll %>%
   anti_join(quiz, by = "id") %>%
   select(id, name, group) %>%
-  arrange(name)
+  arrange(id)
 # absentee <- 
 #   class_roll[class_roll$id %in% setdiff(class_roll$id, quiz$id), c("id", "name", "group")] %>%
 #   `[`(order(.$name), ) 

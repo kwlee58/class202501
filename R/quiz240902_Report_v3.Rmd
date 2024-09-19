@@ -57,7 +57,7 @@ saveRDS(class_roll_id_new2, file = "./class_roll_240913_id_new2.RDS")
 # Quiz Assortment  
 quiz <- 
   read_excel("./data/quiz240902.xlsx",
-             range = "A2:K707",
+             range = "A2:K777",
              col_names = FALSE)
 names(quiz) <- 
   c("time", "email", "dept", "id", "name", "Q1", "Q2", "Q3", "group", "Q4_R", "Q4_B")
@@ -104,14 +104,24 @@ quiz <- quiz %>%
   left_join(class_roll %>% select(email, id), by = "email", suffix = c("", "_correct")) %>%
   mutate(id = if_else(!is.na(id_correct), id_correct, id)) %>%
   select(-id_correct)
+#> 중복 제출자
+which(duplicated(quiz$id)) %>%
+  quiz[., c("id", "name")]
+quiz[quiz$name == "최재혁", ]
+quiz[quiz$name == "우로겸", ]
+quiz[quiz$id == "20242128", ]
 #> 불참자들
-absentee <- 
-  class_roll[class_roll$id %in% setdiff(class_roll$id, quiz$id), c("id", "name", "group")] %>%
-  `[`(order(.$name), ) 
+absentee <- class_roll0913 %>%
+  anti_join(quiz, by = "id") %>%
+  select(id, name) %>%
+  arrange(id)
+# absentee <- 
+#   class_roll0913[class_roll0913$id %in% setdiff(class_roll0913$id, quiz$id), c("id", "name")] %>%
+#   `[`(order(.$id), ) 
 absentee %>%
   pander(row.names = FALSE) 
-absentee$group %>%
-  table
+# absentee$group %>%
+#   table
 #> 마감기한으로부터 제출시점의 기간
 quiz$days <- as.numeric(difftime("2024-09-16 09:00:00", quiz$time, units = 'days'))
 quiz$hours <- as.numeric(difftime("2024-09-16 09:00:00", quiz$time, units = 'hours'))
@@ -120,7 +130,7 @@ str(quiz)
 
 ## Red, Black을 잘못 표시한 사람들
 
-랜덤화출석부(8월 24일 기준)에 있는 Red, Black 과 실제 구글예습설문지에 올린 Red, Black 이 다른 사람들의 분포를 파악해 보았습니다. 랜덤화 효과는 여기서도 작동하고 있는 걸 알 수 있습니다. Red를 Black 이라고 한 사람의 수효(9명)과 Black을 Red 라고 한 사람의 수효(5명)의 차이는 확률법칙으로 충분히 설명됩니다. group 을 잘못 기억하고 있는 사람들의 수효조차 Red, Black 에 비슷하게 나뉘었습니다. 
+랜덤화출석부(8월 24일 기준)에 있는 Red, Black 과 실제 구글예습설문지에 올린 Red, Black 이 다른 사람들의 분포를 파악해 보았습니다. 랜덤화 효과는 여기서도 작동하고 있는 걸 알 수 있습니다. Red를 Black 이라고 한 사람의 수효(9명)과 Black을 Red 라고 한 사람의 수효(8명)가 상당히 비슷합니다. group 을 잘못 기억하고 있는 사람들의 수효조차 Red, Black 에 비슷하게 나뉘었습니다. 
 
 ```{r, wrong group, echo = FALSE}
 quiz$group2 <- class_roll$group[match(quiz$id, class_roll$id)]
@@ -133,10 +143,10 @@ wrong_group <- which(quiz$group != quiz$group2)
 #   `[`(order(.$name), ) %>%
 #   `colnames<-`(c("학번", "이름", "랜덤화출석부", "구글예습퀴즈")) %>%
 #   pander(row.names = FALSE)
-quiz[wrong_group, c("time", "id", "group2", "group")] %>%
-  `[`(order(.$time), ) %>%
-  `colnames<-`(c("제출시간", "학번", "랜덤화출석부", "구글예습퀴즈")) %>%
-  pander(row.names = FALSE)
+# quiz[wrong_group, c("time", "id", "name", "group2", "group")] %>%
+#   `[`(order(.$time), ) %>%
+#   `colnames<-`(c("제출시간", "학번", "이름", "랜덤화출석부", "구글예습퀴즈")) %>%
+#   pander(row.names = FALSE)
 wrong_tbl <- table("랜덤화출석부" = quiz$group2, 
                    "구글예습퀴즈" = quiz$group)
 wrong_tbl %>%
@@ -166,7 +176,7 @@ tbl_q1_a <- quiz$Q1 %>%
 tbl_q1_a %>% 
   pander 
 tbl_q1_a[-3, -6] %>% 
-  chisq.test(simulate.p.value = TRUE) %>% 
+  chisq.test(simulate.p.value = FALSE) %>% 
   pander
 ```
 
