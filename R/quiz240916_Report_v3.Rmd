@@ -23,7 +23,7 @@ class_roll <- readRDS("./class_roll_240913.RDS")
 class_roll <- data.frame(class_roll)
 quiz <- 
   read_excel("./data/quiz240916.xlsx",
-             range = "A2:N150",
+             range = "A2:N187",
              col_names = FALSE)
 names(quiz) <- 
   c("time", "email", "dept", "id", "name", 
@@ -77,9 +77,9 @@ wrong_id <- setdiff(quiz$id, class_roll$id)
 quiz %>%
   filter(id %in% wrong_id) %>%
   select(id, name, dept, email)
-# quiz <- quiz %>%
+quiz <- quiz %>%
 #   mutate(id = replace(id, name == "안현영", "20243414")) %>%
-#   mutate(id = replace(id, name == "안준선", "20232728"))
+  mutate(id = replace(id, name == "한희락", "20246303"))
 # quiz[quiz$name == "안현영", "id"] <- "20243414"
 # quiz[quiz$id %in% setdiff(quiz$id, class_roll$id), c("id", "name", "dept", "group")]
 
