@@ -36,7 +36,7 @@ saveRDS(class_roll0913, file = "./class_roll_240913.RDS")
 class_roll <- class_roll0913
 quiz <- 
   read_excel("./data/quiz240909.xlsx",
-             range = "A2:N584",
+             range = "A2:N622",
              col_names = FALSE)
 names(quiz) <- 
   c("time", "email", "dept", "id", "name", 
@@ -159,7 +159,7 @@ absentee %>%
 
 ## Red, Black을 잘못 표시한 사람들
 
-랜덤화출석부에 있는 Red, Black 과 실제 구글예습퀴즈에 올린 Red, Black 이 여전히 다른 사람들이 있어서 파악해 보았습니다. Red를 Black 이라고 한 사람의 수효(23명)과 Black을 Red 라고 한 사람의 수효(24명)이 놀라울 정도로 닮았습니다. 랜덤화의 효과로 볼 수 있습니다.
+랜덤화출석부에 있는 Red, Black 과 실제 구글예습퀴즈에 올린 Red, Black 이 여전히 다른 사람들이 있어서 파악해 보았습니다. Red를 Black 이라고 한 사람의 수효(25명)과 Black을 Red 라고 한 사람의 수효(18명)이 상당히 닮았습니다. 랜덤화의 효과로 볼 수 있습니다.
 
 ```{r, wrong group, echo = FALSE}
 #> group2 생성

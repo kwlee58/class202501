@@ -23,7 +23,7 @@ class_roll <- readRDS("./class_roll_240913.RDS")
 class_roll <- data.frame(class_roll)
 quiz <- 
   read_excel("./data/quiz240916.xlsx",
-             range = "A2:N272",
+             range = "A2:N310",
              col_names = FALSE)
 names(quiz) <- 
   c("time", "email", "dept", "id", "name", 
@@ -93,6 +93,7 @@ quiz_wrong_ids <- quiz_wrong_ids %>%
   mutate(id = case_when(
     id == "2024603" ~ "20246303",
     id == "202170325" ~ "20217035",
+    id == "2023537" ~ "20203537",
     TRUE ~ id
   ))
 # 3. quiz 에서 id 틀린 행을 제거하고 옳은 id 갖춘 행으로 교체하기
@@ -146,12 +147,29 @@ absentee %>%
 랜덤화출석부에 있는 Red, Black 과 실제 구글예습퀴즈에 올린 Red, Black 이 여전히 다른 사람들이 있어서 파악해 보았습니다. Red를 Black 이라고 한 사람의 수효(10명)와 Black을 Red 라고 한 사람의 수효(11명)가 매우 닮았습니다. 요약의 일관성을 기하기 위하여 기대값과 표준오차를 계산해 봅니다. 21명을 랜덤하게 둘로 나누면 $21/2\pm\sqrt21/2$명 = 11.5 $\pm$ 2.3명 이 나오는데 굳이 이 계산을 하지 않아도 더 이상 닮을 방법이 없다는 것을 쉽게 알 수 있습니다.
 
 ```{r, wrong group, echo = FALSE}
-quiz$group2 <- class_roll$group[match(quiz$id, class_roll$id)]
-wrong_group <- which(quiz$group != quiz$group2)
-quiz[wrong_group, c("time", "id", "name", "group2", "group")] %>%
-  `[`(order(.$time), ) %>%
-  `colnames<-`(c("제출시간", "학번", "이름", "랜덤화출석부", "구글예습퀴즈")) %>%
+#> group2 생성
+quiz <- quiz %>%
+  left_join(class_roll %>% select(id, group), by = "id", suffix = c("", "_class_roll")) %>%
+  rename(group2 = group_class_roll)
+
+#> group 과 group2가 다른 행 필터링
+wrong_group <- quiz %>%
+  filter(group2 != group)
+
+#> 잘못된 그룹 정보 출력
+wrong_group %>%
+  select(time, id, name, group2, group) %>%
+  arrange(time) %>%
+  rename(제출시간 = time, 학번 = id, 아름 = name, 랜덤화출석부 = group2, 구글예습퀴즈 = group) %>%
   pander(row.names = FALSE)
+
+#> 옛 코드
+# quiz$group2 <- class_roll$group[match(quiz$id, class_roll$id)]
+# wrong_group <- which(quiz$group != quiz$group2)
+# quiz[wrong_group, c("time", "id", "name", "group2", "group")] %>%
+#   `[`(order(.$time), ) %>%
+#   `colnames<-`(c("제출시간", "학번", "이름", "랜덤화출석부", "구글예습퀴즈")) %>%
+#   pander(row.names = FALSE)
 # quiz[wrong_group, c("time", "id", "group2", "group")] %>%
 #   `[`(order(.$time), ) %>%
 #   `colnames<-`(c("제출시간", "학번", "랜덤화출석부", "구글예습퀴즈")) %>%
@@ -187,7 +205,7 @@ tbl_q1_a[-3, -6] %>%
 
 ### 국세와 지방세 비중(%)
 
-```{r, national vs local tax in percentage, echo = FALSE}
+```{r, national vs local tax in percentage, echo = FALSE, warning = FALSE}
 tbl_q1_a %>% 
   `[`(3, -6) %>%
   prop.table %>% 
@@ -205,7 +223,7 @@ include_graphics("./pics/Quiz230315_Q2.png")
 
 ### 조세부담률(집계표)
 
-```{r, tax burden rate, echo = FALSE}
+```{r, tax burden rate, echo = FALSE, warning = FALSE}
 tbl_q2_a <- 
   quiz$Q2 %>% 
   table(quiz$group, ., useNA = "ifany") %>%
@@ -238,7 +256,7 @@ include_graphics("./pics/Quiz230315_Q3.png")
 
 ### OECD 국민부담률(집계표)
 
-```{r, national burden rate, echo = FALSE}
+```{r, national burden rate, echo = FALSE, warning = FALSE}
 tbl_q3_a <- 
   quiz$Q3 %>% 
   table(quiz$group, ., useNA = "ifany") %>%
@@ -271,7 +289,7 @@ include_graphics("./pics/Quiz230315_Q4.png")
 
 ### 과세대상 근로소득 1,200만 원(집계표)
 
-```{r, lowest taxable income, echo = FALSE}
+```{r, lowest taxable income, echo = FALSE, warning = FALSE}
 tbl_q4_a <- 
   quiz$Q4 %>% 
   table(quiz$group, ., useNA = "ifany") %>%
@@ -304,7 +322,7 @@ include_graphics("./pics/Quiz230315_Q5.png")
 
 ### 소득세 실효세율(집계표)
 
-```{r, echo = FALSE}
+```{r, echo = FALSE, warning = FALSE}
 tbl_q5_a <- 
   quiz$Q5 %>% 
   table(quiz$group, ., useNA = "ifany") %>%
@@ -337,7 +355,7 @@ include_graphics("./pics/Quiz230315_Q6.png")
 
 ### 기업규모별 과세 현황(집계표)
 
-```{r, corporate tax, echo = FALSE}
+```{r, corporate tax, echo = FALSE, warning = FALSE}
 tbl_q6_a <- 
   quiz$Q6 %>% 
   table(quiz$group, ., useNA = "ifany") %>%
@@ -488,7 +506,7 @@ max(quiz$hours, na.rm = TRUE)
 
 ### 분포표 (Red, Black 은 닮았는가?)
 
-```{r, echo = FALSE}
+```{r, echo = FALSE, warning = FALSE}
 N <- nrow(quiz)
 days_tbl <- 
   quiz$days %>%
@@ -509,6 +527,7 @@ quiz$days %>%
 
 ```{r, echo = FALSE}
 # png(file = "./pics/2401/quiz_submission_3.png", width = 640, height = 480)
+suppressMessages({
 par(family = "KoPubWorldDotum Medium")
 b <- 
   quiz$days %>%
@@ -526,6 +545,7 @@ title(main = paste0("Quiz240916 (", N, "명 제출)"))
 # title(main = "일 단위 퀴즈 제출 인원", sub = paste0("Quiz230904 (", N, "명 제출)"))
 dev.copy(png, file = "./pics/2401/quiz_submission_3.png", width = 640, height = 480)
 invisible(dev.off())
+})
 ```
 
 ### Mosaic Plot
