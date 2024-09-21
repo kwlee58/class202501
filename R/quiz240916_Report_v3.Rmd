@@ -23,7 +23,7 @@ class_roll <- readRDS("./class_roll_240913.RDS")
 class_roll <- data.frame(class_roll)
 quiz <- 
   read_excel("./data/quiz240916.xlsx",
-             range = "A2:N187",
+             range = "A2:N272",
              col_names = FALSE)
 names(quiz) <- 
   c("time", "email", "dept", "id", "name", 
@@ -69,21 +69,39 @@ quiz$Q7 <-
          levels = c("낮춰야 한다", 
                     "높여야 한다", 
                     "모름/무응답"))
+#> 마감기한으로부터 제출시점의 기간
+quiz$days <- 
+  as.numeric(difftime("2024-09-30 09:00:00", quiz$time, units = 'days'))
+quiz$hours <- 
+  as.numeric(difftime("2024-09-30 09:00:00", quiz$time, units = 'hours'))
+str(quiz)
+pander(summary(quiz))
+```
+
+```{r, cleaning, echo = FALSE, results = 'hide'}
 #> 학번 잘못 써서 고생시키는 녀석들 찾아내는 코드
-quiz %>%
-  anti_join(class_roll, by = "id") %>%
-  select(id, name, group)
 wrong_id <- setdiff(quiz$id, class_roll$id)
 quiz %>%
   filter(id %in% wrong_id) %>%
   select(id, name, dept, email)
+# 1. 잘못된 id 가진 행 찾기
+quiz_wrong_ids <- quiz %>%
+  anti_join(class_roll, by = "id") 
+# 2. 잘못된 id를 따로 저장하고 수정하기
+wrong_ids <- quiz_wrong_ids$id
+quiz_wrong_ids <- quiz_wrong_ids %>%
+  mutate(id = case_when(
+    id == "2024603" ~ "20246303",
+    id == "202170325" ~ "20217035",
+    TRUE ~ id
+  ))
+# 3. quiz 에서 id 틀린 행을 제거하고 옳은 id 갖춘 행으로 교체하기
 quiz <- quiz %>%
-#   mutate(id = replace(id, name == "안현영", "20243414")) %>%
-  mutate(id = replace(id, name == "한희락", "20246303"))
-# quiz[quiz$name == "안현영", "id"] <- "20243414"
+  filter(!id %in% wrong_ids) %>%
+  bind_rows(quiz_wrong_ids)
 # quiz[quiz$id %in% setdiff(quiz$id, class_roll$id), c("id", "name", "dept", "group")]
 
-#> 틀린 학번 수정하여 되돌리기
+#> 틀린 학번 수정하여 되돌리기 (작동하지 않음. 참고로만)
 # quiz <- quiz %>%
 #   #> `left_join`으로 `name`과 `dept`를 기준으로 교정 정보를 추가
 #   left_join(class_roll %>% select(id, name, dept), 
@@ -93,13 +111,16 @@ quiz <- quiz %>%
 #   mutate(id = if_else(!is.na(id_correct) & id != id_correct, id_correct, id)) %>%
 #   #> 임시로 추가된 `id_correct` 열 제거
 #   select(-id_correct)
+
 #> 중복 제출자
 quiz %>%
   filter(duplicated(id)) %>%
   select(id, name)
 # which(duplicated(quiz$id)) %>%
 #   quiz[., c("id", "name")]
-quiz[quiz$name == "최재혁", ] #> 최재혁이 중복 제출한 경우
+quiz %>%
+  filter(name %in% c("최재혁", "박지연"))
+# quiz[quiz$name %in% c("최재혁", "박지연"), ] #> 최재혁, 박지연이 중복 제출
 quiz <- quiz %>% 
   arrange(id, desc(time)) %>%
   distinct(id, .keep_all = TRUE)
@@ -118,16 +139,6 @@ absentee %>%
   print()
 # absentee$group %>%
 #   table
-#> 마감기한으로부터 제출시점의 기간
-quiz$days <- 
-  as.numeric(difftime("2024-09-30 09:00:00", quiz$time, units = 'days'))
-quiz$hours <- 
-  as.numeric(difftime("2024-09-30 09:00:00", quiz$time, units = 'hours'))
-str(quiz)
-```
-
-```{r, randomization, echo = FALSE, results = 'hide'}
-pander(summary(quiz))
 ```
 
 ## Red, Black을 잘못 표시한 사람들
