@@ -36,7 +36,7 @@ saveRDS(class_roll0913, file = "./class_roll_240913.RDS")
 class_roll <- class_roll0913
 quiz <- 
   read_excel("./data/quiz240909.xlsx",
-             range = "A2:N622",
+             range = "A2:N640",
              col_names = FALSE)
 names(quiz) <- 
   c("time", "email", "dept", "id", "name", 
@@ -135,7 +135,7 @@ quiz %>%
 # which(duplicated(quiz$id)) %>%
 #   quiz[., c("id", "name")]
 quiz %>%
-  filter(name %in% c("최재혁", "박지연"))
+  filter(name %in% c("최재혁", "박지연", "최민재"))
 # quiz[quiz$name %in% c("최재혁", "박지연"), ] #> 최재혁, 박지연이 중복 제출
 quiz <- quiz %>% 
   arrange(id, desc(time)) %>%
