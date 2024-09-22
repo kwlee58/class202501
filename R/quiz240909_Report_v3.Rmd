@@ -36,7 +36,7 @@ saveRDS(class_roll0913, file = "./class_roll_240913.RDS")
 class_roll <- class_roll0913
 quiz <- 
   read_excel("./data/quiz240909.xlsx",
-             range = "A2:N662",
+             range = "A2:N687",
              col_names = FALSE)
 names(quiz) <- 
   c("time", "email", "dept", "id", "name", 
