@@ -36,7 +36,7 @@ saveRDS(class_roll0913, file = "./class_roll_240913.RDS")
 class_roll <- class_roll0913
 quiz <- 
   read_excel("./data/quiz240909.xlsx",
-             range = "A2:N687",
+             range = "A2:N739",
              col_names = FALSE)
 names(quiz) <- 
   c("time", "email", "dept", "id", "name", 
@@ -135,7 +135,7 @@ quiz %>%
 # which(duplicated(quiz$id)) %>%
 #   quiz[., c("id", "name")]
 quiz %>%
-  filter(name %in% c("최재혁", "박지연", "최민재", "최자영"))
+  filter(name %in% c("최재혁", "박지연", "최민재", "최자영", "김준서"))
 # quiz[quiz$name %in% c("최재혁", "박지연"), ] #> 최재혁, 박지연이 중복 제출
 quiz <- quiz %>% 
   arrange(id, desc(time)) %>%
@@ -159,7 +159,7 @@ absentee %>%
 
 ## Red, Black을 잘못 표시한 사람들
 
-랜덤화출석부에 있는 Red, Black 과 실제 구글예습퀴즈에 올린 Red, Black 이 여전히 다른 사람들이 있어서 파악해 보았습니다. Red를 Black 이라고 한 사람의 수효(25명)과 Black을 Red 라고 한 사람의 수효(18명)이 상당히 닮았습니다. 랜덤화의 효과로 볼 수 있습니다.
+랜덤화출석부에 있는 Red, Black 과 실제 구글예습퀴즈에 올린 Red, Black 이 여전히 다른 사람들이 있어서 파악해 보았습니다. Red를 Black 이라고 한 사람의 수효(27명)과 Black을 Red 라고 한 사람의 수효(22명)는 기대인원으로부터 표준오차 범위 내에 잘 들어가는 수준입니다. 랜덤화의 효과로 볼 수 있습니다.
 
 ```{r, wrong group, echo = FALSE}
 #> group2 생성
@@ -172,11 +172,11 @@ wrong_group <- quiz %>%
   filter(group2 != group)
 
 #> 잘못된 그룹 정보 출력
-wrong_group %>%
-  select(time, id, group2, group) %>%
-  arrange(time) %>%
-  rename(제출시간 = time, 학번 = id, 랜덤화출석부 = group2, 구글예습퀴즈 = group) %>%
-  pander(row.names = FALSE)
+# wrong_group %>%
+#   select(time, id, group2, group) %>%
+#   arrange(time) %>%
+#   rename(제출시간 = time, 학번 = id, 랜덤화출석부 = group2, 구글예습퀴즈 = group) %>%
+#   pander(row.names = FALSE)
 
 #> 옛 코드
 # quiz$group2 <- class_roll$group[match(quiz$id, class_roll$id)]
@@ -217,7 +217,7 @@ tbl_q1_a <-
 tbl_q1_a %>% 
   pander 
 tbl_q1_a[-3, -(6:7)] %>% 
-  chisq.test(simulate.p.value = TRUE) %>%
+  chisq.test(simulate.p.value = FALSE) %>%
   pander
 ```
 
@@ -250,7 +250,7 @@ tbl_q2_a <-
 tbl_q2_a %>% 
   pander 
 tbl_q2_a[-3, -c(1:2, 6)] %>% 
-  chisq.test(simulate.p.value = TRUE) %>%
+  chisq.test(simulate.p.value = FALSE) %>%
   pander
 ```
 
@@ -284,7 +284,7 @@ tbl_q3_a <-
 tbl_q3_a %>% 
   pander 
 tbl_q3_a[-3, -5] %>% 
-  chisq.test(simulate.p.value = TRUE) %>%
+  chisq.test(simulate.p.value = FALSE) %>%
   pander
 ```
 
