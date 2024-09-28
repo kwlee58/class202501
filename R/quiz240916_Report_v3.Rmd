@@ -19,11 +19,26 @@ options(width=180)
 ```
 
 ```{r message=FALSE, data, echo=FALSE, results='hide'}
-class_roll <- readRDS("./class_roll_240913.RDS")
-class_roll <- data.frame(class_roll)
+class_roll0913 <- 
+  readRDS("./class_roll_240913.RDS")
+class_roll0913 <- data.frame(class_roll0913)
+## 수강 철회 반영 새 출석부
+class_roll0927 <- 
+  read_excel("./data/class_roll240927.xlsx", range = "B1:G808")
+str(class_roll0927)
+names(class_roll0927) <- 
+  c("dept", "id", "name", "status", "email", "cell_no")
+class_roll0927$group <- 
+  class_roll0913$group[match(class_roll0927$id, class_roll0913$id)]
+#> 폐강으로 인하여 들어 온 수강생들의 그룹 설정
+# na_gr <- which(is.na(class_roll0913$group)) 
+# class_roll0913[na_gr, "group"] <- c("Red", "Black")
+#> class_roll_240927 저장
+saveRDS(class_roll0927, file = "./class_roll_240927.RDS")
+class_roll <- class_roll0927
 quiz <- 
   read_excel("./data/quiz240916.xlsx",
-             range = "A2:N568",
+             range = "A2:N586",
              col_names = FALSE)
 names(quiz) <- 
   c("time", "email", "dept", "id", "name", 
@@ -146,7 +161,7 @@ absentee %>%
 
 ## Red, Black을 잘못 표시한 사람들
 
-랜덤화출석부에 있는 Red, Black 과 실제 구글예습퀴즈에 올린 Red, Black 이 여전히 다른 사람들이 있어서 파악해 보았습니다. Red를 Black 이라고 한 사람의 수효(10명)와 Black을 Red 라고 한 사람의 수효(11명)가 매우 닮았습니다. 요약의 일관성을 기하기 위하여 기대값과 표준오차를 계산해 봅니다. 21명을 랜덤하게 둘로 나누면 $21/2\pm\sqrt21/2$명 = 11.5 $\pm$ 2.3명 이 나오는데 굳이 이 계산을 하지 않아도 더 이상 닮을 방법이 없다는 것을 쉽게 알 수 있습니다.
+랜덤화출석부에 있는 Red, Black 과 실제 구글예습퀴즈에 올린 Red, Black 이 여전히 다른 사람들이 있어서 파악해 보았습니다. Red를 Black 이라고 한 사람의 수효(3명)과 Black을 Red 라고 한 사람의 수효(3명)이 매우 닮았습니다. 요약의 일관성을 기하기 위하여 기대값과 표준오차를 계산해 봅니다. 21명을 랜덤하게 둘로 나누면 $21/2\pm\sqrt21/2$명 = 11.5 $\pm$ 2.3명 이 나오는데 굳이 이 계산을 하지 않아도 더 이상 닮을 방법이 없다는 것을 쉽게 알 수 있습니다.
 
 ```{r, wrong group, echo = FALSE}
 #> group2 생성
@@ -538,7 +553,7 @@ b <-
   rev %>%
   barplot(space = 0, names.arg = rep(c("월", "화", "수", "목", "금", "토", "일"), 2),
           col = c(rep("white", 13), "pink"),
-          ylim = c(0, 400)) 
+          ylim = c(0, 200)) 
 text(x = b[14, 1], y = sum(days_tbl[, 1]), 
      labels = paste0(sum(days_tbl[, 1]), "명"), pos = 3)
 text(x = b[14, 1], y = sum(days_tbl[, 1]) / 2, 
