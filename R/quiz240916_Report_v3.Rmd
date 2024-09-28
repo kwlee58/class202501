@@ -23,7 +23,7 @@ class_roll <- readRDS("./class_roll_240913.RDS")
 class_roll <- data.frame(class_roll)
 quiz <- 
   read_excel("./data/quiz240916.xlsx",
-             range = "A2:N481",
+             range = "A2:N539",
              col_names = FALSE)
 names(quiz) <- 
   c("time", "email", "dept", "id", "name", 
@@ -159,9 +159,9 @@ wrong_group <- quiz %>%
 
 #> 잘못된 그룹 정보 출력
 wrong_group %>%
-  select(time, id, name, group2, group) %>%
+  select(time, id, group2, group) %>%
   arrange(time) %>%
-  rename(제출시간 = time, 학번 = id, 아름 = name, 랜덤화출석부 = group2, 구글예습퀴즈 = group) %>%
+  rename(제출시간 = time, 학번 = id, 랜덤화출석부 = group2, 구글예습퀴즈 = group) %>%
   pander(row.names = FALSE)
 
 #> 옛 코드
