@@ -35,10 +35,10 @@ class_roll0927$group <-
 # class_roll0913[na_gr, "group"] <- c("Red", "Black")
 #> class_roll_240927 저장
 saveRDS(class_roll0927, file = "./class_roll_240927.RDS")
-class_roll <- class_roll0927
+class_roll <- class_roll0913
 quiz <- 
   read_excel("./data/quiz240916.xlsx",
-             range = "A2:N586",
+             range = "A2:N729",
              col_names = FALSE)
 names(quiz) <- 
   c("time", "email", "dept", "id", "name", 
@@ -111,6 +111,8 @@ quiz_wrong_ids <- quiz_wrong_ids %>%
     id == "2023537" ~ "20203537",
     id == "20205260" ~ "20205206",
     id == "2022238" ~ "20222238",
+    id == "202356705" ~ "20236705",
+    id == "041103" ~ "20233544",
     TRUE ~ id
   ))
 # 3. quiz 에서 id 틀린 행을 제거하고 옳은 id 갖춘 행으로 교체하기
@@ -137,7 +139,7 @@ quiz %>%
 # which(duplicated(quiz$id)) %>%
 #   quiz[., c("id", "name")]
 quiz %>%
-  filter(name %in% c("최재혁", "박지연"))
+  filter(name %in% c("허지수"))
 # quiz[quiz$name %in% c("최재혁", "박지연"), ] #> 최재혁, 박지연이 중복 제출
 quiz <- quiz %>% 
   arrange(id, desc(time)) %>%
@@ -161,7 +163,8 @@ absentee %>%
 
 ## Red, Black을 잘못 표시한 사람들
 
-랜덤화출석부에 있는 Red, Black 과 실제 구글예습퀴즈에 올린 Red, Black 이 여전히 다른 사람들이 있어서 파악해 보았습니다. Red를 Black 이라고 한 사람의 수효(3명)과 Black을 Red 라고 한 사람의 수효(3명)이 매우 닮았습니다. 요약의 일관성을 기하기 위하여 기대값과 표준오차를 계산해 봅니다. 21명을 랜덤하게 둘로 나누면 $21/2\pm\sqrt21/2$명 = 11.5 $\pm$ 2.3명 이 나오는데 굳이 이 계산을 하지 않아도 더 이상 닮을 방법이 없다는 것을 쉽게 알 수 있습니다.
+랜덤화출석부에 있는 Red, Black 과 실제 구글예습퀴즈에 올린 Red, Black 이 여전히 다른 사람들이 있어서 파악해 보았습니다. Red를 Black 이라고 한 사람의 수효(4명)과 Black을 Red 라고 한 사람의 수효(5명)이 매우 닮았습니다.
+9명을 랜덤하게 둘로 나누었을 때 더 이상 닮아질 수는 없습니다.
 
 ```{r, wrong group, echo = FALSE}
 #> group2 생성
@@ -174,11 +177,11 @@ wrong_group <- quiz %>%
   filter(group2 != group)
 
 #> 잘못된 그룹 정보 출력
-wrong_group %>%
-  select(time, id, group2, group) %>%
-  arrange(time) %>%
-  rename(제출시간 = time, 학번 = id, 랜덤화출석부 = group2, 구글예습퀴즈 = group) %>%
-  pander(row.names = FALSE)
+# wrong_group %>%
+#   select(time, id, group2, group) %>%
+#   arrange(time) %>%
+#   rename(제출시간 = time, 학번 = id, 랜덤화출석부 = group2, 구글예습퀴즈 = group) %>%
+#   pander(row.names = FALSE)
 
 #> 옛 코드
 # quiz$group2 <- class_roll$group[match(quiz$id, class_roll$id)]
