@@ -39,6 +39,12 @@ literacy_roll %<>%
 literacy_roll <- literacy_roll %>%
   mutate(group = class_roll$group[match(id, class_roll$id)])
 # literacy_roll$group <- class_roll$group[match(literacy_roll$id, class_roll$id)]
+#> 1, 2, 3, 4 번호만 남기고 뒤의 글자는 모두 지우기
+# literacy_roll[-c(1, 27)] %>%
+#   sapply(table)
+# literacy_roll[2:26] %<>% 
+#   sapply(FUN = {. %>% substr(start = 1, stop = 1)})
+# sapply(FUN = function(x) substr(x, 1, 1))
 literacy_roll[2:26] %<>% 
   sapply(FUN = {. %>% strsplit(split = "[.]") %>% sapply(`[`, 1)})
 kable(literacy_roll)
@@ -52,8 +58,6 @@ saveRDS(literacy_roll, file = "./literacy_roll240930.RDS")
 ```
 
 ```{r, echo = FALSE, results = "hide"}
-#> 학번 잘못 써서 고생시키는 녀석들 찾아내는 코드
-setdiff(literacy_roll$id, class_roll$id)
 #> 학번 잘못 써서 고생시키는 녀석들 찾아내는 코드
 wrong_id <- setdiff(literacy_roll$id, class_roll$id)
 literacy_roll %>%
@@ -86,12 +90,6 @@ class_roll %>%
 #   `!` %>% 
 #   which %>%
 #   `[`(class_roll, ., "id")
-#> 1, 2, 3, 4 번호만 남기고 뒤의 글자는 모두 지우기
-# literacy_roll[-c(1, 27)] %>%
-#   sapply(table)
-# literacy_roll[2:26] %<>% 
-#   sapply(FUN = {. %>% substr(start = 1, stop = 1)})
-# sapply(FUN = function(x) substr(x, 1, 1))
 #> 불참자들
 absentee <- class_roll %>%
   filter(id %in% setdiff(id, literacy_roll$id)) %>%
