@@ -26,7 +26,7 @@ class_roll <- class_roll0927
 str(class_roll)
 quiz <- 
   read_excel("./data/quiz240930.xlsx",
-             range = "A2:N60",
+             range = "A2:N104",
              col_names = FALSE)
 names(quiz) <- c("time", "email", "dept", "id", "name", "Q1", "Q2", "Q3", "Q4", "Q5", "Q6", "group", "Q7_R", "Q7_B")
 str(quiz)
@@ -36,38 +36,32 @@ class(quiz$id) <- "character"
 # quiz$Q7_B[quiz$Q7_B == "정부가 기업에 과다하게 개입하여 경영자율권을 침해하므로 반대한다."] <- "반대한다."
 quiz$Q7 <- ifelse(is.na(quiz$Q7_R), quiz$Q7_B, quiz$Q7_R)
 quiz$dept <- factor(quiz$dept)
-quiz$group <- factor(quiz$group, 
-                         levels = c("Red", "Black"))
-quiz$Q1 <- factor(quiz$Q1, 
-#                      levels = c("가", "나"), 
-                      levels = c("민주 문자", "엘리트 문자"))
-quiz$Q2 <- factor(quiz$Q2, 
-#                      levels = c("가", "나"), 
-                      levels = c("한자", "한글"))
-quiz$Q3 <- factor(quiz$Q3, 
-#                      levels = c("가", "나", "다", "라", "마"), 
-                      levels = c("하나도 없다", "1개", "2개", "3개", "4개"))
-quiz$Q4 <- factor(quiz$Q4, 
-                      levels = c("0.9", "0.8", "0.5", "0.2", "0.1"), 
-                      labels = c("90%", "80%", "50%", "20%", "10%"))
-quiz$Q5 <- factor(quiz$Q5, 
-#                      levels = c("가", "나", "다", "라"), 
-                      levels = c("대한민국", "영국",  "이탈리아", "미국"))
-quiz$Q6 <- factor(quiz$Q6, 
-                      levels = c("시간당 중위 임금이 60% 낮다", 
-                                 "2배 정도 실직할 가능성이 높다", 
-                                 "건강이 좋지 않다", 
-                                 "사회활동이나 자원활동에 덜 참여한다", 
-                                 "남들을 덜 신뢰한다"),
-                      labels = c("60% 낮은 임금", "실직 가능성", "나쁜 건강", "활동 불참", "덜 신뢰"))
+quiz$group <- 
+  factor(quiz$group, levels = c("Red", "Black"))
+quiz$Q1 <- 
+  factor(quiz$Q1, levels = c("민주 문자", "엘리트 문자"))
+quiz$Q2 <- 
+  factor(quiz$Q2, levels = c("한자", "한글"))
+quiz$Q3 <- 
+  factor(quiz$Q3, levels = c("하나도 없다", "1개", "2개", "3개", "4개"))
+quiz$Q4 <- 
+  factor(quiz$Q4, 
+         levels = c("0.9", "0.8", "0.5", "0.2", "0.1"), 
+         labels = c("90%", "80%", "50%", "20%", "10%"))
+quiz$Q5 <- 
+  factor(quiz$Q5, levels = c("대한민국", "영국",  "이탈리아", "미국"))
+quiz$Q6 <- 
+  factor(quiz$Q6, 
+         levels = c("시간당 중위 임금이 60% 낮다", 
+                    "2배 정도 실직할 가능성이 높다", 
+                    "건강이 좋지 않다", 
+                    "사회활동이나 자원활동에 덜 참여한다", 
+                    "남들을 덜 신뢰한다"),
+         labels = c("60% 낮은 임금", "실직 가능성", "나쁜 건강", "활동 불참", "덜 신뢰"))
 quiz$Q7 %<>%
   factor(levels = c("휴우, 그래도 반이나 남았네.", "헐, 반 밖에 안 남았네.", "모름/기타"),
          labels = c("반이나", "반밖에", "모름/기타"))
-# quiz$Q7.2 <- quiz$Q7
-# levels(quiz$Q7.2[quiz$group == "Black"]) <- c("2번", "1번", "9번")
-# levels(quiz$Q7) <- c("합의 가능",  "합의 어려움", "모름/무응답")
 table(quiz$Q7, useNA = "ifany")
-
 #> 마감기한으로부터 제출시점의 기간
 quiz$days <- as.numeric(difftime("2024-10-14 09:00:00", quiz$time, units = 'days'))
 quiz$hours <- as.numeric(difftime("2024-10-14 09:00:00", quiz$time, units = 'hours'))
@@ -87,10 +81,7 @@ quiz_wrong_ids <- quiz %>%
 wrong_ids <- quiz_wrong_ids$id
 quiz_wrong_ids <- quiz_wrong_ids %>%
   mutate(id = case_when(
-    id == "2024303" ~ "20243403",
-    id == "20243831" ~ "20243731",
-    id == "2023122" ~ "20231622",
-    id == "2046904" ~ "20246904",
+    id == "20247109" ~ "20241709",
     TRUE ~ id
   ))
 # 3. quiz 에서 id 틀린 행을 제거하고 옳은 id 갖춘 행으로 교체하기
@@ -136,9 +127,9 @@ absentee %>%
   count(group) %>%
   print()
 #> 국민문해력조사 참여자 vs Quiz 참여자
-# literacy_roll <- readRDS("./literacy_roll240930.RDS")
-# class_roll[class_roll$id %in% setdiff(literacy_roll$id, quiz$id), c("id", "name", "group")]
-# class_roll[class_roll$id %in% setdiff(quiz$id, literacy_roll$id), c("id", "name", "group")]
+literacy_roll <- readRDS("./literacy_roll240930.RDS")
+class_roll[class_roll$id %in% setdiff(literacy_roll$id, quiz$id), c("id", "name", "group")]
+class_roll[class_roll$id %in% setdiff(quiz$id, literacy_roll$id), c("id", "name", "group")]
 # absentee$group %>%
 #   table
 ```
