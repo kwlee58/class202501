@@ -26,7 +26,7 @@ class_roll <- class_roll0927
 str(class_roll)
 quiz <- 
   read_excel("./data/quiz240930.xlsx",
-             range = "A2:N104",
+             range = "A2:N130",
              col_names = FALSE)
 names(quiz) <- c("time", "email", "dept", "id", "name", "Q1", "Q2", "Q3", "Q4", "Q5", "Q6", "group", "Q7_R", "Q7_B")
 str(quiz)
@@ -82,6 +82,7 @@ wrong_ids <- quiz_wrong_ids$id
 quiz_wrong_ids <- quiz_wrong_ids %>%
   mutate(id = case_when(
     id == "20247109" ~ "20241709",
+    id == "20246278" ~ "20246279",
     TRUE ~ id
   ))
 # 3. quiz 에서 id 틀린 행을 제거하고 옳은 id 갖춘 행으로 교체하기

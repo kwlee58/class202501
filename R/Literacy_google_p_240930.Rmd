@@ -25,16 +25,40 @@ options(width=180)
 class_roll <- readRDS("./class_roll_240927.RDS")
 literacy_roll <- 
   read_excel("./data/literacy_240930.xlsx",
-             range = "C1:AD111",
+             range = "C1:AD135",
              col_names = TRUE,
-             col_types = "text") %>%
-  select(-1, -3)
+             col_types = "text") 
 # literacy_roll <- literacy_roll[, -c(1, 3)]
 N <- nrow(literacy_roll)
-names(literacy_roll) <- c("id", paste0("Q", 1:25))
+names(literacy_roll) <- c("dept", "id", "name", paste0("Q", 1:25))
 str(literacy_roll)
 literacy_roll %<>%
   data.frame
+#> 학번 잘못 써서 고생시키는 녀석들 찾아내는 코드
+wrong_id <- setdiff(literacy_roll$id, class_roll$id)
+literacy_roll %>%
+  filter(id %in% wrong_id) %>%
+  select(dept, id, name)
+#> id 틀린 사람 찾아서 수정하기
+# 1. 잘못된 id 가진 행 찾기
+literacy_wrong_ids <- literacy_roll %>%
+  anti_join(class_roll, by = "id") 
+# 2. 잘못된 id를 따로 저장하고 수정하기
+wrong_ids <- literacy_wrong_ids$id
+literacy_wrong_ids <- 
+  literacy_wrong_ids %>%
+  mutate(id = case_when(
+    id == "20236650" ~ "20243650",
+    TRUE ~ id
+  ))
+# 3. quiz 에서 id 틀린 행을 제거하고 옳은 id 갖춘 행으로 교체하기
+literacy_roll <- literacy_roll %>%
+  filter(!id %in% wrong_ids) %>%
+  bind_rows(literacy_wrong_ids)
+#> literacy_roll 에서 학과, 이름 제거하기
+literacy_roll <- literacy_roll %>%
+  select(-dept, -name)
+#> literacy_roll 에 group 추가하기
 literacy_roll <- literacy_roll %>%
   mutate(group = class_roll$group[match(id, class_roll$id)])
 # literacy_roll$group <- class_roll$group[match(literacy_roll$id, class_roll$id)]
@@ -57,29 +81,6 @@ saveRDS(literacy_roll, file = "./literacy_roll240930.RDS")
 ```
 
 ```{r, echo = FALSE, results = "hide"}
-#> 학번 잘못 써서 고생시키는 녀석들 찾아내는 코드
-wrong_id <- setdiff(literacy_roll$id, class_roll$id)
-literacy_roll %>%
-  filter(id %in% wrong_id) %>%
-  select(id, group)
-# 1. 잘못된 id 가진 행 찾기
-literacy_wrong_ids <- literacy_roll %>%
-  anti_join(class_roll, by = "id") 
-# 2. 잘못된 id를 따로 저장하고 수정하기
-wrong_ids <- literacy_wrong_ids$id
-literacy_wrong_ids <- 
-  literacy_wrong_ids %>%
-  mutate(id = case_when(
-    id == "2024303" ~ "20243403",
-    id == "20243831" ~ "20243731",
-    id == "2023122" ~ "20231622",
-    id == "2046904" ~ "20246904",
-    TRUE ~ id
-  ))
-# 3. quiz 에서 id 틀린 행을 제거하고 옳은 id 갖춘 행으로 교체하기
-literacy_roll <- literacy_roll %>%
-  filter(!id %in% wrong_ids) %>%
-  bind_rows(literacy_wrong_ids)
 #> 불참자 id 추출하기
 class_roll %>%
   filter(!id %in% literacy_roll$id) %>%
