@@ -374,6 +374,7 @@ quiz$days %>%
 
 ```{r, echo = FALSE}
 # png(file = "./pics/2302/quiz_submission_1.png", width = 640, height = 480)
+suppressMessages({
 par(family = "KoPubWorldDotum Medium")
 b <- 
   quiz$days %>%
@@ -391,6 +392,7 @@ title(main = paste0("Quiz240902 (", N, "명 제출)"))
 # title(main = "일 단위 퀴즈 제출 인원", sub = paste0("Quiz240902 (", N, "명 제출)"))
 dev.copy(png, file = "./pics/2401/quiz_submission_1.png", width = 640, height = 480)
 invisible(dev.off())
+})
 ```
 
 ### Mosaic Plot
@@ -418,7 +420,8 @@ m2 + geom_text(aes(x = center, y = 1.05),
                     direction = 1) +
   theme(plot.title = element_text(hjust = 0.5, 
                                   size = 18, 
-                                  family = "KoPubWorldDotum Bold")) 
+                                  family = "KoPubWorldDotum Bold"),
+        axis.text.x = element_text(angle = -90, vjust = 0.5)) 
 ggsave("./pics/Quiz230904_submission_2.png", dpi = 120, width = 960, height = 840, units = "px")
 ```
 

@@ -25,7 +25,7 @@ class_roll <- readRDS("./class_roll_240927.RDS")
 class_roll <- data.frame(class_roll)
 quiz <- 
   read_excel("./data/quiz240923.xlsx",
-             range = "A2:N459",
+             range = "A2:N481",
              col_names = FALSE)
 names(quiz) <- c("time", "email", "dept", "id", "name", "Q1", "Q2", "Q3", "Q4", "Q5", "Q6", "group", "Q7_R", "Q7_B")
 str(quiz)
@@ -559,7 +559,8 @@ m2 + geom_text(aes(x = center, y = 1.05),
                     direction = 1) +
   theme(plot.title = element_text(hjust = 0.5, 
                                   size = 18, 
-                                  family = "KoPubWorldDotum Bold")) 
+                                  family = "KoPubWorldDotum Bold"),
+        axis.text.x = element_text(angle = -90, vjust = 0.5)) 
 ggsave("./pics/Quiz240923_submission_4.png", dpi = 120, width = 960, height = 840, units = "px")
 ```
 
