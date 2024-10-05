@@ -30,7 +30,7 @@ class_roll <- readRDS("./class_roll_240913.RDS")
 class_roll <- data.frame(class_roll)
 comment <-
   readxl::read_excel("./data/data_lab_240930.xlsx",
-                     range = "A2:H2397", 
+                     range = "A2:H2398", 
                      col_names = TRUE)
 # comment <-
 #   read_csv("./data/data_lab_220503.csv")

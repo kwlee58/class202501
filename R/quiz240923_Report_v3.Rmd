@@ -25,7 +25,7 @@ class_roll <- readRDS("./class_roll_240927.RDS")
 class_roll <- data.frame(class_roll)
 quiz <- 
   read_excel("./data/quiz240923.xlsx",
-             range = "A2:N535",
+             range = "A2:N549",
              col_names = FALSE)
 names(quiz) <- c("time", "email", "dept", "id", "name", "Q1", "Q2", "Q3", "Q4", "Q5", "Q6", "group", "Q7_R", "Q7_B")
 str(quiz)
@@ -118,7 +118,7 @@ quiz %>%
 # which(duplicated(quiz$id)) %>%
 #   quiz[., c("id", "name")]
 quiz %>%
-  filter(name %in% c("안현성"))
+  filter(name %in% c("안현성", "이강준", "정수영"))
 # quiz[quiz$name %in% c("최재혁", "박지연"), ] #> 최재혁, 박지연이 중복 제출
 quiz <- quiz %>% 
   arrange(id, desc(time)) %>%
