@@ -25,7 +25,7 @@ class_roll <- readRDS("./class_roll_240927.RDS")
 class_roll <- data.frame(class_roll)
 quiz <- 
   read_excel("./data/quiz240923.xlsx",
-             range = "A2:N549",
+             range = "A2:N591",
              col_names = FALSE)
 names(quiz) <- c("time", "email", "dept", "id", "name", "Q1", "Q2", "Q3", "Q4", "Q5", "Q6", "group", "Q7_R", "Q7_B")
 str(quiz)
@@ -118,7 +118,7 @@ quiz %>%
 # which(duplicated(quiz$id)) %>%
 #   quiz[., c("id", "name")]
 quiz %>%
-  filter(name %in% c("안현성", "이강준", "정수영"))
+  filter(name %in% c("안현성", "이강준", "정수영", "박세준"))
 # quiz[quiz$name %in% c("최재혁", "박지연"), ] #> 최재혁, 박지연이 중복 제출
 quiz <- quiz %>% 
   arrange(id, desc(time)) %>%
@@ -156,9 +156,9 @@ wrong_group <- quiz %>%
 
 #> 잘못된 그룹 정보 출력
 wrong_group %>%
-  select(time, id, name, group2, group) %>%
+  select(time, id, group2, group) %>%
   arrange(time) %>%
-  rename(제출시간 = time, 학번 = id, 아름 = name, 랜덤화출석부 = group2, 구글예습퀴즈 = group) %>%
+  rename("제출시간" = time, "학번" = id, "랜덤화출석부" = group2, "구글예습퀴즈" = group) %>%
   pander(row.names = FALSE)
 
 #> 옛 코드
