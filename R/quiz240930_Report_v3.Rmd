@@ -29,11 +29,12 @@ names(class_roll1004) <-
   c("dept", "id", "name", "status", "email", "cell_no")
 class_roll1004$group <- 
   class_roll0927$group[match(class_roll1004$id, class_roll0927$id)]
+saveRDS(class_roll1004, file = "./class_roll_241004.RDS")
 class_roll <- class_roll1004
 str(class_roll)
 quiz <- 
   read_excel("./data/quiz240930.xlsx",
-             range = "A2:N406",
+             range = "A2:N423",
              col_names = FALSE)
 names(quiz) <- c("time", "email", "dept", "id", "name", "Q1", "Q2", "Q3", "Q4", "Q5", "Q6", "group", "Q7_R", "Q7_B")
 str(quiz)
@@ -511,7 +512,7 @@ days_tbl %>%
 quiz$days %>%
   cut(breaks = c(0:14), include.lowest = TRUE) %>%
   table(quiz$group, .) %>%
-  `[`(, -(1:7)) %>%
+  `[`(, -(1:6)) %>%
   chisq.test(simulate.p.value = FALSE) %>%
   pander
 ```
