@@ -25,7 +25,7 @@ class_roll <- readRDS("./class_roll_240927.RDS")
 class_roll <- data.frame(class_roll)
 quiz <- 
   read_excel("./data/quiz240923.xlsx",
-             range = "A2:N657",
+             range = "A2:N747",
              col_names = FALSE)
 names(quiz) <- c("time", "email", "dept", "id", "name", "Q1", "Q2", "Q3", "Q4", "Q5", "Q6", "group", "Q7_R", "Q7_B")
 str(quiz)
@@ -93,6 +93,7 @@ quiz_wrong_ids <- quiz_wrong_ids %>%
     id == "2046904" ~ "20246904",
     id == "20346294" ~ "20246293",
     id == "2020291" ~ "20202911",
+    id == "0232238" ~ "20232238",
     TRUE ~ id
   ))
 # 3. quiz 에서 id 틀린 행을 제거하고 옳은 id 갖춘 행으로 교체하기
@@ -143,7 +144,7 @@ absentee %>%
 
 ## Red, Black을 잘못 표시한 사람들
 
-랜덤화출석부에 있는 Red, Black 과 실제 구글예습퀴즈에 올린 Red, Black 이 다른 사람들이 있어서 파악해 보았습니다. 4/5 0시00분 현재 7명이 잘못 선택하였는데 Red 이면서 Black을 선택한 사람이 4명, Black 이면서 Red 를 선택한 사람이  3명 있었습니다. 7명을 랜덤하게 둘로 나누었을 때 이 이상 닮을 수는 없죠.
+랜덤화출석부에 있는 Red, Black 과 실제 구글예습퀴즈에 올린 Red, Black 이 다른 사람들이 있어서 파악해 보았습니다. 10월6일 오후 10시 현재 11명이 잘못 선택하였는데 Red 이면서 Black을 선택한 사람이 8명, Black 이면서 Red 를 선택한 사람이  3명 있었습니다. 11명을 랜덤하게 둘로 나눌 때 한 쪽 편에 3명 이하, 즉 다른 편에 8명 이상이 배정될 확률을 계산해 보면 공평한 동전 을 11번 던지는 이항분포에서 앞면이 세번 이하 나올 확률을 계산해 주면 되니까 $X$ 를 성공확률 0.5, 시행횟수 11인 이항분포의 확률 변수라고 하면 그 확률은 $$Pr(X \le 3) + Pr(X \ge 8)$$ 를 계산하는 게 되어서 P-value 가 `r round(pbinom(3, size = 11, prob = 0.5) * 2, digits = 4)` 임을 알 수 있고, 우리가 기준으로 삼는 0.05보다 훨씬 크다는 것을 알 수 있습니다.  
 
 ```{r, wrong group, echo = FALSE}
 #> group2 생성
@@ -156,11 +157,11 @@ wrong_group <- quiz %>%
   filter(group2 != group)
 
 #> 잘못된 그룹 정보 출력
-wrong_group %>%
-  select(time, id, group2, group) %>%
-  arrange(time) %>%
-  rename("제출시간" = time, "학번" = id, "랜덤화출석부" = group2, "구글예습퀴즈" = group) %>%
-  pander(row.names = FALSE)
+# wrong_group %>%
+#   select(time, id, group2, group) %>%
+#   arrange(time) %>%
+#   rename("제출시간" = time, "학번" = id, "랜덤화출석부" = group2, "구글예습퀴즈" = group) %>%
+#   pander(row.names = FALSE)
 
 #> 옛 코드
 # quiz$group2 <- class_roll$group[match(quiz$id, class_roll$id)]
