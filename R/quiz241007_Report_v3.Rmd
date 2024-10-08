@@ -13,6 +13,7 @@ library(readxl)
 library(pander)
 library(knitr)
 library(magrittr)
+library(dplyr)
 panderOptions('table.split.table', Inf)
 panderOptions('table.alignment.rownames', 'left')
 panderOptions('table.alignment.default', 'right')
@@ -34,7 +35,7 @@ class_roll %<>%
 # saveRDS(class_roll, file = "./class_roll_241007.RDS")
 quiz <- 
   read_excel("./data/quiz241007.xlsx",
-             range = "A2:N79",
+             range = "A2:N115",
              col_names = FALSE)
 str(quiz)
 names(quiz) <- c("time", "email", "dept", "id", "name", paste0("Q", 1:6), "group", "Q7_R", "Q7_B")
@@ -81,16 +82,7 @@ quiz$Q7 <-
 str(quiz)
 which(is.na(quiz$Q7))
 table(quiz$Q7, useNA = "ifany")
-#> 학번 잘못 써서 고생시키는 녀석들 찾아내는 코드
-quiz[quiz$id %in% setdiff(quiz$id, class_roll$id), c("id", "name", "dept")]
-#> 불참자들
-absentee <- 
-  class_roll[class_roll$id %in% setdiff(class_roll$id, quiz$id), c("id", "name", "group")] %>%
-  `[`(order(.$id), ) 
-absentee %>%
-  pander(row.names = FALSE) 
-absentee$group %>%
-  table
+
 #> 마감기한으로부터 제출시점의 기간
 #> 제출시간 분포 분석 코드 
 quiz$days <- as.numeric(difftime("2024-10-21 09:00:00", quiz$time, units = 'days'))
@@ -98,21 +90,111 @@ quiz$hours <- as.numeric(difftime("2024-10-21 09:00:00", quiz$time, units = 'hou
 str(quiz)
 ```
 
+```{r, cleaning, echo = FALSE, results = 'hide'}
+#> 학번 잘못 써서 고생시키는 녀석들 찾아내는 코드
+wrong_id <- setdiff(quiz$id, class_roll$id)
+quiz %>%
+  filter(id %in% wrong_id) %>%
+  select(id, name, dept, email)
+# 1. 잘못된 id 가진 행 찾기
+quiz_wrong_ids <- quiz %>%
+  anti_join(class_roll, by = "id") 
+# 2. 잘못된 id를 따로 저장하고 수정하기
+wrong_ids <- quiz_wrong_ids$id
+quiz_wrong_ids <- quiz_wrong_ids %>%
+  mutate(id = case_when(
+    id == "202434134" ~ "20243414",
+    id == "20242728" ~ "20232728",
+    id == "2024210*9" ~ "20242109",
+    id == "2024308" ~ "20243048",
+    id == "20243247" ~ "20243257",
+    TRUE ~ id
+  ))
+# 3. quiz 에서 id 틀린 행을 제거하고 옳은 id 갖춘 행으로 교체하기
+quiz <- quiz %>%
+  filter(!id %in% wrong_ids) %>%
+  bind_rows(quiz_wrong_ids)
+# quiz[quiz$id %in% setdiff(quiz$id, class_roll$id), c("id", "name", "dept", "group")]
+
+#> 틀린 학번 수정하여 되돌리기 (작동하지 않음. 참고로만)
+# quiz <- quiz %>%
+#   #> `left_join`으로 `name`과 `dept`를 기준으로 교정 정보를 추가
+#   left_join(class_roll %>% select(id, name, dept), 
+#             by = "name", 
+#             suffix = c("", "_correct")) %>%
+#   #> `id_correct`가 있는 경우 이를 사용하여 `id`를 교정하고, 그렇지 않으면 기존의 `id`를 유지
+#   mutate(id = if_else(!is.na(id_correct) & id != id_correct, id_correct, id)) %>%
+#   #> 임시로 추가된 `id_correct` 열 제거
+#   select(-id_correct)
+
+#> 중복 제출자
+quiz %>%
+  filter(duplicated(id)) %>%
+  select(id, name)
+# which(duplicated(quiz$id)) %>%
+#   quiz[., c("id", "name")]
+quiz %>%
+  filter(name %in% c("최재혁", "박지연", "최민재", "최자영", "김준서"))
+# quiz[quiz$name %in% c("최재혁", "박지연"), ] #> 최재혁, 박지연이 중복 제출
+quiz <- quiz %>% 
+  arrange(id, desc(time)) %>%
+  distinct(id, .keep_all = TRUE)
+#> 불참자들
+absentee <- class_roll %>%
+  anti_join(quiz, by = "id") %>%
+  select(id, name, group) %>%
+  arrange(id)
+# absentee <- 
+#   class_roll[class_roll$id %in% setdiff(class_roll$id, quiz$id), c("id", "name", "group")] %>%
+#   `[`(order(.$name), ) 
+absentee %>%
+  pander(row.names = FALSE) 
+absentee %>%
+  count(group) %>%
+  print()
+# absentee$group %>%
+#   table
+```
+
 ## Red, Black을 잘못 표시한 사람들
 
 랜덤화출석부에 있는 Red, Black 과 실제 구글예습퀴즈에 올린 Red, Black 이 다른 사람들이 있어서 파악해 보았습니다. Red를 Black 이라고 한 사람이 2명, Black을 Red 라고 한 사람이 4명 나왔습니다.
 
 ```{r, wrong group, echo = FALSE}
-quiz$group2 <- class_roll$group[match(quiz$id, class_roll$id)]
-wrong_group <- which(quiz$group != quiz$group2)
-quiz[wrong_group, c("time", "id", "name", "group2", "group")] %>%
-  `[`(order(.$time), ) %>%
-  `colnames<-`(c("제출시간", "학번", "이름", "랜덤화출석부", "구글예습퀴즈")) %>%
+#> group2 생성
+quiz <- quiz %>%
+  left_join(class_roll %>% select(id, group), by = "id", suffix = c("", "_class_roll")) %>%
+  rename(group2 = group_class_roll)
+
+#> group 과 group2가 다른 행 필터링
+wrong_group <- quiz %>%
+  filter(group2 != group)
+
+#> 잘못된 그룹 정보 출력
+wrong_group %>%
+  select(time, id, name, group2, group) %>%
+  arrange(time) %>%
+  rename("제출시간" = time, "학번" = id, "이름" = name, "랜덤화출석부" = group2, "구글예습퀴즈" = group) %>%
   pander(row.names = FALSE)
-wrong_tbl <- table("랜덤화출석부" = quiz$group2, 
-                   "구글예습퀴즈" = quiz$group)
+
+#> 옛 코드
+# quiz$group2 <- class_roll$group[match(quiz$id, class_roll$id)]
+# wrong_group <- which(quiz$group != quiz$group2)
+# class_roll[wrong_group, c("id", "name", "group", "group2")] %>%
+#   `colnames<-`(c("학번", "이름", "랜덤화출석부", "구글예습퀴즈")) %>%
+#   pander
+# quiz[wrong_group, c("time", "id", "name", "group2", "group")] %>%
+#   `[`(order(.$time), ) %>%
+#   `colnames<-`(c("제출시간", "학번", "이름", "랜덤화출석부", "구글예습퀴즈")) %>%
+#   pander(row.name = FALSE)
+
+#> 잘못된 그룹 정보의 테이블 생성 및 출력
+wrong_tbl <- 
+  table("랜덤화출석부" = quiz$group2, "구글예습퀴즈" = quiz$group)
+
 wrong_tbl %>%
-  pander(row.names = c("Red(랜덤화출석부)", "Black(랜덤화출석부)"), col.names = c("Red(구글예습퀴즈)", "Black(구글예습퀴즈)"))
+  pander(row.names = c("Red(랜덤화출석부)", "Black(랜덤화출석부)"), 
+         col.names = c("Red(구글예습퀴즈)", "Black(구글예습퀴즈)"))
 ```
 
 <!--
@@ -138,7 +220,7 @@ include_graphics("./pics/Quiz210330_Q4.png")
 
 ### 집계
 
-```{r, echo = FALSE}
+```{r, echo = FALSE, warning = FALSE}
 tbl_q1_a <- quiz$Q1 %>% 
   table(quiz$group, ., useNA = "ifany") %>%
   cbind("계" = rowSums(.)) %>%
@@ -153,7 +235,7 @@ tbl_q1_a %>%
 
 ### %
 
-```{r, echo = FALSE}
+```{r, echo = FALSE, warning = FALSE}
 tbl_q1_a %>% 
   `[`(3, -5) %>%
   prop.table %>% 
@@ -171,7 +253,7 @@ include_graphics("./pics/Quiz210330_Q1.png")
 
 ### 집계
 
-```{r, echo = FALSE}
+```{r, echo = FALSE, warning = FALSE}
 tbl_q2_a <- quiz$Q2 %>% 
   table(quiz$group, ., useNA = "ifany") %>%
   cbind("계" = rowSums(.)) %>%
@@ -203,7 +285,7 @@ include_graphics("./pics/Quiz210330_Q2.png")
 
 ### 집계
 
-```{r, echo = FALSE}
+```{r, echo = FALSE, warning = FALSE}
 tbl_q3_a <- quiz$Q3 %>% 
   table(quiz$group, ., useNA = "ifany") %>%
   cbind("계" = rowSums(.)) %>%
@@ -236,7 +318,7 @@ include_graphics("./pics/Quiz210330_Q3.png")
 
 ### 집계
 
-```{r, National and Local tax, echo = FALSE}
+```{r, echo = FALSE, warning = FALSE}
 tbl_q4_a <- quiz$Q4 %>% 
   table(quiz$group, ., useNA = "ifany") %>%
   cbind("계" = rowSums(.)) %>%
@@ -269,7 +351,7 @@ include_graphics("./pics/Quiz230405_Q5.png")
 
 ### 집계
 
-```{r, tax law and cabinets, echo = FALSE}
+```{r, tax law and cabinets, echo = FALSE, warning = FALSE}
 tbl_q5_a <- quiz$Q5 %>% 
   table(quiz$group, ., useNA = "ifany") %>%
   cbind("계" = rowSums(.)) %>%
@@ -302,7 +384,7 @@ include_graphics("./pics/Quiz230405_Q6.png")
 
 ### 집계
 
-```{r, tax law and laymen, echo = FALSE}
+```{r, tax law and laymen, echo = FALSE, warning = FALSE}
 tbl_q6_a <- quiz$Q6 %>% 
   table(quiz$group, ., useNA = "ifany") %>%
   cbind("계" = rowSums(.)) %>%
@@ -437,7 +519,7 @@ max(quiz$hours, na.rm = TRUE)
 
 ### 분포표
 
-```{r, echo = FALSE}
+```{r, echo = FALSE, warning = FALSE}
 N <- nrow(quiz)
 days_tbl <- quiz$days %>%
   cut(breaks = c(0:14), include.lowest = TRUE) %>%
@@ -449,6 +531,7 @@ days_tbl %>%
 quiz$days %>%
   cut(breaks = c(0:14), include.lowest = TRUE) %>%
   table(quiz$group, .) %>%
+  `[`(, -(1:12)) %>%
   chisq.test(simulate.p.value = FALSE) %>%
   pander
 ```
@@ -457,7 +540,8 @@ quiz$days %>%
 
 ```{r, echo = FALSE}
 # png(file = "./pics/2302/quiz_submission_6.png", width = 640, height = 480)
-par(family = "KoPubWorldDotum Medium")
+suppressMessages({
+  par(family = "KoPubWorldDotum Medium")
 b <- 
   quiz$days %>%
   cut(breaks = c(0:14), include.lowest = TRUE) %>%
@@ -465,7 +549,7 @@ b <-
   rev %>%
   barplot(space = 0, names.arg = rep(c("금", "토", "일", "월", "화", "수", "목"), 2),
           col = c(rep("white", 13), "pink"),
-          ylim = c(0, 400)) 
+          ylim = c(0, 200)) 
 text(x = b[14, 1], y = sum(days_tbl[, 1]), 
      labels = paste0(sum(days_tbl[, 1]), "명"), pos = 3)
 text(x = b[14, 1], y = sum(days_tbl[, 1]) / 2, 
@@ -474,6 +558,7 @@ title(main = paste0("Quiz241007 (", N, "명 제출)"))
 # title(main = "일 단위 퀴즈 제출 인원", sub = paste0("Quiz230925 (", N, "명 제출)"))
 dev.copy(png, file = "./pics/2401/quiz_submission_6.png", width = 640, height = 480)
 invisible(dev.off())
+})
 ```
 
 ### Mosaic Plot

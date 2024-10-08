@@ -34,7 +34,7 @@ class_roll <- class_roll1004
 str(class_roll)
 quiz <- 
   read_excel("./data/quiz240930.xlsx",
-             range = "A2:N423",
+             range = "A2:N435",
              col_names = FALSE)
 names(quiz) <- c("time", "email", "dept", "id", "name", "Q1", "Q2", "Q3", "Q4", "Q5", "Q6", "group", "Q7_R", "Q7_B")
 str(quiz)
@@ -119,7 +119,7 @@ quiz %>%
 # which(duplicated(quiz$id)) %>%
 #   quiz[., c("id", "name")]
 quiz %>%
-  filter(name %in% c("최재혁", "박지연"))
+  filter(name %in% c("손연수", "김유진"))
 # quiz[quiz$name %in% c("최재혁", "박지연"), ] #> 최재혁, 박지연이 중복 제출
 quiz <- quiz %>% 
   arrange(id, desc(time)) %>%
@@ -139,8 +139,14 @@ absentee %>%
   print()
 #> 국민문해력조사 참여자 vs Quiz 참여자
 literacy_roll <- readRDS("./literacy_roll240930.RDS")
-class_roll[class_roll$id %in% setdiff(literacy_roll$id, quiz$id), c("id", "name", "group")]
-class_roll[class_roll$id %in% setdiff(quiz$id, literacy_roll$id), c("id", "name", "group")]
+class_roll %>%
+  filter(id %in% setdiff(literacy_roll$id, quiz$id)) %>%
+  select(id, name, group)
+class_roll %>%
+  filter(id %in% setdiff(quiz$id, literacy_roll$id)) %>%
+  select(id, name, group)
+# class_roll[class_roll$id %in% setdiff(literacy_roll$id, quiz$id), c("id", "name", "group")]
+# class_roll[class_roll$id %in% setdiff(quiz$id, literacy_roll$id), c("id", "name", "group")]
 # absentee$group %>%
 #   table
 ```
@@ -164,7 +170,7 @@ wrong_group <- quiz %>%
 wrong_group %>%
   select(time, id, name, group2, group) %>%
   arrange(time) %>%
-  rename(제출시간 = time, 학번 = id, 아름 = name, 랜덤화출석부 = group2, 구글예습퀴즈 = group) %>%
+  rename("제출시간" = time, "학번" = id, "이름" = name, "랜덤화출석부" = group2, "구글예습퀴즈" = group) %>%
   pander(row.names = FALSE)
 
 #> 옛 코드
@@ -512,7 +518,7 @@ days_tbl %>%
 quiz$days %>%
   cut(breaks = c(0:14), include.lowest = TRUE) %>%
   table(quiz$group, .) %>%
-  `[`(, -(1:6)) %>%
+  `[`(, -(1:5)) %>%
   chisq.test(simulate.p.value = FALSE) %>%
   pander
 ```
