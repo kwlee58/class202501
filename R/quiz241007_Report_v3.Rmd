@@ -130,7 +130,7 @@ quiz %>%
 # which(duplicated(quiz$id)) %>%
 #   quiz[., c("id", "name")]
 quiz %>%
-  filter(name %in% c("최재혁", "박지연", "최민재", "최자영", "김준서"))
+  filter(name %in% c("최정환"))
 # quiz[quiz$name %in% c("최재혁", "박지연"), ] #> 최재혁, 박지연이 중복 제출
 quiz <- quiz %>% 
   arrange(id, desc(time)) %>%
