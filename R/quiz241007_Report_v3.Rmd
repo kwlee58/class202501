@@ -35,7 +35,7 @@ class_roll %<>%
 # saveRDS(class_roll, file = "./class_roll_241007.RDS")
 quiz <- 
   read_excel("./data/quiz241007.xlsx",
-             range = "A2:N174",
+             range = "A2:N196",
              col_names = FALSE)
 str(quiz)
 names(quiz) <- c("time", "email", "dept", "id", "name", paste0("Q", 1:6), "group", "Q7_R", "Q7_B")
@@ -527,7 +527,7 @@ days_tbl %>%
 quiz$days %>%
   cut(breaks = c(0:14), include.lowest = TRUE) %>%
   table(quiz$group, .) %>%
-  `[`(, -(1:11)) %>%
+  `[`(, -(1:110)) %>%
   chisq.test(simulate.p.value = FALSE) %>%
   pander
 ```
