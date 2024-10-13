@@ -21,21 +21,21 @@ options(width=180)
 ```
 
 ```{r, data, echo = FALSE, results = 'hide', message = FALSE}
-class_roll <- readRDS("./class_roll_241004.RDS")
+class_roll1004 <- readRDS("./class_roll_241004.RDS")
+class_roll1004 %<>% 
+  data.frame
+class_roll <- 
+  read_excel("./data/class_roll241011.xlsx", 
+             range = "B1:G806")
 class_roll %<>% 
   data.frame
-# class_roll <- 
-#   read_excel("./data/class_roll241007.xlsx", 
-#              range = "B1:I769")
-# class_roll %<>% 
-#   data.frame
-# str(class_roll)
-# names(class_roll) <- c("college", "dept", "year", "id", "name", "status", "email", "cell_no")
-# class_roll$group <- class_roll0329$group[match(class_roll$id, class_roll0329$id)]
-# saveRDS(class_roll, file = "./class_roll_241007.RDS")
+str(class_roll)
+names(class_roll) <- c("dept", "id", "name", "status", "email", "cell_no")
+class_roll$group <- class_roll1004$group[match(class_roll$id, class_roll1004$id)]
+saveRDS(class_roll, file = "./class_roll_241011.RDS")
 quiz <- 
   read_excel("./data/quiz241007.xlsx",
-             range = "A2:N374",
+             range = "A2:N406",
              col_names = FALSE)
 str(quiz)
 names(quiz) <- c("time", "email", "dept", "id", "name", paste0("Q", 1:6), "group", "Q7_R", "Q7_B")

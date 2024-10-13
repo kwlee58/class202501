@@ -34,7 +34,7 @@ class_roll <- class_roll1004
 str(class_roll)
 quiz <- 
   read_excel("./data/quiz240930.xlsx",
-             range = "A2:N633",
+             range = "A2:N752",
              col_names = FALSE)
 names(quiz) <- c("time", "email", "dept", "id", "name", "Q1", "Q2", "Q3", "Q4", "Q5", "Q6", "group", "Q7_R", "Q7_B")
 str(quiz)
@@ -94,6 +94,7 @@ quiz_wrong_ids <- quiz_wrong_ids %>%
     id == "20243491" ~ "20243941",
     id == "2021209" ~ "20221209",
     id == "20241529" ~ "20241520",
+    id == "20142513" ~ "20242513",
     TRUE ~ id
   ))
 # 3. quiz 에서 id 틀린 행을 제거하고 옳은 id 갖춘 행으로 교체하기
@@ -155,8 +156,7 @@ class_roll %>%
 
 ## Red, Black을 잘못 표시한 사람들
 
-랜덤화출석부에 있는 Red, Black 과 실제 구글예습퀴즈에 올린 Red, Black 이 다른 사람들이 있어서 파악해 보았습니다. 잘못 선택하는 사람들의 수효가 4명인데 Red를 Black 이라고 한 사람이 1명, Black 을 Red 라고 한 사람이 3명 나왔습니다. 이 정도 인원에 대해서는 많이 줄었습니다. 공평한 동전을 네 번 던져서 앞면이 한 번 이하 혹은 세번 이상 나올 확률은 0.625입니다. 
-0.05에 비해서 엄청나게 큰 값이죠. 이게 p-value 입니다.
+랜덤화출석부에 있는 Red, Black 과 실제 구글예습퀴즈에 올린 Red, Black 이 다른 사람들이 있어서 파악해 보았습니다. 잘못 선택하는 사람들의 수효가 5명인데 Red를 Black 이라고 한 사람이 4명, Black 을 Red 라고 한 사람이 1명 나왔습니다. 4명과 1명은 차이가 상당해 보이죠. 그런데 공평한 동전을 다섯 번 던져서 앞면이 한 번 이하 혹은 네 번 이상 나올 확률은 0.375입니다. 여덟번에 세번 정도로 흔히 나올 수 있는 차이라는 뜻입니다. 0.05에 비해서 엄청나게 큰 값이죠. 이게 p-value 입니다.
 
 ```{r, wrong group, echo = FALSE}
 #> group2 생성
@@ -169,11 +169,11 @@ wrong_group <- quiz %>%
   filter(group2 != group)
 
 #> 잘못된 그룹 정보 출력
-wrong_group %>%
-  select(time, id, group2, group) %>%
-  arrange(time) %>%
-  rename("제출시간" = time, "학번" = id, "랜덤화출석부" = group2, "구글예습퀴즈" = group) %>%
-  pander(row.names = FALSE)
+# wrong_group %>%
+#   select(time, id, group2, group) %>%
+#   arrange(time) %>%
+#   rename("제출시간" = time, "학번" = id, "랜덤화출석부" = group2, "구글예습퀴즈" = group) %>%
+#   pander(row.names = FALSE)
 
 #> 옛 코드
 # quiz$group2 <- class_roll$group[match(quiz$id, class_roll$id)]
