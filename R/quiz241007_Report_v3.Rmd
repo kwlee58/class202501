@@ -35,7 +35,7 @@ class_roll$group <- class_roll1004$group[match(class_roll$id, class_roll1004$id)
 saveRDS(class_roll, file = "./class_roll_241011.RDS")
 quiz <- 
   read_excel("./data/quiz241007.xlsx",
-             range = "A2:N406",
+             range = "A2:N455",
              col_names = FALSE)
 str(quiz)
 names(quiz) <- c("time", "email", "dept", "id", "name", paste0("Q", 1:6), "group", "Q7_R", "Q7_B")
@@ -105,6 +105,7 @@ quiz_wrong_ids <- quiz_wrong_ids %>%
   mutate(id = case_when(
     id == "20245262" ~ "20215262",
     id == "202044150" ~ "20244150",
+    id == "2024602" ~ "20246902",
     TRUE ~ id
   ))
 # 3. quiz 에서 id 틀린 행을 제거하고 옳은 id 갖춘 행으로 교체하기
@@ -529,7 +530,7 @@ days_tbl %>%
 quiz$days %>%
   cut(breaks = c(0:14), include.lowest = TRUE) %>%
   table(quiz$group, .) %>%
-  `[`(, -(1:8)) %>%
+  `[`(, -(1:6)) %>%
   chisq.test(simulate.p.value = FALSE) %>%
   pander
 ```
