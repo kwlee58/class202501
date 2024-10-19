@@ -21,7 +21,8 @@ options(width=180)
 ```
 
 ```{r, data, echo = FALSE, results = 'hide', message = FALSE}
-class_roll1004 <- readRDS("./class_roll_241004.RDS")
+class_roll1004 <- 
+  readRDS("./class_roll_241004.RDS")
 class_roll1004 %<>% 
   data.frame
 class_roll <- 
@@ -35,20 +36,39 @@ class_roll$group <- class_roll1004$group[match(class_roll$id, class_roll1004$id)
 saveRDS(class_roll, file = "./class_roll_241011.RDS")
 quiz <- 
   read_excel("./data/quiz241007.xlsx",
-             range = "A2:N533",
+             range = "A2:N589",
              col_names = FALSE)
 str(quiz)
 names(quiz) <- c("time", "email", "dept", "id", "name", paste0("Q", 1:6), "group", "Q7_R", "Q7_B")
 class(quiz$id) <- "character"
-quiz$Q7_R[quiz$Q7_R == "가. 내 연봉은 5천만원 남들은 2천5백만원"] <- 
-  "내가 남보다"
-quiz$Q7_R[quiz$Q7_R == "나. 내 연봉은 1억원, 남들은 2억원"] <- 
-  "남이 나보다"
-quiz$Q7_B[quiz$Q7_B == "나. 내 연봉은 5천만원, 남들은 2천5백만원"] <- 
-  "내가 남보다"
-quiz$Q7_B[quiz$Q7_B == "가. 내 연봉은 1억원, 남들은 2억원"] <- 
-  "남이 나보다"
-quiz$Q7 <- ifelse(is.na(quiz$Q7_R), quiz$Q7_B, quiz$Q7_R)
+#> mutate, case_when 을 이용한 변수 변환
+quiz <- quiz %>%
+  mutate(
+    # Q7_R에 대한 조건 처리
+    Q7_R = case_when(
+      Q7_R == "가. 내 연봉은 5천만원 남들은 2천5백만원" ~ "내가 남보다",
+      Q7_R == "나. 내 연봉은 1억원, 남들은 2억원" ~ "남이 나보다",
+      TRUE ~ Q7_R  # 나머지 값은 그대로 유지
+    ),
+    # Q7_B에 대한 조건 처리
+    Q7_B = case_when(
+      Q7_B == "나. 내 연봉은 5천만원, 남들은 2천5백만원" ~ "내가 남보다",
+      Q7_B == "가. 내 연봉은 1억원, 남들은 2억원" ~ "남이 나보다",
+      TRUE ~ Q7_B  # 나머지 값은 그대로 유지
+    )
+  )
+quiz$Q7 <- coalesce(quiz$Q7_R, quiz$Q7_B)
+#> 옛 코드
+# quiz$Q7_R[quiz$Q7_R == "가. 내 연봉은 5천만원 남들은 2천5백만원"] <- 
+#   "내가 남보다"
+# quiz$Q7_R[quiz$Q7_R == "나. 내 연봉은 1억원, 남들은 2억원"] <- 
+#   "남이 나보다"
+# quiz$Q7_B[quiz$Q7_B == "나. 내 연봉은 5천만원, 남들은 2천5백만원"] <- 
+#   "내가 남보다"
+# quiz$Q7_B[quiz$Q7_B == "가. 내 연봉은 1억원, 남들은 2억원"] <- 
+#   "남이 나보다"
+# quiz$Q7 <- ifelse(is.na(quiz$Q7_R), quiz$Q7_B, quiz$Q7_R)
+
 quiz$dept <- factor(quiz$dept)
 quiz$group <- 
   factor(quiz$group, levels = c("Red", "Black"))
@@ -106,6 +126,7 @@ quiz_wrong_ids <- quiz_wrong_ids %>%
     id == "20245262" ~ "20215262",
     id == "202044150" ~ "20244150",
     id == "2024602" ~ "20246902",
+    id == "202046422" ~ "20246422",
     TRUE ~ id
   ))
 # 3. quiz 에서 id 틀린 행을 제거하고 옳은 id 갖춘 행으로 교체하기
@@ -133,7 +154,7 @@ quiz %>%
 # which(duplicated(quiz$id)) %>%
 #   quiz[., c("id", "name")]
 quiz %>%
-  filter(name %in% c("최정환"))
+  filter(name %in% c("이수빈"))
 # quiz[quiz$name %in% c("최재혁", "박지연"), ] #> 최재혁, 박지연이 중복 제출
 quiz <- quiz %>% 
   arrange(id, desc(time)) %>%
@@ -171,9 +192,9 @@ wrong_group <- quiz %>%
 
 #> 잘못된 그룹 정보 출력
 wrong_group %>%
-  select(time, id, name, group2, group) %>%
+  select(time, id, group2, group) %>%
   arrange(time) %>%
-  rename("제출시간" = time, "학번" = id, "이름" = name, "랜덤화출석부" = group2, "구글예습퀴즈" = group) %>%
+  rename("제출시간" = time, "학번" = id, "랜덤화출석부" = group2, "구글예습퀴즈" = group) %>%
   pander(row.names = FALSE)
 
 #> 옛 코드
@@ -228,7 +249,7 @@ tbl_q1_a %>%
   pander 
 tbl_q1_a %>% 
   `[`(-3, -5) %>%
-  chisq.test(simulate.p.value = TRUE) %>%
+  chisq.test(simulate.p.value = FALSE) %>%
   pander
 ```
 
@@ -530,7 +551,7 @@ days_tbl %>%
 quiz$days %>%
   cut(breaks = c(0:14), include.lowest = TRUE) %>%
   table(quiz$group, .) %>%
-  `[`(, -(1:2)) %>%
+  `[`(, -1) %>%
   chisq.test(simulate.p.value = FALSE) %>%
   pander
 ```
@@ -589,7 +610,6 @@ ggsave("./pics/Quiz241007_submission_5.png", dpi = 120, width = 960, height = 84
 
 
 ```{r, save, echo = FALSE}
-saveRDS(class_roll, file = "./class_roll241007.RDS")
 saveRDS(quiz, file = "./quiz241007.RDS")
 save.image("./quiz241007.RData")
 ```

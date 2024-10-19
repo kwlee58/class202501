@@ -14,64 +14,94 @@ library(pander)
 library(knitr)
 library(magrittr)
 library(dplyr)
+library(googlesheets4)
 panderOptions('table.split.table', Inf)
 panderOptions('table.alignment.rownames', 'left')
 panderOptions('table.alignment.default', 'right')
 options(width=180)
 ```
 
-```{r, data, echo = FALSE, results = 'hide', message = FALSE}
-class_roll <- readRDS("./class_roll_241011.RDS")
+```{r, load-data, echo = FALSE, results = 'hide', message = FALSE}
+class_roll1011 <- readRDS("./class_roll_241011.RDS")
+class_roll <- 
+  read_excel("./data/class_roll241018.xlsx", 
+             range = "B1:G805")
 class_roll %<>% 
   data.frame
-# class_roll <- 
-#   read_excel("./data/class_roll241011.xlsx", 
-#              range = "B1:I898")
-# class_roll %<>% 
-#   data.frame
-# str(class_roll)
-# names(class_roll) <- c("college", "dept", "year", "id", "name", "status", "email", "cell_no")
-# class_roll$group <- class_roll1011$group[match(class_roll$id, class_roll1011$id)]
-# saveRDS(class_roll, file = "./class_roll_240412.RDS")
+str(class_roll)
+names(class_roll) <- c("dept", "id", "name", "status", "email", "cell_no")
+class_roll$group <- class_roll1011$group[match(class_roll$id, class_roll1011$id)]
+saveRDS(class_roll, file = "./class_roll_241018.RDS")
+#> googlesheets4 패키지 시험
+# quiz_url <-"https://docs.google.com/spreadsheets/d/1aBup2DrQJ8b1A6DlhuDZ0VmbmAGDVDJDgsFsw9JcCTI/edit?resourcekey=&gid=1526295180#gid=1526295180"
+# gs4_deauth()
+# quiz <- read_sheet(quiz_url, range = "A2:P303")
+#> 잘 안됨.  
 quiz <- 
   read_excel("./data/quiz241014.xlsx",
-             range = "A2:P280",
+             range = "A2:P334",
              col_names = FALSE)
 names(quiz) <- 
   c("time", "email", "dept", "id", "name", paste0("Q", 1:6),  "group", "Q7_R", "Q8_R", "Q7_B", "Q8_B")
 class(quiz$id) <- "character"
 str(quiz)
-quiz$Q7 <- ifelse(is.na(quiz$Q7_R), quiz$Q7_B, quiz$Q7_R)
-quiz$Q8 <- ifelse(is.na(quiz$Q8_R), quiz$Q8_B, quiz$Q8_R)
+quiz$Q7 <- coalesce(quiz$Q7_R, quiz$Q7_B)
+quiz$Q8 <- coalesce(quiz$Q8_R, quiz$Q8_B)
+# quiz$Q7 <- ifelse(is.na(quiz$Q7_R), quiz$Q7_B, quiz$Q7_R)
+# quiz$Q8 <- ifelse(is.na(quiz$Q8_R), quiz$Q8_B, quiz$Q8_R)
 quiz %>%
-  `[`(., c("Q7", "Q8", "group"))
+  select(Q7_R, Q7_B, Q7, Q8_R, Q8_B, Q8, group)
+#   `[`(., c("Q7", "Q8", "group"))
 #> 응답 결과를 정답과 오답으로 나누어 변환할 변수 설정
-quiz$Q7_2 <- quiz$Q7
-#> Red, Black 논리 벡터 설정
-Red <- quiz$group %>%
-  `==` ("Red")
-Black <- quiz$group %>%
-  `==` ("Black")
-#> 무응답을 포함하여 정답 이외의 응답은 오답으로 간주
-quiz$Q7_2[Red] <- quiz$Q7 %>%
-  `[`(Red) %>%
-  `==`("A,3") %>%
-  ifelse("Right", "Wrong")
-quiz$Q7_2[Black] <- quiz$Q7 %>%
-  `[`(Black) %>%
-  `==`("Beer,17") %>%
-  ifelse("Right", "Wrong")
-quiz[c("Q7", "Q7_2", "group")]
-quiz$Q8_2 <- quiz$Q8
-quiz$Q8_2[Red] <- quiz$Q8 %>%
-  `[`(Red) %>%
-  `==`("Beer,17") %>%
-  ifelse("Right", "Wrong")
-quiz$Q8_2[Black] <- quiz$Q8 %>%
-  `[`(Black) %>%
-  `==`("A,3") %>%
-  ifelse("Right", "Wrong")
-quiz[c("Q8", "Q8_2", "group")]
+quiz <- quiz %>%
+  mutate(
+    # Red와 Black 논리 벡터 설정
+    Red = group == "Red",
+    Black = group == "Black",
+    
+    # Q7_2 변환: 그룹에 따른 정답/오답 처리
+    Q7_2 = case_when(
+      Red & Q7 == "A,3" ~ "Right",
+      Black & Q7 == "Beer,17" ~ "Right",
+      TRUE ~ "Wrong"
+    ),
+    
+    # Q8_2 변환: 그룹에 따른 정답/오답 처리
+    Q8_2 = case_when(
+      Red & Q8 == "Beer,17" ~ "Right",
+      Black & Q8 == "A,3" ~ "Right",
+      TRUE ~ "Wrong"
+    )
+  )
+# 결과 확인
+quiz %>% 
+  select(Q7, Q7_2, Q8, Q8_2, group)
+# #> 옛코드
+# #> Red, Black 논리 벡터 설정
+# Red <- quiz$group %>%
+#   `==` ("Red")
+# Black <- quiz$group %>%
+#   `==` ("Black")
+# #> 무응답을 포함하여 정답 이외의 응답은 오답으로 간주
+# quiz$Q7_2[Red] <- quiz$Q7 %>%
+#   `[`(Red) %>%
+#   `==`("A,3") %>%
+#   ifelse("Right", "Wrong")
+# quiz$Q7_2[Black] <- quiz$Q7 %>%
+#   `[`(Black) %>%
+#   `==`("Beer,17") %>%
+#   ifelse("Right", "Wrong")
+# quiz[c("Q7", "Q7_2", "group")]
+# quiz$Q8_2 <- quiz$Q8
+# quiz$Q8_2[Red] <- quiz$Q8 %>%
+#   `[`(Red) %>%
+#   `==`("Beer,17") %>%
+#   ifelse("Right", "Wrong")
+# quiz$Q8_2[Black] <- quiz$Q8 %>%
+#   `[`(Black) %>%
+#   `==`("A,3") %>%
+#   ifelse("Right", "Wrong")
+# quiz[c("Q8", "Q8_2", "group")]
 str(quiz)
 quiz$dept %<>% 
   factor
@@ -132,9 +162,7 @@ quiz_wrong_ids <- quiz %>%
 wrong_ids <- quiz_wrong_ids$id
 quiz_wrong_ids <- quiz_wrong_ids %>%
   mutate(id = case_when(
-    id == "20245262" ~ "20215262",
-    id == "202044150" ~ "20244150",
-    id == "2024602" ~ "20246902",
+    id == "20145218" ~ "20245218",
     TRUE ~ id
   ))
 # 3. quiz 에서 id 틀린 행을 제거하고 옳은 id 갖춘 행으로 교체하기
@@ -245,7 +273,7 @@ tbl_q1_a %>%
   pander 
 tbl_q1_a %>% 
   `[`(-3, -5) %>%
-  chisq.test(simulate.p.value = TRUE) %>%
+  chisq.test(simulate.p.value = FALSE) %>%
   pander
 ```
 
@@ -278,7 +306,7 @@ tbl_q2_a <-
 tbl_q2_a %>% pander 
 tbl_q2_a %>% 
   `[`(-3, -5) %>%
-  chisq.test(simulate.p.value = TRUE) %>%
+  chisq.test(simulate.p.value = FALSE) %>%
   pander
 ```
 
@@ -312,7 +340,7 @@ tbl_q3_a %>%
   pander 
 tbl_q3_a %>%
   `[`(-3, -5) %>%
-  chisq.test(simulate.p.value = TRUE) %>%
+  chisq.test(simulate.p.value = FALSE) %>%
   pander
 ```
 
@@ -346,7 +374,7 @@ tbl_q4_a %>%
   pander
 tbl_q4_a %>%
   `[`(-3, -5) %>%
-  chisq.test(simulate.p.value = TRUE) %>%
+  chisq.test(simulate.p.value = FALSE) %>%
   pander
 ```
 
@@ -379,7 +407,7 @@ tbl_q5_a <-
 tbl_q5_a %>% pander 
 tbl_q5_a %>% 
   `[`(-3, -5) %>%
-  chisq.test(simulate.p.value = TRUE) %>%
+  chisq.test(simulate.p.value = FALSE) %>%
   pander
 ```
 
@@ -413,7 +441,7 @@ tbl_q6_a %>%
   pander 
 tbl_q6_a %>%
   `[`(-3, -5) %>%
-  chisq.test(simulate.p.value = TRUE) %>%
+  chisq.test(simulate.p.value = FALSE) %>%
   pander
 ```
 
@@ -736,7 +764,7 @@ days_tbl %>%
 quiz$days %>%
   cut(breaks = c(0:14), include.lowest = TRUE) %>%
   table(quiz$group, .) %>%
-  `[`(, -(1:9)) %>%
+  `[`(, -(1:8)) %>%
   chisq.test(simulate.p.value = FALSE) %>%
   pander
 ```
@@ -795,7 +823,6 @@ ggsave("./pics/Quiz231002_submission_7.png", dpi = 120, width = 960, height = 84
 ```
 
 ```{r, save, echo = FALSE}
-# saveRDS(class_roll, file = "./class_roll241014.RDS")
 saveRDS(quiz, file = "quiz241014.RDS")
 save.image("quiz241014.RData")
 ```
