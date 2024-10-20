@@ -15,6 +15,7 @@ library(knitr)
 library(magrittr)
 library(dplyr)
 library(googlesheets4)
+library(gsheet)
 panderOptions('table.split.table', Inf)
 panderOptions('table.alignment.rownames', 'left')
 panderOptions('table.alignment.default', 'right')
@@ -36,10 +37,11 @@ saveRDS(class_roll, file = "./class_roll_241018.RDS")
 # quiz_url <-"https://docs.google.com/spreadsheets/d/1aBup2DrQJ8b1A6DlhuDZ0VmbmAGDVDJDgsFsw9JcCTI/edit?resourcekey=&gid=1526295180#gid=1526295180"
 # gs4_deauth()
 # quiz <- read_sheet(quiz_url, range = "A2:P303")
+# quiz <- gsheet2tbl(quiz_url)
 #> 잘 안됨.  
 quiz <- 
   read_excel("./data/quiz241014.xlsx",
-             range = "A2:P334",
+             range = "A2:P382",
              col_names = FALSE)
 names(quiz) <- 
   c("time", "email", "dept", "id", "name", paste0("Q", 1:6),  "group", "Q7_R", "Q8_R", "Q7_B", "Q8_B")
@@ -163,6 +165,7 @@ wrong_ids <- quiz_wrong_ids$id
 quiz_wrong_ids <- quiz_wrong_ids %>%
   mutate(id = case_when(
     id == "20145218" ~ "20245218",
+    id == "20241529" ~ "20241520",
     TRUE ~ id
   ))
 # 3. quiz 에서 id 틀린 행을 제거하고 옳은 id 갖춘 행으로 교체하기
@@ -764,7 +767,7 @@ days_tbl %>%
 quiz$days %>%
   cut(breaks = c(0:14), include.lowest = TRUE) %>%
   table(quiz$group, .) %>%
-  `[`(, -(1:8)) %>%
+  `[`(, -(1:7)) %>%
   chisq.test(simulate.p.value = FALSE) %>%
   pander
 ```
@@ -780,7 +783,7 @@ b <-
   cut(breaks = c(0:14), include.lowest = TRUE) %>%
   table %>%
   rev %>%
-  barplot(space = 0, names.arg = rep(c("금", "토", "일", "월", "화", "수", "목"), 2),
+  barplot(space = 0, names.arg = rep(c("월", "화", "수", "목", "금", "토", "일"), 2),
           col = c(rep("white", 13), "pink"),
           ylim = c(0, 200)) 
 text(x = b[14, 1], y = sum(days_tbl[, 1]), 
@@ -807,7 +810,7 @@ names(df2[, 2]) <- "Days"
 m2 + 
   geom_text(aes(x = center, y = 1.05), 
             family = "KoPubWorldDotum Medium",
-            label = rep(rep(c("금", "토", "일", "월", "화", "수", "목"), each = 2), times = 2)) +
+            label = rep(rep(c("월", "화", "수", "목", "금", "토", "일"), each = 2), times = 2)) +
   theme_bw(base_family = "KoPubWorldDotum Medium") +
   labs(title = "마감일로부터 제출시간의 분포", x = "마감일로부터 일수(누적 %)", y = "인원 백분율(%)") +
   scale_fill_brewer(name = "그룹", 
