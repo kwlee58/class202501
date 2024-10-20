@@ -36,7 +36,7 @@ class_roll$group <- class_roll1004$group[match(class_roll$id, class_roll1004$id)
 saveRDS(class_roll, file = "./class_roll_241011.RDS")
 quiz <- 
   read_excel("./data/quiz241007.xlsx",
-             range = "A2:N658",
+             range = "A2:N737",
              col_names = FALSE)
 str(quiz)
 names(quiz) <- c("time", "email", "dept", "id", "name", paste0("Q", 1:6), "group", "Q7_R", "Q7_B")
@@ -127,6 +127,7 @@ quiz_wrong_ids <- quiz_wrong_ids %>%
     id == "202044150" ~ "20244150",
     id == "2024602" ~ "20246902",
     id == "202046422" ~ "20246422",
+    id == "20246283" ~ "20236283",
     TRUE ~ id
   ))
 # 3. quiz 에서 id 틀린 행을 제거하고 옳은 id 갖춘 행으로 교체하기
@@ -154,7 +155,7 @@ quiz %>%
 # which(duplicated(quiz$id)) %>%
 #   quiz[., c("id", "name")]
 quiz %>%
-  filter(name %in% c("이수빈"))
+  filter(name %in% c("이수빈", "정준우"))
 # quiz[quiz$name %in% c("최재혁", "박지연"), ] #> 최재혁, 박지연이 중복 제출
 quiz <- quiz %>% 
   arrange(id, desc(time)) %>%
@@ -178,7 +179,7 @@ absentee %>%
 
 ## Red, Black을 잘못 표시한 사람들
 
-랜덤화출석부에 있는 Red, Black 과 실제 구글예습퀴즈에 올린 Red, Black 이 다른 사람들이 있어서 파악해 보았습니다. Red를 Black 이라고 한 사람이 2명, Black을 Red 라고 한 사람이 4명 나왔습니다.
+랜덤화출석부에 있는 Red, Black 과 실제 구글예습퀴즈에 올린 Red, Black 이 다른 사람들이 있어서 파악해 보았습니다. Red를 Black 이라고 한 사람이 4명, Black을 Red 라고 한 사람이 1명 나왔습니다. P-value 한번 계산해 보세요. (1/32 + 5/32 + 5/32 + 1/32) = 0.375 입니다.
 
 ```{r, wrong group, echo = FALSE}
 #> group2 생성
@@ -191,11 +192,11 @@ wrong_group <- quiz %>%
   filter(group2 != group)
 
 #> 잘못된 그룹 정보 출력
-wrong_group %>%
-  select(time, id, group2, group) %>%
-  arrange(time) %>%
-  rename("제출시간" = time, "학번" = id, "랜덤화출석부" = group2, "구글예습퀴즈" = group) %>%
-  pander(row.names = FALSE)
+# wrong_group %>%
+#   select(time, id, group2, group) %>%
+#   arrange(time) %>%
+#   rename("제출시간" = time, "학번" = id, "랜덤화출석부" = group2, "구글예습퀴즈" = group) %>%
+#   pander(row.names = FALSE)
 
 #> 옛 코드
 # quiz$group2 <- class_roll$group[match(quiz$id, class_roll$id)]
@@ -521,7 +522,7 @@ ggsave("./pics/Quiz241007_Q7_RnB.png", dpi = 120, width = 960, height = 840, uni
 
 # 제출 시간의 분포
 
-과제 제출이 제출 기간 마지막 날에 몰린다는 것을 시각적으로 보여주고 싶어서 하나 추가하였습니다. 7주차에 접어들어가는 시점에서 마지막 날에 몰리는 현상이 뚜럇해지고 있습니다. 여기서조차 랜덤화 효과를 관찰할 수 있네요. p-value 에 유의해 주세요. 제출시간과 관련한 두 가지 현상에 대해서도 여러분의 생각을 들어보고 싶습니다. 첫째, 랜덤화 효과. 둘쨰, 마감날에 몰리는 현상.
+과제 제출이 제출 기간 마지막 날에 몰린다는 것을 시각적으로 보여주고 싶어서 하나 추가하였습니다. 8주차에 접어들어가는 시점에서 마지막 날에 몰리는 현상이 뚜렷해지고 있습니다. 지금까지 랜덤화 효과를 관찰할 수 있었는데 이번에는 p-value 가 0.05보다 작습니다. 어떤 의미일까요? 제출시간과 관련한 두 가지 현상에 대해서도 여러분의 생각을 들어보고 싶습니다. 첫째, 랜덤화 효과. 둘쨰, 마감날에 몰리는 현상.
 
 <!--
 ### 시간 단위 기초통계량
@@ -537,7 +538,7 @@ max(quiz$hours, na.rm = TRUE)
 
 ## 일 단위 마감 시간으로부터 제출 시간의 분포
 
-### 분포표
+### 분포표(Red, Black 은 닮았는가?)
 
 ```{r, echo = FALSE, warning = FALSE}
 N <- nrow(quiz)
