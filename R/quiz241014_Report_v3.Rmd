@@ -797,6 +797,41 @@ invisible(dev.off())
 })
 ```
 
+```{r, echo = FALSE, eval = FALSE, warning = FALSE}
+# days_df 생성
+days_df <- 
+  quiz$days %>%
+  cut(breaks = c(0:14), include.lowest = TRUE) %>%
+  table %>%
+  rev %>%
+  as.data.frame %>%
+  setNames(c("days", "count"))
+
+# 전체 제출 인원
+total_submissions <- sum(days_df$count)
+
+# 그래프 그리기
+ggplot(days_df, aes(x = days, y = count)) +
+  geom_bar(stat = "identity", fill = c(rep("white", 13), "pink"), color = "black") +
+  ylim(0, 200) +
+  
+  # 막대 위에 텍스트 추가 (annotate 사용)
+  annotate("text", x = 14, y = days_df$count[14] + 5, label = paste0(days_df$count[14], "명"), vjust = -0.5,
+           family = "KoPubWorldDotum Light") +
+  
+  # 퍼센트 텍스트 추가
+  annotate("text", x = 14, y = total_submissions / 2, 
+           label = paste0(format(total_submissions / N * 100, digits = 1, nsmall = 0), "%"), vjust = 1.5) +
+  
+  labs(title = paste0("Quiz241014 (", N, "명 제출)"),
+       x = NULL, y = NULL) +
+  theme_minimal() +
+  theme(plot.title = element_text(hjust = 0.5, family = "KoPubWorldDotum Medium"))
+
+# 이미지 저장
+ggsave("./pics/2401/quiz_submission_7.png", width = 640 / 96, height = 480 / 96, dpi = 96)
+```
+
 ### Mosaic Plot
 
 ```{r, echo = FALSE, fig.width = 10, fig.height = 5}
