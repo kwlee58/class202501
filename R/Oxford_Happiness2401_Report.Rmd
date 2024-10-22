@@ -192,27 +192,16 @@ oxford_tbl[3, -6] %>%
   pander
 ```
 
-<!--
-### `boxplot()`
-
-```{r, echo = FALSE}
-par(family = "HCR Dotum LVT")
-boxplot(Scores ~ group, data = oxford)
-```
--->
-
 ### `geom_boxplot()`
 
 ```{r, echo = FALSE, message = FALSE}
 library(tidyverse)
 library(ggplot2)
 library(extrafont)
-# source("theme_kr.R")
 ggplot(data = oxford, 
        mapping = aes(x = group, y = Scores)) +
   geom_boxplot(outlier.shape = 1, na.rm = TRUE) +
   theme_bw(base_family = "KoPubWorldDotum Medium") +
-#  theme_kr +
   scale_x_discrete(name = "질문지 유형") +
   scale_y_continuous(name = "행복 점수")
 ```
