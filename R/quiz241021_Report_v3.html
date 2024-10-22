@@ -360,7 +360,26 @@ display: none;
 <div id="red-black을-잘못-표시한-사람들" class="section level2">
 <h2>Red, Black을 잘못 표시한 사람들</h2>
 <p>랜덤화출석부에 있는 Red, Black 과 실제 구글예습퀴즈에 올린 Red, Black
-이 다른 사람들의 수효는 한명으로 정말 많이 줄었습니다.</p>
+이 다른 사람들이 있어서 파악해 보았습니다. Red를 Black 이라고 한 사람이
+2명, Black을 Red 라고 한 사람이 4명 나왔습니다.</p>
+<table>
+<colgroup>
+<col width="20%" />
+<col width="14%" />
+<col width="14%" />
+<col width="25%" />
+<col width="25%" />
+</colgroup>
+<tbody>
+<tr class="odd">
+<td align="center"><strong>제출시간</strong></td>
+<td align="center"><strong>학번</strong></td>
+<td align="center"><strong>이름</strong></td>
+<td align="center"><strong>랜덤화출석부</strong></td>
+<td align="center"><strong>구글예습퀴즈</strong></td>
+</tr>
+</tbody>
+</table>
 <table style="width:94%;">
 <colgroup>
 <col width="36%" />
@@ -460,7 +479,7 @@ display: none;
 <tr class="odd">
 <td align="right">0.379</td>
 <td align="right">NA</td>
-<td align="right">0.8411</td>
+<td align="right">0.8456</td>
 </tr>
 </tbody>
 </table>
@@ -1185,7 +1204,8 @@ Black 은 가)에 생각이 필요한 답, 나)에 끌리는 답을 배치하였
 </table>
 <pre><code>## Warning in chisq.test(., simulate.p.value = FALSE): Chi-squared approximation may be incorrect</code></pre>
 <table style="width:44%;">
-<caption>Pearson’s Chi-squared test: <code>.</code></caption>
+<caption>Pearson’s Chi-squared test with Yates’ continuity correction:
+<code>.</code></caption>
 <colgroup>
 <col width="23%" />
 <col width="6%" />
@@ -1200,9 +1220,9 @@ Black 은 가)에 생각이 필요한 답, 나)에 끌리는 답을 배치하였
 </thead>
 <tbody>
 <tr class="odd">
-<td align="right">NA</td>
-<td align="right">13</td>
-<td align="right">NaN NA</td>
+<td align="right">0.526</td>
+<td align="right">1</td>
+<td align="right">0.4683</td>
 </tr>
 </tbody>
 </table>
