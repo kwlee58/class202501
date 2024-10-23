@@ -27,7 +27,7 @@ library(magrittr)
 options(width = 180)
 class_roll <- readRDS("./class_roll_241018.RDS")
 oxford <- "./data/oxford_241021.xlsx" %>%
-  read_excel(range = "A2:BM74",
+  read_excel(range = "A2:BM82",
              col_names = FALSE)
 names(oxford) <- c("Time1", "email", "dept", "id", "name", "Time2", "group", paste0("Q", 1:29, "_R"), paste0("Q", 1:29, "_B"))
 oxford <- oxford[-2]
@@ -150,18 +150,9 @@ wrong_ids <- literacy_wrong_ids$id
 literacy_wrong_ids <- 
   literacy_wrong_ids %>%
   mutate(id = case_when(
-    id == "20236650" ~ "20243650",
-    id == "202043236" ~ "20243236",
-    id == "20243247" ~ "20243257",
-    id == "20242427" ~ "20242327",
+    id == "2024380" ~ "20243850",
     id == "24" & name == "박준형" ~ "20244120",
-    id == "20243713" ~ "20243712",
-    id == "24" & name == "이수용" ~ "20243938",
-    id == "202023702" ~ "20203702",
-    id == "20236738" ~ "20236739",
-    id == "24" & name == "김윤아" ~ "20246224",
     id == "소프트웨어학부" & dept == "20245268" ~ "20245268",
-    id == "러시아학과" & dept == "20241728" ~ "20241728",
     TRUE ~ id
   ))
 # 3. quiz 에서 id 틀린 행을 제거하고 옳은 id 갖춘 행으로 교체하기

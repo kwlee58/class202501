@@ -34,7 +34,7 @@ str(class_roll)
 # saveRDS(class_roll, file = "./class_roll_241021.RDS")
 quiz <- 
   read_excel("./data/quiz241021.xlsx",
-             range = "A2:O71",
+             range = "A2:O79",
              col_names = FALSE)
 names(quiz) <- 
   c("time", "email", "dept", "id", "name", paste0("Q", 1:3),  
@@ -536,7 +536,7 @@ ggsave("./pics/Quiz241021_Q6_RnB.png", dpi = 120, width = 960, height = 840, uni
 
 ### 분포표
 
-```{r, echo = FALSE}
+```{r, echo = FALSE, warning = FALSE}
 N <- nrow(quiz)
 days_tbl <- quiz$days %>%
   cut(breaks = c(0:14), include.lowest = TRUE) %>%
@@ -548,7 +548,7 @@ days_tbl %>%
 quiz$days %>%
   cut(breaks = c(0:14), include.lowest = TRUE) %>%
   table(quiz$group, .) %>%
-  `[`(, -(1:12)) %>%
+  `[`(, -(1:11)) %>%
   chisq.test(simulate.p.value = FALSE) %>%
   pander
 ```
