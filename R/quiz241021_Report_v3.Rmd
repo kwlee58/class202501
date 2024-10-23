@@ -34,7 +34,7 @@ str(class_roll)
 # saveRDS(class_roll, file = "./class_roll_241021.RDS")
 quiz <- 
   read_excel("./data/quiz241021.xlsx",
-             range = "A2:O51",
+             range = "A2:O71",
              col_names = FALSE)
 names(quiz) <- 
   c("time", "email", "dept", "id", "name", paste0("Q", 1:3),  
@@ -557,6 +557,7 @@ quiz$days %>%
 
 ```{r, echo = FALSE}
 # png(file = "./pics/2302/quiz_submission_8.png", width = 640, height = 480)
+suppressMessages({
 par(family = "KoPubWorldDotum Medium")
 b <- 
   quiz$days %>%
@@ -565,7 +566,7 @@ b <-
   rev %>%
   barplot(space = 0, names.arg = rep(c("월", "화", "수", "목", "금", "토", "일"), 2),
           col = c(rep("white", 13), "pink"),
-          ylim = c(0, 400)) 
+          ylim = c(0, 200)) 
 text(x = b[14, 1], y = sum(days_tbl[, 1]), 
      labels = paste0(sum(days_tbl[, 1]), "명"), pos = 3)
 text(x = b[14, 1], y = sum(days_tbl[, 1]) / 2, 
@@ -574,6 +575,7 @@ title(main = paste0("Quiz241021 (", N, "명 제출)"))
 # title(main = "일 단위 퀴즈 제출 인원", sub = paste0("Quiz230925 (", N, "명 제출)"))
 dev.copy(png, file = "./pics/2401/quiz_submission_8.png", width = 640, height = 480)
 invisible(dev.off())
+})
 ```
 
 ### Mosaic Plot

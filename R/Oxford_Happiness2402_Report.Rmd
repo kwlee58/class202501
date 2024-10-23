@@ -8,7 +8,7 @@ output: html_document
 ```{r setup, include=FALSE}
 library(knitr)
 library(pander)
-library(extrafont)
+library(dplyr)
 panderOptions("table.split.table", Inf)
 knitr::opts_chunk$set(echo = TRUE)
 ```
@@ -27,7 +27,7 @@ library(magrittr)
 options(width = 180)
 class_roll <- readRDS("./class_roll_241018.RDS")
 oxford <- "./data/oxford_241021.xlsx" %>%
-  read_excel(range = "A2:BM53",
+  read_excel(range = "A2:BM74",
              col_names = FALSE)
 names(oxford) <- c("Time1", "email", "dept", "id", "name", "Time2", "group", paste0("Q", 1:29, "_R"), paste0("Q", 1:29, "_B"))
 oxford <- oxford[-2]
@@ -135,17 +135,106 @@ oxford$days <- as.numeric(difftime("2024-11-04 09:00:00", oxford$Time1, tz = "As
 oxford$hours <- as.numeric(difftime("2024-11-04 09:00:00", oxford$Time1, tz = "Asia/Seoul", units = 'hours'))
 ```
 
+```{r, cleaning, echo = FALSE, results = "hide"}
+#> 학번 잘못 써서 고생시키는 녀석들 찾아내는 코드
+wrong_id <- setdiff(oxford$id, class_roll$id)
+oxford %>%
+  filter(id %in% wrong_id) %>%
+  select(dept, id, name)
+#> id 틀린 사람 찾아서 수정하기
+# 1. 잘못된 id 가진 행 찾기
+literacy_wrong_ids <- oxford %>%
+  anti_join(class_roll, by = "id") 
+# 2. 잘못된 id를 따로 저장하고 수정하기
+wrong_ids <- literacy_wrong_ids$id
+literacy_wrong_ids <- 
+  literacy_wrong_ids %>%
+  mutate(id = case_when(
+    id == "20236650" ~ "20243650",
+    id == "202043236" ~ "20243236",
+    id == "20243247" ~ "20243257",
+    id == "20242427" ~ "20242327",
+    id == "24" & name == "박준형" ~ "20244120",
+    id == "20243713" ~ "20243712",
+    id == "24" & name == "이수용" ~ "20243938",
+    id == "202023702" ~ "20203702",
+    id == "20236738" ~ "20236739",
+    id == "24" & name == "김윤아" ~ "20246224",
+    id == "소프트웨어학부" & dept == "20245268" ~ "20245268",
+    id == "러시아학과" & dept == "20241728" ~ "20241728",
+    TRUE ~ id
+  ))
+# 3. quiz 에서 id 틀린 행을 제거하고 옳은 id 갖춘 행으로 교체하기
+oxford <- oxford %>%
+  filter(!id %in% wrong_ids) %>%
+  bind_rows(literacy_wrong_ids)
+#> 불참자 id 추출하기
+class_roll %>%
+  filter(!id %in% oxford$id) %>%
+  pull(id)
+#> 옛 코드
+# class_roll$id %in% oxford$id %>%
+#   `!` %>% 
+#   which %>%
+#   `[`(class_roll, ., "id")
+#> 불참자들
+absentee <- class_roll %>%
+  filter(id %in% setdiff(id, oxford$id)) %>%
+  select(id, name, group) %>%
+  arrange(id)
+# absentee <- 
+#   class_roll[class_roll$id %in% setdiff(class_roll$id, oxford$id), c("id", "name", "group")] %>%
+#   `[`(order(.$id), ) 
+absentee %>%
+  pander(row.names = FALSE) 
+absentee$group %>%
+  table
+#> 옥스포드 행복도 조사 참여자 vs Quiz 참여자
+quiz <- readRDS("./quiz241021.RDS")
+#> 행복도조사 O, 퀴즈 X
+class_roll %>%
+  filter(id %in% setdiff(oxford$id, quiz$id)) %>%
+  select(id, name, group)
+#> 퀴즈 X, 행복도조사 O
+class_roll %>%
+  filter(id %in% setdiff(quiz$id, oxford$id)) %>%
+  select(id, name, group)
+#> 옛 코드
+# class_roll[class_roll$id %in% setdiff(oxford$id, quiz$id), c("id", "name", "group")]
+# class_roll[class_roll$id %in% setdiff(quiz$id, oxford$id), c("id", "name", "group")]
+#> RDS 포맷으로 저장 
+saveRDS(oxford, file = "./oxford240930.RDS")
+```
+
 ## Red, Black을 잘못 표시한 사람들
 
 랜덤화출석부에 있는 Red, Black 과 실제 구글설문에 올린 Red, Black 이 다른 사람들의 수효는 세명입니다. Red를 Black 이라고 한 사람이 1명, Black 을 Red 라고 한 사람이 2명입니다. 
 
 ```{r, wrong group, echo = FALSE}
-oxford$group2 <- class_roll$group[match(oxford$id, class_roll$id)]
-wrong_group <- which(oxford$group != oxford$group2)
+#> group2 생성
+oxford <- oxford %>%
+  left_join(class_roll %>% select(id, group), by = "id", suffix = c("", "_class_roll")) %>%
+  rename(group2 = group_class_roll)
+
+#> group 과 group2가 다른 행 필터링
+wrong_group <- oxford %>%
+  filter(group2 != group)
+
+#> 잘못된 그룹 정보 출력
+wrong_group %>%
+  select(Time1, id, name, group2, group) %>%
+  arrange(Time1) %>%
+  rename("제출시간" = Time1, "학번" = id, "이름" = name, "랜덤화출석부" = group2, "구글예습퀴즈" = group) %>%
+  pander(row.names = FALSE)
+
+#> 옛 코드
+# oxford$group2 <- class_roll$group[match(oxford$id, class_roll$id)]
+# wrong_group <- which(oxford$group != oxford$group2)
 # oxford[wrong_group, c("Time1", "id", "group2", "group")] %>%
 #   `[`(order(.$Time1), ) %>%
 #   `colnames<-`(c("제출시간", "학번", "랜덤화출석부", "구글예습퀴즈")) %>%
 #   pander(row.names = FALSE)
+
 wrong_tbl <- table("랜덤화출석부" = oxford$group2, 
                    "옥스포드행복설문지" = oxford$group)
 wrong_tbl %>%
@@ -247,7 +336,6 @@ ggplot(data = oxford,
        mapping = aes(x = group, y = as.numeric(Duration))) +
   geom_boxplot(outlier.shape = 1, na.rm = TRUE) +
   theme_bw(base_family = "KoPubWorldDotum Medium") +
-#  theme_kr +
   scale_x_discrete(name = "질문지 유형") +
   scale_y_continuous(name = "소요시간(초)")
 ```
@@ -262,7 +350,7 @@ t.test(as.numeric(Duration) ~ group, data = oxford, var.equal = FALSE) %>% pande
 
 ### 분포표
 
-```{r, echo = FALSE}
+```{r, echo = FALSE, warning = FALSE}
 N <- nrow(oxford)
 days_tbl <- oxford$days %>%
   cut(breaks = c(0:14), include.lowest = TRUE) %>%
@@ -274,7 +362,7 @@ days_tbl %>%
 oxford$days %>%
   cut(breaks = c(0:14), include.lowest = TRUE) %>%
   table(oxford$group, .) %>%
-  `[`(, -(1:12)) %>%
+  `[`(, -(1:11)) %>%
   chisq.test(simulate.p.value = FALSE) %>%
   pander
 ```
