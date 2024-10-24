@@ -1,7 +1,7 @@
 ---
 title: "Quiz 241021 (Cognitive Reponse Test)"
 author: "coop711"
-date: "2024-04-19"
+date: "2024-10-21"
 output: html_document
 ---
 
@@ -34,7 +34,7 @@ str(class_roll)
 # saveRDS(class_roll, file = "./class_roll_241021.RDS")
 quiz <- 
   read_excel("./data/quiz241021.xlsx",
-             range = "A2:O79",
+             range = "A2:O106",
              col_names = FALSE)
 names(quiz) <- 
   c("time", "email", "dept", "id", "name", paste0("Q", 1:3),  
@@ -238,7 +238,7 @@ include_graphics("./pics/Quiz180409_02.png")
 
 ### 집계
 
-```{r, Treatment vs Control, echo = FALSE}
+```{r, Treatment vs Control, echo = FALSE, warning = FALSE}
 tbl_q2_a <- quiz$Q2 %>%
   table(quiz$group, ., useNA = "ifany") %>%
   cbind("계" = rowSums(.)) %>%
@@ -548,7 +548,7 @@ days_tbl %>%
 quiz$days %>%
   cut(breaks = c(0:14), include.lowest = TRUE) %>%
   table(quiz$group, .) %>%
-  `[`(, -(1:11)) %>%
+  `[`(, -(1:10)) %>%
   chisq.test(simulate.p.value = FALSE) %>%
   pander
 ```
