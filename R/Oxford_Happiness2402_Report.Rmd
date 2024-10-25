@@ -27,7 +27,7 @@ library(magrittr)
 options(width = 180)
 class_roll <- readRDS("./class_roll_241018.RDS")
 oxford <- "./data/oxford_241021.xlsx" %>%
-  read_excel(range = "A2:BM119",
+  read_excel(range = "A2:BM145",
              col_names = FALSE)
 names(oxford) <- c("Time1", "email", "dept", "id", "name", "Time2", "group", paste0("Q", 1:29, "_R"), paste0("Q", 1:29, "_B"))
 oxford <- oxford[-2]
@@ -114,22 +114,6 @@ col_names <- c("학번", "컴퓨터점수", "행복 수준", "소요 시간", "�
 oxford[, c("id", "Scores", "Levels", "Duration_2", "group")] %>% 
   format(digits = 3, nsmall = 2) %>%
   kable(align = c("c", "c", "r", "r", "c"), col.names = col_names)
-#> 학번 잘못 써서 고생시키는 녀석들 찾아내는 코드
-oxford[oxford$id %in% setdiff(oxford$id, class_roll$id), c("id", "name", "dept")]
-#> 중복제출자
-oxford[which(duplicated(oxford$id)), c("id", "name")]
-#> 불참자들
-absentee <- 
-  class_roll[class_roll$id %in% setdiff(class_roll$id, oxford$id), c("id", "name", "group")] %>%
-  `[`(order(.$id), ) 
-absentee %>%
-  pander(row.names = FALSE) 
-absentee$group %>%
-  table
-#> 옥스포드 행복도 조사 참여자 vs Quiz 참여자
-quiz <- readRDS("./quiz241021.RDS")
-class_roll[class_roll$id %in% setdiff(oxford$id, quiz$id), c("id", "name", "group")]
-class_roll[class_roll$id %in% setdiff(quiz$id, oxford$id), c("id", "name", "group")]
 #> 마감기한으로부터 제출시점의 기간
 oxford$days <- as.numeric(difftime("2024-11-04 09:00:00", oxford$Time1, tz = "Asia/Seoul", units = 'days'))
 oxford$hours <- as.numeric(difftime("2024-11-04 09:00:00", oxford$Time1, tz = "Asia/Seoul", units = 'hours'))
@@ -141,6 +125,8 @@ wrong_id <- setdiff(oxford$id, class_roll$id)
 oxford %>%
   filter(id %in% wrong_id) %>%
   select(dept, id, name)
+#> 옛 코드
+# oxford[oxford$id %in% setdiff(oxford$id, class_roll$id), c("id", "name", "dept")]
 #> id 틀린 사람 찾아서 수정하기
 # 1. 잘못된 id 가진 행 찾기
 literacy_wrong_ids <- oxford %>%
@@ -180,6 +166,8 @@ absentee %>%
   pander(row.names = FALSE) 
 absentee$group %>%
   table
+#> 중복제출자
+oxford[which(duplicated(oxford$id)), c("id", "name")]
 #> 옥스포드 행복도 조사 참여자 vs Quiz 참여자
 quiz <- readRDS("./quiz241021.RDS")
 #> 행복도조사 O, 퀴즈 X
@@ -353,7 +341,7 @@ days_tbl %>%
 oxford$days %>%
   cut(breaks = c(0:14), include.lowest = TRUE) %>%
   table(oxford$group, .) %>%
-  `[`(, -(1:10)) %>%
+  `[`(, -(1:9)) %>%
   chisq.test(simulate.p.value = FALSE) %>%
   pander
 ```
