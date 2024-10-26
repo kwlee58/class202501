@@ -19,22 +19,22 @@ options(width = 180)
 ```
 
 ```{r, data, echo = FALSE, results = 'hide', message = FALSE}
-class_roll <- 
+class_roll1018 <- 
   readRDS("./class_roll_241018.RDS")
+class_roll1018 %<>% 
+  data.frame
+class_roll <- 
+  read_excel("./data/class_roll241025.xlsx", 
+             range = "B1:G805")
 class_roll %<>% 
   data.frame
-# class_roll <- 
-#   read_excel("./data/class_roll241025.xlsx", 
-#              range = "B1:I898")
-# class_roll %<>% 
-#   data.frame
 str(class_roll)
-# names(class_roll) <- c("college", "dept", "year", "id", "name", "status", "email", "cell_no")
-# class_roll$group <- class_roll0412$group[match(class_roll$id, class_roll0412$id)]
-# saveRDS(class_roll, file = "./class_roll_241021.RDS")
+names(class_roll) <- c("dept","id", "name", "status", "email", "cell_no")
+class_roll$group <- class_roll1018$group[match(class_roll$id, class_roll1018$id)]
+saveRDS(class_roll, file = "./class_roll_241025.RDS")
 quiz <- 
   read_excel("./data/quiz241021.xlsx",
-             range = "A2:O226",
+             range = "A2:O244",
              col_names = FALSE)
 names(quiz) <- 
   c("time", "email", "dept", "id", "name", paste0("Q", 1:3),  
@@ -549,7 +549,7 @@ days_tbl %>%
 quiz$days %>%
   cut(breaks = c(0:14), include.lowest = TRUE) %>%
   table(quiz$group, .) %>%
-  `[`(, -(1:8)) %>%
+  `[`(, -(1:7)) %>%
   chisq.test(simulate.p.value = FALSE) %>%
   pander
 ```
