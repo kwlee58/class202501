@@ -27,7 +27,7 @@ library(magrittr)
 options(width = 180)
 class_roll <- readRDS("./class_roll_241018.RDS")
 oxford <- "./data/oxford_241021.xlsx" %>%
-  read_excel(range = "A2:BM212",
+  read_excel(range = "A2:BM229",
              col_names = FALSE)
 names(oxford) <- c("Time1", "email", "dept", "id", "name", "Time2", "group", paste0("Q", 1:29, "_R"), paste0("Q", 1:29, "_B"))
 oxford <- oxford[-2]
@@ -57,6 +57,7 @@ lapply(col_names, replace_missing)
 ```
 
 ```{r, echo = FALSE, eval= FALSE}
+#> Not in use any more
 oxford$Q1 <- ifelse(is.na(oxford$Q1_R), oxford$Q1_B, oxford$Q1_R)
 oxford$Q2 <- ifelse(is.na(oxford$Q2_R), oxford$Q2_B, oxford$Q2_R)
 oxford$Q3 <- ifelse(is.na(oxford$Q3_R), oxford$Q3_B, oxford$Q3_R)
@@ -137,8 +138,7 @@ literacy_wrong_ids <-
   literacy_wrong_ids %>%
   mutate(id = case_when(
     id == "2024380" ~ "20243850",
-    id == "24" & name == "박준형" ~ "20244120",
-    id == "소프트웨어학부" & dept == "20245268" ~ "20245268",
+    id == "20243699" ~ "20243609",
     TRUE ~ id
   ))
 # 3. quiz 에서 id 틀린 행을 제거하고 옳은 id 갖춘 행으로 교체하기
@@ -298,15 +298,6 @@ oxford$Duration %>%
   tapply(INDEX = oxford$group, FUN = summary) %>%
   pander
 ```
-
-<!--
-### `boxplot()`
-
-```{r, echo = FALSE, eval = FALSE}
-par(family = "HCR Dotum LVT")
-boxplot(Duration ~ group, data = oxford)
-```
--->
 
 ### `geom_boxplot()`
 
