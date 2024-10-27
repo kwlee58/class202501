@@ -17,17 +17,13 @@ knitr::opts_chunk$set(echo = TRUE)
 첫째는 있는 그대로 옥스포드 행복 설문지로 측정하는 여러분의 행복 수준은 어느 정도인지,
 둘째는 영문판으로 응답할 때와 국문판으로 응답할 때 어떤 차이가 있는지, 특히 응답에 소요되는 시간을 측정해 보았다. 
 
-<!--
-## Data
--->
-
-```{r, echo = FALSE, message = FALSE}
+```{r, data reading, echo = FALSE, message = FALSE}
 library(readxl)
 library(magrittr)
 options(width = 180)
 class_roll <- readRDS("./class_roll_241018.RDS")
 oxford <- "./data/oxford_241021.xlsx" %>%
-  read_excel(range = "A2:BM292",
+  read_excel(range = "A2:BM310",
              col_names = FALSE)
 names(oxford) <- c("Time1", "email", "dept", "id", "name", "Time2", "group", paste0("Q", 1:29, "_R"), paste0("Q", 1:29, "_B"))
 oxford <- oxford[-2]
@@ -54,39 +50,6 @@ replace_missing <- function(col_name) {
 
 # Use lapply to apply the function to each column
 lapply(col_names, replace_missing)
-```
-
-```{r, echo = FALSE, eval= FALSE}
-#> Not in use any more
-oxford$Q1 <- ifelse(is.na(oxford$Q1_R), oxford$Q1_B, oxford$Q1_R)
-oxford$Q2 <- ifelse(is.na(oxford$Q2_R), oxford$Q2_B, oxford$Q2_R)
-oxford$Q3 <- ifelse(is.na(oxford$Q3_R), oxford$Q3_B, oxford$Q3_R)
-oxford$Q4 <- ifelse(is.na(oxford$Q4_R), oxford$Q4_B, oxford$Q4_R)
-oxford$Q5 <- ifelse(is.na(oxford$Q5_R), oxford$Q5_B, oxford$Q5_R)
-oxford$Q6 <- ifelse(is.na(oxford$Q6_R), oxford$Q6_B, oxford$Q6_R)
-oxford$Q7 <- ifelse(is.na(oxford$Q7_R), oxford$Q7_B, oxford$Q7_R)
-oxford$Q8 <- ifelse(is.na(oxford$Q8_R), oxford$Q8_B, oxford$Q8_R)
-oxford$Q9 <- ifelse(is.na(oxford$Q9_R), oxford$Q9_B, oxford$Q9_R)
-oxford$Q10 <- ifelse(is.na(oxford$Q10_R), oxford$Q10_B, oxford$Q10_R)
-oxford$Q11 <- ifelse(is.na(oxford$Q11_R), oxford$Q11_B, oxford$Q11_R)
-oxford$Q12 <- ifelse(is.na(oxford$Q12_R), oxford$Q12_B, oxford$Q12_R)
-oxford$Q13 <- ifelse(is.na(oxford$Q13_R), oxford$Q13_B, oxford$Q13_R)
-oxford$Q14 <- ifelse(is.na(oxford$Q14_R), oxford$Q14_B, oxford$Q14_R)
-oxford$Q15 <- ifelse(is.na(oxford$Q15_R), oxford$Q15_B, oxford$Q15_R)
-oxford$Q16 <- ifelse(is.na(oxford$Q16_R), oxford$Q16_B, oxford$Q16_R)
-oxford$Q17 <- ifelse(is.na(oxford$Q17_R), oxford$Q17_B, oxford$Q17_R)
-oxford$Q18 <- ifelse(is.na(oxford$Q18_R), oxford$Q18_B, oxford$Q18_R)
-oxford$Q19 <- ifelse(is.na(oxford$Q19_R), oxford$Q19_B, oxford$Q19_R)
-oxford$Q20 <- ifelse(is.na(oxford$Q20_R), oxford$Q20_B, oxford$Q20_R)
-oxford$Q21 <- ifelse(is.na(oxford$Q21_R), oxford$Q21_B, oxford$Q21_R)
-oxford$Q22 <- ifelse(is.na(oxford$Q22_R), oxford$Q22_B, oxford$Q22_R)
-oxford$Q23 <- ifelse(is.na(oxford$Q23_R), oxford$Q23_B, oxford$Q23_R)
-oxford$Q24 <- ifelse(is.na(oxford$Q24_R), oxford$Q24_B, oxford$Q24_R)
-oxford$Q25 <- ifelse(is.na(oxford$Q25_R), oxford$Q25_B, oxford$Q25_R)
-oxford$Q26 <- ifelse(is.na(oxford$Q26_R), oxford$Q26_B, oxford$Q26_R)
-oxford$Q27 <- ifelse(is.na(oxford$Q27_R), oxford$Q27_B, oxford$Q27_R)
-oxford$Q28 <- ifelse(is.na(oxford$Q28_R), oxford$Q28_B, oxford$Q28_R)
-oxford$Q29 <- ifelse(is.na(oxford$Q29_R), oxford$Q29_B, oxford$Q29_R)
 ```
 
 ```{r, echo = FALSE, results =  'hide'}
@@ -139,6 +102,7 @@ literacy_wrong_ids <-
   mutate(id = case_when(
     id == "2024380" ~ "20243850",
     id == "20243699" ~ "20243609",
+    id == "204242613" ~ "20242613",
     TRUE ~ id
   ))
 # 3. quiz 에서 id 틀린 행을 제거하고 옳은 id 갖춘 행으로 교체하기
