@@ -41,7 +41,7 @@ saveRDS(class_roll, file = "./class_roll_241018.RDS")
 #> 잘 안됨.  
 quiz <- 
   read_excel("./data/quiz241014.xlsx",
-             range = "A2:P665",
+             range = "A2:P746",
              col_names = FALSE)
 names(quiz) <- 
   c("time", "email", "dept", "id", "name", paste0("Q", 1:6),  "group", "Q7_R", "Q8_R", "Q7_B", "Q8_B")
@@ -196,7 +196,7 @@ quiz %>%
 # which(duplicated(quiz$id)) %>%
 #   quiz[., c("id", "name")]
 quiz %>%
-  filter(name %in% c("최정환"))
+  filter(name %in% c("이유찬"))
 # quiz[quiz$name %in% c("최재혁", "박지연"), ] #> 최재혁, 박지연이 중복 제출
 quiz <- quiz %>% 
   arrange(id, desc(time)) %>%
@@ -233,11 +233,11 @@ wrong_group <- quiz %>%
   filter(group2 != group)
 
 #> 잘못된 그룹 정보 출력
-wrong_group %>%
-  select(time, id, group2, group) %>%
-  arrange(time) %>%
-  rename("제출시간" = time, "학번" = id, "랜덤화출석부" = group2, "구글예습퀴즈" = group) %>%
-  pander(row.names = FALSE)
+# wrong_group %>%
+#   select(time, id, group2, group) %>%
+#   arrange(time) %>%
+#   rename("제출시간" = time, "학번" = id, "랜덤화출석부" = group2, "구글예습퀴즈" = group) %>%
+#   pander(row.names = FALSE)
 
 #> 옛 코드
 # quiz$group2 <- class_roll$group[match(quiz$id, class_roll$id)]
@@ -755,7 +755,7 @@ max(quiz$hours, na.rm = TRUE)
 
 ## 일 단위 마감 시간으로부터 제출 시간의 분포
 
-### 분포표
+### 분포표 (Red, Black 은 닮았는가?)
 
 ```{r, echo = FALSE, warning = FALSE}
 N <- nrow(quiz)
