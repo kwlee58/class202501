@@ -27,7 +27,7 @@ library(magrittr)
 options(width = 180)
 class_roll <- readRDS("./class_roll_241018.RDS")
 oxford <- "./data/oxford_241021.xlsx" %>%
-  read_excel(range = "A2:BM253",
+  read_excel(range = "A2:BM292",
              col_names = FALSE)
 names(oxford) <- c("Time1", "email", "dept", "id", "name", "Time2", "group", paste0("Q", 1:29, "_R"), paste0("Q", 1:29, "_B"))
 oxford <- oxford[-2]
@@ -332,7 +332,7 @@ days_tbl %>%
 oxford$days %>%
   cut(breaks = c(0:14), include.lowest = TRUE) %>%
   table(oxford$group, .) %>%
-  `[`(, -(1:9)) %>%
+  `[`(, -(1:7)) %>%
   chisq.test(simulate.p.value = FALSE) %>%
   pander
 ```
