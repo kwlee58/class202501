@@ -1,7 +1,7 @@
 ---
 title: "데이터실험 댓글 점수 확인"
 # author: "coop711"
-date: "2024-09-30 09:30"
+date: "2024-10-28 09:00"
 output: html_document
 ---
 
@@ -18,7 +18,7 @@ options(width = 132)
 
 ```{r, data, echo = FALSE, message = FALSE, results = "hide"}
 options(digits = 2)
-load("./data_lab240930.RData")
+load("./data_lab241028.RData")
 str(comments)
 str(comments_w)
 ```
@@ -93,6 +93,7 @@ kable(comments_w[order(comments_w$id, comments_w$name),
 # 회차별 점수 
 
 ```{r, echo = FALSE}
-kable(comments[order(comments$id), -2], row.names = FALSE,
+kable(comments[order(comments$id), -2], 
+      row.names = FALSE,
       col.names = c("학번", "회차", "게시시점", "댓글시점", "경과시간(주)", "점수"))
 ```
