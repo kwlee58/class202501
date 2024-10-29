@@ -23,7 +23,7 @@ library(magrittr)
 options(width = 180)
 class_roll <- readRDS("./class_roll_241018.RDS")
 oxford <- "./data/oxford_241021.xlsx" %>%
-  read_excel(range = "A2:BM370",
+  read_excel(range = "A2:BM374",
              col_names = FALSE)
 names(oxford) <- c("Time1", "email", "dept", "id", "name", "Time2", "group", paste0("Q", 1:29, "_R"), paste0("Q", 1:29, "_B"))
 oxford <- oxford[-2]
@@ -40,6 +40,7 @@ oxford$group %<>%
 ```
 
 ```{r, echo = FALSE, eval = FALSE}
+#> mapply 대신 사용할 수 있는 코드, col_name 설정에 중점.
 # List of column names without the "_R" and "_B" suffix
 col_names <- paste0("Q", 1:29)
 

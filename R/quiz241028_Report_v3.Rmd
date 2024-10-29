@@ -38,7 +38,7 @@ class_roll <-
 # saveRDS(class_roll, file = "./class_roll_241028.RDS")
 quiz <- 
   read_excel("./data/quiz241028.xlsx",
-             range = "A2:N46",
+             range = "A2:N62",
              col_names = FALSE)
 str(quiz)
 names(quiz) <- 
@@ -532,7 +532,7 @@ days_tbl %>%
 quiz$days %>%
   cut(breaks = c(0:14), include.lowest = TRUE) %>%
   table(quiz$group, .) %>%
-  `[`(, -(1:13)) %>%
+  `[`(, -(1:12)) %>%
   chisq.test(simulate.p.value = TRUE) %>%
   pander
 ```
@@ -586,7 +586,8 @@ m2 + geom_text(aes(x = center, y = 1.05),
                     direction = 1) +
   theme(plot.title = element_text(hjust = 0.5, 
                                   size = 18, 
-                                  family = "KoPubWorldDotum Bold")) 
+                                  family = "KoPubWorldDotum Bold"),
+        axis.text.x = element_text(angle = -90, vjust = 0.5)) 
 ggsave("./pics/Quiz241028_submission_7.png", dpi = 120, width = 960, height = 840, units = "px")
 ```
 
