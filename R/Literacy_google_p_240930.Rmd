@@ -113,6 +113,14 @@ absentee %>%
   pander(row.names = FALSE) 
 absentee$group %>%
   table
+#> 국민문해력조사 참여자 vs Quiz 참여자
+quiz <- readRDS("./quiz240930.RDS")
+class_roll %>%
+  filter(id %in% setdiff(literacy_roll$id, quiz$id)) %>%
+  select(id, name, group)
+class_roll %>%
+  filter(id %in% setdiff(quiz$id, literacy_roll$id)) %>%
+  select(id, name, group)
 ```
 
 <!--
