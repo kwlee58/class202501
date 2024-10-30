@@ -556,7 +556,7 @@ b <-
   rev %>%
   barplot(space = 0, names.arg = rep(c("월", "화", "수", "목", "금", "토", "일"), 2),
           col = c(rep("white", 13), "pink"),
-          ylim = c(0, 200)) 
+          ylim = c(0, 300)) 
 text(x = b[14, 1], y = sum(days_tbl[, 1]), 
      labels = paste0(sum(days_tbl[, 1]), "명"), pos = 3)
 text(x = b[14, 1], y = sum(days_tbl[, 1]) / 2, 

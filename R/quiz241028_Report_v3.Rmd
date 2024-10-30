@@ -38,7 +38,7 @@ class_roll <-
 # saveRDS(class_roll, file = "./class_roll_241028.RDS")
 quiz <- 
   read_excel("./data/quiz241028.xlsx",
-             range = "A2:N62",
+             range = "A2:N108",
              col_names = FALSE)
 str(quiz)
 names(quiz) <- 
@@ -518,7 +518,7 @@ include_graphics("./pics/default_effects_by_country.png")
 
 ## 일 단위 마감 시간으로부터 제출 시간의 분포
 
-### 분포표
+### 분포표 (Red, Black 은 닮았는가?)
 
 ```{r, echo = FALSE}
 N <- nrow(quiz)
@@ -532,8 +532,8 @@ days_tbl %>%
 quiz$days %>%
   cut(breaks = c(0:14), include.lowest = TRUE) %>%
   table(quiz$group, .) %>%
-  `[`(, -(1:12)) %>%
-  chisq.test(simulate.p.value = TRUE) %>%
+  `[`(, -(1:11)) %>%
+  chisq.test(simulate.p.value = FALSE) %>%
   pander
 ```
 
@@ -550,7 +550,7 @@ b <-
   rev %>%
   barplot(space = 0, names.arg = rep(c("월", "화", "수", "목", "금", "토", "일"), 2),
           col = c(rep("white", 13), "pink"),
-          ylim = c(0, 200)) 
+          ylim = c(0, 300)) 
 text(x = b[14, 1], y = sum(days_tbl[, 1]), 
      labels = paste0(sum(days_tbl[, 1]), "명"), pos = 3)
 text(x = b[14, 1], y = sum(days_tbl[, 1]) / 2, 
