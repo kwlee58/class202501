@@ -13,9 +13,11 @@ panderOptions("table.split.table", Inf)
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-옥스포드 행복 설문지 실험결과를 분석한다. 이 실험에는 두 가지 목적이 있다.
+## 실험의 목적
+
+옥스포드 행복 설문지 실험결과를 분석합니다. 이 실험에는 두 가지 목적이 있습니다.
 첫째는 있는 그대로 옥스포드 행복 설문지로 측정하는 여러분의 행복 수준은 어느 정도인지,
-둘째는 영문판으로 응답할 때와 국문판으로 응답할 때 어떤 차이가 있는지, 특히 응답에 소요되는 시간을 측정해 보았다. 
+둘째는 영문판으로 응답할 때와 국문판으로 응답할 때 어떤 차이가 있는지, 특히 응답에 소요되는 시간을 측정해서 비교해 보았습니다. 
 
 ```{r, data reading, echo = FALSE, message = FALSE}
 library(readxl)
@@ -23,9 +25,10 @@ library(magrittr)
 options(width = 180)
 class_roll <- readRDS("./class_roll_241018.RDS")
 oxford <- "./data/oxford_241021.xlsx" %>%
-  read_excel(range = "A2:BM393",
+  read_excel(range = "A2:BM435",
              col_names = FALSE)
-names(oxford) <- c("Time1", "email", "dept", "id", "name", "Time2", "group", paste0("Q", 1:29, "_R"), paste0("Q", 1:29, "_B"))
+names(oxford) <- 
+  c("Time1", "email", "dept", "id", "name", "Time2", "group", paste0("Q", 1:29, "_R"), paste0("Q", 1:29, "_B"))
 oxford <- oxford[-2]
 class(oxford$id) <- "character"
 b <- format(as.POSIXct(oxford$Time2, format = "%Y-%m-%d %H:%M:%S"), format = "%H:%M:%S")
@@ -110,6 +113,36 @@ literacy_wrong_ids <-
 oxford <- oxford %>%
   filter(!id %in% wrong_ids) %>%
   bind_rows(literacy_wrong_ids)
+
+#> 중복 제출자
+oxford %>%
+  filter(duplicated(id)) %>%
+  select(Time1, id, name) %>%
+  arrange(Time1)
+# which(duplicated(oxford$id)) %>%
+#   oxford[., c("id", "name")]
+oxford %>%
+  filter(name %in% c("최정환"))
+# oxoford[oxford$name %in% c("최재혁", "박지연"), ] #> 최재혁, 박지연이 중복 제출
+oxford <- oxford %>% 
+  arrange(id, desc(Time1)) %>%
+  distinct(id, .keep_all = TRUE)
+#> 옛 코드
+# oxford[which(duplicated(oxford$id)), c("id", "name")]
+#> 옥스포드 행복도 조사 참여자 vs Quiz 참여자
+quiz <- readRDS("./quiz241021.RDS")
+#> 행복도조사 O, 퀴즈 X
+class_roll %>%
+  filter(id %in% setdiff(oxford$id, quiz$id)) %>%
+  select(id, name, group)
+#> 퀴즈 X, 행복도조사 O
+class_roll %>%
+  filter(id %in% setdiff(quiz$id, oxford$id)) %>%
+  select(id, name, group)
+#> 옛 코드
+# class_roll[class_roll$id %in% setdiff(oxford$id, quiz$id), c("id", "name", "group")]
+# class_roll[class_roll$id %in% setdiff(quiz$id, oxford$id), c("id", "name", "group")]
+
 #> 불참자 id 추출하기
 class_roll %>%
   filter(!id %in% oxford$id) %>%
@@ -131,28 +164,12 @@ absentee %>%
   pander(row.names = FALSE) 
 absentee$group %>%
   table
-#> 중복제출자
-oxford[which(duplicated(oxford$id)), c("id", "name")]
-#> 옥스포드 행복도 조사 참여자 vs Quiz 참여자
-quiz <- readRDS("./quiz241021.RDS")
-#> 행복도조사 O, 퀴즈 X
-class_roll %>%
-  filter(id %in% setdiff(oxford$id, quiz$id)) %>%
-  select(id, name, group)
-#> 퀴즈 X, 행복도조사 O
-class_roll %>%
-  filter(id %in% setdiff(quiz$id, oxford$id)) %>%
-  select(id, name, group)
-#> 옛 코드
-# class_roll[class_roll$id %in% setdiff(oxford$id, quiz$id), c("id", "name", "group")]
-# class_roll[class_roll$id %in% setdiff(quiz$id, oxford$id), c("id", "name", "group")]
+
 #> RDS 포맷으로 저장 
 saveRDS(oxford, file = "./oxford240930.RDS")
 ```
 
 ## Red, Black을 잘못 표시한 사람들
-
-랜덤화출석부에 있는 Red, Black 과 실제 구글설문에 올린 Red, Black 이 다른 사람들의 수효는 세명입니다. Red를 Black 이라고 한 사람이 1명, Black 을 Red 라고 한 사람이 2명입니다. 
 
 ```{r, wrong group, echo = FALSE}
 #> group2 생성
@@ -186,19 +203,40 @@ wrong_tbl %>%
          col.names = c("Red(옥스포드행복설문지)", "Black(옥스포드행복설문지)"))
 ```
 
+랜덤화출석부에 있는 Red, Black 과 실제 구글설문에 올린 Red, Black 이 다른 사람들의 수효는 `r nrow(wrong_group)`명입니다. Red를 Black 이라고 한 사람이 `r wrong_tbl[1, 2]`명, Black 을 Red 라고 한 사람이 `r wrong_tbl[2, 1]`명입니다. 
+
+## 응답인원의 Red, Black
+
+Red 로 응답한 인원은 `r colSums(wrong_tbl)[1]`명, Black 에 응답한 인원은 `r colSums(wrong_tbl)[2]`명입니다. 전체 응답인원 `r sum(wrong_tbl)` 명을 랜덤하게 둘로 나눌 때 어느 한 쪽의 기대인원은 이를 반으로 나눠 준`r sum(wrong_tbl) / 2`명이고, 표준오차는 이의 제곱근에 1/2을 곱해 준 `r round(sqrt(sum(wrong_tbl)) * 1 / 2, digits = 1)` 명입니다. 따라서 Red, Black 각 그룹에 관찰된 인원은 기대인원으로부터 표준오차 범위 안에 들어갑니다. 
+
 ## 행복 점수 비교
 
-국문 설문지와 영문 설문지의 행복점수를 비교한다. 행복점수 단계별로 비교했을 때나 기초통계로 비교했을 때나 국문 설문지로 작성한 그룹 (Red)의 행복점수가 높게 나온다. 이는 통계적으로 매우 매우 유의한 수준이다. 
+국문 설문지와 영문 설문지의 행복점수를 비교한다. 먼저 기초통계를 비교합니다. 행복점수 단계별로 비교했을 때나 기초통계로 비교했을 때나 국문 설문지로 작성한 그룹 (Red)의 행복점수가 높게 나온다. 그 차이는 통계적으로 매우 매우 유의한 수준이다. 
 
 ### `summary()`
 
 ```{r, echo = FALSE}
 oxford$group %<>% 
   factor(levels = c("Red", "Black"), labels = c("국문", "영문"))
-oxford$Scores %>% 
-  tapply(INDEX = oxford$group, FUN = summary) %>%
+scores_summary <- oxford$Scores %>%
+  tapply(INDEX = oxford$group, FUN = summary) 
+scores_summary %>%
   pander
 ```
+
+Red 집단의 평균 행복점수는 `r format(scores_summary$국문[4], digits = 2, nsmall = 2)`,  Black 집단의 평균 행복점수는 `r format(scores_summary$영문[4], digits = 2, nsmall = 2)` 으로 국문 설문지에 응답한 행복점수의 평균이 `r format(scores_summary$국문[4] - scores_summary$영문[4], digits = 2, nsmall = 2)` 점 더 높게 나온다. 중위수를 비교하더라도 Red 집단의 행복점수 중위수는 `r format(scores_summary$국문[3], digits = 2, nsmall = 2)`,  Black 집단의 행복점수 중위수는 `r format(scores_summary$영문[3], digits = 2, nsmall = 2)` 으로 국문 설문지에 응답한 행복점수의 중위수가 `r format(scores_summary$국문[3] - scores_summary$영문[3], digits = 2, nsmall = 2)` 점 더 높게 나온다.
+
+### `t.test()` on means
+
+```{r, echo = FALSE}
+Scores_t_test <- 
+  t.test(Scores ~ group, data = oxford, var.equal = FALSE, alternative = "two.sided") 
+Scores_t_test %>% 
+  pander
+```
+
+국문 설문지에 대한 행복점수의 평균과 영문 설문지에 대한 행복점수의 평균에서 관찰된 차이가 통계적으로 유의한지 t-test 로 알아 봅니다. 양 집단의 표준편차를 알 수 없기 때문에 Welch 의 근사식을 활용합니다. 이 때 t-통계량은 `r format(Scores_t_test[1], digits = 2, nsmall = 2)`, 자유도는 `r format(Scores_t_test[2], digits = 2, nsmall = 2)`, p-value 는 `r format(Scores_t_test[3], digits = 2, nsmall = 2)`라고 나옵니다. 즉, 통계적으로 유의한 차이를 관찰하였습니다. 국문 행복도 조사지와 영문 행복도 조사지
+의 행복점수에는 차이가 있고, 국문 행복도의 평균점수가 더 높은 것으로 나왔습니다. 결과 요약표에는 각 집단의 평균 행복점수도 나와 있습니다. 국문으로 물어 봤을 때하고 영문으로 물어 봤을 때는 명확히 차이가 있다는 것을 알 수 있습니다. 왜 그런 차이가 관찰되는 걸까요?
 
 ### `table()`
 
@@ -209,22 +247,37 @@ oxford_tbl <- oxford$Levels %>%
   rbind("계" = colSums(.)) 
 oxford_tbl %>% 
   pander
-oxford_tbl %>% 
+```
+
+이번에는 국문 행복도 조사 결과와 영문 행복도 조사 결과를 등급별로 나누어 교차표를 게산해 보았습니다. 총 `r oxford_tbl[3, 6]` 명 응답한 가운데 `r sum(oxford_tbl[3, 5:6])`명이 그저 그렇다 이상으로 행복하다고 응답하였고 그저 그렇다고 응답 한 사람들이 `r oxford_tbl[3, 3]` 명이었습니다. 국문, 영문의 차이는 어떤가요?
+
+### `chisq.test()`
+
+```{r, echo = FALSE}
+oxford_chisq_test <- 
+  oxford_tbl %>% 
   `[`(-3, -c(1, 6)) %>% 
-  chisq.test(simulate.p.value = TRUE) %>%
+  chisq.test(simulate.p.value = TRUE) 
+oxford_chisq_test %>%
   pander
 ```
+
+국문, 영문 행복도 조사 결과의 등급별 차이를 파악하기 위하여 카이제곱 테스트를 수행하였습니다. 그 결과 카이제곱 통계량은 `r format(oxford_chisq_test[1], digits = 2, nsmall = 2)`, 반복수 2,0000의 붓스트랩 근사를 사용하였기 때문에 자유도는 알 수 없고, p-value 는 `r format(oxford_chisq_test[3], digits = 2, nsmall = 2)`이므로 통계적으로 유의한 차이를 보입니다.
 
 ### 백분율(%)
 
 ```{r, echo = FALSE}
-oxford_tbl[3, -6] %>%  
+oxford_ptbl <- 
+  oxford_tbl[3, -6] %>%  
   prop.table %>% 
-  `*`(100) %>% 
+  `*`(100) 
+oxford_ptbl %>%
   c("계" = sum(.)) %>%
-  format(digits = 1, nsmall = 1) %>% 
+  format(digits = 1, nsmall = 1) %>%
   pander
 ```
+
+행복점수의 등급별 백분율을 파악해 보면 꽤 행복하다 이상이 `r format(sum(oxford_ptbl[4:5]), digits = 2, nsmall = 2)`%이고, 그저 그렇다가 `r format(sum(oxford_ptbl[3]), digits = 2, nsmall = 2)`%, 다소 행복하지 않다 이하가 `r format(sum(oxford_ptbl[1:2]), digits = 2, nsmall = 2)` 이다. 다행히도 대부분 행복합니다.
 
 ### `geom_boxplot()`
 
@@ -240,30 +293,27 @@ ggplot(data = oxford,
   scale_y_continuous(name = "행복 점수")
 ```
 
-### `t.test()` on means
-
-```{r, echo = FALSE}
-t.test(Scores ~ group, data = oxford, var.equal = FALSE, alternative = "greater") %>% 
-  pander
-```
+국문, 영문 행복도 조사 결과를 시각적으로 비교하기 위하여 Boxplot 을 그려 보았습니다. 국문 행복도 조사의 중위수가 영문 행복도 조사의 중위수보다 높다는 게 눈에 띕니다. 그 밖에 기초 통계에 나오는 통계값들을 시각적으로 비교할 수 있습니다.
 
 ## 소요시간 비교
 
-초 단위로 측정한 소요시간에서는 오전, 오후를 잘못 쓴다거나 시작 시간이 제출 시간보다 늦게 입력한 사람들이 있고, 과도하게 (한 시간) 이상 소요된 것으로 나오는 사람들이 있어서 일일이 찾아서 수정하였고, 한 시간 이상은 사실상 설문지를 작성하다가 다른 일을 하고 다시 돌아와 마치는 과정을 의미하는 것으로 판단하여 NA 로 처리하였다. 소요 시간에 있어서도 국문과 영문에는 통계적으로 유의한 수준의 차이가 관찰되지 않았다.
-
-평균적으로 `r oxford %$% Duration %>% tapply(INDEX = oxford$group, FUN = mean, na.rm = TRUE) %>% diff %>% round(1)`초, 즉 `r oxford %$% Duration %>% tapply(INDEX = oxford$group, FUN = mean, na.rm = TRUE) %>% diff %>% "%/%"(60)`분 `r oxford %$% Duration %>% tapply(INDEX = oxford$group, FUN = mean, na.rm = TRUE) %>% diff %>% "%%"(60) %>% round`초정도 국문 질문지에 더 빨리 응답한다. 소요시간의 중위값을 비교해 보면 `r oxford %$% Duration %>% tapply(INDEX = oxford$group, FUN = median, na.rm = TRUE) %>% diff %>% round(1)` 초, 약 `r oxford %$% Duration %>% tapply(INDEX = oxford$group, FUN = median, na.rm = TRUE) %>% diff %>% "%/%"(60) `분 `r oxford %$% Duration %>% tapply(INDEX = oxford$group, FUN = median, na.rm = TRUE) %>% diff %>% "%%"(60)  %>% round`초 만큼 국문 질문지에 더 빨리 응답하지만 통계적으로 유의한 수준은 아니다.
+초 단위로 측정한 소요시간에서는 오전, 오후를 잘못 쓴다거나 시작 시간을 제출 시간보다 늦게 입력한 사람들도 있고, 과도하게 (한 시간 이상) 소요된 것으로 나오는 사람들이 있어서 일일이 찾아서 수정하였고, 한 시간 이상은 사실상 설문지를 작성하다가 다른 일을 하고 다시 돌아와 마치는 것으로 판단하여 NA 로 처리하였습니다. 기초 통계부터 살펴보겠습니다. 
 
 ### `summary()`
 
 ```{r, echo = FALSE}
-oxford$Duration %>% 
+Duration_summary <- 
+  oxford$Duration %>% 
   as.numeric %>%
 #   `/`(60) %>%
 #   round(2) %>%
-  tapply(INDEX = oxford$group, FUN = summary) %>%
+  tapply(INDEX = oxford$group, FUN = summary) 
+Duration_summary %>%
   pander
 ```
 
+국문 행복도 조사의 평균 소요시간은 `r format(Duration_summary$국문[4], digits = 2, nsmall = 2)`초, 영문 행복도 조사의 평균 소요시간은 `r format(Duration_summary$국문[4], digits = 2, nsmall = 2)`초이므로 평균적으로 `r oxford %$% Duration %>% tapply(INDEX = oxford$group, FUN = mean, na.rm = TRUE) %>% diff %>% round(1)`초, 즉 `r oxford %$% Duration %>% tapply(INDEX = oxford$group, FUN = mean, na.rm = TRUE) %>% diff %>% "%/%"(60)`분 `r oxford %$% Duration %>% tapply(INDEX = oxford$group, FUN = mean, na.rm = TRUE) %>% diff %>% "%%"(60) %>% round`초 정도 국문 행복도 조사 시간이 덜 걸립니다.  소요시간의 중위
+수를 비교해 보아도 국문 행복도 조사 소요시간의 중위수는 `r format(Duration_summary$국문[3], digits = 2, nsmall = 2)`초, 영문 행복도 조사의 평균 소요시간은 `r format(Duration_summary$국문[3], digits = 2, nsmall = 2)`초이므로  `r oxford %$% Duration %>% tapply(INDEX = oxford$group, FUN = median, na.rm = TRUE) %>% diff %>% round(1)` 초, 약 `r oxford %$% Duration %>% tapply(INDEX = oxford$group, FUN = median, na.rm = TRUE) %>% diff %>% "%/%"(60) `분 `r oxford %$% Duration %>% tapply(INDEX = oxford$group, FUN = median, na.rm = TRUE) %>% diff %>% "%%"(60)  %>% round`초 만큼 국문 행복도 조사의 소요시간이 덜 걸립니다. 
 ### `geom_boxplot()`
 
 ```{r, echo = FALSE, message = FALSE}
@@ -275,15 +325,22 @@ ggplot(data = oxford,
   scale_y_continuous(name = "소요시간(초)")
 ```
 
+국문, 영문 행복도 조사 소요시간의 Boxplot 을 그려 보았습니다. 워낙 큰 값들이 많이 나오기 때문에 중위수 비교 등이 좀 어려운 측면이 있습니다.
+
 ### `t.test()` on means
 
 ```{r, echo = FALSE}
-t.test(as.numeric(Duration) ~ group, data = oxford, var.equal = FALSE) %>% pander
+Duration_t_test <- 
+  t.test(as.numeric(Duration) ~ group, data = oxford, var.equal = FALSE) 
+Duration_t_test %>% 
+  pander
 ```
+
+국문, 영문 행복도 조사의 소요 시간에 대해서도 t-test 를 수행하였는데 t-통계량은 `r format(Duration_t_test[1], digits = 2, nsmall = 2)`, 자유도는 `r format(Duration_t_test[2], digits = 2, nsmall = 2)`, p-value 는 `r format(Duration_t_test[3], digits = 2, nsmall = 2)`으로 통계적으로 유의한 차이가 관찰되지 않았습니다.
 
 ## 일 단위 마감 시간으로부터 제출 시간의 분포
 
-### 분포표
+### 분포표 (국문, 영문 행복도 조사의 제출시간은 닮았는가?)
 
 ```{r, echo = FALSE, warning = FALSE}
 N <- nrow(oxford)
@@ -294,13 +351,17 @@ days_tbl %>%
 #  cbind("계" = rowSums(.)) %>%
 #  rbind("계" = colSums(.)) %>%
   pander(caption = "일 단위")
-oxford$days %>%
+days_chisq_test <-
+  oxford$days %>%
   cut(breaks = c(0:14), include.lowest = TRUE) %>%
   table(oxford$group, .) %>%
-  `[`(, -(1:4)) %>%
-  chisq.test(simulate.p.value = FALSE) %>%
+  `[`(, -(1:2)) %>%
+  chisq.test(simulate.p.value = FALSE) 
+days_chisq_test %>%
   pander
 ```
+
+제출시간의 분포가 국문 행복도 조사와 영문 행복도 조사 간에 닮았는지 알아 보았습니다. 분포표 만으로 쉽게 파악할 수 없지만 카이제곱테스트가 도와 줍니다. 카이제곱 통계량은 `r format(days_chisq_test[1], digits = 2, nsmall = 2)`, 자유도는 `r format(days_chisq_test[2], digits = 2, nsmall = 2)`, p-value 는 `r format(days_chisq_test[3], digits = 2, nsmall = 2)` 이므로 국문이나 영문 행복도 조사 제출 시간의 분포에는 통계적으로 유의한 차이가 관찰되지 않습니다.
 
 ### 막대그래프
 
@@ -323,9 +384,11 @@ text(x = b[14, 1], y = sum(days_tbl[, 1]) / 2,
 title(main = paste0("Oxford 2402 (", N, "명 제출)"))
 # title(main = "일 단위 퀴즈 제출 인원", sub = paste0("Quiz230925 (", N, "명 제출)"))
 # dev.copy(png, file = "./pics/2302/quiz_submission_5.png", width = 640, height = 480)
-invisible(dev.off())
+# invisible(dev.off())
 })
 ```
+
+제출시간의 분포를 막대그래프로 그려 보았습니다. 마감일에 몰리는 경향이 관찰되고 있습니다.
 
 ### Mosaic Plot
 
@@ -353,6 +416,8 @@ m2 + geom_text(aes(x = center, y = 1.05),
                                   family = "KoPubWorldDotum Bold")) 
 ggsave("./pics/oxford_submission.png", dpi = 120, width = 960, height = 840, units = "px")
 ```
+
+제출시간의 분포를 국문, 영문 간에 구분하여 Mosaic Plot 으로 그려 보았습니다. 닮은 것이 느껴지나요?
 
 ```{r, save, echo = FALSE}
 saveRDS(oxford, file = "./oxford241021.RDS")

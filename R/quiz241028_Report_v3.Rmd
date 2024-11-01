@@ -38,7 +38,7 @@ class_roll <-
 # saveRDS(class_roll, file = "./class_roll_241028.RDS")
 quiz <- 
   read_excel("./data/quiz241028.xlsx",
-             range = "A2:N108",
+             range = "A2:N191",
              col_names = FALSE)
 str(quiz)
 names(quiz) <- 
@@ -117,6 +117,7 @@ quiz_wrong_ids <- quiz_wrong_ids %>%
     id == "20241529" ~ "20241520",
     id == "202436624" ~ "20243624",
     id == "20242910" ~ "20242901",
+    id == "20227131" ~ "20227141",
     TRUE ~ id
   ))
 # 3. quiz 에서 id 틀린 행을 제거하고 옳은 id 갖춘 행으로 교체하기
@@ -520,7 +521,7 @@ include_graphics("./pics/default_effects_by_country.png")
 
 ### 분포표 (Red, Black 은 닮았는가?)
 
-```{r, echo = FALSE}
+```{r, echo = FALSE, warning = FALSE}
 N <- nrow(quiz)
 days_tbl <- quiz$days %>%
   cut(breaks = c(0:14), include.lowest = TRUE) %>%
@@ -532,7 +533,7 @@ days_tbl %>%
 quiz$days %>%
   cut(breaks = c(0:14), include.lowest = TRUE) %>%
   table(quiz$group, .) %>%
-  `[`(, -(1:11)) %>%
+  `[`(, -(1:9)) %>%
   chisq.test(simulate.p.value = FALSE) %>%
   pander
 ```
