@@ -1,7 +1,7 @@
 ---
 title: "Quiz 241028 (Default Effects)"
 author: "coop711"
-date: "2024-10-28"
+date: "`r format(Sys.time(), '%Y-%m-%d %H:%M:%S')`"
 output: html_document
 ---
 
@@ -38,7 +38,7 @@ class_roll <-
 # saveRDS(class_roll, file = "./class_roll_241028.RDS")
 quiz <- 
   read_excel("./data/quiz241028.xlsx",
-             range = "A2:N191",
+             range = "A2:N219",
              col_names = FALSE)
 str(quiz)
 names(quiz) <- 

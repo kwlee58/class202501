@@ -1,7 +1,7 @@
 ---
 title: "Quiz 241021 (Cognitive Reponse Test)"
 author: "coop711"
-date: "2024-10-21"
+date : "`r format(Sys.time(), '%Y-%m-%d %H:%M:%S')`"
 output: html_document
 ---
 
@@ -41,7 +41,7 @@ class_roll$group <- class_roll1018$group[match(class_roll$id, class_roll1018$id)
 saveRDS(class_roll, file = "./class_roll_241025.RDS")
 quiz <- 
   read_excel("./data/quiz241021.xlsx",
-             range = "A2:O431",
+             range = "A2:O450",
              col_names = FALSE)
 names(quiz) <- 
   c("time", "email", "dept", "id", "name", paste0("Q", 1:3),  
@@ -177,9 +177,9 @@ wrong_group <- quiz %>%
 
 #> 잘못된 그룹 정보 출력
 wrong_group %>%
-  select(time, id, name, group2, group) %>%
+  select(time, id, group2, group) %>%
   arrange(time) %>%
-  rename("제출시간" = time, "학번" = id, "이름" = name, "랜덤화출석부" = group2, "구글예습퀴즈" = group) %>%
+  rename("제출시간" = time, "학번" = id, "랜덤화출석부" = group2, "구글예습퀴즈" = group) %>%
   pander(row.names = FALSE)
 
 #> 옛 코드
@@ -384,7 +384,7 @@ ptbl_q4_a %>%
   pander
 ```
 
-이를 백분률로 살펴보면 10센트를 먼저 선택지에 올린 Red 나 5센트를 먼저 올린 Black 이나 선택지를 바꾸어도 응답에는 아무런 영향을 주지 못한다는 것을 명확히 알 수 있습니다. 따라서 Red, Black 은 합쳐서 분석하는 것이 타당합니다. 그 결과는 다음과 같습니다.
+이를 백분률로 살펴보면 10센트를 먼저 선택지에 올린 Red 에서 정답 5센트를 고른 백분율, `r format(ptbl_q4_a[1, 2], digits = 2, nsmall = 1)`(%)(이)나 5센트를 먼저 선택지에 올린 Black 에서 정답 5센트를 고른 백분율, `r format(ptbl_q4_a[2, 2], digits = 2, nsmall = 1)`(%)(이)나 큰 차이가 없어서 선택지를 바꾸어도 응답에는 아무런 영향을 주지 못한다는 것을 명확히 알 수 있습니다. 따라서 Red, Black 은 합쳐서 분석하는 것이 타당합니다. 그 결과는 다음과 같습니다.
 
 ### 합산(%)
 
@@ -398,14 +398,9 @@ ptbl_q4 <-
 ptbl_q4 %>%
   format(digits = 2, nsmall = 1) %>%
   pander
-tbl_q4_a %>% 
-  `[`(3, -3, drop = FALSE) %>%
-  prop.table(margin = 1) %>%
-  `*`(100) %>%
-  cbind("계" = rowSums(.)) %>%
-  format(digits = 2, nsmall = 1) %>%
-  pander
 ```
+
+정답 5센트를 고른 백분률은 선택지의 순서 바꿈과는 무관하게 `r format(ptbl_q4[2], digits = 2, nsmall = 1)`(%)(으)로 상당히 높은 편이라고 할 수 있습니다. 
 
 ### Mosaic Plot
 
@@ -439,6 +434,8 @@ m4 + geom_text(aes(x = center, y = 1.05),
 ggsave("./pics/Quiz241021_Q4_RnB.png", dpi = 120, width = 960, height = 840, units = "px")
 ```
 
+Mosaic Plot 은 이 집계결과를 시각적으로 잘 보여줍니다. 선택지의 순서 바꿈에 거의 무관할 정도로 응답이 같았기 때문에 Red, Black 이 닮았고, 정답인 5센트를 고른 비율도 닮은 것을 잘 알 수 있습니다.
+
 ## Q5. 가발 만드는 기계
 
 ### 집계
@@ -451,35 +448,47 @@ tbl_q5_a <- quiz$Q5 %>%
 rownames(tbl_q5_a)[1:2] <- c("Red(100분 먼저)", "Black(5분 먼저)")
 tbl_q5_a %>% 
   pander
-tbl_q5_a %>%
+chisq_test_q5 <- 
+  tbl_q5_a %>%
   `[`(-3, -3) %>%
-  chisq.test(simulate.p.value = FALSE) %>%
+  chisq.test(simulate.p.value = FALSE) 
+chisq_test_q5 %>%
   pander
 ```
+
+기계 다섯 대가 5분 동안 가발 다섯 개를 만들면 기계 한 대가 5분 동안 가발 한 개를 만드는 셈이므로 기계 100대를 동원하더라도 5분이면 가발 100 개를 만들 수 있습니다. 다만, 다섯 대, 5분, 다섯 개가 함께 나오니까 저도 모르게 즉각적으로 100대, 100분, 100개로 반응하게 됩니다. Red 와 Black 은 선택지의 순서만 바꾼 것인데 아무런 영향을 주지 않고 있습니다. 여기서 수행하고 있는 카이제곱 테스트는 이 순서를 바꾼 것의 효과가 통계적으로 유의한지 알아보기 위한 것입니다. 그 결과 카이제곱 통계량은 `r chisq_test_q5[1] %>% format(digits = 2, nsmall = 2)`, 자유도는 `r chisq_test_q5[2] %>% format(digits = 2, nsmall = 2)`, p-value 는 `r chisq_test_q5[3] %>% format(digits = 2, nsmall = 2)`이므로 선택지의 순서를 바꾼 것은 통계적으로 유의한 차이를 보이지 않습니다. 적어도 지금 자료로는 닮아도 이렇게 닮기가 힘들 정도입니다.
 
 ### % 비교.  
 
 ```{r, echo = FALSE}
-tbl_q5_a %>% 
+ptbl_q5_a <- 
+  tbl_q5_a %>% 
   `[`(-3, -3) %>%
-  prop.table(margin = 1) %>%
+  prop.table(margin = 1) %>% 
   `*`(100) %>%
-  cbind("계" = rowSums(.)) %>%
+  cbind("계" = rowSums(.))
+ptbl_q5_a %>%
   format(digits = 2, nsmall = 1) %>%
   pander
 ```
+
+이를 백분률로 살펴보면 100분을 먼저 선택지에 올린 Red에서 정답 5분을 고른 백분율, `r format(ptbl_q5_a[1, 2], digits = 2, nsmall = 1)`(%)(이)나 5분을 먼저 선택지에 올린 Black 에서 정답 5분을 고른 백분율, `r format(ptbl_q5_a[2, 2], digits = 2, nsmall = 1)`(%)(이)나 큰 차이가 없어서 선택지를 바꾸어도 응답에는 아무런 영향을 주지 못한다는 것을 명확히 알 수 있습니다. 따라서 Red, Black 은 합쳐서 분석하는 것이 타당합니다. 그 결과는 다음과 같습니다.
 
 ### 합산(%)
 
 ```{r, echo = FALSE}
-tbl_q5_a %>% 
-  `[`(3, -3, drop = FALSE) %>%
-  prop.table(margin = 1) %>%
-  `*`(100) %>%
-  cbind("계" = rowSums(.)) %>%
+ptbl_q5 <- 
+  tbl_q5_a %>% 
+  `[`(3, -3) %>%
+  prop.table %>% 
+  c("계" = sum(.)) %>%
+  `*`(100) 
+ptbl_q5 %>%
   format(digits = 2, nsmall = 1) %>%
   pander
 ```
+
+정답 5분을 고른 백분률은 선택지의 순서 바꿈과는 무관하게 `r format(ptbl_q5[2], digits = 2, nsmall = 1)`(%)(으)로 상당히 높은 편이라고 할 수 있습니다.
 
 ### Mosaic Plot
 
@@ -513,6 +522,8 @@ m5 + geom_text(aes(x = center, y = 1.05),
 ggsave("./pics/Quiz241021_Q5_RnB.png", dpi = 120, width = 960, height = 840, units = "px")
 ```
 
+Mosaic Plot 은 이 집계결과를 시각적으로 잘 보여줍니다. 선택지의 순서 바꿈에 거의 무관할 정도로 응답이 같았기 때문에 Red, Black 이 닮았고, 정답인 5분을 고른 비율도 닮은 것을 잘 알 수 있습니다.
+
 ## Q6. 호수에 수련
 
 ### 집계
@@ -525,35 +536,47 @@ tbl_q6_a <- quiz$Q6 %>%
 rownames(tbl_q6_a)[1:2] <- c("Red(24일 먼저)", "Black(47일 먼저)")
 tbl_q6_a %>% 
   pander
-tbl_q6_a %>%
+chisq_test_q6 <- 
+  tbl_q6_a %>%
   `[`(-3, -3) %>%
-  chisq.test(simulate.p.value = FALSE) %>%
+  chisq.test(simulate.p.value = FALSE) 
+chisq_test_q6 %>%
   pander
 ```
+
+수련 잎이 차지하는 면적이 날마다 두 배로 늘어나기 때문에 호수 전체를 뒤덮는데 48일이 걸린다면, 호수 절반을 뒤덮는 데는 그 절반인 24일로 답하기 쉽습니다. 그러나 절반이 뒤덮인 상태에서 하루면 전체를 뒤덮게 되므로 정답은 47일입니다. Red 와 Black 은 선택지의 순서만 바꾼 것인데 아무런 영향을 주지 않고 있습니다. 여기서 수행하고 있는 카이제곱 테스트는 이 순서를 바꾼 것의 효과가 통계적으로 유의한지 알아보기 위한 것입니다. 그 결과 카이제곱 통계량은 `r chisq_test_q6[1] %>% format(digits = 2, nsmall = 2)`, 자유도는 `r chisq_test_q6[2] %>% format(digits = 2, nsmall = 2)`, p-value 는 `r chisq_test_q6[3] %>% format(digits = 2, nsmall = 2)`이므로 선택지의 순서를 바꾼 것은 통계적으로 유의한 차이를 보이지 않습니다. 
 
 ### % 비교.  
 
 ```{r, echo = FALSE}
-tbl_q6_a %>% 
+ptbl_q6_a <- 
+  tbl_q6_a %>% 
   `[`(-3, -3) %>%
-  prop.table(margin = 1) %>%
+  prop.table(margin = 1) %>% 
   `*`(100) %>%
-  cbind("계" = rowSums(.)) %>%
+  cbind("계" = rowSums(.))
+ptbl_q6_a %>%
   format(digits = 2, nsmall = 1) %>%
   pander
 ```
+
+이를 백분률로 살펴보면 24일을 먼저 선택지에 올린 Red에서 정답 47일을 고른 백분율, `r format(ptbl_q6_a[1, 2], digits = 2, nsmall = 1)`(%)(이)나 47일을 먼저 선택지에 올린 Black 에서 정답 47일을 고른 백분율, `r format(ptbl_q6_a[2, 2], digits = 2, nsmall = 1)`(%)(이)나 큰 차이가 없어서 선택지를 바꾸어도 응답에는 아무런 영향을 주지 못한다는 것을 명확히 알 수 있습니다. 따라서 Red, Black 은 합쳐서 분석하는 것이 타당합니다. 그 결과는 다음과 같습니다.
 
 ### 합산(%)
 
 ```{r, echo = FALSE}
-tbl_q6_a %>% 
-  `[`(3, -3, drop = FALSE) %>%
-  prop.table(margin = 1) %>%
-  `*`(100) %>%
-  cbind("계" = rowSums(.)) %>%
+ptbl_q6 <- 
+  tbl_q6_a %>% 
+  `[`(3, -3) %>%
+  prop.table %>% 
+  c("계" = sum(.)) %>%
+  `*`(100) 
+ptbl_q6 %>%
   format(digits = 2, nsmall = 1) %>%
   pander
 ```
+
+정답 47일을 고른 백분율은 선택지의 순서 바꿈과는 무관하게 `r format(ptbl_q6[2], digits = 2, nsmall = 1)`(%)(으)로 상당히 높은 편이라고 할 수 있습니다.
 
 ### Mosaic Plot
 
@@ -587,6 +610,8 @@ m6 + geom_text(aes(x = center, y = 1.05),
 ggsave("./pics/Quiz241021_Q6_RnB.png", dpi = 120, width = 960, height = 840, units = "px")
 ```
 
+Mosaic Plot 은 이 집계결과를 시각적으로 잘 보여줍니다. 선택지의 순서 바꿈에 거의 무관할 정도로 응답이 같았기 때문에 Red, Black 이 닮았고, 정답인 47일을 고른 비율도 닮은 것을 잘 알 수 있습니다.
+
 ## 일 단위 마감 시간으로부터 제출 시간의 분포
 
 ### 분포표 (Red, Black 은 닮았는가?)
@@ -600,13 +625,17 @@ days_tbl %>%
 #  cbind("계" = rowSums(.)) %>%
 #  rbind("계" = colSums(.)) %>%
   pander(caption = "일 단위")
-quiz$days %>%
+days_chisq_test <-
+  quiz$days %>%
   cut(breaks = c(0:14), include.lowest = TRUE) %>%
   table(quiz$group, .) %>%
   `[`(, -(1:2)) %>%
-  chisq.test(simulate.p.value = FALSE) %>%
+  chisq.test(simulate.p.value = FALSE) 
+days_chisq_test %>%
   pander
 ```
+
+제출시간의 분포가 Red, Black 간에 닮았는지 알아 보았습니다. 분포표 만으로 쉽게 파악할 수 없지만 카이제곱테스트가 도와 줍니다. 카이제곱 통계량은 `r format(days_chisq_test[1], digits = 2, nsmall = 2)`, 자유도는 `r format(days_chisq_test[2], digits = 2, nsmall = 2)`, p-value 는 `r format(days_chisq_test[3], digits = 2, nsmall = 2)` 이므로 제출 시간의 분포는 Red, Black 간에 통계적으로 유의한 차이가 관찰되지 않습니다.
 
 ### 막대그래프
 
@@ -632,6 +661,8 @@ dev.copy(png, file = "./pics/2401/quiz_submission_8.png", width = 640, height = 
 invisible(dev.off())
 })
 ```
+
+제출시간의 분포를 막대그래프로 그려 보았습니다. 마감일에 몰리는 경향이 관찰되고 있습니다.
 
 ### Mosaic Plot
 
@@ -661,6 +692,8 @@ m2 + geom_text(aes(x = center, y = 1.05),
         axis.text.x = element_text(angle = -90, vjust = 0.5)) 
 ggsave("./pics/Quiz241021_submission_7.png", dpi = 120, width = 960, height = 840, units = "px")
 ```
+
+제출시간의 분포를 Red, Black 간에 구분하여 Mosaic Plot 으로 그려 보았습니다. 닮은 것이 느껴지나요?
 
 ```{r, save, echo = FALSE}
 saveRDS(quiz[c("id", "name")], file = "./quiz241021.RDS")

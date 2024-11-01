@@ -1,7 +1,7 @@
 ---
 title: "Oxford Happiness Questionnaire"
 author: "coop711"
-date: "2024-10-21"
+date: "`r format(Sys.time(), '%Y-%m-%d %H:%M:%S')`"
 output: html_document
 ---
 
@@ -25,7 +25,7 @@ library(magrittr)
 options(width = 180)
 class_roll <- readRDS("./class_roll_241018.RDS")
 oxford <- "./data/oxford_241021.xlsx" %>%
-  read_excel(range = "A2:BM435",
+  read_excel(range = "A2:BM453",
              col_names = FALSE)
 names(oxford) <- 
   c("Time1", "email", "dept", "id", "name", "Time2", "group", paste0("Q", 1:29, "_R"), paste0("Q", 1:29, "_B"))
@@ -107,6 +107,7 @@ literacy_wrong_ids <-
     id == "2024380" ~ "20243850",
     id == "20243699" ~ "20243609",
     id == "204242613" ~ "20242613",
+    id == "20201079" ~ "20201070",
     TRUE ~ id
   ))
 # 3. quiz 에서 id 틀린 행을 제거하고 옳은 id 갖춘 행으로 교체하기
@@ -183,9 +184,9 @@ wrong_group <- oxford %>%
 
 #> 잘못된 그룹 정보 출력
 wrong_group %>%
-  select(Time1, id, name, group2, group) %>%
+  select(Time1, id, group2, group) %>%
   arrange(Time1) %>%
-  rename("제출시간" = Time1, "학번" = id, "이름" = name, "랜덤화출석부" = group2, "구글예습퀴즈" = group) %>%
+  rename("제출시간" = Time1, "학번" = id, "랜덤화출석부" = group2, "구글예습퀴즈" = group) %>%
   pander(row.names = FALSE)
 
 #> 옛 코드
