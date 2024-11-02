@@ -25,7 +25,7 @@ library(magrittr)
 options(width = 180)
 class_roll <- readRDS("./class_roll_241018.RDS")
 oxford <- "./data/oxford_241021.xlsx" %>%
-  read_excel(range = "A2:BM476",
+  read_excel(range = "A2:BM508",
              col_names = FALSE)
 names(oxford) <- 
   c("Time1", "email", "dept", "id", "name", "Time2", "group", paste0("Q", 1:29, "_R"), paste0("Q", 1:29, "_B"))
@@ -208,11 +208,11 @@ wrong_tbl %>%
 
 ## 응답인원의 Red, Black
 
-Red 로 응답한 인원은 `r colSums(wrong_tbl)[1]`명, Black 에 응답한 인원은 `r colSums(wrong_tbl)[2]`명입니다. 전체 응답인원 `r sum(wrong_tbl)` 명을 랜덤하게 둘로 나눌 때 어느 한 쪽의 기대인원은 이를 반으로 나눠 준`r sum(wrong_tbl) / 2`명이고, 표준오차는 이의 제곱근에 1/2을 곱해 준 `r round(sqrt(sum(wrong_tbl)) * 1 / 2, digits = 1)` 명입니다. 따라서 Red, Black 각 그룹에 관찰된 인원은 기대인원으로부터 표준오차 범위 안에 들어갑니다. 
+Red(국문) 로 응답한 인원은 `r colSums(wrong_tbl)[1]`명, Black(영문) 에 응답한 인원은 `r colSums(wrong_tbl)[2]`명입니다. 전체 응답인원 `r sum(wrong_tbl)` 명을 랜덤하게 둘로 나눌 때 어느 한 쪽의 기대인원은 이를 반으로 나눠 준`r sum(wrong_tbl) / 2`명이고, 표준오차는 이의 제곱근에 1/2을 곱해 준 `r round(sqrt(sum(wrong_tbl)) * 1 / 2, digits = 1)` 명입니다. 따라서 Red, Black 각 그룹에 관찰된 인원은 기대인원으로부터 표준오차 범위 안에 들어갑니다. 
 
 ## 행복 점수 비교
 
-국문 설문지와 영문 설문지의 행복점수를 비교한다. 먼저 기초통계를 비교합니다. 행복점수 단계별로 비교했을 때나 기초통계로 비교했을 때나 국문 설문지로 작성한 그룹 (Red)의 행복점수가 높게 나온다. 그 차이는 통계적으로 매우 매우 유의한 수준이다. 
+국문 설문지와 영문 설문지의 행복점수를 비교합니다. 먼저 기초통계입니다. 행복점수 단계별로 비교했을 때나 기초통계로 비교했을 때나 국문 설문지로 작성한 그룹 (Red)의 행복점수가 높게 나옵니다. 그 차이는 통계적으로 유의한 수준입니다. 
 
 ### `summary()`
 
@@ -225,7 +225,7 @@ scores_summary %>%
   pander
 ```
 
-Red 집단의 평균 행복점수는 `r format(scores_summary$국문[4], digits = 2, nsmall = 2)`,  Black 집단의 평균 행복점수는 `r format(scores_summary$영문[4], digits = 2, nsmall = 2)` 으로 국문 설문지에 응답한 행복점수의 평균이 `r format(scores_summary$국문[4] - scores_summary$영문[4], digits = 2, nsmall = 2)` 점 더 높게 나온다. 중위수를 비교하더라도 Red 집단의 행복점수 중위수는 `r format(scores_summary$국문[3], digits = 2, nsmall = 2)`,  Black 집단의 행복점수 중위수는 `r format(scores_summary$영문[3], digits = 2, nsmall = 2)` 으로 국문 설문지에 응답한 행복점수의 중위수가 `r format(scores_summary$국문[3] - scores_summary$영문[3], digits = 2, nsmall = 2)` 점 더 높게 나온다.
+Red(국문) 집단의 평균 행복점수는 `r format(scores_summary$국문[4], digits = 2, nsmall = 2)`,  Black(영문)) 집단의 평균 행복점수는 `r format(scores_summary$영문[4], digits = 2, nsmall = 2)` 으로 국문 설문지에 응답한 행복점수의 평균이 `r format(scores_summary$국문[4] - scores_summary$영문[4], digits = 2, nsmall = 2)` 점 더 높게 나옵니다. 중위수를 비교하더라도 Red(국문) 집단의 행복점수 중위수는 `r format(scores_summary$국문[3], digits = 2, nsmall = 2)`,  Black(영문) 집단의 행복점수 중위수는 `r format(scores_summary$영문[3], digits = 2, nsmall = 2)` 으로 국문 설문지에 응답한 행복점수의 중위수가 `r format(scores_summary$국문[3] - scores_summary$영문[3], digits = 2, nsmall = 2)` 점 더 높게 나옵니다.
 
 ### `t.test()` on means
 
@@ -278,7 +278,7 @@ oxford_ptbl %>%
   pander
 ```
 
-행복점수의 등급별 백분율을 파악해 보면 꽤 행복하다 이상이 `r format(sum(oxford_ptbl[4:5]), digits = 2, nsmall = 2)`%이고, 그저 그렇다가 `r format(sum(oxford_ptbl[3]), digits = 2, nsmall = 2)`%, 다소 행복하지 않다 이하가 `r format(sum(oxford_ptbl[1:2]), digits = 2, nsmall = 2)` 이다. 다행히도 대부분 행복합니다.
+행복점수의 등급별 백분율을 파악해 보면 꽤 행복하다 이상이 `r format(sum(oxford_ptbl[4:5]), digits = 2, nsmall = 2)`%이고, 그저 그렇다가 `r format(sum(oxford_ptbl[3]), digits = 2, nsmall = 2)`%, 다소 행복하지 않다 이하가 `r format(sum(oxford_ptbl[1:2]), digits = 2, nsmall = 2)` 입니다. 다행히도 대부분 행복합니다.
 
 ### `geom_boxplot()`
 
@@ -315,6 +315,7 @@ Duration_summary %>%
 
 국문 행복도 조사의 평균 소요시간은 `r format(Duration_summary$국문[4], digits = 2, nsmall = 2)`초, 영문 행복도 조사의 평균 소요시간은 `r format(Duration_summary$국문[4], digits = 2, nsmall = 2)`초이므로 평균적으로 `r oxford %$% Duration %>% tapply(INDEX = oxford$group, FUN = mean, na.rm = TRUE) %>% diff %>% round(1)`초, 즉 `r oxford %$% Duration %>% tapply(INDEX = oxford$group, FUN = mean, na.rm = TRUE) %>% diff %>% "%/%"(60)`분 `r oxford %$% Duration %>% tapply(INDEX = oxford$group, FUN = mean, na.rm = TRUE) %>% diff %>% "%%"(60) %>% round`초 정도 국문 행복도 조사 시간이 덜 걸립니다.  소요시간의 중위
 수를 비교해 보아도 국문 행복도 조사 소요시간의 중위수는 `r format(Duration_summary$국문[3], digits = 2, nsmall = 2)`초, 영문 행복도 조사의 평균 소요시간은 `r format(Duration_summary$국문[3], digits = 2, nsmall = 2)`초이므로  `r oxford %$% Duration %>% tapply(INDEX = oxford$group, FUN = median, na.rm = TRUE) %>% diff %>% round(1)` 초, 약 `r oxford %$% Duration %>% tapply(INDEX = oxford$group, FUN = median, na.rm = TRUE) %>% diff %>% "%/%"(60) `분 `r oxford %$% Duration %>% tapply(INDEX = oxford$group, FUN = median, na.rm = TRUE) %>% diff %>% "%%"(60)  %>% round`초 만큼 국문 행복도 조사의 소요시간이 덜 걸립니다. 
+
 ### `geom_boxplot()`
 
 ```{r, echo = FALSE, message = FALSE}
@@ -339,30 +340,42 @@ Duration_t_test %>%
 
 국문, 영문 행복도 조사의 소요 시간에 대해서도 t-test 를 수행하였는데 t-통계량은 `r format(Duration_t_test[1], digits = 2, nsmall = 2)`, 자유도는 `r format(Duration_t_test[2], digits = 2, nsmall = 2)`, p-value 는 `r format(Duration_t_test[3], digits = 2, nsmall = 2)`으로 통계적으로 유의한 차이가 관찰되지 않았습니다.
 
-## 일 단위 마감 시간으로부터 제출 시간의 분포
+## 마감 시간으로부터 제출 시간의 분포
 
-### 분포표 (국문, 영문 행복도 조사의 제출시간은 닮았는가?)
+### 분포표
 
 ```{r, echo = FALSE, warning = FALSE}
-N <- nrow(oxford)
-days_tbl <- oxford$days %>%
+N <- nrow(quiz)
+days_tbl <- 
+  oxford$days %>%
   cut(breaks = c(0:14), include.lowest = TRUE) %>%
   table(oxford$group, .) 
 days_tbl %>%
-#  cbind("계" = rowSums(.)) %>%
-#  rbind("계" = colSums(.)) %>%
+  cbind("계" = rowSums(.)) %>%
+  rbind("계" = colSums(.)) %>%
   pander(caption = "일 단위")
+```
+
+분포표로부터 두 가지 문제를 살펴보겠습니다. 첫째, 날마다 고르게 제출하는가? 둘쨰, Red(국문), Black(영문)) 간에 통게적으로 유의한 차이가 있는가?
+각 문제를 살펴보기 위해서는 분포표의 일부분을 대상으로 카이제곱 테스트를 수행합니다.
+
+### 날마다 고르게 제출하는가?
+
+```{r, echo = FALSE, warning = FALSE}
+days_tbl %>%
+  rbind("계" = colSums(.)) %>%
+  `[`(3, 2:14) %>%
+  pander
 days_chisq_test <-
-  oxford$days %>%
-  cut(breaks = c(0:14), include.lowest = TRUE) %>%
-  table(oxford$group, .) %>%
-  `[`(, -(1:1)) %>%
+  days_tbl %>%
+  rbind("계" = colSums(.)) %>%
+  `[`(3, 2:14) %>%
   chisq.test(simulate.p.value = FALSE) 
 days_chisq_test %>%
   pander
 ```
 
-제출시간의 분포가 국문 행복도 조사와 영문 행복도 조사 간에 닮았는지 알아 보았습니다. 분포표 만으로 쉽게 파악할 수 없지만 카이제곱테스트가 도와 줍니다. 카이제곱 통계량은 `r format(days_chisq_test[1], digits = 2, nsmall = 2)`, 자유도는 `r format(days_chisq_test[2], digits = 2, nsmall = 2)`, p-value 는 `r format(days_chisq_test[3], digits = 2, nsmall = 2)` 이므로 국문이나 영문 행복도 조사 제출 시간의 분포에는 통계적으로 유의한 차이가 관찰되지 않습니다.
+날마다 고르게 제출하는지 알아 보았습니다. 분포표의 "계"행에서 '계'열을 제외하고 카이제곱테스트를 수행합니다. 분포표 만으로도 쉽게 파악할 수 있지만 카이제곱테스트가 명확히 해 줍니다. 카이제곱 통계량은 `r format(days_chisq_test[1], digits = 2, nsmall = 2)`, 자유도는 `r format(days_chisq_test[2], digits = 2, nsmall = 2)`, p-value 는 `r format(days_chisq_test[3], digits = 2, nsmall = 2)` 이므로 제출은 고르지 않고 특정 날짜에 치우쳐 있습니다. 막대그래프로 살펴 보겠습니다.
 
 ### 막대그래프
 
@@ -377,19 +390,34 @@ b <-
   rev %>%
   barplot(space = 0, names.arg = rep(c("월", "화", "수", "목", "금", "토", "일"), 2),
           col = c(rep("white", 13), "pink"),
-          ylim = c(0, 200)) 
+          ylim = c(0, 300)) 
 text(x = b[14, 1], y = sum(days_tbl[, 1]), 
      labels = paste0(sum(days_tbl[, 1]), "명"), pos = 3)
 text(x = b[14, 1], y = sum(days_tbl[, 1]) / 2, 
      labels = paste0(format(sum(days_tbl[, 1]) / N * 100, digits = 1, nsmall = 0), "%"))
-title(main = paste0("Oxford 2402 (", N, "명 제출)"))
-# title(main = "일 단위 퀴즈 제출 인원", sub = paste0("Quiz230925 (", N, "명 제출)"))
-# dev.copy(png, file = "./pics/2302/quiz_submission_5.png", width = 640, height = 480)
-# invisible(dev.off())
+title(main = paste0("oxford241021 (", N, "명 제출)"))
+# title(main = "일 단위 퀴즈 제출 인원", sub = paste0("oxford230925 (", N, "명 제출)"))
+dev.copy(png, file = "./pics/2402/oxford_submission_8.png", width = 640, height = 480)
+invisible(dev.off())
 })
 ```
 
-제출시간의 분포를 막대그래프로 그려 보았습니다. 마감일에 몰리는 경향이 관찰되고 있습니다.
+### Red(국문), Black(영문) 간에 닮았는가?
+
+```{r, echo = FALSE, warning = FALSE}
+days_tbl %>%
+  rbind("계" = colSums(.)) %>%
+  `[`(-3, 2:14) %>%
+  pander
+days_RnB_chisq_test <-
+  days_tbl %>%
+  `[`(-3, 2:14) %>%
+  chisq.test(simulate.p.value = FALSE) 
+days_RnB_chisq_test %>%
+  pander
+```
+
+제출시간의 분포가 Red(국문), Black(영문) 간에 닮았는지 알아 보았습니다. 이번에는 분포표의 첫번쨰와 두번쨰 행, '계'열을 제외한 나머지 열에 대해서 카이제곱테스트를 수행합니다. 카이제곱 통계량은 `r format(days_RnB_chisq_test[1], digits = 2, nsmall = 2)`, 자유도는 `r format(days_RnB_chisq_test[2], digits = 2, nsmall = 2)`, p-value 는 `r format(days_RnB_chisq_test[3], digits = 2, nsmall = 2)` 이므로 제출 시간의 분포는 Red(국문), Black(영문) 간에 통계적으로 유의한 차이가 관찰되지 않습니다. 이 사실을 Mosaic Plot 을 이용하여 시각적으로 살펴보겠습니다. 닮았다고 느껴지나요?
 
 ### Mosaic Plot
 
@@ -408,19 +436,19 @@ m2 + geom_text(aes(x = center, y = 1.05),
   theme_bw(base_family = "KoPubWorldDotum Medium") +
   labs(title = "마감일로부터 제출시간의 분포", x = "마감일로부터 일수(누적 %)", y = "인원 백분율(%)") +
   scale_fill_brewer(name = "그룹", 
-                    labels = c("Red", "Black"),
+                    labels = c("국문", 
+                               "영문"),
                     type = "qual", 
                     palette = "Set1", 
                     direction = 1) +
   theme(plot.title = element_text(hjust = 0.5, 
                                   size = 18, 
-                                  family = "KoPubWorldDotum Bold")) 
-ggsave("./pics/oxford_submission.png", dpi = 120, width = 960, height = 840, units = "px")
+                                  family = "KoPubWorldDotum Bold"),
+        axis.text.x = element_text(angle = -90, vjust = 0.5)) 
+ggsave("./pics/oxford241021_submission_7.png", dpi = 120, width = 960, height = 840, units = "px")
 ```
 
-제출시간의 분포를 국문, 영문 간에 구분하여 Mosaic Plot 으로 그려 보았습니다. 닮은 것이 느껴지나요?
-
 ```{r, save, echo = FALSE}
-saveRDS(oxford, file = "./oxford241021.RDS")
+saveRDS(oxford[c("id", "name")], file = "./oxford241021.RDS")
 save.image("./oxford241021.RData")
 ```

@@ -42,7 +42,7 @@ class_roll$group <- class_roll1025$group[match(class_roll$id, class_roll1025$id)
 saveRDS(class_roll, file = "./class_roll_241101.RDS")
 quiz <- 
   read_excel("./data/quiz241028.xlsx",
-             range = "A2:N230",
+             range = "A2:N262",
              col_names = FALSE)
 str(quiz)
 names(quiz) <- 
@@ -592,35 +592,47 @@ include_graphics("./pics/default_effects_by_country.png")
 
 Johnson and Goldtein 의 원전에 나오는 그래프를 옮겨 왔습니다. 황금색으로 표시한 나라들은 사후 장기기증 의사를 직접 표시해야 하는 나라들이고 하늘색으로 표시한 나라들은 사후 장기기증 의사를 default 로 하여 사후 장기기증 의사가 없으면 직접 표시해야 하는 나라들입니다. 여기서 오스트리아, 독일, 스웨덴, 덴마크의 수치를 확인해 보세요.
 
-## 일 단위 마감 시간으로부터 제출 시간의 분포
+## 마감 시간으로부터 제출 시간의 분포
 
-### 분포표 (Red, Black 은 닮았는가?)
+### 분포표
 
 ```{r, echo = FALSE, warning = FALSE}
 N <- nrow(quiz)
-days_tbl <- quiz$days %>%
+days_tbl <- 
+  quiz$days %>%
   cut(breaks = c(0:14), include.lowest = TRUE) %>%
   table(quiz$group, .) 
 days_tbl %>%
-#  cbind("계" = rowSums(.)) %>%
-#  rbind("계" = colSums(.)) %>%
+  cbind("계" = rowSums(.)) %>%
+  rbind("계" = colSums(.)) %>%
   pander(caption = "일 단위")
+```
+
+분포표로부터 두 가지 문제를 살펴보겠습니다. 첫째, 날마다 고르게 제출하는가? 둘쨰, Red, Black 간에 통게적으로 유의한 차이가 있는가?
+각 문제를 살펴보기 위해서는 분포표의 일부분을 대상으로 카이제곱 테스트를 수행합니다.
+
+### 날마다 고르게 제출하는가?
+
+```{r, echo = FALSE, warning = FALSE}
+days_tbl %>%
+  rbind("계" = colSums(.)) %>%
+  `[`(3, 9:14) %>%
+  pander
 days_chisq_test <-
-  quiz$days %>%
-  cut(breaks = c(0:14), include.lowest = TRUE) %>%
-  table(quiz$group, .) %>%
-  `[`(, -(1:8)) %>%
+  days_tbl %>%
+  rbind("계" = colSums(.)) %>%
+  `[`(3, 9:14) %>%
   chisq.test(simulate.p.value = FALSE) 
 days_chisq_test %>%
   pander
 ```
 
-제출시간의 분포가 Red, Black 간에 닮았는지 알아 보았습니다. 분포표 만으로 쉽게 파악할 수 없지만 카이제곱테스트가 도와 줍니다. 카이제곱 통계량은 `r format(days_chisq_test[1], digits = 2, nsmall = 2)`, 자유도는 `r format(days_chisq_test[2], digits = 2, nsmall = 2)`, p-value 는 `r format(days_chisq_test[3], digits = 2, nsmall = 2)` 이므로 제출 시간의 분포는 Red, Black 간에 통계적으로 유의한 차이가 관찰되지 않습니다.
+날마다 고르게 제출하는지 알아 보았습니다. 분포표의 "계"행에서 '계'열을 제외하고 카이제곱테스트를 수행합니다. 분포표 만으로도 쉽게 파악할 수 있지만 카이제곱테스트가 명확히 해 줍니다. 카이제곱 통계량은 `r format(days_chisq_test[1], digits = 2, nsmall = 2)`, 자유도는 `r format(days_chisq_test[2], digits = 2, nsmall = 2)`, p-value 는 `r format(days_chisq_test[3], digits = 2, nsmall = 2)` 이므로 아직까지는 날짜별로 고르게 제출하고 있습니다. 막대그래프로 살펴 보겠습니다.
 
 ### 막대그래프
 
 ```{r, echo = FALSE}
-# png(file = "./pics/2302/quiz_submission_9.png", width = 640, height = 480)
+# png(file = "./pics/2302/quiz_submission_8.png", width = 640, height = 480)
 suppressMessages({
 par(family = "KoPubWorldDotum Medium")
 b <- 
@@ -637,12 +649,27 @@ text(x = b[14, 1], y = sum(days_tbl[, 1]) / 2,
      labels = paste0(format(sum(days_tbl[, 1]) / N * 100, digits = 1, nsmall = 0), "%"))
 title(main = paste0("Quiz241028 (", N, "명 제출)"))
 # title(main = "일 단위 퀴즈 제출 인원", sub = paste0("Quiz230925 (", N, "명 제출)"))
-dev.copy(png, file = "./pics/2401/quiz_submission_9.png", width = 640, height = 480)
+dev.copy(png, file = "./pics/2402/quiz_submission_9.png", width = 640, height = 480)
 invisible(dev.off())
 })
 ```
 
-제출시간의 분포를 막대그래프로 그려 보았습니다. 마감일에 몰리는 경향이 관찰되고 있습니다.
+### Red, Black 간에 닮았는가?
+
+```{r, echo = FALSE, warning = FALSE}
+days_tbl %>%
+  rbind("계" = colSums(.)) %>%
+  `[`(-3, 9:14) %>%
+  pander
+days_RnB_chisq_test <-
+  days_tbl %>%
+  `[`(-3, 9:14) %>%
+  chisq.test(simulate.p.value = FALSE) 
+days_RnB_chisq_test %>%
+  pander
+```
+
+제출시간의 분포가 Red, Black 간에 닮았는지 알아 보았습니다. 이번에는 분포표의 첫번쨰와 두번쨰 행, '계'열을 제외한 나머지 열에 대해서 카이제곱테스트를 수행합니다. 카이제곱 통계량은 `r format(days_RnB_chisq_test[1], digits = 2, nsmall = 2)`, 자유도는 `r format(days_RnB_chisq_test[2], digits = 2, nsmall = 2)`, p-value 는 `r format(days_RnB_chisq_test[3], digits = 2, nsmall = 2)` 이므로 제출 시간의 분포는 Red, Black 간에 통계적으로 유의한 차이가 관찰되지 않습니다. 이 사실을 Mosaic Plot 을 이용하여 시각적으로 살펴보겠습니다. 닮았다고 느껴지나요?
 
 ### Mosaic Plot
 
@@ -672,8 +699,6 @@ m2 + geom_text(aes(x = center, y = 1.05),
         axis.text.x = element_text(angle = -90, vjust = 0.5)) 
 ggsave("./pics/Quiz241028_submission_7.png", dpi = 120, width = 960, height = 840, units = "px")
 ```
-
-제출시간의 분포를 Red, Black 간에 구분하여 Mosaic Plot 으로 그려 보았습니다. 닮은 것이 느껴지나요?
 
 ```{r, save, echo = FALSE}
 saveRDS(quiz, file = "quiz241028.RDS")
