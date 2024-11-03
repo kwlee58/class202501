@@ -25,7 +25,7 @@ library(magrittr)
 options(width = 180)
 class_roll <- readRDS("./class_roll_241018.RDS")
 oxford <- "./data/oxford_241021.xlsx" %>%
-  read_excel(range = "A2:BM523",
+  read_excel(range = "A2:BM541",
              col_names = FALSE)
 names(oxford) <- 
   c("Time1", "email", "dept", "id", "name", "Time2", "group", paste0("Q", 1:29, "_R"), paste0("Q", 1:29, "_B"))
@@ -345,7 +345,7 @@ Duration_t_test %>%
 ### 분포표
 
 ```{r, echo = FALSE, warning = FALSE}
-N <- nrow(quiz)
+N <- nrow(oxford)
 days_tbl <- 
   oxford$days %>%
   cut(breaks = c(0:14), include.lowest = TRUE) %>%
@@ -364,12 +364,12 @@ days_tbl %>%
 ```{r, echo = FALSE, warning = FALSE}
 days_tbl %>%
   rbind("계" = colSums(.)) %>%
-  `[`(3, 2:14) %>%
+  `[`(3, 1:14) %>%
   pander
 days_chisq_test <-
   days_tbl %>%
   rbind("계" = colSums(.)) %>%
-  `[`(3, 2:14) %>%
+  `[`(3, 1:14) %>%
   chisq.test(simulate.p.value = FALSE) 
 days_chisq_test %>%
   pander
