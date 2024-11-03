@@ -25,7 +25,7 @@ library(magrittr)
 options(width = 180)
 class_roll <- readRDS("./class_roll_241018.RDS")
 oxford <- "./data/oxford_241021.xlsx" %>%
-  read_excel(range = "A2:BM673",
+  read_excel(range = "A2:BM739",
              col_names = FALSE)
 names(oxford) <- 
   c("Time1", "email", "dept", "id", "name", "Time2", "group", paste0("Q", 1:29, "_R"), paste0("Q", 1:29, "_B"))
@@ -109,6 +109,7 @@ literacy_wrong_ids <-
     id == "204242613" ~ "20242613",
     id == "20201079" ~ "20201070",
     id == "202043359" ~ "20243359",
+    id == "2023310" ~ "20233310",
     TRUE ~ id
   ))
 # 3. quiz 에서 id 틀린 행을 제거하고 옳은 id 갖춘 행으로 교체하기
@@ -184,11 +185,11 @@ wrong_group <- oxford %>%
   filter(group2 != group)
 
 #> 잘못된 그룹 정보 출력
-wrong_group %>%
-  select(Time1, id, group2, group) %>%
-  arrange(Time1) %>%
-  rename("제출시간" = Time1, "학번" = id, "랜덤화출석부" = group2, "구글예습퀴즈" = group) %>%
-  pander(row.names = FALSE)
+# wrong_group %>%
+#   select(Time1, id, group2, group) %>%
+#   arrange(Time1) %>%
+#   rename("제출시간" = Time1, "학번" = id, "랜덤화출석부" = group2, "구글예습퀴즈" = group) %>%
+#   pander(row.names = FALSE)
 
 #> 옛 코드
 # oxford$group2 <- class_roll$group[match(oxford$id, class_roll$id)]
@@ -209,7 +210,7 @@ wrong_tbl %>%
 
 ## 응답인원의 Red, Black
 
-Red(국문) 로 응답한 인원은 `r colSums(wrong_tbl)[1]`명, Black(영문) 에 응답한 인원은 `r colSums(wrong_tbl)[2]`명입니다. 전체 응답인원 `r sum(wrong_tbl)` 명을 랜덤하게 둘로 나눌 때 어느 한 쪽의 기대인원은 이를 반으로 나눠 준`r sum(wrong_tbl) / 2`명이고, 표준오차는 이의 제곱근에 1/2을 곱해 준 `r round(sqrt(sum(wrong_tbl)) * 1 / 2, digits = 1)` 명입니다. 따라서 Red, Black 각 그룹에 관찰된 인원은 기대인원으로부터 표준오차 범위 안에 들어갑니다. 
+Red(국문) 로 응답한 인원은 `r colSums(wrong_tbl)[1]`명, Black(영문) 에 응답한 인원은 `r colSums(wrong_tbl)[2]`명입니다. 전체 응답인원 `r sum(wrong_tbl)` 명을 랜덤하게 둘로 나눌 때 어느 한 쪽의 기대인원은 이를 반으로 나눠 준 `r sum(wrong_tbl) / 2`명이고, 표준오차는 이의 제곱근에 1/2을 곱해 준 `r round(sqrt(sum(wrong_tbl)) * 1 / 2, digits = 1)` 명입니다. 따라서 Red, Black 각 그룹에 관찰된 인원은 기대인원으로부터 표준오차 범위 안에 들어갑니다. 
 
 ## 행복 점수 비교
 
@@ -226,7 +227,7 @@ scores_summary %>%
   pander
 ```
 
-Red(국문) 집단의 평균 행복점수는 `r format(scores_summary$국문[4], digits = 2, nsmall = 2)`,  Black(영문)) 집단의 평균 행복점수는 `r format(scores_summary$영문[4], digits = 2, nsmall = 2)` 으로 국문 설문지에 응답한 행복점수의 평균이 `r format(scores_summary$국문[4] - scores_summary$영문[4], digits = 2, nsmall = 2)` 점 더 높게 나옵니다. 중위수를 비교하더라도 Red(국문) 집단의 행복점수 중위수는 `r format(scores_summary$국문[3], digits = 2, nsmall = 2)`,  Black(영문) 집단의 행복점수 중위수는 `r format(scores_summary$영문[3], digits = 2, nsmall = 2)` 으로 국문 설문지에 응답한 행복점수의 중위수가 `r format(scores_summary$국문[3] - scores_summary$영문[3], digits = 2, nsmall = 2)` 점 더 높게 나옵니다.
+Red(국문) 집단의 평균 행복점수는 `r format(scores_summary$국문[4], digits = 2, nsmall = 2)`,  Black(영문) 집단의 평균 행복점수는 `r format(scores_summary$영문[4], digits = 2, nsmall = 2)` 으로 국문 설문지에 응답한 행복점수의 평균이 `r format(scores_summary$국문[4] - scores_summary$영문[4], digits = 2, nsmall = 2)` 점 더 높게 나옵니다. 중위수를 비교하더라도 Red(국문) 집단의 행복점수 중위수는 `r format(scores_summary$국문[3], digits = 2, nsmall = 2)`,  Black(영문) 집단의 행복점수 중위수는 `r format(scores_summary$영문[3], digits = 2, nsmall = 2)` 으로 국문 설문지에 응답한 행복점수의 중위수가 `r format(scores_summary$국문[3] - scores_summary$영문[3], digits = 2, nsmall = 2)` 점 더 높게 나옵니다.
 
 ### `t.test()` on means
 
@@ -314,8 +315,8 @@ Duration_summary %>%
   pander
 ```
 
-국문 행복도 조사의 평균 소요시간은 `r format(Duration_summary$국문[4], digits = 2, nsmall = 2)`초, 영문 행복도 조사의 평균 소요시간은 `r format(Duration_summary$국문[4], digits = 2, nsmall = 2)`초이므로 평균적으로 `r oxford %$% Duration %>% tapply(INDEX = oxford$group, FUN = mean, na.rm = TRUE) %>% diff %>% round(1)`초, 즉 `r oxford %$% Duration %>% tapply(INDEX = oxford$group, FUN = mean, na.rm = TRUE) %>% diff %>% "%/%"(60)`분 `r oxford %$% Duration %>% tapply(INDEX = oxford$group, FUN = mean, na.rm = TRUE) %>% diff %>% "%%"(60) %>% round`초 정도 국문 행복도 조사 시간이 덜 걸립니다.  소요시간의 중위
-수를 비교해 보아도 국문 행복도 조사 소요시간의 중위수는 `r format(Duration_summary$국문[3], digits = 2, nsmall = 2)`초, 영문 행복도 조사의 평균 소요시간은 `r format(Duration_summary$국문[3], digits = 2, nsmall = 2)`초이므로  `r oxford %$% Duration %>% tapply(INDEX = oxford$group, FUN = median, na.rm = TRUE) %>% diff %>% round(1)` 초, 약 `r oxford %$% Duration %>% tapply(INDEX = oxford$group, FUN = median, na.rm = TRUE) %>% diff %>% "%/%"(60) `분 `r oxford %$% Duration %>% tapply(INDEX = oxford$group, FUN = median, na.rm = TRUE) %>% diff %>% "%%"(60)  %>% round`초 만큼 국문 행복도 조사의 소요시간이 덜 걸립니다. 
+국문 행복도 조사의 평균 소요시간은 `r format(Duration_summary$국문[4], digits = 2, nsmall = 2)`초, 영문 행복도 조사의 평균 소요시간은 `r format(Duration_summary$영문[4], digits = 2, nsmall = 2)`초이므로 평균적으로 `r oxford %$% Duration %>% tapply(INDEX = oxford$group, FUN = mean, na.rm = TRUE) %>% diff %>% round(1)`초, 즉 `r oxford %$% Duration %>% tapply(INDEX = oxford$group, FUN = mean, na.rm = TRUE) %>% diff %>% "%/%"(60)`분 `r oxford %$% Duration %>% tapply(INDEX = oxford$group, FUN = mean, na.rm = TRUE) %>% diff %>% "%%"(60) %>% round`초 정도 국문 행복도 조사 시간이 덜 걸립니다.  소요시간의 중위
+수를 비교해 보아도 국문 행복도 조사 소요시간의 중위수는 `r format(Duration_summary$국문[3], digits = 2, nsmall = 2)`초, 영문 행복도 조사의 평균 소요시간은 `r format(Duration_summary$영문[3], digits = 2, nsmall = 2)`초이므로  `r oxford %$% Duration %>% tapply(INDEX = oxford$group, FUN = median, na.rm = TRUE) %>% diff %>% round(1)` 초, 약 `r oxford %$% Duration %>% tapply(INDEX = oxford$group, FUN = median, na.rm = TRUE) %>% diff %>% "%/%"(60) `분 `r oxford %$% Duration %>% tapply(INDEX = oxford$group, FUN = median, na.rm = TRUE) %>% diff %>% "%%"(60)  %>% round`초 만큼 국문 행복도 조사의 소요시간이 덜 걸립니다. 
 
 ### `geom_boxplot()`
 
@@ -339,7 +340,7 @@ Duration_t_test %>%
   pander
 ```
 
-국문, 영문 행복도 조사의 소요 시간에 대해서도 t-test 를 수행하였는데 t-통계량은 `r format(Duration_t_test[1], digits = 2, nsmall = 2)`, 자유도는 `r format(Duration_t_test[2], digits = 2, nsmall = 2)`, p-value 는 `r format(Duration_t_test[3], digits = 2, nsmall = 2)`이어서 통계적으로 유의한 차이가 관찰되지 않았습니다.
+국문, 영문 행복도 조사의 소요 시간에 대해서도 t-test 를 수행하였는데 t-통계량은 `r format(Duration_t_test[1], digits = 2, nsmall = 2)`, 자유도는 `r format(Duration_t_test[2], digits = 2, nsmall = 2)`, p-value 는 `r format(Duration_t_test[3], digits = 2, nsmall = 2)`이어서 통계적으로 유의한 차이가 관찰되고 있습니다.
 
 ## 마감 시간으로부터 제출 시간의 분포
 
@@ -357,7 +358,7 @@ days_tbl %>%
   pander(caption = "일 단위")
 ```
 
-분포표로부터 두 가지 문제를 살펴보겠습니다. 첫째, 날마다 고르게 제출하는가? 둘쨰, Red(국문), Black(영문)) 간에 통게적으로 유의한 차이가 있는가?
+분포표로부터 두 가지 문제를 살펴보겠습니다. 첫째, 날마다 고르게 제출하는가? 둘쨰, Red(국문), Black(영문) 간에 통계적으로 유의한 차이가 있는가?
 각 문제를 살펴보기 위해서는 분포표의 일부분을 대상으로 카이제곱 테스트를 수행합니다.
 
 ### 날마다 고르게 제출하는가?
