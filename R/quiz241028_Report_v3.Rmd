@@ -42,7 +42,7 @@ class_roll$group <- class_roll1025$group[match(class_roll$id, class_roll1025$id)
 saveRDS(class_roll, file = "./class_roll_241101.RDS")
 quiz <- 
   read_excel("./data/quiz241028.xlsx",
-             range = "A2:N283",
+             range = "A2:N295",
              col_names = FALSE)
 str(quiz)
 names(quiz) <- 

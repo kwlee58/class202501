@@ -25,7 +25,7 @@ library(magrittr)
 options(width = 180)
 class_roll <- readRDS("./class_roll_241018.RDS")
 oxford <- "./data/oxford_241021.xlsx" %>%
-  read_excel(range = "A2:BM575",
+  read_excel(range = "A2:BM609",
              col_names = FALSE)
 names(oxford) <- 
   c("Time1", "email", "dept", "id", "name", "Time2", "group", paste0("Q", 1:29, "_R"), paste0("Q", 1:29, "_B"))
@@ -338,7 +338,7 @@ Duration_t_test %>%
   pander
 ```
 
-국문, 영문 행복도 조사의 소요 시간에 대해서도 t-test 를 수행하였는데 t-통계량은 `r format(Duration_t_test[1], digits = 2, nsmall = 2)`, 자유도는 `r format(Duration_t_test[2], digits = 2, nsmall = 2)`, p-value 는 `r format(Duration_t_test[3], digits = 2, nsmall = 2)`으로 통계적으로 유의한 차이가 관찰되지 않았습니다.
+국문, 영문 행복도 조사의 소요 시간에 대해서도 t-test 를 수행하였는데 t-통계량은 `r format(Duration_t_test[1], digits = 2, nsmall = 2)`, 자유도는 `r format(Duration_t_test[2], digits = 2, nsmall = 2)`, p-value 는 `r format(Duration_t_test[3], digits = 2, nsmall = 2)`이어서 통계적으로 유의한 차이가 관찰되었습니다.
 
 ## 마감 시간으로부터 제출 시간의 분포
 
