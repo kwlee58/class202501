@@ -32,7 +32,7 @@ class_roll1018 %<>%
   data.frame
 class_roll <- 
   read_excel("./data/class_roll241025.xlsx", 
-             range = "B1:G805")
+             range = "B1:G803")
 class_roll %<>% 
   data.frame
 str(class_roll)
@@ -649,12 +649,12 @@ days_tbl %>%
 ```{r, echo = FALSE, warning = FALSE}
 days_tbl %>%
   rbind("계" = colSums(.)) %>%
-  `[`(3, 2:14) %>%
+  `[`(3, 1:14) %>%
   pander
 days_chisq_test <-
   days_tbl %>%
   rbind("계" = colSums(.)) %>%
-  `[`(3, 2:14) %>%
+  `[`(3, 1:14) %>%
   chisq.test(simulate.p.value = FALSE) 
 days_chisq_test %>%
   pander

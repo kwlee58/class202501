@@ -316,7 +316,7 @@ Duration_summary %>%
 ```
 
 국문 행복도 조사의 평균 소요시간은 `r format(Duration_summary$국문[4], digits = 2, nsmall = 2)`초, 영문 행복도 조사의 평균 소요시간은 `r format(Duration_summary$영문[4], digits = 2, nsmall = 2)`초이므로 평균적으로 `r oxford %$% Duration %>% tapply(INDEX = oxford$group, FUN = mean, na.rm = TRUE) %>% diff %>% round(1)`초, 즉 `r oxford %$% Duration %>% tapply(INDEX = oxford$group, FUN = mean, na.rm = TRUE) %>% diff %>% "%/%"(60)`분 `r oxford %$% Duration %>% tapply(INDEX = oxford$group, FUN = mean, na.rm = TRUE) %>% diff %>% "%%"(60) %>% round`초 정도 국문 행복도 조사 시간이 덜 걸립니다.  소요시간의 중위
-수를 비교해 보아도 국문 행복도 조사 소요시간의 중위수는 `r format(Duration_summary$국문[3], digits = 2, nsmall = 2)`초, 영문 행복도 조사의 평균 소요시간은 `r format(Duration_summary$영문[3], digits = 2, nsmall = 2)`초이므로  `r oxford %$% Duration %>% tapply(INDEX = oxford$group, FUN = median, na.rm = TRUE) %>% diff %>% round(1)` 초, 약 `r oxford %$% Duration %>% tapply(INDEX = oxford$group, FUN = median, na.rm = TRUE) %>% diff %>% "%/%"(60) `분 `r oxford %$% Duration %>% tapply(INDEX = oxford$group, FUN = median, na.rm = TRUE) %>% diff %>% "%%"(60)  %>% round`초 만큼 국문 행복도 조사의 소요시간이 덜 걸립니다. 
+수를 비교해 보아도 국문 행복도 조사 소요시간의 중위수는 `r format(Duration_summary$국문[3], digits = 2, nsmall = 2)`초, 영문 행복도 조사 소요시간의 중위수는 `r format(Duration_summary$영문[3], digits = 2, nsmall = 2)`초이므로  `r oxford %$% Duration %>% tapply(INDEX = oxford$group, FUN = median, na.rm = TRUE) %>% diff %>% round(1)` 초, 약 `r oxford %$% Duration %>% tapply(INDEX = oxford$group, FUN = median, na.rm = TRUE) %>% diff %>% "%/%"(60) `분 `r oxford %$% Duration %>% tapply(INDEX = oxford$group, FUN = median, na.rm = TRUE) %>% diff %>% "%%"(60)  %>% round`초 만큼 국문 행복도 조사의 소요시간이 덜 걸립니다. 
 
 ### `geom_boxplot()`
 
