@@ -1,7 +1,7 @@
 ---
 title: "Food Habits Survey 241104"
 author: "coop711"
-date: "2024-11-04"
+date: "`r format(Sys.time(), '%Y-%m-%d %H:%M:%S')`"
 output: html_document
 ---
 
@@ -17,15 +17,11 @@ panderOptions('table.alignment.default', 'right')
 options(width = 180)
 ```
 
-<!--
-# Data 
--->
-
 ```{r, data, echo = FALSE, results = 'hide'}
 class_roll <- readRDS("./class_roll_241101.RDS")
 food <-
   read_excel("./data/food_survey_241104.xlsx",
-             range = "C1:Y71")
+             range = "C1:Y101")
 str(food)
 names(food) <- c("dept", "id", "name", paste0("Q", 1:20))
 class(food$id) <- "character"

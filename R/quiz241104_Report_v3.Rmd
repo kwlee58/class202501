@@ -1,7 +1,7 @@
 ---
 title: "Quiz 241104 (Prospect Theory)"
 author: "coop711"
-date: "`r Sys.time()"
+date: "`r format(Sys.time(), '%Y-%m-%d %H:%M:%S')`"
 output: html_document
 ---
 
@@ -41,7 +41,7 @@ class_roll %<>%
 # saveRDS(class_roll, file = "./class_roll_241101.RDS")
 quiz <- 
   read_excel("./data/quiz241104.xlsx",
-             range = "A2:N42",
+             range = "A2:N82",
              col_names = FALSE)
 str(quiz)
 names(quiz) <- 
@@ -598,7 +598,7 @@ text(x = b[14, 1], y = sum(days_tbl[, 1]),
      labels = paste0(sum(days_tbl[, 1]), "명"), pos = 3)
 text(x = b[14, 1], y = sum(days_tbl[, 1]) / 2, 
      labels = paste0(format(sum(days_tbl[, 1]) / N * 100, digits = 1, nsmall = 0), "%"))
-title(main = paste0("Quiz241028 (", N, "명 제출)"))
+title(main = paste0("Quiz241104 (", N, "명 제출)"))
 # title(main = "일 단위 퀴즈 제출 인원", sub = paste0("Quiz230925 (", N, "명 제출)"))
 dev.copy(png, file = "./pics/2402/quiz_submission_9.png", width = 640, height = 480)
 invisible(dev.off())
