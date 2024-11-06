@@ -11,27 +11,52 @@ library(readxl)
 library(pander)
 library(knitr)
 library(magrittr)
+library(dplyr)
 panderOptions('table.split.table', Inf)
 panderOptions('table.alignment.rownames', 'left')
 panderOptions('table.alignment.default', 'right')
 options(width = 180)
 ```
 
-<!--
-# Data 
--->
-
 ```{r, data, echo = FALSE, results = 'hide'}
 class_roll <- 
   readRDS("./class_roll_241101.RDS")
 food <-
   read_excel("./data/food_plan_241104.xlsx",
-             range = "C1:Y99")
+             range = "C1:Y147")
 str(food)
 names(food) <- c("dept", "id", "name", paste0("Q", 1:20))
 class(food$id) <- "character"
-food %<>% data.frame
+food %<>% 
+  data.frame
+
+#> 학번 잘못 써서 고생시키는 녀석들 찾아내는 코드
+#> #> 학번을 잘못 쓰면 Red, Black 에서 누락되기 때문에 이 위치에서 수정해 줘야 함.
+wrong_id <- setdiff(food$id, class_roll$id)
+food %>%
+  filter(id %in% wrong_id) %>%
+  select(id, name, dept)
+# 1. 잘못된 id 가진 행 찾기
+food_wrong_ids <- food %>%
+  anti_join(class_roll, by = "id") 
+# 2. 잘못된 id를 따로 저장하고 수정하기
+wrong_ids <- food_wrong_ids$id
+food_wrong_ids <- food_wrong_ids %>%
+  mutate(id = case_when(
+    id == "20236239" ~ "20246239",
+    TRUE ~ id
+  ))
+# 3. quiz 에서 id 틀린 행을 제거하고 옳은 id 갖춘 행으로 교체하기
+food <- food %>%
+  filter(!id %in% wrong_ids) %>%
+  bind_rows(food_wrong_ids)
+#> 옛 코드
+#> 학번 잘못 써서 고생시키는 녀석들 찾아내는 코드
+# food[food$id %in% setdiff(food$id, class_roll$id), c("id", "name", "dept")]
+
+#> id 와 맷칭하는 Red, Black 부여
 food$group <- class_roll$group[match(food$id, class_roll$id)]
+#> factor 변환, 응답값의 숫자 변환
 food$dept %<>% 
   factor
 food$group %<>%
@@ -50,8 +75,19 @@ food$grade <-
   factor(food$grade, 
          levels = c("식생활을 고치세요", "식생활이 보통입니다", "식생활이 대체로 좋아요"), 
          ordered = TRUE)
-#> 학번 잘못 써서 고생시키는 녀석들 찾아내는 코드
-food[food$id %in% setdiff(food$id, class_roll$id), c("id", "name", "dept")]
+str(food)
+#> 중복 제출자
+food %>%
+  filter(duplicated(id)) %>%
+  select(id, name) %>%
+  arrange(id)
+# which(duplicated(quiz$id)) %>%
+#   quiz[., c("id", "name")]
+food %>%
+  filter(name %in% c("최정환"))
+food <- food %>% 
+  arrange(id, desc(name)) %>%
+  distinct(id, .keep_all = TRUE)
 #> 식생활 계획 조사 미제출자
 absentee <- 
   class_roll[class_roll$id %in% setdiff(class_roll$id, food$id), 
@@ -75,7 +111,7 @@ pander(food[c("id", "score", "grade")])
 
 ```{r, cross table, echo = FALSE}
 food %$%
-  table(.$group, .$grade) %>%
+  table(.$group, .$grade, useNA = "ifany") %>%
   cbind("계" = rowSums(.)) %>%
   rbind("계" = colSums(.)) %>%
   pander

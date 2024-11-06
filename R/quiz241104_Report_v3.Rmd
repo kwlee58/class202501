@@ -22,8 +22,8 @@ options(width = 180)
 
 10주차 구글 예습 설문지 집계결과를 분석합니다. 
 Q1~Q6에서는 랜덤화의 효과로 Red, Black 이 얼마나 닮았는지 알아봅니다.
-Q7에서는 Prospect Theory 에서 이득은 확고히 하고 손실은 회피하려는 심리에 대해서 살펴보면서 1번효과에 대해서 알아봅니다.
-제출시간의 분포가 날마다 고른지, Red, Black 은 닮았는지 알아봅니다.
+Q7에서는 Prospect Theory 에서 이득은 확고히 하고 손실은 회피하려는 심리에 대해서 살펴봅니다.
+제출시간의 분포가 날마다 고른지, Red, Black 간에는 닮았는지 알아봅니다.
 
 ```{r, data, echo = FALSE, results = 'hide', message = FALSE}
 class_roll <- 
@@ -41,7 +41,7 @@ class_roll %<>%
 # saveRDS(class_roll, file = "./class_roll_241101.RDS")
 quiz <- 
   read_excel("./data/quiz241104.xlsx",
-             range = "A2:N82",
+             range = "A2:N132",
              col_names = FALSE)
 str(quiz)
 names(quiz) <- 
@@ -567,12 +567,12 @@ days_tbl %>%
 ```{r, echo = FALSE, warning = FALSE}
 days_tbl %>%
   rbind("계" = colSums(.)) %>%
-  `[`(3, 13:14) %>%
+  `[`(3, 12:14) %>%
   pander
 days_chisq_test <-
   days_tbl %>%
   rbind("계" = colSums(.)) %>%
-  `[`(3, 13:14) %>%
+  `[`(3, 12:14) %>%
   chisq.test(simulate.p.value = FALSE) 
 days_chisq_test %>%
   pander
@@ -610,11 +610,11 @@ invisible(dev.off())
 ```{r, echo = FALSE, warning = FALSE}
 days_tbl %>%
   rbind("계" = colSums(.)) %>%
-  `[`(-3, 13:14) %>%
+  `[`(-3, 12:14) %>%
   pander
 days_RnB_chisq_test <-
   days_tbl %>%
-  `[`(-3, 13:14) %>%
+  `[`(-3, 12:14) %>%
   chisq.test(simulate.p.value = FALSE) 
 days_RnB_chisq_test %>%
   pander

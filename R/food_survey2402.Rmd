@@ -11,6 +11,7 @@ library(readxl)
 library(pander)
 library(knitr)
 library(magrittr)
+library(dplyr)
 panderOptions('table.split.table', Inf)
 panderOptions('table.alignment.rownames', 'left')
 panderOptions('table.alignment.default', 'right')
@@ -21,13 +22,38 @@ options(width = 180)
 class_roll <- readRDS("./class_roll_241101.RDS")
 food <-
   read_excel("./data/food_survey_241104.xlsx",
-             range = "C1:Y101")
+             range = "C1:Y150")
 str(food)
 names(food) <- c("dept", "id", "name", paste0("Q", 1:20))
 class(food$id) <- "character"
 food %<>% 
   data.frame
+#> 학번 잘못 써서 고생시키는 녀석들 찾아내는 코드
+#> 학번을 잘못 쓰면 Red, Black 에서 누락되기 때문에 이 위치에서 수정해 줘야 함.
+wrong_id <- setdiff(food$id, class_roll$id)
+food %>%
+  filter(id %in% wrong_id) %>%
+  select(id, name, dept)
+# 1. 잘못된 id 가진 행 찾기
+food_wrong_ids <- food %>%
+  anti_join(class_roll, by = "id") 
+# 2. 잘못된 id를 따로 저장하고 수정하기
+wrong_ids <- food_wrong_ids$id
+food_wrong_ids <- food_wrong_ids %>%
+  mutate(id = case_when(
+    id == "24" & name == "김미소" ~ "20242607",
+    id == "24" & name == "서호원" ~ "20246245",
+    TRUE ~ id
+  ))
+# 3. quiz 에서 id 틀린 행을 제거하고 옳은 id 갖춘 행으로 교체하기
+food <- food %>%
+  filter(!id %in% wrong_ids) %>%
+  bind_rows(food_wrong_ids)
+#> 옛 코드
+# food[food$id %in% setdiff(food$id, class_roll$id), c("id", "name", "dept")]
+#> id 와 맷칭하는 Red, Black 부여
 food$group <- class_roll$group[match(food$id, class_roll$id)]
+#> factor 변환, 응답값의 숫자 변환
 food$dept %<>% 
   factor
 food$group %<>%
@@ -35,8 +61,7 @@ food$group %<>%
 food[paste0("Q", 1:20)] %<>%
   sapply(FUN = {. %>% strsplit(split = "[.]") %>% sapply(`[`, 1)}) %>%
   as.numeric
-#> 학번 잘못 써서 고생시키는 녀석들 찾아내는 코드
-food[food$id %in% setdiff(food$id, class_roll$id), c("id", "name", "dept")]
+
 #> 식생활 현황 조사 미제출자
 absentee <- 
   class_roll[class_roll$id %in% setdiff(class_roll$id, food$id), 
@@ -49,8 +74,8 @@ food %>%
 ```
 
 ```{r, echo = FALSE, eval = TRUE}
-food$name[food$name == "정솔 "] <- "정솔"
-food$name[food$name == "김희령 "] <- "김희령"
+# food$name[food$name == "정솔 "] <- "정솔"
+# food$name[food$name == "김희령 "] <- "김희령"
 # food[is.na(food$group), c("id", "name")]
 # food$id[food$id == "20192992"] <- "20192902"
 ```
@@ -95,7 +120,7 @@ pander(food[c("id", "score", "grade")])
 
 ```{r, cross table, echo = FALSE}
 food %$%
-  table(.$group, .$grade) %>%
+  table(.$group, .$grade, useNA = "ifany") %>%
   cbind("계" = rowSums(.)) %>%
   rbind("계" = colSums(.)) %>%
   pander
