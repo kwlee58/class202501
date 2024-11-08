@@ -30,6 +30,7 @@ class_roll <-
   readRDS("./class_roll_241101.RDS")
 class_roll %<>% 
   data.frame
+#> 11월 8일 출석부로 업데이트할 부분
 # class_roll <- 
 #   read_excel("./data/class_roll241108.xlsx", 
 #              range = "B1:G801")
@@ -41,7 +42,7 @@ class_roll %<>%
 # saveRDS(class_roll, file = "./class_roll_241101.RDS")
 quiz <- 
   read_excel("./data/quiz241104.xlsx",
-             range = "A2:N132",
+             range = "A2:N207",
              col_names = FALSE)
 str(quiz)
 names(quiz) <- 
@@ -567,12 +568,12 @@ days_tbl %>%
 ```{r, echo = FALSE, warning = FALSE}
 days_tbl %>%
   rbind("계" = colSums(.)) %>%
-  `[`(3, 12:14) %>%
+  `[`(3, 10:14) %>%
   pander
 days_chisq_test <-
   days_tbl %>%
   rbind("계" = colSums(.)) %>%
-  `[`(3, 12:14) %>%
+  `[`(3, 10:14) %>%
   chisq.test(simulate.p.value = FALSE) 
 days_chisq_test %>%
   pander
@@ -610,11 +611,11 @@ invisible(dev.off())
 ```{r, echo = FALSE, warning = FALSE}
 days_tbl %>%
   rbind("계" = colSums(.)) %>%
-  `[`(-3, 12:14) %>%
+  `[`(-3, 10:14) %>%
   pander
 days_RnB_chisq_test <-
   days_tbl %>%
-  `[`(-3, 12:14) %>%
+  `[`(-3, 10:14) %>%
   chisq.test(simulate.p.value = FALSE) 
 days_RnB_chisq_test %>%
   pander
