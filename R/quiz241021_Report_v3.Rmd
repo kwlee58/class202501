@@ -23,7 +23,7 @@ options(width = 180)
 8주차 구글 예습 설문지 집계결과를 분석합니다. 
 Q1~Q3에서는 랜덤화의 효과로 Red, Black 이 얼마나 닮았는지 알아봅니다.
 Q4~Q6에서는 인지반응테스트를 수행하면서 1번효과에 대해서 알아봅니다.
-제출시간의 분포가 어떻게 변해 가는지, Red, Black 은 닮았는지 알아봅니다.
+제출시간의 분포가 날마다 고른지, Red, Black 간에는 닮았는지 알아봅니다.
 
 ```{r, data, echo = FALSE, results = 'hide', message = FALSE}
 class_roll1018 <- 
