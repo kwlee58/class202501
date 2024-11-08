@@ -113,7 +113,7 @@ quiz %>%
 #   ifelse("Right", "Wrong")
 # quiz[c("Q8", "Q8_2", "group")]
 str(quiz)
-#> 인지 편향 관점을 입증하는 데이터 생성
+#> 확증 편향을 입증하는 데이터 생성
 quiz <- quiz %>%
   mutate(
     # Q9 생성: Q7_R와 Q8_B 중 하나의 값 선택하고 인지 편향을 확인하는 범주 생성
