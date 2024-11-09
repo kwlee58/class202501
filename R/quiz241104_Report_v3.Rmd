@@ -26,23 +26,23 @@ Q7에서는 Prospect Theory 에서 이득은 확고히 하고 손실은 회피�
 제출시간의 분포가 날마다 고른지, Red, Black 간에는 닮았는지 알아봅니다.
 
 ```{r, data, echo = FALSE, results = 'hide', message = FALSE}
-class_roll <- 
+class_roll1101 <- 
   readRDS("./class_roll_241101.RDS")
-class_roll %<>% 
+class_roll1101 %<>% 
   data.frame
 #> 11월 8일 출석부로 업데이트할 부분
-# class_roll <- 
-#   read_excel("./data/class_roll241108.xlsx", 
-#              range = "B1:G801")
-# class_roll %<>% 
-#   data.frame
-# str(class_roll)
-# names(class_roll) <- c("dept","id", "name", "status", "email", "cell_no")
-# class_roll$group <- class_roll1025$group[match(class_roll$id, class_roll1025$id)]
-# saveRDS(class_roll, file = "./class_roll_241101.RDS")
+class_roll <- 
+  read_excel("./data/class_roll241108.xlsx", 
+             range = "B1:G801")
+class_roll %<>% 
+  data.frame
+str(class_roll)
+names(class_roll) <- c("dept","id", "name", "status", "email", "cell_no")
+class_roll$group <- class_roll1101$group[match(class_roll$id, class_roll1101$id)]
+saveRDS(class_roll, file = "./class_roll_241108.RDS")
 quiz <- 
   read_excel("./data/quiz241104.xlsx",
-             range = "A2:N207",
+             range = "A2:N221",
              col_names = FALSE)
 str(quiz)
 names(quiz) <- 
@@ -568,12 +568,12 @@ days_tbl %>%
 ```{r, echo = FALSE, warning = FALSE}
 days_tbl %>%
   rbind("계" = colSums(.)) %>%
-  `[`(3, 10:14) %>%
+  `[`(3, 9:14) %>%
   pander
 days_chisq_test <-
   days_tbl %>%
   rbind("계" = colSums(.)) %>%
-  `[`(3, 10:14) %>%
+  `[`(3, 9:14) %>%
   chisq.test(simulate.p.value = FALSE) 
 days_chisq_test %>%
   pander
@@ -611,11 +611,11 @@ invisible(dev.off())
 ```{r, echo = FALSE, warning = FALSE}
 days_tbl %>%
   rbind("계" = colSums(.)) %>%
-  `[`(-3, 10:14) %>%
+  `[`(-3, 9:14) %>%
   pander
 days_RnB_chisq_test <-
   days_tbl %>%
-  `[`(-3, 10:14) %>%
+  `[`(-3, 9:14) %>%
   chisq.test(simulate.p.value = FALSE) 
 days_RnB_chisq_test %>%
   pander

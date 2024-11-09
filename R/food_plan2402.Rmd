@@ -23,7 +23,7 @@ class_roll <-
   readRDS("./class_roll_241101.RDS")
 food <-
   read_excel("./data/food_plan_241104.xlsx",
-             range = "C1:Y236")
+             range = "C1:Y251")
 str(food)
 names(food) <- c("dept", "id", "name", paste0("Q", 1:20))
 class(food$id) <- "character"
@@ -46,6 +46,7 @@ food_wrong_ids <- food_wrong_ids %>%
     id == "20236239" ~ "20246239",
     id == "20227156" ~ "20227155",
     id == "20242851" ~ "20242751",
+    id == "202243801" ~ "20243801",
     TRUE ~ id
   ))
 # 3. quiz 에서 id 틀린 행을 제거하고 옳은 id 갖춘 행으로 교체하기
