@@ -1,5 +1,5 @@
 ---
-title: "Quiz 240930"
+title: "Quiz 240930 (Framing Effects)"
 author: "coop711"
 date: "2024-09-30"
 output: html_document
@@ -17,6 +17,13 @@ panderOptions('table.alignment.rownames', 'left')
 panderOptions('table.alignment.default', 'right')
 options(width=180)
 ```
+
+## 실험의 목적
+
+5주차 구글 예습 설문지 집계결과를 분석합니다. 
+Q1~Q6에서는 랜덤화의 효과로 Red, Black 이 얼마나 닮았는지 알아봅니다.
+Q7에서는 컵에 우유를 반을 쏟은 상황에서 긍정적인 단어를 읽은 그룹하고 부정적인 단어를 읽은 그룹 사이에 어떠한 인식의 차이가 발생하는 지 살펴봅니다. 
+끝으로 제출시간의 분포가 날마다 고른지, Red, Black 간에는 닮았는지 알아봅니다.
 
 ```{r, data, echo = FALSE, results = 'hide', message = FALSE}
 class_roll0927 <- readRDS("./class_roll_240927.RDS")
@@ -156,8 +163,6 @@ class_roll %>%
 
 ## Red, Black을 잘못 표시한 사람들
 
-랜덤화출석부에 있는 Red, Black 과 실제 구글예습퀴즈에 올린 Red, Black 이 다른 사람들이 있어서 파악해 보았습니다. 잘못 선택하는 사람들의 수효가 5명인데 Red를 Black 이라고 한 사람이 4명, Black 을 Red 라고 한 사람이 1명 나왔습니다. 4명과 1명은 차이가 상당해 보이죠. 그런데 공평한 동전을 다섯 번 던져서 앞면이 한 번 이하 혹은 네 번 이상 나올 확률은 0.375입니다. 여덟번에 세번 정도로 흔히 나올 수 있는 차이라는 뜻입니다. 0.05에 비해서 엄청나게 큰 값이죠. 이게 p-value 입니다.
-
 ```{r, wrong group, echo = FALSE}
 #> group2 생성
 quiz <- quiz %>%
@@ -192,6 +197,12 @@ wrong_tbl %>%
   pander(row.names = c("Red(랜덤화출석부)", "Black(랜덤화출석부)"), col.names = c("Red(구글예습퀴즈)", "Black(구글예습퀴즈)"))
 ```
 
+랜덤화출석부에 있는 Red, Black 과 실제 구글설문에 올린 Red, Black 이 다른 사람들의 수효는 `r nrow(wrong_group)`명입니다. Red를 Black 이라고 한 사람이 `r wrong_tbl[1, 2]`명, Black 을 Red 라고 한 사람이 `r wrong_tbl[2, 1]`명입니다. 
+
+## 응답인원의 Red, Black
+
+Red 로 응답한 인원은 `r colSums(wrong_tbl)[1]`명, Black 에 응답한 인원은 `r colSums(wrong_tbl)[2]`명입니다. 전체 응답인원 `r sum(wrong_tbl)` 명을 랜덤하게 둘로 나눌 때 어느 한 쪽의 기대인원은 이를 반으로 나눠 준`r sum(wrong_tbl) / 2`명이고, 표준오차는 이의 제곱근에 1/2을 곱해 준 `r round(sqrt(sum(wrong_tbl)) * 1 / 2, digits = 1)` 명입니다. 따라서 Red, Black 각 그룹에 관찰된 인원은 기대인원으로부터 표준오차 범위 안에 들어갑니다.
+
 # 응답 결과
 
 ##  Q1. 한글의 문자 유형
@@ -211,23 +222,31 @@ tbl_q1_a <- quiz$Q1 %>%
   rbind("계" = colSums(.))
 tbl_q1_a %>% 
   pander 
-tbl_q1_a %>% 
+chisq_test_q1 <- 
+  tbl_q1_a %>%
   `[`(-3, -3) %>%
-  chisq.test(simulate.p.value = FALSE) %>%
+  chisq.test(simulate.p.value = FALSE) 
+chisq_test_q1 %>%
   pander
 ```
+
+Q1의 집계 결과가 Red, Black 간에 통계적으로 유의한 차이가 있는지 알아보기 위하여 카이제곱 테스트를 수행하였습니다. 그 결과 카이제곱 통계량은 `r chisq_test_q1[1] %>% format(digits = 2, nsmall = 2)`, 자유도는 `r chisq_test_q1[2] %>% format(digits = 2, nsmall = 3)` , p-value 는 `r chisq_test_q1[3] %>% format(digits = 2, nsmall = 4)`이므로 Red, Black 간에 통계적으로 유의한 차이를 보이지 않습니다. 실제로 닮은 게 느껴집니까?
 
 ### 한글은 민주 문자(%)
 
 ```{r, echo = FALSE}
-tbl_q1_a %>% 
+ptbl_q1 <- 
+  tbl_q1_a %>% 
   `[`(3, -3) %>%
   prop.table %>% 
   c("계" = sum(.)) %>%
-  `*`(100) %>%
+  `*`(100) 
+ptbl_q1 %>%
   format(digits = 2, nsmall = 1) %>%
   pander
 ```
+
+정답률은 Red, Black 을 합하여 계산하는데, `r ptbl_q1[1] %>% format(digits = 2, nsmall = 1)`(%) 입니다.
 
 ## Q2. 정보혁명과 문자 체계
 
@@ -244,23 +263,31 @@ tbl_q2_a <- quiz$Q2 %>%
   rbind("계" = colSums(.))
 tbl_q2_a %>% 
   pander
-tbl_q2_a %>% 
+chisq_test_q2 <- 
+  tbl_q2_a %>%
   `[`(-3, -3) %>%
-  chisq.test(simulate.p.value = FALSE) %>%
+  chisq.test(simulate.p.value = FALSE) 
+chisq_test_q2 %>%
   pander
 ```
+
+Q2의 집계 결과가 Red, Black 간에 통계적으로 유의한 차이가 있는지 알아보기 위하여 카이제곱 테스트를 수행하였습니다. 그 결과 카이제곱 통계량은 `r chisq_test_q2[1] %>% format(digits = 2, nsmall = 2)`, 자유도는 `r chisq_test_q2[2] %>% format(digits = 2, nsmall = 2)`, p-value 는 `r chisq_test_q2[3] %>% format(digits = 2, nsmall = 2)`이므로 Red, Black 간에 통계적으로 유의한 차이를 보이지 않습니다. 실제로 닮은 게 느껴집니까?
 
 ### 정보혁명을 이끄는 문자는 한글(%)
 
 ```{r, echo = FALSE}
-tbl_q2_a %>% 
+ptbl_q2 <- 
+  tbl_q2_a %>% 
   `[`(3, -3) %>%
   prop.table %>% 
   c("계" = sum(.)) %>%
-  `*`(100) %>%
+  `*`(100) 
+ptbl_q2 %>%
   format(digits = 2, nsmall = 1) %>%
   pander
 ```
+
+정답률은 Red, Black 을 합하여 계산하는데, `r ptbl_q2[2] %>% format(digits = 2, nsmall = 1)`(%) 입니다.
 
 ## Q3. 알기 힘든 전문 용어
 
@@ -276,24 +303,33 @@ tbl_q3_a <- quiz$Q3 %>%
   cbind("계" = rowSums(.)) %>%
   rbind("계" = colSums(.))
 # colnames(tbl_q3_a)[6] %<>% `<-`(., "결석")
-tbl_q3_a %>% pander 
 tbl_q3_a %>% 
+  pander 
+chisq_test_q3 <- 
+  tbl_q3_a %>%
   `[`(-3, -6) %>%
-  chisq.test(simulate.p.value = FALSE) %>%
+  chisq.test(simulate.p.value = FALSE) 
+chisq_test_q3 %>%
   pander
 ```
+
+Q3의 집계 결과가 Red, Black 간에 통계적으로 유의한 차이가 있는지 알아보기 위하여 카이제곱 테스트를 수행하였습니다. 그 결과 카이제곱 통계량은 `r chisq_test_q3[1] %>% format(digits = 2, nsmall = 3)`, 자유도는 `r chisq_test_q3[2] %>% format(digits = 2, nsmall = 2)`, p-value 는 `r chisq_test_q3[3] %>% format(digits = 2, nsmall = 4)`이므로 Red, Black 간에 통계적으로 유의한 차이를 보이지 않습니다. 실제로 닮은 게 느껴집니까?
 
 ### 몇 개나 아나요?(%)
 
 ```{r, echo = FALSE}
-tbl_q3_a %>% 
+ptbl_q3 <- 
+  tbl_q3_a %>% 
   `[`(3, -6) %>%
   prop.table %>% 
   c("계" = sum(.)) %>%
-  `*`(100) %>%
+  `*`(100) 
+ptbl_q3 %>%
   format(digits = 2, nsmall = 1) %>%
   pander
 ```
+
+물론, 이 문제에는 정답이 없으므로 정답률은 의미가 없습니다. 가장 많은 비율로 응답한 것이 "하나도 없다"이고 `r ptbl_q3[1] %>% format(digits = 2, nsmall = 1)`(%) 입니다.
 
 ## Q4. 해방직후 비문해율
 
@@ -310,23 +346,31 @@ tbl_q4_a <- quiz$Q4 %>%
   rbind("계" = colSums(.))
 tbl_q4_a %>% 
   pander 
-tbl_q4_a %>% 
+chisq_test_q4 <- 
+  tbl_q4_a %>%
   `[`(-3, -6) %>%
-  chisq.test(simulate.p.value = FALSE) %>%
+  chisq.test(simulate.p.value = FALSE) 
+chisq_test_q4 %>%
   pander
 ```
+
+Q4의 집계 결과가 Red, Black 간에 통계적으로 유의한 차이가 있는지 알아보기 위하여 카이제곱 테스트를 수행하였습니다. 그 결과 카이제곱 통계량은 `r chisq_test_q4[1] %>% format(digits = 2, nsmall = 3)`, 자유도는 `r chisq_test_q4[2] %>% format(digits = 2, nsmall = 2)`, p-value 는 `r chisq_test_q4[3] %>% format(digits = 2, nsmall = 4)`이므로 Red, Black 간에 통계적으로 유의한 차이를 보이지 않습니다. 실제로 닮은 게 느껴집니까?
 
 ### %
 
 ```{r, National and Local tax in percentage, echo = FALSE}
-tbl_q4_a %>% 
-  `[`(3, -(6:7)) %>%
+ptbl_q4 <- 
+  tbl_q4_a %>% 
+  `[`(3, -6) %>%
   prop.table %>% 
   c("계" = sum(.)) %>%
-  `*`(100) %>%
+  `*`(100) 
+ptbl_q4 %>%
   format(digits = 2, nsmall = 1) %>%
   pander
 ```
+
+정답률은 Red, Black 을 합하여 계산하는데, `r ptbl_q4[2] %>% format(digits = 2, nsmall = 1)`(%) 입니다.
 
 ## Q5. 세대간 문해력 격차
 
@@ -341,25 +385,33 @@ tbl_q5_a <- quiz$Q5 %>%
   table(quiz$group, ., useNA = "ifany") %>%
   cbind("계" = rowSums(.)) %>%
   rbind("계" = colSums(.))
-# colnames(tbl_q2_a)[5] %<>% `<-`(., "결석")
-tbl_q5_a %>% pander 
 tbl_q5_a %>% 
+  pander 
+chisq_test_q5 <- 
+  tbl_q5_a %>%
   `[`(-3, -5) %>%
-  chisq.test(simulate.p.value = FALSE) %>%
+  chisq.test(simulate.p.value = FALSE) 
+chisq_test_q5 %>%
   pander
 ```
+
+Q5의 집계 결과가 Red, Black 간에 통계적으로 유의한 차이가 있는지 알아보기 위하여 카이제곱 테스트를 수행하였습니다. 그 결과 카이제곱 통계량은 `r chisq_test_q5[1] %>% format(digits = 2, nsmall = 3)`, 자유도는 `r chisq_test_q5[2] %>% format(digits = 2, nsmall = 2)`, p-value 는 `r chisq_test_q5[3] %>% format(digits = 2, nsmall = 4)`이므로 Red, Black 간에 통계적으로 유의한 차이를 보이지 않습니다. 실제로 닮은 게 느껴집니까?
 
 ### %
 
 ```{r, tax law and cabinets in percentage, echo = FALSE}
-tbl_q5_a %>% 
+ptbl_q5 <- 
+  tbl_q5_a %>% 
   `[`(3, -5) %>%
   prop.table %>% 
   c("계" = sum(.)) %>%
-  `*`(100) %>%
+  `*`(100) 
+ptbl_q5 %>%
   format(digits = 2, nsmall = 1) %>%
   pander
 ```
+
+정답률은 Red, Black 을 합하여 계산하는데, `r ptbl_q5[1] %>% format(digits = 2, nsmall = 1)`(%) 입니다.
 
 ## Q6. 문해력 격차의 파급효과
 
@@ -376,27 +428,37 @@ tbl_q6_a <- quiz$Q6 %>%
   rbind("계" = colSums(.))
 tbl_q6_a %>% 
   pander 
-tbl_q6_a %>% 
+chisq_test_q6 <- 
+  tbl_q6_a %>%
   `[`(-3, -6) %>%
-  chisq.test(simulate.p.value = FALSE) %>%
+  chisq.test(simulate.p.value = FALSE) 
+chisq_test_q6 %>%
   pander
 ```
+
+Q6의 집계 결과가 Red, Black 간에 통계적으로 유의한 차이가 있는지 알아보기 위하여 카이제곱 테스트를 수행하였습니다. 그 결과 카이제곱 통계량은 `r chisq_test_q6[1] %>% format(digits = 2, nsmall = 2)`, 자유도는 `r chisq_test_q6[2] %>% format(digits = 2, nsmall = 2)`, p-value 는 `r chisq_test_q6[3] %>% format(digits = 2, nsmall = 2)`이므로 Red, Black 간에 통계적으로 유의한 차이를 보이지 않습니다. 실제로 닮은 게 느껴집니까?
 
 ### %
 
 ```{r, tax law and laymen in percentage, echo = FALSE}
-tbl_q6_a %>% 
+ptbl_q6 <- 
+  tbl_q6_a %>% 
   `[`(3, -6) %>%
   prop.table %>% 
   c("계" = sum(.)) %>%
-  `*`(100) %>%
+  `*`(100) 
+ptbl_q6 %>%
   format(digits = 2, nsmall = 1) %>%
   pander
 ```
 
+정답률은 Red, Black 을 합하여 계산하는데, `r ptbl_q6[1] %>% format(digits = 2, nsmall = 1)`(%) 입니다. 
+
 # 一切唯心造(일체유심조)
 
-## Q7. 단어의 영향
+컵 가득 음료수를 채웠는데 미끄러지면서 반을 쏟았습니다. 이 상황에서 어떤 사람은 "그래도 반이 남았네"라고 긍정적 반응을 하고 또 다른 사람은 "어쩌나 반 밖에 안 남았네"라고 부정적 반응을 보일 수 있습니다. 만약, 반응을 보이기 전에 Red 에는 긍정적 단어들을 읽게 하고, Black 에는 부정적 단어들을 읽게 한 후 반응을 물어보면 어떻게 될까요? Red, Black 의 성격상 단어를 보기 전에는 긍정적 반응의 비율과 부정적 반응의 비율이 닮을 것으로 기대됩니다. 그러나 단어를 보고 나서는 반응이 극명하게 나뉘는 것을 관찰하게 됩니다. 통계적으로 매우, 매우, ... 유의한 차이를 보여 줍니다. 이것도 일종의 프레이밍이 인식에 미치는 영향이라고 할 수 있겠습니다. 힘든 상황이라도 긍정적인 생각을 가져야겠죠?
+
+## Q7. 프레임을 설정하는 단어의 힘
 
 ```{r, echo = FALSE, out.width = "67%", fig.align = "left"}
 include_graphics("./pics/Quiz240329_Q7_Red.png")
@@ -406,53 +468,57 @@ include_graphics("./pics/Quiz240329_Q7_Red.png")
 include_graphics("./pics/Quiz240329_Q7_Black.png")
 ```
 
-똑같은 상황에서 긍정적인 단어를 보고 답하는 것 (Red)과, 부정적인 단어를 보고 답하는 것(Black)에 따라 Red 집단에는 긍정적 답변의 비율이 높게, Black 집단에는 부정적 답변의 비율이 높게 나올 것으로 기대한 대로 통계적으로 매우 유의한 차이가 관찰됨. 힘든 상황이라도 긍정적인 생각을 가지길~~^^
 
 ```{r, vote attitude, echo = FALSE, warning = FALSE}
 tbl_q7_a <- quiz$Q7 %>%
   table(quiz$group, ., useNA = "ifany") %>%
   cbind("계" = rowSums(.)) %>%
   rbind("계" = colSums(.))
-# colnames(tbl_Q7_a)[4] <- "불참"
 rownames(tbl_q7_a)[1:2] <- c("Red(긍정적 단어)", "Black(부정적 단어)")
 tbl_q7_a %>% 
   pander
-tbl_q7_a %>% 
-  `[`(-3, -(4:5)) %>%
-  chisq.test(simulate.p.value = FALSE) %>%
+chisq_test_q7 <- 
+  tbl_q7_a %>%
+  `[`(-3, -4) %>%
+  chisq.test(simulate.p.value = FALSE) 
+chisq_test_q7 %>%
   pander
 ```
+
+Q7의 Red는 음료수를 쏟은 상황에서 "견딜만 하다" 등의 긍정적인 단어들을 본 사람들인 데 `r tbl_q7_a[1, 4]`명이 응답한 가운데 `r tbl_q7_a[1, 1]`명이 "반이나" 남아 있다는 반응을 보이고, `r tbl_q7_a[1, 2]`명이 "반 밖에" 안 남았다는 반응을 보입니다. Black은 같은 상황에서 "매우 화가 난다" 등의 부정적인 단어들을 본 사람들인 데 `r tbl_q7_a[2, 4]`명이 응답한 가운데 `r tbl_q7_a[2, 1]`명이 "반이나" 남아 있다는 반응을 보이고, `r tbl_q7_a[2, 2]`명이 "반 밖에" 안 남았다는 반응을 보입니다. 그리고 "모름/기타"에 답한 인원은 Red에  `r tbl_q7_a[1, 3]`명, Black 에 `r tbl_q7_a[2, 3]`명이 응답하였습니다. 랜덤화 효과일까요? 유난히 닮은 게 이런 해석을 불러 일으킵니다. 카이제곱 테스트는 이와 같은 상황에서 단어들을 이용하여 긍정적인 프레임을 구성한 경우와 부정적인 프레임을 구성한 경우에 그 차이가 통계적으로 매우, 매우, ... 유의하다는 것을 보여 줍니다. 카이제곱 통계량은 `r chisq_test_q7[1] %>% format(digits = 2, nsmall = 3)`, 자유도는 `r chisq_test_q7[2] %>% format(digits = 2, nsmall = 2)`, p-value 는 `r chisq_test_q7[3] %>% format(digits = 2, nsmall = 4)` 
+긍정적인 단어나 부정적인 단어를 단지 읽는 것만으로도 프레임이 설정되어 반응이 다르게 나온다는 것을 보여줍니다.
 
 ### % 비교.  
 
 ```{r, investigation in percentage, echo = FALSE}
-levels(quiz$Q7) <- c("반이나", "반밖에", "모름/무응답")
-tbl_q7_a_3 <- quiz$Q7 %>%
-  table(quiz$group, ., useNA = "ifany") %>%
-  cbind("계" = rowSums(.)) %>%
-  rbind("계" = colSums(.))
-colnames(tbl_q7_a_3)[4] <- "결석"
-rownames(tbl_q7_a_3)[1:2] <- c("Red(긍정적 단어)", "Black(부정적 단어)")
-tbl_q7_a_3 %>% 
-  `[`(-3, -(4:5)) %>%
-  prop.table(margin = 1) %>%
+ptbl_q7_a <- 
+  tbl_q7_a %>% 
+  `[`(-3, -4) %>%
+  prop.table(margin = 1) %>% 
   `*`(100) %>%
-  cbind("계" = rowSums(.)) %>%
+  cbind("계" = rowSums(.))
+ptbl_q7_a %>%
   format(digits = 2, nsmall = 1) %>%
   pander
 ```
 
-### % 합계
+긍정적인 단어들을 읽어 본 Red에서 "반이나" 남았다고 응답하는사람들의 백분율, `r format(ptbl_q7_a[1, 1], digits = 2, nsmall = 1)`(%)은 "반 밖에" 안 남았다고 응답하는 사람들의 백분율, `r format(ptbl_q7_a[1, 2], digits = 2, nsmall = 1)`(%) 보다 월등히 높습니다. 반면 부정적인 단어들을 읽어 본 Black에서 "반이나" 남았다고 응답하는사람들의 백분율, `r format(ptbl_q7_a[2, 1], digits = 2, nsmall = 1)`(%)은 "반 밖에" 안 남았다고 응답하는 사람들의 백분율, `r format(ptbl_q7_a[2, 2], digits = 2, nsmall = 1)`(%) 보다 훨씬 적습니다. 긍정적인 단어를 읽느냐, 부정적인 단어를 읽느냐에 따라 형성된 프레임의 영향이 막대하다는 것을 잘 알 수 있습니다. Red 와 Black 이 워낙 차이가 나지만 전체적으로 어느 정도가 "반이나" 남았다, 혹은 "반 밖에 " 안 남았다고 응답하였는지 합쳐 보겠습니다.
+
+### % 합산
 
 ```{r, overall percentage, echo = FALSE}
-quiz$Q7 %>%
-  table(useNA = "no") %>%
-  prop.table %>%
-  `*`(100) %>%
+ptbl_q7 <- 
+  tbl_q7_a %>% 
+  `[`(3, -4) %>%
+  prop.table %>% 
   c("계" = sum(.)) %>%
+  `*`(100) 
+ptbl_q7 %>%
   format(digits = 2, nsmall = 1) %>%
   pander
 ```
+
+"반이나" 남아 있다고 응답한 백분율은 Red, Black 합쳐서  `r format(ptbl_q7[1], digits = 2, nsmall = 1)`(%)(으)로  '반 밖에 " 안 남아 있다고 응답한 백분율, `r format(ptbl_q7[2], digits = 2, nsmall = 1)`(%) 보다 상당히 많습니다. 
 
 ### Mosaic Plot
 
@@ -468,9 +534,9 @@ df <- m_list$df
 p_df <- m_list$p_df
 names(df)[1] <- "Var1"
 names(p_df)[1] <- "Var1"
-# df$Var1 %<>% factor(labels = c("반이나 남았네", "반밖에 안 남았네", "모름/무응답"))
+# df$Var1 %<>% factor(labels = c("반이나 남았네", "반밖에 안 남았네", "모름/기타"))
 df$Var2 %<>% factor(labels = c("긍정적 단어를 본 집단", "부정적 단어를 본 집단"))
-# p_df$Var1 %<>% factor(labels = c("반이나 남았네", "반밖에 안 남았네", "모름/무응답"))
+# p_df$Var1 %<>% factor(labels = c("반이나 남았네", "반밖에 안 남았네", "모름/기타"))
 p_df$Var2 %<>% factor(labels = c("긍정적 단어를 본 집단", "부정적 단어를 본 집단"))
 m + geom_text(aes(x = center, y = 1.05), 
               family = "KoPubWorldDotum Medium",
@@ -478,7 +544,7 @@ m + geom_text(aes(x = center, y = 1.05),
   theme_bw(base_family = "KoPubWorldDotum Medium") +
   labs(title = "컵의 물을 반 엎질렀을 때", x = "Red or Black(누적 %)", y = "인원(%, 명)") +
   scale_fill_brewer(name = "응답", 
-                    labels = c("반이나 남았네", "반밖에 안 남았네", "모름/무응답"),
+                    labels = c("반이나 남았네", "반밖에 안 남았네", "모름/기타"),
                     type = "qual", 
                     palette = "Set2", 
                     direction = 1) +
@@ -488,49 +554,52 @@ m + geom_text(aes(x = center, y = 1.05),
 ggsave("./pics/Quiz240930_Q7_RnB.png", dpi = 120, width = 960, height = 840, units = "px")
 ```
 
-# 제출 시간의 분포
+Mosaic Plot 은 이 집계결과를 시각적으로 잘 보여줍니다. 긍정적 단어를 본 Red 에서 "반이나" 남아 있다고 응답한 백분율이 월등
+히 높고, 정적 단어를 본 Black 에서 "반 밖에" 안 남았다고 응답한 백분율이 월등히 높은 것을 시각적으로 알 수 있습니다. 덤으로 "모름/기타"의 백분율은 Red, Black 간에 매우 닮았다는 점도 시각적으로 쉽게 파악할 수 있습니다.
 
-과제 제출이 제출 기간 마지막 날에 몰린다는 것을 시각적으로 보여주고 싶어서 하나 추가하였습니다. 6주차에 접어들어가는 시점에서 마지막 날에 몰리는 현상이 뚜럇해지고 있습니다. 여기서조차 랜덤화 효과를 관찰할 수 있네요. p-value 에 유의해 주세요. 제출시간과 관련한 두 가지 현상에 대해서도 여러분의 생각을 들어보고 싶습니다. 첫째, 랜덤화 효과. 둘쨰, 마감날에 몰리는 현상.
+## 마감 시간으로부터 제출 시간의 분포
 
-<!--
-### 시간 단위 기초통계량
-
-```{r, echo = FALSE}
-summary(quiz$hours)
-stem(quiz$hours)
-max(quiz$hours, na.rm = TRUE)
-```
--->
-
-<P style = "page-break-before:always">
-
-## 일 단위 마감 시간으로부터 제출 시간의 분포
-
-### 분포표(Red, Black 은 닮았는가?)
+### 분포표
 
 ```{r, echo = FALSE, warning = FALSE}
 N <- nrow(quiz)
-days_tbl <- quiz$days %>%
+days_tbl <- 
+  quiz$days %>%
   cut(breaks = c(0:14), include.lowest = TRUE) %>%
   table(quiz$group, .) 
 days_tbl %>%
-#  cbind("계" = rowSums(.)) %>%
-#  rbind("계" = colSums(.)) %>%
+  cbind("계" = rowSums(.)) %>%
+  rbind("계" = colSums(.)) %>%
   pander(caption = "일 단위")
-quiz$days %>%
-  cut(breaks = c(0:14), include.lowest = TRUE) %>%
-  table(quiz$group, .) %>%
-#  `[`(, -1) %>%
-  chisq.test(simulate.p.value = FALSE) %>%
+```
+
+분포표로부터 두 가지 문제를 살펴보겠습니다. 첫째, 날마다 고르게 제출하는가? 둘쨰, Red, Black 간에 통게적으로 유의한 차이가 있는가?
+각 문제를 살펴보기 위해서는 분포표의 일부분을 대상으로 카이제곱 테스트를 수행합니다.
+
+### 날마다 고르게 제출하는가?
+
+```{r, echo = FALSE, warning = FALSE}
+days_tbl %>%
+  rbind("계" = colSums(.)) %>%
+  `[`(3, 1:14) %>%
+  pander
+days_chisq_test <-
+  days_tbl %>%
+  rbind("계" = colSums(.)) %>%
+  `[`(3, 1:14) %>%
+  chisq.test(simulate.p.value = FALSE) 
+days_chisq_test %>%
   pander
 ```
+
+날마다 고르게 제출하는지 알아 보았습니다. 분포표의 "계"행에서 '계'열을 제외하고 카이제곱테스트를 수행합니다. 분포표 만으로도 쉽게 파악할 수 있지만 카이제곱테스트가 명확히 해 줍니다. 카이제곱 통계량은 `r format(days_chisq_test[1], digits = 2, nsmall = 2)`, 자유도는 `r format(days_chisq_test[2], digits = 2, nsmall = 2)`, p-value 는 `r format(days_chisq_test[3], digits = 2, nsmall = 2)` 이므로 결코 고르게 제출한다고 말할 수 없겠습니다. 막대그래프로 살펴 보겠습니다.
 
 ### 막대그래프
 
 ```{r, echo = FALSE}
-# png(file = "./pics/2302/quiz_submission_5.png", width = 640, height = 480)
+# png(file = "./pics/2302/quiz_submission_8.png", width = 640, height = 480)
 suppressMessages({
-  par(family = "KoPubWorldDotum Medium")
+par(family = "KoPubWorldDotum Medium")
 b <- 
   quiz$days %>%
   cut(breaks = c(0:14), include.lowest = TRUE) %>%
@@ -544,15 +613,36 @@ text(x = b[14, 1], y = sum(days_tbl[, 1]),
 text(x = b[14, 1], y = sum(days_tbl[, 1]) / 2, 
      labels = paste0(format(sum(days_tbl[, 1]) / N * 100, digits = 1, nsmall = 0), "%"))
 title(main = paste0("Quiz240930 (", N, "명 제출)"))
-# title(main = "일 단위 퀴즈 제출 인원", sub = paste0("Quiz240930 (", N, "명 제출)"))
-dev.copy(png, file = "./pics/2401/quiz_submission_5.png", width = 640, height = 480)
+# title(main = "일 단위 퀴즈 제출 인원", sub = paste0("Quiz230925 (", N, "명 제출)"))
+dev.copy(png, file = "./pics/2402/quiz_submission_9.png", width = 640, height = 480)
 invisible(dev.off())
 })
 ```
 
+막대그래프는 총 제출인원 `r N`(명) 중에 `r sum(days_tbl[, 1])`(명),  `r format(sum(days_tbl[, 1]) / N * 100, digits = 1, nsmall = 0)`(%)가 마감일에 몰리는 것을 명확히 보여주고 있습니다.
+
+### Red, Black 간에 닮았는가?
+
+```{r, echo = FALSE, warning = FALSE}
+days_tbl %>%
+  rbind("계" = colSums(.)) %>%
+  `[`(-3, 1:14) %>%
+  pander
+days_RnB_chisq_test <-
+  days_tbl %>%
+  `[`(-3, 1:14) %>%
+  chisq.test(simulate.p.value = FALSE) 
+days_RnB_chisq_test %>%
+  pander
+```
+
+제출시간의 분포가 Red, Black 간에 닮았는지 알아 보았습니다. 이번에는 분포표의 첫번쨰와 두번쨰 행, '계'열을 제외한 나머지 열에 대해서 카이제곱테스트를 수행합니다. 카이제곱 통계량은 `r format(days_RnB_chisq_test[1], digits = 2, nsmall = 3)`, 자유도는 `r format(days_RnB_chisq_test[2], digits = 2, nsmall = 2)`, p-value 는 `r format(days_RnB_chisq_test[3], digits = 2, nsmall = 4)` 이므로 제출 시간의 분포는 Red, Black 간에 통계적으로 유의한 차이가 관찰되지 않습니다. 이 사실을 Mosaic Plot 을 이용하여 시각적으로 살펴보겠습니다. 닮았다고 느껴지나요?
+
 ### Mosaic Plot
 
 ```{r, echo = FALSE, fig.width = 10, fig.height = 5}
+library(ggplot2)
+source("./mosaic_gg.R")
 m2_list <- days_tbl[, 14:1] %>%
   mosaic_gg
 m2 <- m2_list$m
@@ -577,9 +667,7 @@ m2 + geom_text(aes(x = center, y = 1.05),
 ggsave("./pics/Quiz240930_submission_5.png", dpi = 120, width = 960, height = 840, units = "px")
 ```
 
-
 ```{r, save, echo = FALSE}
-saveRDS(class_roll, file = "./class_roll240930.RDS")
 saveRDS(quiz, file = "./quiz240930.RDS")
 save.image("./quiz240930.RData")
 ```
