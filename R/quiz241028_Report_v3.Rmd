@@ -42,7 +42,7 @@ class_roll$group <- class_roll1025$group[match(class_roll$id, class_roll1025$id)
 saveRDS(class_roll, file = "./class_roll_241101.RDS")
 quiz <- 
   read_excel("./data/quiz241028.xlsx",
-             range = "A2:N523",
+             range = "A2:N623",
              col_names = FALSE)
 str(quiz)
 names(quiz) <- 
@@ -120,6 +120,7 @@ quiz_wrong_ids <- quiz_wrong_ids %>%
     id == "20227131" ~ "20227141",
     id == "20143824" ~ "20183824",
     id == "202425259" ~ "20245259",
+    id == "20212556" ~ "20212566",
     TRUE ~ id
   ))
 # 3. quiz 에서 id 틀린 행을 제거하고 옳은 id 갖춘 행으로 교체하기
@@ -528,7 +529,7 @@ ptbl_q7 %>%
   pander
 ```
 
-사후 장기기증 의사가 있다고 응답한 백분률은 default의 설정과는 무관하게 `r format(ptbl_q7[1], digits = 2, nsmall = 1)`(%)(으)로 절반이 좀 넘습니다. 
+사후 장기기증 의사가 있다고 응답한 백분률은 default의 설정과는 무관하게 `r format(ptbl_q7[1], digits = 2, nsmall = 1)`(%)(으)로 절반이 좀 (안 되는군요.)넘습니다. 
 
 ### Mosaic Plot
 
@@ -625,7 +626,7 @@ days_chisq_test %>%
   pander
 ```
 
-날마다 고르게 제출하는지 알아 보았습니다. 분포표의 "계"행에서 '계'열을 제외하고 카이제곱테스트를 수행합니다. 분포표 만으로도 쉽게 파악할 수 있지만 카이제곱테스트가 명확히 해 줍니다. 카이제곱 통계량은 `r format(days_chisq_test[1], digits = 2, nsmall = 2)`, 자유도는 `r format(days_chisq_test[2], digits = 2, nsmall = 2)`, p-value 는 `r format(days_chisq_test[3], digits = 2, nsmall = 2)` 이므로 아직까지는 날짜별로 고르게 제출하고 있습니다. 막대그래프로 살펴 보겠습니다.
+날마다 고르게 제출하는지 알아 보았습니다. 분포표의 "계"행에서 '계'열을 제외하고 카이제곱테스트를 수행합니다. 분포표 만으로도 쉽게 파악할 수 있지만 카이제곱테스트가 명확히 해 줍니다. 카이제곱 통계량은 `r format(days_chisq_test[1], digits = 2, nsmall = 2)`, 자유도는 `r format(days_chisq_test[2], digits = 2, nsmall = 2)`, p-value 는 `r format(days_chisq_test[3], digits = 2, nsmall = 2)` 이므로 특정 날짜에 몰리고 있음을 시사합니다. 막대그래프로 살펴 보겠습니다.
 
 ### 막대그래프
 
