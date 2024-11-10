@@ -301,7 +301,7 @@ ptbl_q2 %>%
   pander
 ```
 
-정답률은 Red, Black 을 합하여 계산하는데, `r ptbl_q2[2] %>% format(digits = 2, nsmall = 1)`(%) 입니다.
+정답률은 Red, Black 을 합하여 계산하는데, `r ptbl_q2[3] %>% format(digits = 2, nsmall = 1)`(%) 입니다.
 
 ## Q3. 취업자의 조건
 
@@ -532,7 +532,7 @@ ptbl_q7 %>%
   pander
 ```
 
-사후 장기기증 의사가 있다고 응답한 백분률은 default의 설정과는 무관하게 `r format(ptbl_q7[1], digits = 2, nsmall = 1)`(%)(으)로 절반이 좀 (안 되는군요.)넘습니다. 
+사후 장기기증 의사가 있다고 응답한 백분률은 default의 설정과는 무관하게 `r format(ptbl_q7[1], digits = 2, nsmall = 1)`(%)(으)로 절반이 좀 안 되는군요. 
 
 ### Mosaic Plot
 

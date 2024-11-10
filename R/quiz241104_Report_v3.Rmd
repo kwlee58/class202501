@@ -42,7 +42,7 @@ class_roll$group <- class_roll1101$group[match(class_roll$id, class_roll1101$id)
 saveRDS(class_roll, file = "./class_roll_241108.RDS")
 quiz <- 
   read_excel("./data/quiz241104.xlsx",
-             range = "A2:N314",
+             range = "A2:N329",
              col_names = FALSE)
 str(quiz)
 names(quiz) <- 
@@ -564,18 +564,18 @@ days_tbl %>%
 ```{r, echo = FALSE, warning = FALSE}
 days_tbl %>%
   rbind("계" = colSums(.)) %>%
-  `[`(3, 8:14) %>%
+  `[`(3, 7:14) %>%
   pander
 days_chisq_test <-
   days_tbl %>%
   rbind("계" = colSums(.)) %>%
-  `[`(3, 8:14) %>%
+  `[`(3, 7:14) %>%
   chisq.test(simulate.p.value = FALSE) 
 days_chisq_test %>%
   pander
 ```
 
-날마다 고르게 제출하는지 알아 보았습니다. 분포표의 "계"행에서 '계'열을 제외하고 카이제곱테스트를 수행합니다. 분포표 만으로도 쉽게 파악할 수 있지만 카이제곱테스트가 명확히 해 줍니다. 카이제곱 통계량은 `r format(days_chisq_test[1], digits = 2, nsmall = 2)`, 자유도는 `r format(days_chisq_test[2], digits = 2, nsmall = 2)`, p-value 는 `r format(days_chisq_test[3], digits = 2, nsmall = 2)` 이므로 아직까지는 날짜별로 고르게 제출하고 있습니다. 막대그래프로 살펴 보겠습니다.
+날마다 고르게 제출하는지 알아 보았습니다. 분포표의 "계"행에서 '계'열을 제외하고 카이제곱테스트를 수행합니다. 분포표 만으로도 쉽게 파악할 수 있지만 카이제곱테스트가 명확히 해 줍니다. 카이제곱 통계량은 `r format(days_chisq_test[1], digits = 2, nsmall = 3)`, 자유도는 `r format(days_chisq_test[2], digits = 2, nsmall = 2)`, p-value 는 `r format(days_chisq_test[3], digits = 2, nsmall = 4)` 이므로 특정한 날짜에 제출이 집중되고 있음을 시사합니다. 막대그래프로 살펴 보겠습니다.
 
 ### 막대그래프
 
@@ -607,17 +607,17 @@ invisible(dev.off())
 ```{r, echo = FALSE, warning = FALSE}
 days_tbl %>%
   rbind("계" = colSums(.)) %>%
-  `[`(-3, 8:14) %>%
+  `[`(-3, 7:14) %>%
   pander
 days_RnB_chisq_test <-
   days_tbl %>%
-  `[`(-3, 8:14) %>%
+  `[`(-3, 7:14) %>%
   chisq.test(simulate.p.value = FALSE) 
 days_RnB_chisq_test %>%
   pander
 ```
 
-제출시간의 분포가 Red, Black 간에 닮았는지 알아 보았습니다. 이번에는 분포표의 첫번쨰와 두번쨰 행, '계'열을 제외한 나머지 열에 대해서 카이제곱테스트를 수행합니다. 카이제곱 통계량은 `r format(days_RnB_chisq_test[1], digits = 2, nsmall = 2)`, 자유도는 `r format(days_RnB_chisq_test[2], digits = 2, nsmall = 2)`, p-value 는 `r format(days_RnB_chisq_test[3], digits = 2, nsmall = 2)` 이므로 제출 시간의 분포는 Red, Black 간에 통계적으로 유의한 차이가 관찰되지 않습니다. 이 사실을 Mosaic Plot 을 이용하여 시각적으로 살펴보겠습니다. 닮았다고 느껴지나요?
+제출시간의 분포가 Red, Black 간에 닮았는지 알아 보았습니다. 이번에는 분포표의 첫번쨰와 두번쨰 행, '계'열을 제외한 나머지 열에 대해서 카이제곱테스트를 수행합니다. 카이제곱 통계량은 `r format(days_RnB_chisq_test[1], digits = 2, nsmall = 2)`, 자유도는 `r format(days_RnB_chisq_test[2], digits = 2, nsmall = 3)`, p-value 는 `r format(days_RnB_chisq_test[3], digits = 2, nsmall = 4)` 이므로 제출 시간의 분포는 Red, Black 간에 통계적으로 유의한 차이가 관찰되지 않습니다. 이 사실을 Mosaic Plot 을 이용하여 시각적으로 살펴보겠습니다. 닮았다고 느껴지나요?
 
 ### Mosaic Plot
 
