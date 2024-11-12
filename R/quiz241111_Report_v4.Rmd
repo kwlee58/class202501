@@ -43,7 +43,7 @@ str(class_roll)
 # saveRDS(class_roll, file = "./class_roll_240510.RDS")
 quiz <- 
   read_excel("./data/quiz241111.xlsx",
-             range = "A2:N80",
+             range = "A2:N95",
              col_names = FALSE)
 str(quiz)
 names(quiz) <- 

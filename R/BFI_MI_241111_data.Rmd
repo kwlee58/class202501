@@ -39,7 +39,7 @@ str(class_roll)
 
 ```{r}
 BFI <- "./data/BFI241111.xlsx" %>% 
-  read_excel(range = "A1:AA96",
+  read_excel(range = "A1:AA108",
              col_names = TRUE)
 BFI %<>%
   data.frame
@@ -78,7 +78,7 @@ BFI_hours <- as.numeric(difftime("2024-11-25 09:00:00", BFI$Time,
 
 ```{r}
 MI <- "./data/MI241111.xlsx" %>% 
-  read_excel(range = "A1:BQ89",
+  read_excel(range = "A1:BQ103",
              col_names = TRUE)
 MI %<>%
   data.frame
