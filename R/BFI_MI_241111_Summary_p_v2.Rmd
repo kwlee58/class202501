@@ -5,7 +5,7 @@ date: "2024-11-11"
 output: html_document
 ---
 
-<!--
+# <!--
 ### Data Reading
 
 `join()`을 사용하기 위하여 `dplyr` 패키지는 사전에 등록
@@ -77,6 +77,63 @@ y_breaks_m <-
 ```{r, echo = FALSE, fig.width = 8, fig.height = 6, message = FALSE}
 library(ggplot2)
 source("./barplot_gg.R")
+b_fill01 <-
+  BFI_level_kr[1:94, ] %>%
+  sapply(FUN = table) %>%
+  `[`(4:1, ) %>% 
+  as.table %>%
+  as.data.frame %>%
+  barplot_gg(position = "fill")
+b_fill01 + 
+  theme_bw(base_family = "KoPubWorldDotum Medium") +
+  labs(title = "BFP 성격특성별 분포", x = "성격특성", y = "집계(%, 명)") +
+  scale_fill_brewer(name = "등급", 
+                    type = "seq", 
+                    palette = "Blues", 
+                    direction = -1) +
+  scale_y_continuous(breaks = c(0, y_breaks_m/100),
+                     labels = format(c(0, y_breaks_m), digits = 1, nsmall = 1)) +
+  theme(plot.title = element_text(hjust = 0.5, 
+                                  size = 18, 
+                                  family = "KoPubWorldDotum Bold"))
+b_fill02 <-
+  BFI_level_kr[1:214, ] %>%
+  sapply(FUN = table) %>%
+  `[`(4:1, ) %>% 
+  as.table %>%
+  as.data.frame %>%
+  barplot_gg(position = "fill")
+b_fill02 + 
+  theme_bw(base_family = "KoPubWorldDotum Medium") +
+  labs(title = "BFP 성격특성별 분포", x = "성격특성", y = "집계(%, 명)") +
+  scale_fill_brewer(name = "등급", 
+                    type = "seq", 
+                    palette = "Blues", 
+                    direction = -1) +
+  scale_y_continuous(breaks = c(0, y_breaks_m/100),
+                     labels = format(c(0, y_breaks_m), digits = 1, nsmall = 1)) +
+  theme(plot.title = element_text(hjust = 0.5, 
+                                  size = 18, 
+                                  family = "KoPubWorldDotum Bold"))
+b_fill03 <-
+  BFI_level_kr[1:320, ] %>%
+  sapply(FUN = table) %>%
+  `[`(4:1, ) %>% 
+  as.table %>%
+  as.data.frame %>%
+  barplot_gg(position = "fill")
+b_fill03 + 
+  theme_bw(base_family = "KoPubWorldDotum Medium") +
+  labs(title = "BFP 성격특성별 분포", x = "성격특성", y = "집계(%, 명)") +
+  scale_fill_brewer(name = "등급", 
+                    type = "seq", 
+                    palette = "Blues", 
+                    direction = -1) +
+  scale_y_continuous(breaks = c(0, y_breaks_m/100),
+                     labels = format(c(0, y_breaks_m), digits = 1, nsmall = 1)) +
+  theme(plot.title = element_text(hjust = 0.5, 
+                                  size = 18, 
+                                  family = "KoPubWorldDotum Bold"))
 b_fill <-
   BFI_level_kr %>%
   sapply(FUN = table) %>%
@@ -103,11 +160,11 @@ ggsave("./pics/BFP_strengths2302.png", dpi = 120, width = 10, height = 7.5, unit
 
 마감일이 되어서야 질문지에 응답하는 사람들과 그 이전에 응답하는 사람들이 BFP 와 어떤 관련이 있는지 알아 보겠습니다. 성실성이 중상 이상인 사람들이 마감일 이전에 제출하는 비중이 높다는 것을 알 수 있습니다. 
 
-```{r, echo = FALSE, results = 'hide', eval = TRUE}
+```{r, echo = FALSE, results = 'hide', eval = FALSE}
 source("./mosaic_gg.R")
-mosaic_gg(t(table(BFI_level_kr$"외향성", BFI_days <= 1)))$m +
+mosaic_gg(t(table(BFI_level_kr$외향성, BFI_days <= 1)))$m +
   theme_bw(base_family = "KoPubWorldDotum Medium") +
-  labs(title = "외향성과 과제 응답시간", x = "등급(낮음 => 높음 순)", y = "제출(명, %)") +
+  labs(title = "외향성과 과제 응답시간", x = "등급", y = "제출(명, %") +
   scale_fill_brewer(name = "제출시간",
                     labels = c("마감이전", "마감날"),
                     type = "qual", 
@@ -116,9 +173,9 @@ mosaic_gg(t(table(BFI_level_kr$"외향성", BFI_days <= 1)))$m +
   theme(plot.title = element_text(hjust = 0.5, 
                                   size = 18, 
                                   family = "KoPubWorldDotum Bold"))
-mosaic_gg(t(table(BFI_level_kr$"신경성", BFI_days <= 1)))$m +
+mosaic_gg(t(table(BFI_level_kr$신경성, BFI_days <= 1)))$m +
   theme_bw(base_family = "KoPubWorldDotum Medium") +
-  labs(title = "신경성과 과제 응답시간", x = "등급(낮음 => 높음 순)", y = "제출(명, %)") +
+  labs(title = "신경성과 과제 응답시간", x = "등급", y = "제출(명, %") +
   scale_fill_brewer(name = "제출시간",
                     labels = c("마감이전", "마감날"),
                     type = "qual", 
@@ -127,9 +184,9 @@ mosaic_gg(t(table(BFI_level_kr$"신경성", BFI_days <= 1)))$m +
   theme(plot.title = element_text(hjust = 0.5, 
                                   size = 18, 
                                   family = "KoPubWorldDotum Bold"))
-mosaic_gg(t(table(BFI_level_kr$"성실성", BFI_days <= 1)))$m +
+mosaic_gg(t(table(BFI_level_kr$성실성, BFI_days <= 1)))$m +
   theme_bw(base_family = "KoPubWorldDotum Medium") +
-  labs(title = "성실성과 과제 응답시간", x = "등급(낮음 => 높음 순)", y = "제출(명, %)") +
+  labs(title = "성실성과 과제 응답시간", x = "등급", y = "제출(명, %") +
   scale_fill_brewer(name = "제출시간",
                     labels = c("마감이전", "마감날"),
                     type = "qual", 
@@ -138,9 +195,9 @@ mosaic_gg(t(table(BFI_level_kr$"성실성", BFI_days <= 1)))$m +
   theme(plot.title = element_text(hjust = 0.5, 
                                   size = 18, 
                                   family = "KoPubWorldDotum Bold"))
-mosaic_gg(t(table(BFI_level_kr$"친화성", BFI_days <= 1)))$m +
+mosaic_gg(t(table(BFI_level_kr$친화성, BFI_days <= 1)))$m +
   theme_bw(base_family = "KoPubWorldDotum Medium") +
-  labs(title = "친화성과 과제 응답시간", x = "등급(낮음 => 높음 순)", y = "제출(명, %)") +
+  labs(title = "친화성과 과제 응답시간", x = "등급", y = "제출(명, %") +
   scale_fill_brewer(name = "제출시간",
                     labels = c("마감이전", "마감날"),
                     type = "qual", 
@@ -149,9 +206,9 @@ mosaic_gg(t(table(BFI_level_kr$"친화성", BFI_days <= 1)))$m +
   theme(plot.title = element_text(hjust = 0.5, 
                                   size = 18, 
                                   family = "KoPubWorldDotum Bold"))
-mosaic_gg(t(table(BFI_level_kr$"개방성", BFI_days <= 1)))$m +
+mosaic_gg(t(table(BFI_level_kr$개방성, BFI_days <= 1)))$m +
   theme_bw(base_family = "KoPubWorldDotum Medium") +
-  labs(title = "개방성과 과제 응답시간", x = "등급(낮음 => 높음 순)", y = "제출(명, %)") +
+  labs(title = "개방성과 과제 응답시간", x = "등급", y = "제출(명, %") +
   scale_fill_brewer(name = "제출시간",
                     labels = c("마감이전", "마감날"),
                     type = "qual", 
