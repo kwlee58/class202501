@@ -1,5 +1,5 @@
 ---
-title: "Quiz 241104 (Prospect Theory)"
+title: "Quiz 241111 (Anchor Effects)"
 author: "coop711"
 date: "`r format(Sys.time(), '%Y-%m-%d %H:%M:%S')`"
 output: html_document
@@ -7,93 +7,101 @@ output: html_document
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
+# install.packages("pander", repos = "https://cran.rstudio.com")
+# install.packages("xlsx", repos = "https://cran.rstudio.com")
 library(readxl)
+library(magrittr)
 library(pander)
 library(knitr)
-library(magrittr)
 library(dplyr)
 panderOptions('table.split.table', Inf)
 panderOptions('table.alignment.rownames', 'left')
 panderOptions('table.alignment.default', 'right')
-options(width = 180)
+# options(width = 180)
 ```
 
 ## 실험의 목적
 
-10주차 구글 예습 설문지 집계결과를 분석합니다. 
+11주차 구글 예습 설문지 집계결과를 분석합니다. 
 Q1~Q6에서는 랜덤화의 효과로 Red, Black 이 얼마나 닮았는지 알아봅니다.
-Q7에서는 Prospect Theory 에서 이득은 확고히 하고 손실은 회피하려는 심리에 대해서 살펴봅니다.
-제출시간의 분포가 날마다 고른지, Red, Black 간에는 닮았는지 알아봅니다.
+Q7에서는 Anchor Effects 를 알아 보기 위하여 Red 에서는 대학 등록금이 무상인 나라들의 예를 들고 나서 우리나라 국공립 대학 등록금의 적정 수준에 대해서 묻고, Black 에서는  대학 등록금이 고액인 나라들의 예를 들고 나서 우리나라 국공립 대학 등록금의 적정 수준에 대해서 물어 보아 차이가 통계적으로 유의한지 살핍니다. 
+그리고, 제출시간의 분포가 날마다 고른지, Red, Black 간에는 닮았는지 알아봅니다.
 
-```{r, data, echo = FALSE, results = 'hide', message = FALSE}
-class_roll1101 <- 
-  readRDS("./class_roll_241101.RDS")
-class_roll1101 %<>% 
-  data.frame
-#> 11월 8일 출석부로 업데이트할 부분
+```{r, data, echo = FALSE, message = FALSE, results = 'hide'}
 class_roll <- 
-  read_excel("./data/class_roll241108.xlsx", 
-             range = "B1:G801")
+  readRDS("./class_roll_241108.RDS")
 class_roll %<>% 
   data.frame
+# class_roll <- 
+#   read_excel("./data/class_roll241115.xlsx", 
+#              range = "B1:I897")
+# class_roll %<>% 
+#   data.frame
 str(class_roll)
-names(class_roll) <- c("dept","id", "name", "status", "email", "cell_no")
-class_roll$group <- class_roll1101$group[match(class_roll$id, class_roll1101$id)]
-saveRDS(class_roll, file = "./class_roll_241108.RDS")
+# names(class_roll) <- c("college", "dept", "year", "id", "name", "status", "email", "cell_no")
+# class_roll$group <- class_roll0503$group[match(class_roll$id, class_roll0503$id)]
+# saveRDS(class_roll, file = "./class_roll_240510.RDS")
 quiz <- 
-  read_excel("./data/quiz241104.xlsx",
-             range = "A2:N366",
+  read_excel("./data/quiz241111.xlsx",
+             range = "A2:N80",
              col_names = FALSE)
 str(quiz)
 names(quiz) <- 
   c("time", "email", "dept", "id", "name", paste0("Q", 1:6),  "group", "Q7_R", "Q7_B")
-# class(quiz$id) <- "character"
 class(quiz$id) <- "character"
 quiz <- data.frame(quiz)
+str(quiz)
 quiz[c("group", "Q7_R", "Q7_B")]
-quiz$Q7 <- ifelse(is.na(quiz$Q7_R), quiz$Q7_B, quiz$Q7_R)
+quiz$Q7 <- 
+  ifelse(is.na(quiz$Q7_R), quiz$Q7_B, quiz$Q7_R)
 quiz$Q7 %<>% 
-  strsplit(split = " : ") %>% 
-  sapply(`[`, 1)
+  strsplit(split = " : ") %>% sapply(`[`, 1)
 quiz[c("group", "Q7_R", "Q7_B", "Q7")]
-quiz$dept <- factor(quiz$dept)
-quiz$group <- factor(quiz$group, 
-                         levels = c("Red", "Black"))
+# quiz$Q7 %<>% 
+#   strsplit(split = "[.]") %>% sapply(`[`, 1)
+quiz$dept %<>% 
+  factor
+quiz$group %<>% 
+  factor(levels = c("Red", "Black"))
 quiz$Q1 %<>% 
-  factor(levels = c("소득불평등이 심한 나라에서 건강 및 사회문제지수가 나쁘게 나온다.", 
-                    "소득이 많은 나라에서 건강 및 사회문제지수가 나쁘게 나온다.", 
-                    "소득불평등이 심하면 건강 및 사회문제지수가 나빠진다.", 
-                    "소득이 많아지면 건강 및 사회문제지수가 나빠진다."))
+  factor(levels = c("1분위의 평균소비성향이 5분위의 평균소비성향보다 낮다", 
+                    "1분위의 평균소비성향이 5분위의 평균소비성향보다 높다", 
+                    "1분위의 평균소비성향이 5분위의 평균소비성향과 같다", 
+                    "1분위의 평균소비성향과 5분위의 평균소비성향은 비교할 수 없다"))
 quiz$Q2 %<>% 
-  factor(levels = c("대공황, 대침체, 대번영", 
-                    "대침체, 대공황, 대번영", 
-                    "대번영, 대공황, 대침체", 
-                    "대공황, 대번영, 대침체"))
+  factor(levels = c("낙수효과를 기대하기 어렵다",
+                    "낙수효과를 잘 보여주고 있다",
+                    "소비지출이 급격히 늘어나고 있다",
+                    "고소득층의 평균소비성향이 급격히 늘어나고 있다")) 
 quiz$Q3 %<>% 
-  factor(levels = c("\"25%\"", "\"35%\"", "\"50%\"", "\"60%\""), 
-         labels = c("25%", "35%", "50%", "60%"))
+  factor(levels = c("최고한계세율이 높을 때 상위1%의 소득점유율도 높다.", 
+                    "최고한계세율이 낮을 때 상위1%의 소득점유율도 낮다.", 
+                    "최고한계세율이 높을 때 상위1%의 소득점유율은 낮다.", 
+                    "최고한계세율이 높아지면 상위1%의 소득점유율은 낮아진다."))
 quiz$Q4 %<>% 
-  factor(levels = c("\"25%\"", "\"35%\"", "\"45%\"", "\"60%\""), 
-         labels = c("25%", "35%", "45%", "60%"))
+  factor(levels = c("최고한계세율이 높았던 시기에 하위 99%의 소득증가율이 상위1%의 소득증가율 보다 높았다.", 
+                    "최고한계세율을 높이면 하위 99%의 소득증가율이 상위1%의 소득증가율보다 높아진다.", 
+                    "최고한계세율이 높았던 시기에 하위 99%의 소득이 상위1%의 소득보다 많았다.", 
+                    "최고한계세율을 높이면 하위 99%의 소득이 상위1%의 소득보다 많아진다.")) 
 quiz$Q5 %<>% 
-  factor(levels = c("황금기에 소득이 가장 많이 늘어난 계층은 하위 20%(1분위)이다.", 
-                    "황금기에 소득증가율이 가장 높은 계층은 하위 20%(1분위)이다.", 
-                    "신자유주의시기에 소득이 가장 많이 늘어난 계층은 하위 20%(1분위)이다.", 
-                    "신자유주의시기에 소득증가율이 가장 높은 계층은 하위 20%(1분위)이다."))
+  factor(levels = c("1948년부터 1979년까지는 생산성과 급료가 함께 상승하였다.", 
+                    "1979년 이후 생산성과 급료가 함께 상승하였다.", 
+                    "1979년 이후 생산성은 62.5%의 상승을 보였다.", 
+                    "1979년 이후 급료는 15.9% 의 상승을 보였다."))
 quiz$Q6 %<>% 
-  factor(levels = c("지천태", "천지비", "풍뢰익", "산택손"))
+  factor(levels = c("10억원", "20억원", "25억원", "30억원"))
 quiz$Q7 %<>% 
-  factor(levels = c("A", "B"))
-# quiz$Q7.2 <- quiz$Q7
-# quiz$Q7.2[quiz$group == "Black"] <- factor(quiz$Q7.2[quiz$group == "Black"], levels = c("A", "B"), labels = c("100%확률로 잃기", "90%확률로 잃기"))
-# quiz$Q7.2[quiz$group == "Red"] <- factor(quiz$Q7.2[quiz$group == "Red"], levels = c("A", "B"), labels = c("100%확률로 따기", "90%확률로 따기"))
+  factor(levels = c("무상", "100만원", "200만원", "500만원", "1,000만원"))
 
 #> 마감기한으로부터 제출시점의 기간
 quiz$days <- 
-  as.numeric(difftime("2024-11-18 09:00:00", quiz$time, tz = "Asia/Seoul",  units = 'days'))
+  as.numeric(difftime("2024-11-25 09:00:00", quiz$time, 
+                      tz = "Asia/Seoul",  units = 'days'))
 quiz$hours <- 
-  as.numeric(difftime("2024-11-18 09:00:00", quiz$time, tz = "Asia/Seoul", units = 'hours'))
-str(quiz)
+  as.numeric(difftime("2024-11-25 09:00:00", quiz$time, 
+                      tz = "Asia/Seoul", units = 'hours'))
+quiz %>% 
+  str
 ```
 
 ```{r, cleaning, echo = FALSE, results = 'hide'}
@@ -109,7 +117,7 @@ quiz_wrong_ids <- quiz %>%
 wrong_ids <- quiz_wrong_ids$id
 quiz_wrong_ids <- quiz_wrong_ids %>%
   mutate(id = case_when(
-    id == "20203312" ~ "20203321",
+    id == "201725435" ~ "20172435",
     TRUE ~ id
   ))
 # 3. quiz 에서 id 틀린 행을 제거하고 옳은 id 갖춘 행으로 교체하기
@@ -203,19 +211,26 @@ wrong_tbl %>%
 
 Red 로 응답한 인원은 `r colSums(wrong_tbl)[1]`명, Black 에 응답한 인원은 `r colSums(wrong_tbl)[2]`명입니다. 전체 응답인원 `r sum(wrong_tbl)` 명을 랜덤하게 둘로 나눌 때 어느 한 쪽의 기대인원은 이를 반으로 나눠 준`r sum(wrong_tbl) / 2`명이고, 표준오차는 이의 제곱근에 1/2을 곱해 준 `r round(sqrt(sum(wrong_tbl)) * 1 / 2, digits = 1)` 명입니다. 따라서 Red, Black 각 그룹에 관찰된 인원은 기대인원으로부터 표준오차 범위 안에 들어갑니다.
 
-# 퀴즈 응답 비교
 
-## Q1. Wilkinson
-
-```{r, echo = FALSE, out.width = "75%"}
-include_graphics("./pics/Quiz201026_01.png")
+```{r, randomization, echo = FALSE, results = 'hide'}
+quiz %>% str
 ```
 
-### 소득불평등과 건강 및 사회문제 지표
+# 퀴즈 응답 비교
 
-```{r, inequality, echo = FALSE, warning = FALSE}
-tbl_q1_a <- quiz$Q1 %>%
-  table(quiz$group, ., useNA = "ifany") %>%
+## Q1. 1분위와 5분위의 평균소비성향 비교
+
+```{r, echo = FALSE, out.width = "75%"}
+include_graphics("./pics/Quiz230510_Q1.png")
+```
+
+### 집계
+
+```{r, echo = FALSE, warning = FALSE}
+tbl_q1_a <- quiz %$%
+  table(.$group, .$Q1, useNA = "ifany") %>%
+# tbl_q1_a <- quiz$Q1 %>% 
+#   table(quiz$group, ., useNA = "ifany") %>%
   cbind("계" = rowSums(.)) %>%
   rbind("계" = colSums(.))
 tbl_q1_a %>% 
@@ -230,9 +245,9 @@ chisq_test_q1 %>%
 
 Q1의 집계 결과가 Red, Black 간에 통계적으로 유의한 차이가 있는지 알아보기 위하여 카이제곱 테스트를 수행하였습니다. 그 결과 카이제곱 통계량은 `r chisq_test_q1[1] %>% format(digits = 2, nsmall = 3)`, 자유도는 `r chisq_test_q1[2] %>% format(digits = 2, nsmall = 2)` , p-value 는 `r chisq_test_q1[3] %>% format(digits = 2, nsmall = 4)`이므로 Red, Black 간에 통계적으로 유의한 차이를 보이지 않습니다. 실제로 닮은 게 느껴집니까?
 
-### 소득불평등과 건강 및 사회문제 지표 (%)
+### %
 
-```{r, inequality in percentage, echo = FALSE}
+```{r, productivity vs wage in percentage, echo = FALSE}
 ptbl_q1 <- 
   tbl_q1_a %>% 
   `[`(3, -5) %>%
@@ -244,17 +259,17 @@ ptbl_q1 %>%
   pander
 ```
 
-정답률은 Red, Black 을 합하여 계산하는데, `r ptbl_q1[1] %>% format(digits = 2, nsmall = 1)`(%) 입니다.
+정답률은 Red, Black 을 합하여 계산하는데, `r ptbl_q1[2] %>% format(digits = 2, nsmall = 1)`(%) 입니다.
 
-## Q2. 소득 상위1%의 몫과 시대적 사건들
+## Q2. 낙수효과
 
 ```{r, echo = FALSE, out.width = "75%"}
-include_graphics("./pics/Quiz201026_02.png")
+include_graphics("./pics/Quiz230510_Q2.png")
 ```
 
-### 대공황. 대번영, 대침체
+## 집계
 
-```{r, times, echo = FALSE, warning = FALSE}
+```{r, echo = FALSE, warning = FALSE}
 tbl_q2_a <- quiz$Q2 %>% 
   table(quiz$group, ., useNA = "ifany") %>%
   cbind("계" = rowSums(.)) %>%
@@ -271,9 +286,9 @@ chisq_test_q2 %>%
 
 Q2의 집계 결과가 Red, Black 간에 통계적으로 유의한 차이가 있는지 알아보기 위하여 카이제곱 테스트를 수행하였습니다. 그 결과 카이제곱 통계량은 `r chisq_test_q2[1] %>% format(digits = 2, nsmall = 3)`, 자유도는 `r chisq_test_q2[2] %>% format(digits = 2, nsmall = 2)`, p-value 는 `r chisq_test_q2[3] %>% format(digits = 2, nsmall = 4)`이므로 Red, Black 간에 통계적으로 유의한 차이를 보이지 않습니다. 실제로 닮은 게 느껴집니까?
 
-### 대공황. 대번영, 대침체(%)
+## %
 
-```{r, times in percentage, echo = FALSE}
+```{r, echo = FALSE}
 ptbl_q2 <- 
   tbl_q2_a %>% 
   `[`(3, -5) %>%
@@ -285,23 +300,23 @@ ptbl_q2 %>%
   pander
 ```
 
-정답률은 Red, Black 을 합하여 계산하는데, `r ptbl_q2[4] %>% format(digits = 2, nsmall = 1)`(%) 입니다.
+정답률은 Red, Black 을 합하여 계산하는데, `r ptbl_q2[1] %>% format(digits = 2, nsmall = 1)`(%) 입니다.
 
-## Q3. Piketty의 21세기 자본
+## Q3. 최고한계세율과 상위1% 소득점유율
 
 ```{r, echo = FALSE, out.width = "75%"}
-include_graphics("./pics/Quiz230503_Q3.png")
+include_graphics("./pics/Quiz230510_Q3.png")
 ```
 
-### 상위10%의 총소득 점유율
+## 집계
 
-```{r, MTR, echo = FALSE, warning = FALSE}
+```{r, state arithmetic, echo = FALSE, warning = FALSE}
 tbl_q3_a <- quiz$Q3 %>%
   table(quiz$group, ., useNA = "ifany") %>%
   cbind("계" = rowSums(.)) %>%
   rbind("계" = colSums(.))
 tbl_q3_a %>% 
-  pander
+  pander 
 chisq_test_q3 <- 
   tbl_q3_a %>%
   `[`(-3, -5) %>%
@@ -312,9 +327,9 @@ chisq_test_q3 %>%
 
 Q3의 집계 결과가 Red, Black 간에 통계적으로 유의한 차이가 있는지 알아보기 위하여 카이제곱 테스트를 수행하였습니다. 그 결과 카이제곱 통계량은 `r chisq_test_q3[1] %>% format(digits = 2, nsmall = 3)`, 자유도는 `r chisq_test_q3[2] %>% format(digits = 2, nsmall = 2)`, p-value 는 `r chisq_test_q3[3] %>% format(digits = 2, nsmall = 4)`이므로 Red, Black 간에 통계적으로 유의한 차이를 보이지 않습니다. 실제로 닮은 게 느껴집니까?
 
-### 상위10%의 총소득 점유율 (%)
+## %
 
-```{r, MTRE in percentage, echo = FALSE}
+```{r, state arithmetic in percentage, echo = FALSE}
 ptbl_q3 <- 
   tbl_q3_a %>% 
   `[`(3, -5) %>%
@@ -328,21 +343,21 @@ ptbl_q3 %>%
 
 정답률은 Red, Black 을 합하여 계산하는데, `r ptbl_q3[3] %>% format(digits = 2, nsmall = 1)`(%) 입니다.
 
-## Q4. World Top Income Database
+## Q4. 최고한계세율과 상위1%, 하위99%의 소득증가
 
 ```{r, echo = FALSE, out.width = "75%"}
-include_graphics("./pics/Quiz230503_Q4.png")
+include_graphics("./pics/Quiz230510_Q4.png")
 ```
 
-### 우리나라 상위10%의 소득점유율
+## 집계
 
-```{r, book of change, echo = FALSE, warning = FALSE}
-tbl_q4_a <- quiz$Q4 %>% 
+```{r, labour force, echo = FALSE, warning = FALSE}
+tbl_q4_a <- quiz$Q4 %>%
   table(quiz$group, ., useNA = "ifany") %>%
   cbind("계" = rowSums(.)) %>%
   rbind("계" = colSums(.))
 tbl_q4_a %>% 
-  pander 
+  pander
 chisq_test_q4 <- 
   tbl_q4_a %>%
   `[`(-3, -5) %>%
@@ -353,9 +368,9 @@ chisq_test_q4 %>%
 
 Q4의 집계 결과가 Red, Black 간에 통계적으로 유의한 차이가 있는지 알아보기 위하여 카이제곱 테스트를 수행하였습니다. 그 결과 카이제곱 통계량은 `r chisq_test_q4[1] %>% format(digits = 2, nsmall = 3)`, 자유도는 `r chisq_test_q4[2] %>% format(digits = 2, nsmall = 2)`, p-value 는 `r chisq_test_q4[3] %>% format(digits = 2, nsmall = 4)`이므로 Red, Black 간에 통계적으로 유의한 차이를 보이지 않습니다. 실제로 닮은 게 느껴집니까?
 
-### 우리나라 상위10%의 소득점유율(%)
+## %
 
-```{r, book of change in percentage, echo = FALSE}
+```{r, labour force in percentage, echo = FALSE}
 ptbl_q4 <- 
   tbl_q4_a %>% 
   `[`(3, -5) %>%
@@ -369,17 +384,19 @@ ptbl_q4 %>%
 
 정답률은 Red, Black 을 합하여 계산하는데, `r ptbl_q4[3] %>% format(digits = 2, nsmall = 1)`(%) 입니다.
 
-## Q5. 황금기와 신자유주의 시기
+## Q5. 생산성과 급료의 격차
 
 ```{r, echo = FALSE, out.width = "75%"}
-include_graphics("./pics/Quiz230503_Q5.png")
+include_graphics("./pics/Quiz230510_Q5.png")
 ```
 
-### 5분위별 소득증가율 비교 
+### 집계
 
-```{r, opposite, echo = FALSE, warning = FALSE}
-tbl_q5_a <- quiz$Q5 %>%
-  table(quiz$group, ., useNA = "ifany") %>%
+```{r, LM3, echo = FALSE, warning = FALSE}
+tbl_q5_a <- quiz %$%
+  table(.$group, .$Q5, useNA = "ifany") %>%
+# tbl_q2_a <- quiz$Q5 %>%
+#   table(quiz$group, ., useNA = "ifany") %>%
   cbind("계" = rowSums(.)) %>%
   rbind("계" = colSums(.))
 tbl_q5_a %>% 
@@ -392,11 +409,11 @@ chisq_test_q5 %>%
   pander
 ```
 
-Q5의 집계 결과가 Red, Black 간에 통계적으로 유의한 차이가 있는지 알아보기 위하여 카이제곱 테스트를 수행하였습니다. 그 결과 카이제곱 통계량은 `r chisq_test_q5[1] %>% format(digits = 2, nsmall = 3)`, 자유도는 `r chisq_test_q5[2] %>% format(digits = 2, nsmall = 2)`, p-value 는 `r chisq_test_q5[3] %>% format(digits = 2, nsmall = 4)`이므로 Red, Black 간에 통계적으로 유의한 차이를 보이고 있습니다. (지 않습니다.) 실제로 닮은 게 느껴집니까?
+Q5의 집계 결과가 Red, Black 간에 통계적으로 유의한 차이가 있는지 알아보기 위하여 카이제곱 테스트를 수행하였습니다. 그 결과 카이제곱 통계량은 `r chisq_test_q5[1] %>% format(digits = 2, nsmall = 3)`, 자유도는 `r chisq_test_q5[2] %>% format(digits = 2, nsmall = 2)`, p-value 는 `r chisq_test_q5[3] %>% format(digits = 2, nsmall = 4)`이므로 Red, Black 간에 통계적으로 유의한 차이를 보이지 않습니다. 실제로 닮은 게 느껴집니까?
 
-### 5분위별 소득증가율 비교 (%)
+### %
 
-```{r, opposite in percentage, echo = FALSE}
+```{r, LM3 in percentage, echo = FALSE}
 ptbl_q5 <- 
   tbl_q5_a %>% 
   `[`(3, -5) %>%
@@ -410,17 +427,19 @@ ptbl_q5 %>%
 
 정답률은 Red, Black 을 합하여 계산하는데, `r ptbl_q5[2] %>% format(digits = 2, nsmall = 1)`(%) 입니다.
 
-## Q6. 주역 
+## Q6. LM3
 
 ```{r, echo = FALSE, out.width = "75%"}
-include_graphics("./pics/Quiz230503_Q6.png")
+include_graphics("./pics/Quiz230510_Q6.png")
 ```
 
-### 천지비
+### 집계
 
-```{r, trickle down, echo = FALSE, warning = FALSE}
-tbl_q6_a <- quiz$Q6 %>%
-  table(quiz$group, ., useNA = "ifany") %>%
+```{r, echo = FALSE, warning = FALSE}
+tbl_q6_a <- quiz %$%
+  table(.$group, .$Q6, useNA = "ifany") %>%
+# tbl_q3_a <- quiz$Q6 %>%
+#   table(quiz$group, ., useNA = "ifany") %>%
   cbind("계" = rowSums(.)) %>%
   rbind("계" = colSums(.))
 tbl_q6_a %>% 
@@ -433,11 +452,11 @@ chisq_test_q6 %>%
   pander
 ```
 
-Q6의 집계 결과가 Red, Black 간에 통계적으로 유의한 차이가 있는지 알아보기 위하여 카이제곱 테스트를 수행하였습니다. 그 결과 카이제곱 통계량은 `r chisq_test_q6[1] %>% format(digits = 2, nsmall = 3)`, 자유도는 `r chisq_test_q6[2] %>% format(digits = 2, nsmall = 2)`, p-value 는 `r chisq_test_q6[3] %>% format(digits = 2, nsmall = 4)`이므로 Red, Black 간에 통계적으로 유의한 차이를 보이지 않습니다. 실제로 닮은 게 느껴집니까?
+Q6의 집계 결과가 Red, Black 간에 통계적으로 유의한 차이가 있는지 알아보기 위하여 카이제곱 테스트를 수행하였습니다. 그 결과 카이제곱 통계량은 `r chisq_test_q6[1] %>% format(digits = 2, nsmall = 3)`, 자유도는 `r chisq_test_q6[2] %>% format(digits = 2, nsmall = 2)`, p-value 는 `r chisq_test_q6[3] %>% format(digits = 2, nsmall = 4)`이므로 Red, Black 간에 통계적으로 유의한 차이를 (보이고 있습니다.) 보이지 않습니다. 실제로 닮은 게 느껴집니까?
 
-### 천지비 (%)
+### %
 
-```{r, trickle down percentage, echo = FALSE}
+```{r, echo = FALSE}
 ptbl_q6 <- 
   tbl_q6_a %>% 
   `[`(3, -5) %>%
@@ -451,48 +470,47 @@ ptbl_q6 %>%
 
 정답률은 Red, Black 을 합하여 계산하는데, `r ptbl_q6[2] %>% format(digits = 2, nsmall = 1)`(%) 입니다. 
 
-# Prospect Theory
+## Q7. 국공립대 등록금 국제 비교
 
-## Q7. 이득과 손실
-
-이득은 확고히 하고, 손실은 피하고자 하는 보통 사람들의 심리적 경향을 확인합니다. 기대값을 계산해 보면 어는 게임을 선택하더라도 상관이 없어야 하는 데 이득 게임인 Red에서는 조금 덜 받더라도이득을 확고히 하려는 게임(A)에, 손실 게임인 Black에서는 손실을 확률적으로 줄이려는 게임(B)을 많이 선택하여 Kahneman과 Tversky의 Prospect Theory 에 부합하는 결과를 보여줍니다.
+이 질문은 기준점이 어디에 있느냐에 따라서 응답이 달라진다는 Anchor Effects 를 보여줍니다. 국공립대학의 등록금이 무상인 나라들을 소개한 Red 에서는 적정 수준이 "무상" 또는 100만원이라고 응답한 비율이 국공립대학의 등록금이 우리나라보다 높거나 대등한 나라들의 예를 먼저 들고 적정 수준을 물어본 경우(Black)에 "무상" 또는 100만원이라고 응답한 비율보다 월등히 높은 것을 알 수 있습니다. 500만원 이상을 적정하다고 응답한 비율의 비교도 흥미롭습니다.
 
 ```{r, echo = FALSE, out.width = "75%"}
-include_graphics("./pics/Quiz240503_Q7_Red.png")
+include_graphics("./pics/Quiz240510_Q7_Red.png")
 ```
 
 ```{r, echo = FALSE, out.width = "75%"}
-include_graphics("./pics/Quiz240503_Q7_Black.png")
+include_graphics("./pics/Quiz240510_Q7_Black.png")
 ```
 
-### 집계
+### 국공립대 등록금의 적정 수준 (집계)
 
-```{r, prospect theory, echo = FALSE, warning = FALSE}
-tbl_q7_a <- quiz$Q7 %>%
-  table(quiz$group, ., useNA = "ifany") %>%
+```{r, college tuition, echo = FALSE, warning = FALSE}
+tbl_q7_a <- quiz %$%
+  table(.$group, .$Q7, useNA = "ifany") %>%
+# tbl_q4_a <- quiz$Q7 %>%
+#   table(quiz$group, ., useNA = "ifany") %>%
   cbind("계" = rowSums(.)) %>%
   rbind("계" = colSums(.))
-colnames(tbl_q7_a) <- c("확률 100%", "확률 90%", "계")
-rownames(tbl_q7_a) <- c("이득 게임", "손실 게임", "계")
+rownames(tbl_q7_a) <- c("Red(등록금무상국가 소개)", "Black(등록금고액국가 소개)", "계")
 tbl_q7_a %>% 
   pander
 #> 카이제곱 테스트
 chisq_test_q7 <- 
   tbl_q7_a %>%
-  `[`(-3, -3) %>%
+  `[`(-3, -6) %>%
   chisq.test(simulate.p.value = FALSE) 
 chisq_test_q7 %>%
   pander
 ```
 
-Q7의 Red 는 100%의 확률로 900달러를 따거나 90%의 확률로 1000달러를 따는 게임 중에서 많은 사람들이 900달러를 확고하게 갖는 것이 혹시라도 모를 10%의 확률로 아무 것도 안 생기는 것보다 선호한다는 것을 보여줍니다. Black 은 100%의 확률로 900달러를 잃거나 90%의 확률로 1000달러를 잃는 게임 중에서는 손실을 확고히 하기 보다 10%의 확률이라도 1000달러의 손실을 회피하는 게임을 선호한다는 것을 보여줍니다. 이론적으로는 손실 게임이나 이득 게임이나 기대값이 같기 때문에 100% 게임이나 90% 게임을 비슷하게 선택할 것으로 생각되지만 우리의 실제 행동은 전혀 그렇지 않다는 것을 보여 줍니다. 여기서 수행하고 있는 카이제곱 테스트는 이득은 확고히 하고 손실은 운에 기대어 회피하려는 경향을 잘 보여 줍니다. 그 결과 카이제곱 통계량은 `r chisq_test_q7[1] %>% format(digits = 2, nsmall = 2)`, 자유도는 `r chisq_test_q7[2] %>% format(digits = 2, nsmall = 2)`, p-value 는 `r chisq_test_q7[3] %>% format(digits = 2, nsmall = 2)` 합리적 행동을 한다는 가설로부터 어떤 선택도 비슷하게 나오리라는 기대와는 통계적으로 매우, 매우 유의하게 차이나는 결과를 보여줍니다.
+Q7의 Red에는 스웨덴, 노르웨이, 아일랜드, 아이슬랜드, 핀란드, 체코 등 국공립대의 등록금이 전혀 없는 나라들의 예를 들고 나서 우리나라 국공립대 등록금의 적정 수준을 묻고, Black에는 미국, 일본, 오스트레일리아, 캐나다 등 국공립대학의 등록금이 높은 수준인 나라들의 예를 들고 나서 우리나라 국공립대 등록금의 적정 수준을 물었습니다. Daniel Kahneman 의 Think, Fast and Slow 에서 소개한 바와 같이 이와 설정하였을 때 소개한 나라들의 등록금 수준이 마치 닻을 내린 것과 같은 역할을 하여 등록금이 무상인 나라들을 소개한 Red 에서는 우리나라 국공립대 등록금의 적정 수준을 낮게 잡고, 대학 등록금 수준이 높은 나라들을 소개한 Black 에서는 우리나라 국공립대 등록금의 적정 수준을 높 게 잡는 것을 관찰할 수 있습니다. 그 결과 적정 등로금 수준을 다섯 단계로 나누어 차이를 분석하기 위한 카이제곱 통계량은 `r chisq_test_q7[1] %>% format(digits = 2, nsmall = 3)`, 자유도는 `r chisq_test_q7[2] %>% format(digits = 2, nsmall = 2)`, p-value 는 `r chisq_test_q7[3] %>% format(digits = 2, nsmall = 4)` 으로 등록금의 적정 수준의 차이가 통계적으로 유의함을 보여 줍니다. 즉, Anchor 효과가 있는 것으로 파악됩니다. 
 
-### % 비교
+### 국공립대 등록금의 적정 수준 (%)
 
-```{r, echo = FALSE}
+```{r, college tuition in percentage, echo = FALSE}
 ptbl_q7_a <- 
   tbl_q7_a %>% 
-  `[`(-3, -3) %>%
+  `[`(-3, -6) %>%
   prop.table(margin = 1) %>% 
   `*`(100) %>%
   cbind("계" = rowSums(.))
@@ -501,7 +519,32 @@ ptbl_q7_a %>%
   pander
 ```
 
-이를 백분율로 살펴보면 이득 게임인 Red에서 100% 확률로 900달러를 따려는 사람들의 백분율, `r format(ptbl_q7_a[1, 1], digits = 2, nsmall = 1)`(%)은 90% 확률로 1000달러를 따려는 사람들의 백분율, `r format(ptbl_q7_a[1, 2], digits = 2, nsmall = 1)`(%) 보다 월등히 높습니다.반면 손실 게임인 Black에서 100% 확률로 900달러를 잃겠다는 사람들의 백분율, `r format(ptbl_q7_a[2, 1], digits = 2, nsmall = 1)`(%)은 90%의 확률로 1000달러를 잃겠다는 사람들의 백분율, `r format(ptbl_q7_a[2, 2], digits = 2, nsmall = 1)`(%) 보다 적습니다. 이득을 확고히 하려는 사람들의 백분율보다 손실을 운에 기대어 회피하려는 사람들의 백분울이 월등히 적은 것을 관찰할 수 있습니다.
+이를 백분율로 살펴보면 대학 등록금 무상 국가들을 소개한  Red에서 국공립대 적정 등록금 수준을 무상이라고 답한 백분율은 `r format(ptbl_q7_a[1, 1], digits = 2, nsmall = 1)`(%), 100만원이라고 답한 백분율은  `r format(ptbl_q7_a[1, 2], digits = 2, nsmall = 1)`(%) 입니다. 반면 대학 등록금이 고액인 국가들을 소개한  Black에서 국공립대 적정 등록금 수준을 무상이라고 답한 백분율은 `r format(ptbl_q7_a[2, 1], digits = 2, nsmall = 1)`(%), 100만원이라고 답한 백분율은  `r format(ptbl_q7_a[2, 2], digits = 2, nsmall = 1)`(%) 입니다. Red에서 국공립대 적정 등록금 수준을 500만원이라고 답한 백분율은 `r format(ptbl_q7_a[1, 4], digits = 2, nsmall = 1)`(%), 1,000만원이라고 답한 백분율은  `r format(ptbl_q7_a[1, 5], digits = 2, nsmall = 1)`(%) 입니다. 반면 Black에서 국공립대 적정 등록금 수준을 500만원이라고 답한 백분율은 `r format(ptbl_q7_a[2, 4], digits = 2, nsmall = 1)`(%), 1,000만원이라고 답한 백분율은  `r format(ptbl_q7_a[2, 5], digits = 2, nsmall = 1)`(%) 입니다.  
+
+### 국공립대 등록금의 적정 수준 (2단계) (%) 
+
+무상, 100만원을 100만원 이하, 200만원, 500만원, 1,000만원을 200만원 이상으로 나눠 보겠습니다.
+
+```{r, college tuition in percentage 2, echo = FALSE}
+levels(quiz$Q7) <- list("100만원 이하" = c("무상", "100만원"), 
+                            "200만원 이상" = c("200만원", "500만원", "1,000만원"))
+# tbl_q4_a2 <- 
+ptbl_q7_a2 <- quiz$Q7 %>%
+  table(quiz$group, ., useNA = "ifany") %>%
+  cbind("계" = rowSums(.)) %>%
+  rbind("계" = colSums(.)) %>%
+  `[`(-3, -3) %>%
+  prop.table(margin = 1) %>%
+  `*`(100) %>%
+  cbind("계" = rowSums(.)) %>%
+  `rownames<-`(c("Red(등록금무상국가 소개)", "Black(등록금고액국가 소개)")) 
+# rownames(tbl_q4_a2) <- c("Red(등록금무상국가 소개)", "Black(등록금고액국가 소개)")
+ptbl_q7_a2 %>%
+  format(digits = 2, nsmall = 1) %>%
+  pander
+```
+
+이를 백분율로 살펴보면 Red 에서 100만원 이하를 적정 수준이라고 답한 백분율, `r format(ptbl_q7_a2[1, 1], digits = 2, nsmall = 1)`(%)은 200만원 이상을 적정 수준이라고 답한 백분율, `r format(ptbl_q7_a[1, 2], digits = 2, nsmall = 1)`(%) 보다 월등히 높습니다. 반면 Black에서 100만원 이하를 적정 수준이라고 답한 백분율, `r format(ptbl_q7_a[2, 1], digits = 2, nsmall = 1)`(%)은 200만원 이상을 적정 수준이라고 답한 백분율, `r format(ptbl_q7_a[2, 2], digits = 2, nsmall = 1)`(%) 보다 낮습니다. Anchor Effects 를 확인할 수 있는 것입니다.
 
 ### Mosaic Plot
 
@@ -518,27 +561,26 @@ p_df <- m_list$p_df
 names(df)[1] <- "Var1"
 names(p_df)[1] <- "Var1"
 df$Var2 %<>% 
-  factor(labels = c("Red(이득 게임)", "Black(손실 게임)"))
+  factor(labels = c("Red(등록금무상국가 소개)", "Black(등록금고액국가 소개)"))
 p_df$Var2 %<>% 
-  factor(labels = c("Red(이득 게임)", "Black(손실 게임)"))
+  factor(labels = c("Red(등록금무상국가 소개)", "Black(등록금고액국가 소개)"))
 m + geom_text(aes(x = center, y = 1.05), 
               family = "KoPubWorldDotum Medium",
               label = df[, 2]) +
   theme_bw(base_family = "KoPubWorldDotum Medium") +
-  labs(title = "Prospect Theory", x = "Red or Black(누적 %)", y = "인원(%, 명)") +
+  labs(title = "Anchor Effects", x = "Red or Black(누적 %)", y = "인원(%, 명)") +
   scale_fill_brewer(name = "응답", 
-                    labels = c("확률 100%", "확률 90%"),
+                    labels = c("백만원 이하", "200만원 이상"),
                     type = "qual", 
                     palette = "Set2", 
                     direction = 1) +
   theme(plot.title = element_text(hjust = 0.5, 
                                   size = 18, 
                                   family = "KoPubWorldDotum Bold")) 
-ggsave("./pics/Quiz241104_Q7_RnB.png", dpi = 120, width = 960, height = 840, units = "px")
+ggsave("./pics/Quiz241111_Q7_RnB.png", dpi = 120, width = 960, height = 840, units = "px")
 ```
 
-Mosaic Plot 은 이 집계결과를 시각적으로 잘 보여줍니다. 이득을 확고히 하려는 사람들의 백분율이 손실을 운에 기대어 회피하려는 사람들의 백분율보다 월등히 많은 것을 쉽게 파악할 수 있습니다.
-
+Mosaic Plot 은 이 집계결과를 시각적으로 잘 보여줍니다. 대학 등록금의 적정 수준을 예로 들은 나라들의 수준에 맞춰 설정하는 것을 시각적으로 파악할 수 잇습니다. 
 ## 마감 시간으로부터 제출 시간의 분포
 
 ### 분포표
@@ -563,12 +605,12 @@ days_tbl %>%
 ```{r, echo = FALSE, warning = FALSE}
 days_tbl %>%
   rbind("계" = colSums(.)) %>%
-  `[`(3, 6:14) %>%
+  `[`(3, 13:14) %>%
   pander
 days_chisq_test <-
   days_tbl %>%
   rbind("계" = colSums(.)) %>%
-  `[`(3, 6:14) %>%
+  `[`(3, 13:14) %>%
   chisq.test(simulate.p.value = FALSE) 
 days_chisq_test %>%
   pander
@@ -594,9 +636,9 @@ text(x = b[14, 1], y = sum(days_tbl[, 1]),
      labels = paste0(sum(days_tbl[, 1]), "명"), pos = 3)
 text(x = b[14, 1], y = sum(days_tbl[, 1]) / 2, 
      labels = paste0(format(sum(days_tbl[, 1]) / N * 100, digits = 1, nsmall = 0), "%"))
-title(main = paste0("Quiz241104 (", N, "명 제출)"))
+title(main = paste0("Quiz241111 (", N, "명 제출)"))
 # title(main = "일 단위 퀴즈 제출 인원", sub = paste0("Quiz230925 (", N, "명 제출)"))
-dev.copy(png, file = "./pics/2402/quiz_submission_10.png", width = 640, height = 480)
+dev.copy(png, file = "./pics/2402/quiz_submission_11.png", width = 640, height = 480)
 invisible(dev.off())
 })
 ```
@@ -606,11 +648,11 @@ invisible(dev.off())
 ```{r, echo = FALSE, warning = FALSE}
 days_tbl %>%
   rbind("계" = colSums(.)) %>%
-  `[`(-3, 6:14) %>%
+  `[`(-3, 13:14) %>%
   pander
 days_RnB_chisq_test <-
   days_tbl %>%
-  `[`(-3, 6:14) %>%
+  `[`(-3, 13:14) %>%
   chisq.test(simulate.p.value = FALSE) 
 days_RnB_chisq_test %>%
   pander
@@ -644,10 +686,10 @@ m2 + geom_text(aes(x = center, y = 1.05),
                                   size = 18, 
                                   family = "KoPubWorldDotum Bold"),
         axis.text.x = element_text(angle = -90, vjust = 0.5)) 
-ggsave("./pics/Quiz241104_submission_10.png", dpi = 120, width = 960, height = 840, units = "px")
+ggsave("./pics/Quiz241111_submission_11.png", dpi = 120, width = 960, height = 840, units = "px")
 ```
 
 ```{r, save, echo = FALSE}
-saveRDS(quiz, file = "quiz241104.RDS")
-save.image("quiz241104.RData")
+saveRDS(quiz, file = "quiz241111.RDS")
+save.image("./quiz241111.RData")
 ```
