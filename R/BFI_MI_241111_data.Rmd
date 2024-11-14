@@ -39,7 +39,7 @@ str(class_roll)
 
 ```{r}
 BFI <- "./data/BFI241111.xlsx" %>% 
-  read_excel(range = "A1:AA108",
+  read_excel(range = "A1:AA190",
              col_names = TRUE)
 BFI %<>%
   data.frame
@@ -62,7 +62,10 @@ BFI %>%
   kable
 #> 구글 설문지를 사용하면서 필요없게된 코드이나 만약을 위하여
 duplicated(BFI$ID) %>% 
-  which
+  which %>%
+  BFI[., c("ID", "Name")]
+BFI[BFI$ID == "20242702", c("ID", "Name")]
+BFI <- BFI[-117, ]
 # BFI <- unique(BFI)
 str(BFI)
 #> ID 잘못 적은 친구
@@ -78,7 +81,7 @@ BFI_hours <- as.numeric(difftime("2024-11-25 09:00:00", BFI$Time,
 
 ```{r}
 MI <- "./data/MI241111.xlsx" %>% 
-  read_excel(range = "A1:BQ103",
+  read_excel(range = "A1:BQ181",
              col_names = TRUE)
 MI %<>%
   data.frame
@@ -94,7 +97,10 @@ MI %<>%
 MI$ID %<>% 
   as.character
 duplicated(MI$ID) %>% 
-  which
+  which %>%
+  MI[., c("ID", "Name")]
+MI[MI$ID == "20242702", c("ID", "Name")]
+MI <- MI[-109, ]
 # MI <- unique(MI)
 MI[5:60] %<>%
   sapply(FUN = {. %>% strsplit(split = "[.]") %>% sapply(`[`, 1)}) %>%

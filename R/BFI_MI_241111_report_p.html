@@ -378,7 +378,7 @@ library(dplyr)</code></pre>
 <h2>필수 자료 읽어들이기</h2>
 <pre class="r"><code>load(&quot;./BFI_MI_241111.RData&quot;)
 str(BFI)</code></pre>
-<pre><code>## &#39;data.frame&#39;:    107 obs. of  25 variables:
+<pre><code>## &#39;data.frame&#39;:    188 obs. of  25 variables:
 ##  $ Time   : POSIXct, format: &quot;2024-11-11 00:52:03&quot; &quot;2024-11-11 00:52:40&quot; ...
 ##  $ Email  : chr  &quot;kkkssshhh2005@naver.com&quot; &quot;chrisjerco2@naver.com&quot; &quot;hje10314@naver.com&quot; &quot;sws62550100@gmail.com&quot; ...
 ##  $ ID     : chr  &quot;20243210&quot; &quot;20182951&quot; &quot;20222367&quot; &quot;20227036&quot; ...
@@ -405,7 +405,7 @@ str(BFI)</code></pre>
 ##  $ A_Score: chr  &quot;낮음&quot; &quot;낮음&quot; &quot;중하&quot; &quot;낮음&quot; ...
 ##  $ O_Score: chr  &quot;낮음&quot; &quot;낮음&quot; &quot;중하&quot; &quot;중하&quot; ...</code></pre>
 <pre class="r"><code>str(MI)</code></pre>
-<pre><code>## &#39;data.frame&#39;:    102 obs. of  66 variables:
+<pre><code>## &#39;data.frame&#39;:    179 obs. of  66 variables:
 ##  $ Time   : POSIXct, format: &quot;2024-11-11 01:03:42&quot; &quot;2024-11-11 01:03:49&quot; ...
 ##  $ ID     : chr  &quot;20182951&quot; &quot;20243210&quot; &quot;20222367&quot; &quot;20227036&quot; ...
 ##  $ A1     : num  3 3 3 5 4 4 2 4 4 2 ...
@@ -1002,35 +1002,35 @@ BFI_level_kr %&gt;%
 <tbody>
 <tr class="odd">
 <td align="left">높음</td>
-<td align="right">5</td>
-<td align="right">19</td>
-<td align="right">31</td>
 <td align="right">13</td>
-<td align="right">4</td>
+<td align="right">33</td>
+<td align="right">55</td>
+<td align="right">27</td>
+<td align="right">8</td>
 </tr>
 <tr class="even">
 <td align="left">중상</td>
-<td align="right">23</td>
-<td align="right">35</td>
-<td align="right">36</td>
-<td align="right">15</td>
-<td align="right">15</td>
+<td align="right">39</td>
+<td align="right">64</td>
+<td align="right">63</td>
+<td align="right">27</td>
+<td align="right">28</td>
 </tr>
 <tr class="odd">
 <td align="left">중하</td>
-<td align="right">30</td>
-<td align="right">41</td>
-<td align="right">32</td>
-<td align="right">52</td>
-<td align="right">19</td>
+<td align="right">57</td>
+<td align="right">63</td>
+<td align="right">57</td>
+<td align="right">84</td>
+<td align="right">36</td>
 </tr>
 <tr class="even">
 <td align="left">낮음</td>
-<td align="right">49</td>
-<td align="right">12</td>
-<td align="right">8</td>
-<td align="right">27</td>
-<td align="right">69</td>
+<td align="right">79</td>
+<td align="right">28</td>
+<td align="right">13</td>
+<td align="right">50</td>
+<td align="right">116</td>
 </tr>
 </tbody>
 </table>
@@ -1158,11 +1158,11 @@ BFI_full_kr %&gt;%
 </tr>
 <tr class="even">
 <td align="left">20171101</td>
-<td align="left">NA</td>
-<td align="left">NA</td>
-<td align="left">NA</td>
-<td align="left">NA</td>
-<td align="left">NA</td>
+<td align="left">중하</td>
+<td align="left">중상</td>
+<td align="left">높음</td>
+<td align="left">낮음</td>
+<td align="left">낮음</td>
 </tr>
 <tr class="odd">
 <td align="left">20172433</td>
@@ -1899,12 +1899,12 @@ MI_sort_full_kr %&gt;%
 <colgroup>
 <col width="11%" />
 <col width="11%" />
-<col width="10%" />
 <col width="11%" />
 <col width="11%" />
 <col width="11%" />
 <col width="11%" />
-<col width="10%" />
+<col width="11%" />
+<col width="11%" />
 <col width="10%" />
 </colgroup>
 <thead>
@@ -1956,14 +1956,14 @@ MI_sort_full_kr %&gt;%
 </tr>
 <tr class="even">
 <td align="center">20171101</td>
-<td align="center">NA</td>
-<td align="center">NA</td>
-<td align="center">NA</td>
-<td align="center">NA</td>
-<td align="center">NA</td>
-<td align="center">NA</td>
-<td align="center">NA</td>
-<td align="center">NA</td>
+<td align="center">논리수학</td>
+<td align="center">자기성찰</td>
+<td align="center">신체운동</td>
+<td align="center">인간친화</td>
+<td align="center">언어</td>
+<td align="center">공간</td>
+<td align="center">자연친화</td>
+<td align="center">음악</td>
 </tr>
 <tr class="odd">
 <td align="center">20172433</td>
@@ -2009,7 +2009,7 @@ BFI_MI_full %&gt;%
 <col width="10%" />
 <col width="10%" />
 <col width="12%" />
-<col width="11%" />
+<col width="12%" />
 <col width="12%" />
 </colgroup>
 <thead>
@@ -2061,14 +2061,14 @@ BFI_MI_full %&gt;%
 </tr>
 <tr class="even">
 <td align="center">20171101</td>
-<td align="center">NA</td>
-<td align="center">NA</td>
-<td align="center">NA</td>
-<td align="center">NA</td>
-<td align="center">NA</td>
-<td align="center">NA</td>
-<td align="center">NA</td>
-<td align="center">NA</td>
+<td align="center">중하</td>
+<td align="center">중상</td>
+<td align="center">높음</td>
+<td align="center">낮음</td>
+<td align="center">낮음</td>
+<td align="center">논리수학</td>
+<td align="center">자기성찰</td>
+<td align="center">신체운동</td>
 </tr>
 <tr class="odd">
 <td align="center">20172433</td>
