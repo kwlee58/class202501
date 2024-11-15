@@ -43,7 +43,7 @@ str(class_roll)
 # saveRDS(class_roll, file = "./class_roll_240510.RDS")
 quiz <- 
   read_excel("./data/quiz241111.xlsx",
-             range = "A2:N170",
+             range = "A2:N199",
              col_names = FALSE)
 str(quiz)
 names(quiz) <- 
@@ -119,6 +119,7 @@ quiz_wrong_ids <- quiz_wrong_ids %>%
   mutate(id = case_when(
     id == "201725435" ~ "20172435",
     id == "20222525" ~ "20222526",
+    id == "20215019" ~ "20215109",
     TRUE ~ id
   ))
 # 3. quiz 에서 id 틀린 행을 제거하고 옳은 id 갖춘 행으로 교체하기
@@ -606,12 +607,12 @@ days_tbl %>%
 ```{r, echo = FALSE, warning = FALSE}
 days_tbl %>%
   rbind("계" = colSums(.)) %>%
-  `[`(3, 13:14) %>%
+  `[`(3, 10:14) %>%
   pander
 days_chisq_test <-
   days_tbl %>%
   rbind("계" = colSums(.)) %>%
-  `[`(3, 13:14) %>%
+  `[`(3, 10:14) %>%
   chisq.test(simulate.p.value = FALSE) 
 days_chisq_test %>%
   pander
@@ -649,11 +650,11 @@ invisible(dev.off())
 ```{r, echo = FALSE, warning = FALSE}
 days_tbl %>%
   rbind("계" = colSums(.)) %>%
-  `[`(-3, 13:14) %>%
+  `[`(-3, 10:14) %>%
   pander
 days_RnB_chisq_test <-
   days_tbl %>%
-  `[`(-3, 13:14) %>%
+  `[`(-3, 10:14) %>%
   chisq.test(simulate.p.value = FALSE) 
 days_RnB_chisq_test %>%
   pander
