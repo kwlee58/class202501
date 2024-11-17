@@ -58,6 +58,11 @@ setdiff(b_id, quiz$id) %>%
   `%in%`(class_roll$id, .) %>%
   `[`(class_roll, ., c("id", "name"))
 # class_roll[class_roll$id %in% setdiff(a_id, b_id), c("id", "name")]
+#> 불찹자들
+setdiff(class_roll$id, b_id) %>%
+  `%in%`(class_roll$id, .) %>%
+  `[`(class_roll, ., c("id", "name"))
+#> Food 데이터프레임 
 str(food_a)
 duplicated(food_a$id) 
 food_a <- unique(food_a)
