@@ -42,7 +42,7 @@ class_roll$group <- class_roll1101$group[match(class_roll$id, class_roll1101$id)
 saveRDS(class_roll, file = "./class_roll_241108.RDS")
 quiz <- 
   read_excel("./data/quiz241104.xlsx",
-             range = "A2:N413",
+             range = "A2:N509",
              col_names = FALSE)
 str(quiz)
 names(quiz) <- 
@@ -172,9 +172,9 @@ wrong_group <- quiz %>%
 
 #> 잘못된 그룹 정보 출력
 wrong_group %>%
-  select(time, id, name, group2, group) %>%
+  select(time, id, group2, group) %>%
   arrange(time) %>%
-  rename("제출시간" = time, "학번" = id, "이름" = name, "랜덤화출석부" = group2, "구글예습퀴즈" = group) %>%
+  rename("제출시간" = time, "학번" = id, "랜덤화출석부" = group2, "구글예습퀴즈" = group) %>%
   pander(row.names = FALSE)
 
 #> 옛 코드
@@ -563,12 +563,12 @@ days_tbl %>%
 ```{r, echo = FALSE, warning = FALSE}
 days_tbl %>%
   rbind("계" = colSums(.)) %>%
-  `[`(3, 5:14) %>%
+  `[`(3, 1:14) %>%
   pander
 days_chisq_test <-
   days_tbl %>%
   rbind("계" = colSums(.)) %>%
-  `[`(3, 5:14) %>%
+  `[`(3, 1:14) %>%
   chisq.test(simulate.p.value = FALSE) 
 days_chisq_test %>%
   pander
@@ -606,11 +606,11 @@ invisible(dev.off())
 ```{r, echo = FALSE, warning = FALSE}
 days_tbl %>%
   rbind("계" = colSums(.)) %>%
-  `[`(-3, 5:14) %>%
+  `[`(-3, 1:14) %>%
   pander
 days_RnB_chisq_test <-
   days_tbl %>%
-  `[`(-3, 5:14) %>%
+  `[`(-3, 1:14) %>%
   chisq.test(simulate.p.value = FALSE) 
 days_RnB_chisq_test %>%
   pander

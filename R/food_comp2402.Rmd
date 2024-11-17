@@ -29,8 +29,8 @@ options(width = 180)
 
 ```{r, data, echo = FALSE, results = 'hide'}
 class_roll <- readRDS("./class_roll_241101.RDS")
-class_roll_id <- data.frame(id = class_roll$id, stringsAsFactors = FALSE) 
 class_roll <- class_roll[c("id", "name", "group")] 
+quiz <- readRDS(file = "quiz241104.RDS")
 food_b <- readRDS("./food_before2402.rds")
 b_id <- food_b$id
 food_b <- left_join(class_roll, food_b, by = c("id", "group"))
@@ -47,6 +47,14 @@ setdiff(b_id, a_id) %>%
 # class_roll[class_roll$id %in% setdiff(b_id, a_id), c("id", "name")]
 #> after 는 수행하고 before 는 안한 사람  
 setdiff(a_id, b_id) %>%
+  `%in%`(class_roll$id, .) %>%
+  `[`(class_roll, ., c("id", "name"))
+#> quiz는 수행하고 before 는 안한 사람
+setdiff(quiz$id, b_id) %>%
+  `%in%`(class_roll$id, .) %>%
+  `[`(class_roll, ., c("id", "name")) 
+#> before 는 수행하고 quiz 는 안한 사람
+setdiff(b_id, quiz$id) %>%
   `%in%`(class_roll$id, .) %>%
   `[`(class_roll, ., c("id", "name"))
 # class_roll[class_roll$id %in% setdiff(a_id, b_id), c("id", "name")]

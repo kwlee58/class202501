@@ -28,22 +28,22 @@ Q7에서는 Anchor Effects 를 알아 보기 위하여 Red 에서는 대학 등�
 그리고, 제출시간의 분포가 날마다 고른지, Red, Black 간에는 닮았는지 알아봅니다.
 
 ```{r, data, echo = FALSE, message = FALSE, results = 'hide'}
-class_roll <- 
+class_roll1108 <- 
   readRDS("./class_roll_241108.RDS")
+class_roll1108 %<>% 
+  data.frame
+class_roll <- 
+  read_excel("./data/class_roll241115.xlsx", 
+            range = "B1:G801")
 class_roll %<>% 
   data.frame
-# class_roll <- 
-#   read_excel("./data/class_roll241115.xlsx", 
-#              range = "B1:I897")
-# class_roll %<>% 
-#   data.frame
 str(class_roll)
-# names(class_roll) <- c("college", "dept", "year", "id", "name", "status", "email", "cell_no")
-# class_roll$group <- class_roll0503$group[match(class_roll$id, class_roll0503$id)]
-# saveRDS(class_roll, file = "./class_roll_240510.RDS")
+names(class_roll) <- c("dept", "id", "name", "status", "email", "cell_no")
+class_roll$group <- class_roll1108$group[match(class_roll$id, class_roll1108$id)]
+saveRDS(class_roll, file = "./class_roll_241115.RDS")
 quiz <- 
   read_excel("./data/quiz241111.xlsx",
-             range = "A2:N199",
+             range = "A2:N266",
              col_names = FALSE)
 str(quiz)
 names(quiz) <- 
@@ -607,12 +607,12 @@ days_tbl %>%
 ```{r, echo = FALSE, warning = FALSE}
 days_tbl %>%
   rbind("계" = colSums(.)) %>%
-  `[`(3, 10:14) %>%
+  `[`(3, 8:14) %>%
   pander
 days_chisq_test <-
   days_tbl %>%
   rbind("계" = colSums(.)) %>%
-  `[`(3, 10:14) %>%
+  `[`(3, 8:14) %>%
   chisq.test(simulate.p.value = FALSE) 
 days_chisq_test %>%
   pander
@@ -650,11 +650,11 @@ invisible(dev.off())
 ```{r, echo = FALSE, warning = FALSE}
 days_tbl %>%
   rbind("계" = colSums(.)) %>%
-  `[`(-3, 10:14) %>%
+  `[`(-3, 8:14) %>%
   pander
 days_RnB_chisq_test <-
   days_tbl %>%
-  `[`(-3, 10:14) %>%
+  `[`(-3, 8:14) %>%
   chisq.test(simulate.p.value = FALSE) 
 days_RnB_chisq_test %>%
   pander

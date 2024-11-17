@@ -39,7 +39,7 @@ str(class_roll)
 
 ```{r}
 BFI <- "./data/BFI241111.xlsx" %>% 
-  read_excel(range = "A1:AA220",
+  read_excel(range = "A1:AA300",
              col_names = TRUE)
 BFI %<>%
   data.frame
@@ -81,7 +81,7 @@ BFI_hours <- as.numeric(difftime("2024-11-25 09:00:00", BFI$Time,
 
 ```{r}
 MI <- "./data/MI241111.xlsx" %>% 
-  read_excel(range = "A1:BQ211",
+  read_excel(range = "A1:BQ292",
              col_names = TRUE)
 MI %<>%
   data.frame
@@ -114,6 +114,27 @@ kable(head(MI[c(3, 47:60)]))
 ## 학번오류, 불참자
 
 ```{r}
+#> 학번 잘못 써서 고생시키는 녀석들 찾아내는 코드
+wrong_id <- setdiff(MI$ID, class_roll$ID)
+MI %>%
+  filter(ID %in% wrong_id) %>%
+  select(ID, Name)
+# 1. 잘못된 id 가진 행 찾기
+MI_wrong_ids <- MI %>%
+  anti_join(class_roll, by = "ID") 
+# 2. 잘못된 id를 따로 저장하고 수정하기
+wrong_ids <- MI_wrong_ids$ID
+MI_wrong_ids <- MI_wrong_ids %>%
+  mutate(ID = case_when(
+    ID == "바이오메디컬" ~ "20243615",
+    TRUE ~ ID
+  ))
+# 3. MI 에서 id 틀린 행을 제거하고 옳은 id 갖춘 행으로 교체하기
+MI <- MI %>%
+  filter(!ID %in% wrong_ids) %>%
+  bind_rows(MI_wrong_ids)
+#> ID 잘못 적은 친구 수정사항 확인
+MI[MI$ID %in% setdiff(MI$ID, class_roll$ID), c("ID", "Name")]
 #> 각 조사 불참자 
 # setdiff(class_roll$Name, BFI$Name)
 # setdiff(class_roll$Name, MI$Name)
@@ -129,8 +150,7 @@ setdiff(MI$ID, BFI$ID) %>%
 # MI$Name
 # class_roll$Name
 str(MI)
-#> ID 잘못 적은 친구
-MI[MI$ID %in% setdiff(MI$ID, class_roll$ID), c("ID", "Name")]
+
 #> 마감일로부터 제출시점의 기간
 MI_days <- 
   as.numeric(difftime("2024-11-25 09:00:00", MI$Time, 
