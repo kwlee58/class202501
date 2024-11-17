@@ -39,7 +39,7 @@ str(class_roll)
 
 ```{r}
 BFI <- "./data/BFI241111.xlsx" %>% 
-  read_excel(range = "A1:AA300",
+  read_excel(range = "A1:AA370",
              col_names = TRUE)
 BFI %<>%
   data.frame
@@ -69,6 +69,28 @@ BFI <- BFI[-117, ]
 # BFI <- unique(BFI)
 str(BFI)
 #> ID 잘못 적은 친구
+#> #> 학번 잘못 써서 고생시키는 녀석들 찾아내는 코드
+wrong_id <- setdiff(BFI$ID, class_roll$ID)
+BFI %>%
+  filter(ID %in% wrong_id) %>%
+  select(ID, Name)
+# 1. 잘못된 id 가진 행 찾기
+BFI_wrong_ids <- BFI %>%
+  anti_join(class_roll, by = "ID") 
+# 2. 잘못된 id를 따로 저장하고 수정하기
+wrong_ids <- BFI_wrong_ids$ID
+BFI_wrong_ids <- BFI_wrong_ids %>%
+  mutate(ID = case_when(
+    ID == "20245185" ~ "20245186",
+    ID == "영어영문학과" ~ "20241236",
+    ID == "20212546" ~ "20212549",
+    TRUE ~ ID
+  ))
+# 3. MI 에서 id 틀린 행을 제거하고 옳은 id 갖춘 행으로 교체하기
+BFI <- BFI %>%
+  filter(!ID %in% wrong_ids) %>%
+  bind_rows(BFI_wrong_ids)
+#> ID 잘못 적은 친구 수정사항 확인
 BFI[BFI$ID %in% setdiff(BFI$ID, class_roll$ID), c("ID", "Name")]
 #> 마감일로부터 제출시점의 기간
 BFI_days <- as.numeric(difftime("2024-11-25 09:00:00", BFI$Time, 
@@ -81,7 +103,7 @@ BFI_hours <- as.numeric(difftime("2024-11-25 09:00:00", BFI$Time,
 
 ```{r}
 MI <- "./data/MI241111.xlsx" %>% 
-  read_excel(range = "A1:BQ292",
+  read_excel(range = "A1:BQ361",
              col_names = TRUE)
 MI %<>%
   data.frame
