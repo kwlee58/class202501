@@ -44,7 +44,7 @@ class_roll %<>%
 # saveRDS(class_roll, file = "./class_roll_241118.RDS")
 quiz <- 
   read_excel("./data/quiz241118.xlsx",
-             range = "A1:Y63")
+             range = "A1:Y82")
 names(quiz) <- 
   c("time", "email", "dept", "id", "name", "Q1", "Q2", "Q3", 
     paste("Q4", 1:5, sep = "_"), paste("Q5", 1:8, sep = "_"),
@@ -360,24 +360,31 @@ BFI_tbl_a <- BFI_score %>%
   rbind("계" = colSums(.)) 
 BFI_tbl_a %>% 
   pander
-BFI_tbl_a[-3, -6] %>% 
-  chisq.test(simulate.p.value = FALSE) %>% 
+chisq_test_q4 <- 
+  BFI_tbl_a %>%
+  `[`(-3, -6) %>%
+  chisq.test(simulate.p.value = FALSE) 
+chisq_test_q4 %>%
   pander
 ```
+
+Q4의 집계 결과가 Red, Black 간에 통계적으로 유의한 차이가 있는지 알아보기 위하여 카이제곱 테스트를 수행하였습니다. 그 결과 카이제곱 통계량은 `r chisq_test_q4[1] %>% format(digits = 2, nsmall = 3)`, 자유도는 `r chisq_test_q4[2] %>% format(digits = 2, nsmall = 2)`, p-value 는 `r chisq_test_q4[3] %>% format(digits = 2, nsmall = 4)`이므로 Red, Black 간에 통계적으로 유의한 차이를 보이지 않습니다. 실제로 닮은 게 느껴집니까?
 
 ### 몇 개나 맞추나? (%)
 
 ```{r, BFi percentage, echo = FALSE}
-BFI_tbl_a %>% 
+ptbl_q4 <- 
+  BFI_tbl_a %>% 
   `[`(3, -6) %>%
-  prop.table %>%
-  `*`(100) %>%
+  prop.table %>% 
   c("계" = sum(.)) %>%
-  format(digits = 1, nsmall = 1) %>%
+  `*`(100) 
+ptbl_q4 %>%
+  format(digits = 2, nsmall = 1) %>%
   pander
 ```
 
-맞힌 갯수의 평균과 표준편차는 각각 `r BFI_score %>% mean %>% round(1)`, `r BFI_score %>% sd %>% round(1)` 으로 완전히 랜덤하게 골랐을 때의 기대값과 표준편차인 1, 1과 매우 어긋난다.
+모두 맞춘 사람들의 백분율은 `r ptbl_q4[5] %>% format(digits = 2, nsmall = 1)`(%) 입니다.
 
 ## Q5. 다중지능 짝 짓기
 
@@ -394,24 +401,31 @@ MI_tbl_a <- MI_score %>%
   rbind("계" = colSums(.)) 
 MI_tbl_a %>% 
   pander
-MI_tbl_a[-3, -9] %>% 
-  chisq.test(simulate.p.value = FALSE) %>% 
+chisq_test_q5 <- 
+  MI_tbl_a %>%
+  `[`(-3, -9) %>%
+  chisq.test(simulate.p.value = FALSE) 
+chisq_test_q5 %>%
   pander
 ```
+
+Q5의 집계 결과가 Red, Black 간에 통계적으로 유의한 차이가 있는지 알아보기 위하여 카이제곱 테스트를 수행하였습니다. 그 결과 카이제곱 통계량은 `r chisq_test_q5[1] %>% format(digits = 2, nsmall = 3)`, 자유도는 `r chisq_test_q5[2] %>% format(digits = 2, nsmall = 2)`, p-value 는 `r chisq_test_q5[3] %>% format(digits = 2, nsmall = 4)`이므로 Red, Black 간에 통계적으로 유의한 차이를 보이지 않습니다. 실제로 닮은 게 느껴집니까?
 
 ### 몇 개나 맞추나? (%)
 
 ```{r, MI percentage, echo = FALSE}
-MI_tbl_a %>% 
+ptbl_q5 <- 
+  MI_tbl_a %>% 
   `[`(3, -9) %>%
-  prop.table %>%
-  `*`(100) %>%
+  prop.table %>% 
   c("계" = sum(.)) %>%
-  format(digits = 1, nsmall = 1) %>%
+  `*`(100) 
+ptbl_q5 %>%
+  format(digits = 2, nsmall = 1) %>%
   pander
 ```
 
-맞힌 갯수의 평균과 표준편차는 각각 `r MI_score %>% mean %>% round(1)`, `r MI_score %>% sd %>% round(1)` 으로 완전히 랜덤하게 골랐을 때의 기대값과 표준편차인 1, 1과 매우 어긋난다.
+모두 맞춘 사람들의 백분율은 `r ptbl_q5[8] %>% format(digits = 2, nsmall = 1)`(%) 입니다.
 
 ## Q6. 성공한 사람들의 공통점
 
@@ -428,29 +442,37 @@ tbl_q6_a <- quiz$Q6 %>%
   rbind("계" = colSums(.)) 
 tbl_q6_a %>% 
   pander
-tbl_q6_a %>%
-  `[`(-3, -(6:7)) %>% 
-  chisq.test(simulate.p.value = FALSE) %>%
+chisq_test_q6 <- 
+  tbl_q6_a %>%
+  `[`(-3, -c(5, 6)) %>%
+  chisq.test(simulate.p.value = FALSE) 
+chisq_test_q6 %>%
   pander
 ```
+
+Q6의 집계 결과가 Red, Black 간에 통계적으로 유의한 차이가 있는지 알아보기 위하여 카이제곱 테스트를 수행하였습니다. 그 결과 카이제곱 통계량은 `r chisq_test_q6[1] %>% format(digits = 2, nsmall = 3)`, 자유도는 `r chisq_test_q6[2] %>% format(digits = 2, nsmall = 2)`, p-value 는 `r chisq_test_q6[3] %>% format(digits = 2, nsmall = 4)`이므로 Red, Black 간에 통계적으로 유의한 차이를 (보이고 있습니다.) 보이지 않습니다. 실제로 닮은 게 느껴집니까?
 
 ### 자기성찰지능 (%)
 
 ```{r, Intereprsonal in percentage, echo = FALSE}
-tbl_q6_a %>%
+ptbl_q6 <- 
+  tbl_q6_a %>% 
   `[`(3, -6) %>%
-  prop.table %>%
+  prop.table %>% 
   c("계" = sum(.)) %>%
-  `*`(100) %>%
+  `*`(100) 
+ptbl_q6 %>%
   format(digits = 2, nsmall = 1) %>%
   pander
 ```
+
+정답률은 Red, Black 을 합하여 계산하는데, `r ptbl_q6[4] %>% format(digits = 2, nsmall = 1)`(%) 입니다. 
 
 # Framing Effect
 
 ## Q7. 삶과 죽음
 
-이 질문은 프레임을 어떻게 설정하느냐에 따라 반응이 확연하게 달라진다는 Framing effects를 보여 줍니다. 600명 중 200명이 사는 거나 400명이 죽는 것, 모두 살리는 거나 모두 죽지 않는 것이나 같은 내용임에도 반응이 다르게 나타납니다. 생존 프레임에서는 확실한 생존자 수효를 보장하는 프로그램을 선호하고, 사망 프레임에서는 운에 기대는 프로그램을 선호하는 반응이 많다는 것을 확인합니다. 
+이 질문은 프레임을 어떻게 설정하느냐에 따라 반응이 확연하게 달라진다는 Framing effects를 보여 줍니다. 600명 중 200명이 사는 거나 400명이 죽는 것, 모두 살리는 거나 모두 죽지 않는 것이나 같은 내용임에도 반응이 다르게 나타납니다. 생존 프레임에서는 확실한 생존자 수효를 보장하는 프로그램을 선호하고, 사망 프레임에서는 모두 사망하지 않기를 운에 기대는 프로그램을 선호하는 반응이 많다는 것을 확인합니다. 
 
 ```{r, echo = FALSE, out.width = "67%"}
 include_graphics("./pics/Quiz230517_Q7_Red.png")
@@ -459,6 +481,7 @@ include_graphics("./pics/Quiz230517_Q7_Red.png")
 ```{r, echo = FALSE, out.width = "67%"}
 include_graphics("./pics/Quiz230517_Q7_Black.png")
 ```
+
 ### 집계
 
 ```{r, Framing Effect, echo = FALSE}
@@ -519,7 +542,7 @@ m + geom_text(aes(x = center, y = 1.05),
               family = "KoPubWorldDotum Medium",
               label = df[, 2]) +
   theme_bw(base_family = "KoPubWorldDotum Medium") +
-  labs(title = "Prospect Theory", x = "Red or Black(누적 %)", y = "인원(%, 명)") +
+  labs(title = "Framing Effects", x = "Red or Black(누적 %)", y = "인원(%, 명)") +
   scale_fill_brewer(name = "응답", 
                     labels = c("확실히", "확률적으로"),
                     type = "qual", 
