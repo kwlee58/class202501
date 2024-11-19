@@ -43,7 +43,7 @@ class_roll$group <- class_roll1108$group[match(class_roll$id, class_roll1108$id)
 saveRDS(class_roll, file = "./class_roll_241115.RDS")
 quiz <- 
   read_excel("./data/quiz241111.xlsx",
-             range = "A2:N332",
+             range = "A2:N347",
              col_names = FALSE)
 str(quiz)
 names(quiz) <- 
@@ -582,7 +582,8 @@ m + geom_text(aes(x = center, y = 1.05),
 ggsave("./pics/Quiz241111_Q7_RnB.png", dpi = 120, width = 960, height = 840, units = "px")
 ```
 
-Mosaic Plot 은 이 집계결과를 시각적으로 잘 보여줍니다. 대학 등록금의 적정 수준을 예로 들은 나라들의 수준에 맞춰 설정하는 것을 시각적으로 파악할 수 잇습니다. 
+Mosaic Plot 은 이 집계결과를 시각적으로 잘 보여줍니다. 대학 등록금의 적정 수준을 예로 들은 나라들의 수준에 맞춰 설정하는 것을 시각적으로 파악할 수 있습니다. 
+
 ## 마감 시간으로부터 제출 시간의 분포
 
 ### 분포표
@@ -607,12 +608,12 @@ days_tbl %>%
 ```{r, echo = FALSE, warning = FALSE}
 days_tbl %>%
   rbind("계" = colSums(.)) %>%
-  `[`(3, 7:14) %>%
+  `[`(3, 6:14) %>%
   pander
 days_chisq_test <-
   days_tbl %>%
   rbind("계" = colSums(.)) %>%
-  `[`(3, 7:14) %>%
+  `[`(3, 6:14) %>%
   chisq.test(simulate.p.value = FALSE) 
 days_chisq_test %>%
   pander
@@ -650,11 +651,11 @@ invisible(dev.off())
 ```{r, echo = FALSE, warning = FALSE}
 days_tbl %>%
   rbind("계" = colSums(.)) %>%
-  `[`(-3, 7:14) %>%
+  `[`(-3, 6:14) %>%
   pander
 days_RnB_chisq_test <-
   days_tbl %>%
-  `[`(-3, 7:14) %>%
+  `[`(-3, 6:14) %>%
   chisq.test(simulate.p.value = FALSE) 
 days_RnB_chisq_test %>%
   pander
