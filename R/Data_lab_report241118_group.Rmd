@@ -70,14 +70,12 @@ qqplot(comments_w$total[comments_w$group == "Red"],
        ylab = "Black")
 ```
 
-<!--
 # 한번도 댓글을 올리지 않은 사람들
 
 ```{r, echo = FALSE, results = "asis"}
 comments_w[comments_w$total == 0, c("id", "name")] %>%
   pander
 ```
--->
 
 # 점수 집계 요약 (id 순)
 

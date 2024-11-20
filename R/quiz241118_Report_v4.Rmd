@@ -44,7 +44,7 @@ class_roll %<>%
 # saveRDS(class_roll, file = "./class_roll_241118.RDS")
 quiz <- 
   read_excel("./data/quiz241118.xlsx",
-             range = "A1:Y82")
+             range = "A1:Y123")
 names(quiz) <- 
   c("time", "email", "dept", "id", "name", "Q1", "Q2", "Q3", 
     paste("Q4", 1:5, sep = "_"), paste("Q5", 1:8, sep = "_"),
@@ -123,9 +123,8 @@ quiz_wrong_ids <- quiz %>%
 wrong_ids <- quiz_wrong_ids$id
 quiz_wrong_ids <- quiz_wrong_ids %>%
   mutate(id = case_when(
-    id == "201725435" ~ "20172435",
-    id == "20222525" ~ "20222526",
-    id == "20215019" ~ "20215109",
+    id == "2019336" ~ "20193836",
+    id == "050619" ~ "20243821",
     TRUE ~ id
   ))
 # 3. quiz 에서 id 틀린 행을 제거하고 옳은 id 갖춘 행으로 교체하기
@@ -239,7 +238,7 @@ tbl_q1_a %>%
   pander 
 chisq_test_q1 <- 
   tbl_q1_a %>%
-  `[`(-3, -c(4, 5)) %>%
+  `[`(-3, -5) %>%
   chisq.test(simulate.p.value = FALSE) 
 chisq_test_q1 %>%
   pander
@@ -252,7 +251,7 @@ Q1의 집계 결과가 Red, Black 간에 통계적으로 유의한 차이가 있
 ```{r, bystander in percentage, echo = FALSE}
 ptbl_q1 <- 
   tbl_q1_a %>% 
-  `[`(3, -c(4, 5)) %>%
+  `[`(3, -5) %>%
   prop.table %>% 
   c("계" = sum(.)) %>%
   `*`(100) 
@@ -580,12 +579,12 @@ days_tbl %>%
 ```{r, echo = FALSE, warning = FALSE}
 days_tbl %>%
   rbind("계" = colSums(.)) %>%
-  `[`(3, 13:14) %>%
+  `[`(3, 12:14) %>%
   pander
 days_chisq_test <-
   days_tbl %>%
   rbind("계" = colSums(.)) %>%
-  `[`(3, 13:14) %>%
+  `[`(3, 12:14) %>%
   chisq.test(simulate.p.value = FALSE) 
 days_chisq_test %>%
   pander
@@ -623,11 +622,11 @@ invisible(dev.off())
 ```{r, echo = FALSE, warning = FALSE}
 days_tbl %>%
   rbind("계" = colSums(.)) %>%
-  `[`(-3, 13:14) %>%
+  `[`(-3, 12:14) %>%
   pander
 days_RnB_chisq_test <-
   days_tbl %>%
-  `[`(-3, 13:14) %>%
+  `[`(-3, 12:14) %>%
   chisq.test(simulate.p.value = FALSE) 
 days_RnB_chisq_test %>%
   pander
