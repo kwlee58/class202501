@@ -490,9 +490,6 @@ tbl_q7_a <-
   rbind("계" = colSums(.))
 tbl_q7_a %>% 
   pander(row.names = c("Red(김영란법 국회통과)", "Black(고위공직자 범죄수사처 설립)", "계"))
-tbl_q7_a[-3, -4] %>% 
-  chisq.test %>%
-  pander
 chisq_test_q7 <- 
   tbl_q7_a %>%
   `[`(-3, -4) %>%
@@ -508,13 +505,6 @@ Q7의 Red에는 김영란법 국회통과에 대한 여론조사 결과를 원�
 ### % 비교  
 
 ```{r, cheating charts in percentage, echo = FALSE}
-tbl_q7_a %>% 
-  `[`(-3, -4) %>%
-  prop.table(margin = 1) %>%
-  `*`(100) %>%
-  cbind("계" = rowSums(.)) %>%
-  format(digits = 2, nsmall = 1) %>%
-  pander(row.names = c("Red(김영란법 국회통과)", "Black(고위공직자 범죄수사처 설립)"))
 ptbl_q7_a <- 
   tbl_q7_a %>% 
   `[`(-3, -4) %>%
@@ -653,7 +643,7 @@ text(x = b[14, 1], y = sum(days_tbl[, 1]) / 2,
      labels = paste0(format(sum(days_tbl[, 1]) / N * 100, digits = 1, nsmall = 0), "%"))
 title(main = paste0("Quiz240909 (", N, "명 제출)"))
 # title(main = "일 단위 퀴즈 제출 인원", sub = paste0("Quiz230925 (", N, "명 제출)"))
-dev.copy(png, file = "./pics/2402/quiz_submission_3.png", width = 640, height = 480)
+dev.copy(png, file = "./pics/2402/quiz_submission_2.png", width = 640, height = 480)
 invisible(dev.off())
 })
 ```

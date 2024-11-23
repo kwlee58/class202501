@@ -43,7 +43,7 @@ class_roll$group <-
 saveRDS(class_roll, file = "./class_roll_241122.RDS")
 quiz <- 
   read_excel("./data/quiz241118.xlsx",
-             range = "A1:Y221")
+             range = "A1:Y231")
 names(quiz) <- 
   c("time", "email", "dept", "id", "name", "Q1", "Q2", "Q3", 
     paste("Q4", 1:5, sep = "_"), paste("Q5", 1:8, sep = "_"),

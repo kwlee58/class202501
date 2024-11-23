@@ -682,7 +682,7 @@ text(x = b[14, 1], y = sum(days_tbl[, 1]) / 2,
      labels = paste0(format(sum(days_tbl[, 1]) / N * 100, digits = 1, nsmall = 0), "%"))
 title(main = paste0("Quiz241021 (", N, "명 제출)"))
 # title(main = "일 단위 퀴즈 제출 인원", sub = paste0("Quiz230925 (", N, "명 제출)"))
-dev.copy(png, file = "./pics/2401/quiz_submission_8.png", width = 640, height = 480)
+dev.copy(png, file = "./pics/2402/quiz_submission_8.png", width = 640, height = 480)
 invisible(dev.off())
 })
 ```
@@ -730,7 +730,7 @@ m2 + geom_text(aes(x = center, y = 1.05),
                                   size = 18, 
                                   family = "KoPubWorldDotum Bold"),
         axis.text.x = element_text(angle = -90, vjust = 0.5)) 
-ggsave("./pics/Quiz241021_submission_7.png", dpi = 120, width = 960, height = 840, units = "px")
+ggsave("./pics/Quiz241021_submission_8.png", dpi = 120, width = 960, height = 840, units = "px")
 ```
 
 ```{r, save, echo = FALSE}

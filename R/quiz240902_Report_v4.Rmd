@@ -1,0 +1,518 @@
+---
+title: "Quiz 240902"
+author: "coop711"
+date: "2024-09-02"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(readxl)
+library(pander)
+library(knitr)
+library(magrittr)
+library(dplyr)
+panderOptions('table.split.table', Inf)
+panderOptions('table.alignment.rownames', 'left')
+panderOptions('table.alignment.default', 'right')
+options(width=180)
+```
+
+## 실험의 목적
+
+1주차 구글 예습 설문지 집계결과를 분석합니다. 
+Q1~Q3에서는 랜덤화의 효과로 Red, Black 이 얼마나 닮았는지 알아봅니다.
+Q4에서는 같은 내용의 질문지인데 바람직한 논의이다라는 선택지에 부연설명을 붙이거나(Red), 부적절한 논의이다라는 선택지에 부연설명을 붙였을 때(Black), 부연설명의 여부에 따라 응답이 달라지는 지 살펴봅니다.
+끝으로 제출시간의 분포가 날마다 고른지, Red, Black 간에는 닮았는지 알아봅니다.
+
+```{r, data, echo = FALSE, message = FALSE, results = 'hide'}
+## 8월24일자 랜덤화 출석부
+class_roll0824 <- readRDS("./class_roll_240824.RDS") %>%
+  select(dept, id, name, status, email, cell_no, group)
+## 9월6일자 랜덤화 출석부
+class_roll0906 <- readRDS("./class_roll_240906.RDS") %>%
+  select(dept, id, name, status, email, cell_no, group)
+## 9월6일자 신규 수강생의 학번
+id_new <- setdiff(class_roll0906$id, class_roll0824$id)
+## 8월24일 출석부에는 있지만 수강신청변경으로 나간 사람들의 학번
+id_out <- setdiff(class_roll0824$id, class_roll0906$id)
+## 8월24일, 9월6일 양 출석부에 등장하는 사람들의 학번
+id_stay <- intersect(class_roll0824$id, class_roll0906$id)
+## 새로 들어 온 사람들만의 출석부
+class_roll_id_new <- class_roll0906 %>%
+  filter(id %in% id_new)
+## 폐강 과목으로 인한 신규 수강인원 반영 출석부
+class_roll0913 <- 
+  read_excel("./data/class_roll240913.xlsx", range = "B1:G814")
+str(class_roll0913)
+names(class_roll0913) <- 
+  c("dept", "id", "name", "status", "email", "cell_no")
+## 새로 들어온 사람들의 학번
+id_new2 <- 
+  setdiff(class_roll0913$id, class_roll0906$id)
+## 새로 들어온 사람들 출석부
+class_roll_id_new2 <- class_roll0913 %>%
+  filter(id %in% id_new2)
+## 새로 들어온 사람들 그룹은 직접 지정
+class_roll_id_new2$group <- c("Red", "Black")
+## 8월24일, 9월6일 통합 랜덤화 출석부 (기존 수강생들은 8월24일 Red, Black 적용)
+## 8월24일 등록하고 나간 수강생 중에도 1주차 퀴즈는 수행하였을 가능성이 있기 때문에 0824 전체 적용 
+class_roll <- 
+  rbind(class_roll0824, class_roll_id_new, class_roll_id_new2)
+saveRDS(class_roll, file = "./class_roll_240913_1st_wk.RDS")
+saveRDS(class_roll_id_new2, file = "./class_roll_240913_id_new2.RDS")
+# Quiz Assortment  
+quiz <- 
+  read_excel("./data/quiz240902.xlsx",
+             range = "A2:K777",
+             col_names = FALSE)
+names(quiz) <- 
+  c("time", "email", "dept", "id", "name", "Q1", "Q2", "Q3", "group", "Q4_R", "Q4_B")
+str(quiz)
+quiz <- data.frame(quiz)
+class(quiz$id) <- "character"
+quiz %<>%
+  mutate(Q4_R = if_else(Q4_R == "납세자들의 과도한 세금 부담을 낮추기 위한 바람직한 논의이다",
+                        "바람직한 논의이다", Q4_R))
+quiz %<>%
+  mutate(Q4_B = if_else(Q4_B == "상위 계층에 감세 혜택을 집중시킬 수 있는 부적절한 논의이다",
+                        "부적절한 논의이다", Q4_B))
+quiz$Q4 <- ifelse(is.na(quiz$Q4_R), quiz$Q4_B, quiz$Q4_R)
+quiz %>%
+  filter(id %in% id_new) %>%
+  select(id, name, group)
+setdiff(class_roll$id, quiz$id)
+# quiz$group <- class_roll$group[match(quiz$id, class_roll$id)]
+sapply(quiz[, c("Q1", "Q2", "Q3", "Q4")], table, useNA = "ifany")
+which(quiz$Q2 == "가  ")
+which(quiz$Q3 == "나 ")
+quiz$dept <- factor(quiz$dept)
+quiz$group <- factor(quiz$group, 
+                     levels = c("Red", "Black"))
+quiz$Q1 <- factor(quiz$Q1, 
+                  levels = c("통계학", "통계", "자료", "통계청", "정보"))
+quiz$Q2 <- factor(quiz$Q2, 
+                  levels = c("통계학", "통계", "자료", "통계청", "정보"))
+quiz$Q3 <- factor(quiz$Q3, 
+                  levels = c("통계학", "통계", "자료", "통계청", "정보"))
+quiz$Q4 <- factor(quiz$Q4, 
+                  levels = c("바람직한 논의이다", "부적절한 논의이다", "모름/무응답"))
+table(quiz$Q4, useNA = "ifany")
+#> 학번 잘못 써서 고생시키는 녀석들 찾아내는 코드
+wrong_id <- setdiff(quiz$id, class_roll$id)
+quiz %>%
+  filter(id %in% wrong_id) %>%
+  select(id, name, dept, email)
+# quiz[quiz$id %in% setdiff(quiz$id, class_roll$id), c("id", "name", "dept")]
+#> 찾아서 수정하는 코드
+# quiz$id <- 
+#   class_roll$id[match(quiz$email, class_roll$email)]
+quiz <- quiz %>%
+  left_join(class_roll %>% select(email, id), by = "email", suffix = c("", "_correct")) %>%
+  mutate(id = if_else(!is.na(id_correct), id_correct, id)) %>%
+  select(-id_correct)
+#> 중복 제출자
+which(duplicated(quiz$id)) %>%
+  quiz[., c("id", "name")]
+quiz[quiz$name == "최재혁", ]
+quiz[quiz$name == "우로겸", ]
+quiz[quiz$id == "20242128", ]
+#> 불참자들
+absentee <- class_roll0913 %>%
+  anti_join(quiz, by = "id") %>%
+  select(id, name) %>%
+  arrange(id)
+# absentee <- 
+#   class_roll0913[class_roll0913$id %in% setdiff(class_roll0913$id, quiz$id), c("id", "name")] %>%
+#   `[`(order(.$id), ) 
+absentee %>%
+  pander(row.names = FALSE) 
+# absentee$group %>%
+#   table
+#> 마감기한으로부터 제출시점의 기간
+quiz$days <- as.numeric(difftime("2024-09-16 09:00:00", quiz$time, units = 'days'))
+quiz$hours <- as.numeric(difftime("2024-09-16 09:00:00", quiz$time, units = 'hours'))
+str(quiz)
+```
+
+## Red, Black을 잘못 표시한 사람들
+
+랜덤화출석부(8월 24일 기준)에 있는 Red, Black 과 실제 구글예습설문지에 올린 Red, Black 이 다른 사람들의 분포를 파악해 보았습니다. 랜덤화 효과는 여기서도 작동하고 있는 걸 알 수 있습니다. Red를 Black 이라고 한 사람의 수효(9명)과 Black을 Red 라고 한 사람의 수효(8명)가 상당히 비슷합니다. group 을 잘못 기억하고 있는 사람들의 수효조차 Red, Black 에 비슷하게 나뉘었습니다. 
+
+```{r, wrong group, echo = FALSE}
+quiz$group2 <- class_roll$group[match(quiz$id, class_roll$id)]
+## 8/24 출석부에 나오고, 퀴즈도 수행하였지만 9/6 출석부에는 없는 사람
+# which(is.na(quiz$group2)) %>%
+#   quiz[., c("id", "name", "group", "group2")]
+quiz[quiz$id == "20211104", "group2"] <- "Red"
+wrong_group <- which(quiz$group != quiz$group2)
+# quiz[wrong_group, c("id", "name", "group2", "group")] %>%
+#   `[`(order(.$name), ) %>%
+#   `colnames<-`(c("학번", "이름", "랜덤화출석부", "구글예습퀴즈")) %>%
+#   pander(row.names = FALSE)
+# quiz[wrong_group, c("time", "id", "name", "group2", "group")] %>%
+#   `[`(order(.$time), ) %>%
+#   `colnames<-`(c("제출시간", "학번", "이름", "랜덤화출석부", "구글예습퀴즈")) %>%
+#   pander(row.names = FALSE)
+wrong_tbl <- table("랜덤화출석부" = quiz$group2, 
+                   "구글예습퀴즈" = quiz$group)
+wrong_tbl %>%
+  pander(row.names = c("Red(랜덤화출석부)", "Black(랜덤화출석부)"), 
+         col.names = c("Red(구글예습퀴즈)", "Black(구글예습퀴즈)"))
+```
+
+랜덤화출석부에 있는 Red, Black 과 실제 구글설문에 올린 Red, Black 이 다른 사람들의 수효는 `r length(wrong_group)`명입니다. Red를 Black 이라고 한 사람이 `r wrong_tbl[1, 2]`명, Black 을 Red 라고 한 사람이 `r wrong_tbl[2, 1]`명입니다. 
+
+## 응답인원의 Red, Black
+
+Red 로 응답한 인원은 `r colSums(wrong_tbl)[1]`명, Black 에 응답한 인원은 `r colSums(wrong_tbl)[2]`명입니다. 전체 응답인원 `r sum(wrong_tbl)` 명을 랜덤하게 둘로 나눌 때 어느 한 쪽의 기대인원은 이를 반으로 나눠 준`r sum(wrong_tbl) / 2`명이고, 표준오차는 이의 제곱근에 1/2을 곱해 준 `r round(sqrt(sum(wrong_tbl)) * 1 / 2, digits = 1)` 명입니다. 따라서 Red, Black 각 그룹에 관찰된 인원은 기대인원으로부터 표준오차 범위 안에 들어갑니다.
+
+```{r, randomization, echo = FALSE, results = 'hide'}
+pander(summary(quiz))
+```
+
+# Quiz 응답 비교
+
+## Q1. Dewey as good as elected, statistics convince Roper
+
+```{r, echo = FALSE, out.width = "100%", fig.align = "left"}
+include_graphics("./pics/Quiz210302_01.png")
+```
+
+### Roper(Counts) 
+
+```{r, Roper, echo = FALSE}
+tbl_q1_a <- quiz$Q1 %>% 
+  table(quiz$group, ., useNA = "ifany") %>%
+  cbind("계" = rowSums(.)) %>%
+  rbind("계" = colSums(.))
+tbl_q1_a %>% 
+  pander 
+chisq_test_q1 <- 
+  tbl_q1_a %>%
+  `[`(-3, -6) %>%
+  chisq.test(simulate.p.value = FALSE) 
+chisq_test_q1 %>%
+  pander
+```
+
+Q1의 집계 결과가 Red, Black 간에 통계적으로 유의한 차이가 있는지 알아보기 위하여 카이제곱 테스트를 수행하였습니다. 그 결과 카이제곱 통계량은 `r chisq_test_q1[1] %>% format(digits = 2, nsmall = 2)`, 자유도는 `r chisq_test_q1[2] %>% format(digits = 2, nsmall = 3)` , p-value 는 `r chisq_test_q1[3] %>% format(digits = 2, nsmall = 4)`이므로 Red, Black 간에 통계적으로 유의한 차이를 보이지 않습니다. 실제로 닮은 게 느껴집니까?
+
+### Roper(%)
+
+```{r, Roper in percentage, echo = FALSE}
+ptbl_q1 <- 
+  tbl_q1_a %>% 
+  `[`(3, -6) %>%
+  prop.table %>% 
+  c("계" = sum(.)) %>%
+  `*`(100) 
+ptbl_q1 %>%
+  format(digits = 2, nsmall = 1) %>%
+  pander
+```
+
+정답률은 Red, Black 을 합하여 계산하는데, `r ptbl_q1[2] %>% format(digits = 2, nsmall = 1)`(%) 입니다.
+
+## Q2. Statistics is the science of learning from data, ...
+
+```{r, echo = FALSE, out.width = "100%", align = "left"}
+include_graphics("./pics/Quiz210302_02.png")
+```
+
+### ASA(Counts) 
+
+```{r, ASA, echo = FALSE, warning = FALSE}
+tbl_q2_a <- quiz$Q2 %>% 
+  table(quiz$group, ., useNA = "ifany") %>%
+  cbind("계" = rowSums(.)) %>%
+  rbind("계" = colSums(.))
+tbl_q2_a %>% 
+  pander 
+chisq_test_q2 <- 
+  tbl_q2_a %>%
+  `[`(-3, -6) %>%
+  chisq.test(simulate.p.value = FALSE) 
+chisq_test_q2 %>%
+  pander
+```
+
+Q2의 집계 결과가 Red, Black 간에 통계적으로 유의한 차이가 있는지 알아보기 위하여 카이제곱 테스트를 수행하였습니다. 그 결과 카이제곱 통계량은 `r chisq_test_q2[1] %>% format(digits = 2, nsmall = 3)`, 자유도는 `r chisq_test_q2[2] %>% format(digits = 2, nsmall = 2)`, p-value 는 `r chisq_test_q2[3] %>% format(digits = 2, nsmall = 4)`이므로 Red, Black 간에 통계적으로 유의한 차이를 보이지 않습니다. 실제로 닮은 게 느껴집니까?
+
+### ASA(%)
+
+```{r, ASA in percentage, echo = FALSE}
+ptbl_q2 <- 
+  tbl_q2_a %>% 
+  `[`(3, -6) %>%
+  prop.table %>% 
+  c("계" = sum(.)) %>%
+  `*`(100) 
+ptbl_q2 %>%
+  format(digits = 2, nsmall = 1) %>%
+  pander
+```
+
+정답률은 Red, Black 을 합하여 계산하는데, `r ptbl_q2[1] %>% format(digits = 2, nsmall = 1)`(%) 입니다.
+
+## Q3. How to lie with statistics
+
+```{r, echo = FALSE, out.width = "100%", align = "left"}
+include_graphics("./pics/Quiz210302_03.png")
+```
+
+### D.Huff(Counts) 
+
+```{r, D.Huff, echo = FALSE}
+tbl_q3_a <- quiz$Q3 %>% 
+  table(quiz$group, ., useNA = "ifany") %>%
+  cbind("계" = rowSums(.)) %>%
+  rbind("계" = colSums(.))
+# colnames(tbl_q3_a)[5] %<>% `<-`(., "불참")
+tbl_q3_a %>% 
+  pander 
+chisq_test_q3 <- 
+  tbl_q3_a %>%
+  `[`(-3, -6) %>%
+  chisq.test(simulate.p.value = FALSE) 
+chisq_test_q3 %>%
+  pander
+```
+
+Q3의 집계 결과가 Red, Black 간에 통계적으로 유의한 차이가 있는지 알아보기 위하여 카이제곱 테스트를 수행하였습니다. 그 결과 카이제곱 통계량은 `r chisq_test_q3[1] %>% format(digits = 2, nsmall = 3)`, 자유도는 `r chisq_test_q3[2] %>% format(digits = 2, nsmall = 2)`, p-value 는 `r chisq_test_q3[3] %>% format(digits = 2, nsmall = 4)`이므로 Red, Black 간에 통계적으로 유의한 차이를 보이지 않습니다. 실제로 닮은 게 느껴집니까?
+
+### D.Huff(%)
+
+```{r, D.Huff in percentage, echo = FALSE}
+ptbl_q3 <- 
+  tbl_q3_a %>% 
+  `[`(3, -6) %>%
+  prop.table %>% 
+  c("계" = sum(.)) %>%
+  `*`(100) 
+ptbl_q3 %>%
+  format(digits = 2, nsmall = 1) %>%
+  pander
+```
+
+정답률은 Red, Black 을 합하여 계산하는데, `r ptbl_q3[2] %>% format(digits = 2, nsmall = 1)`(%) 입니다.
+
+# Q4. 종부세
+
+바람직한 논의이다라는 선택지에 부연설명을 붙이거나(Red), 부적절한 논의이다라는 선택지에 부연설명을 붙였을 때(Black), 부연설명의 여부에 따라 응답이 달라지는 지 살펴본 결과 기대한 바와 같이 양 집단에 통계적으로 유의한 수준의 차이가 났습니다. 전체적으로 부적절한 논의라는 응답이 주류를 이루는 가운데에도 부적절한 논의의 근거를 추가한 Black 집단에서 훨씬 높은 비율로 부적절한 논의라는 응답이 나왔습니다. 앞에서 본 바와 같이 Red, Black 두 집단은 출석부의 다섯 변수에 있어서 매우 닮은 집단이어서 Q1, Q2, Q3의 응답 결과에서 본 바와 같이 그 응답이 매우 닮게 나오는데 만약 부연설명이 효과가 없다면 Q4에서의 응답도 닮게 나왔을 것입니다. 그러지 못한 이유를 따져보면 바로 부연설명을 붙였다는 데서 차이가 난다고 결론을 내릴 수 있는 것입니다.
+
+## 질문지 선택지에 부연설명 
+
+```{r, echo = FALSE, out.width = "67%", fig.align = "left"}
+include_graphics("./pics/Quiz240902_Q4_Red.png")
+```
+
+```{r, echo = FALSE, out.width = "67%", fig.align = "left"}
+include_graphics("./pics/Quiz240902_Q4_Black.png")
+```
+
+### 집계
+
+```{r, investigation, echo = FALSE}
+tbl_q4_a <- quiz$Q4 %>%
+  table(quiz$group, ., useNA = "ifany") %>%
+  cbind("계" = rowSums(.)) %>%
+  rbind("계" = colSums(.))
+# colnames(tbl_q4_a)[4] <- "결석"
+rownames(tbl_q4_a)[1:2] <- c("Red(바람직한 논의에 부연설명)", "Black(부적절한 논의에 부연설명)")
+tbl_q4_a %>% 
+  pander
+chisq_test_q4 <- 
+  tbl_q4_a %>%
+  `[`(-3, -4) %>%
+  chisq.test(simulate.p.value = FALSE) 
+chisq_test_q4 %>%
+  pander
+```
+
+Q7의 Red에는 종합부동산세 부담을 완화해야 한다는 주장에 대하여 바람직한 논의라는 쪽에 긍정적인 부연설명을 붙였는데,  `r tbl_q4_a[1, 4]`명이 응답한 가운데 `r tbl_q4_a[1, 1]`명이 "바람직한 논의이다"라는 반응을 보이고, `r tbl_q4_a[1, 2]`명이 결과를 "부적절한 논의이다"라는 반응을 보입니다. Black에는 같은 주장에 대하여 부적절한 논의라는 쪽에 부정적인 부연설명을 붙였는데, `r tbl_q4_a[2, 4]`명이 응답한 가운데 `r tbl_q4_a[2, 1]`명이 "바람직한 논의이다"라는 반응을 보이고, `r tbl_q4_a[2, 2]`명이 "부적절한 논의이다"라는 반응을 보입니다. 그리고 "모름/무응답"에 답한 인원은 Red에  `r tbl_q4_a[1, 3]`명, Black 에 `r tbl_q4_a[2, 3]`명이 응답하였습니다. 카이제곱 테스트는 이와 같은 상황에서 원형그래프를 왜곡할 떄와 막대그래프를 왜곡할 때 인식의 차이가 통계적으로 유의하다는 것을 보여 줍니다. 카이제곱 통계량은 `r chisq_test_q4[1] %>% format(digits = 2, nsmall = 3)`, 자유도는 `r chisq_test_q4[2] %>% format(digits = 2, nsmall = 2)`, p-value 는 `r chisq_test_q4[3] %>% format(digits = 2, nsmall = 4)`으로 부연설명을 어떻게 붙이느냐에 따라 반응이 다르게 나온다는 것을 보여줍니다.
+
+### % 비교.  
+
+```{r, investigation in percentage, echo = FALSE}
+ptbl_q4_a <- 
+  tbl_q4_a %>% 
+  `[`(-3, -4) %>%
+  prop.table(margin = 1) %>% 
+  `*`(100) %>%
+  cbind("계" = rowSums(.))
+ptbl_q4_a %>%
+  format(digits = 2, nsmall = 1) %>%
+  pander
+```
+
+"바람직한 논의이다"에 부연설명을 붙인 Red에서 "바람직한 논의이다"라고 응답하는 사람들의 백분율, `r format(ptbl_q4_a[1, 1], digits = 2, nsmall = 1)`(%)은 "부적절한 논의이다"에 부연설명을 붙인 Black 에서 "바람직한 논의이다"라고 응답하는 사람들의 백분율, `r format(ptbl_q4_a[2, 1], digits = 2, nsmall = 1)`(%) 보다 높습니다. 반면 "부적절한 논의이다"에 부연설명을 붙인 Black 에서 "부적절한 논의이다"라고 응답하는 사람들의 백분율, `r format(ptbl_q4_a[2, 2], digits = 2, nsmall = 1)`(%)은 Red 에서 "부적적한 논의이다"라고 응답하는 사람들의 백분율, `r format(ptbl_q4_a[1, 2], digits = 2, nsmall = 1)`(%) 보다 높습니다.  부연설명을 어디에 붙이느냐에 따라 반응이 달라진다는 것을 잘 알 수 있습니다. 
+
+### Mosaic Plot
+
+```{r, mosaic plot, echo = FALSE, fig.width = 7, fig.height = 5, eval = TRUE}
+library(ggplot2)
+source("./mosaic_gg.R")
+m_list <- quiz$Q4 %>%
+  table(quiz$group, ., useNA = "ifany") %>%
+  t %>%
+  mosaic_gg
+m <- m_list$m
+df <- m_list$df
+p_df <- m_list$p_df
+names(df)[1] <- "Var1"
+names(p_df)[1] <- "Var1"
+# df$Var1 %<>% factor(labels = c("반이나 남았네", "반밖에 안 남았네", "모름/무응답"))
+df$Var2 %<>% factor(labels = c("바람직한 논의에 부연설명", "부적절한 논의에 부연설명"))
+# p_df$Var1 %<>% factor(labels = c("반이나 남았네", "반밖에 안 남았네", "모름/무응답"))
+p_df$Var2 %<>% factor(labels = c("바람직한 논의에 부연설명", "부적절한 논의에 부연설명"))
+m + geom_text(aes(x = center, y = 1.05), 
+              family = "KoPubWorldDotum Medium",
+              label = df[, 2]) +
+  theme_bw(base_family = "KoPubWorldDotum Medium") +
+  labs(title = "부연설명의 영향", x = "Red or Black(누적 %)", y = "인원(%, 명)") +
+  scale_fill_brewer(name = "응답", 
+                    labels = c("바람직한 논의이다", "부적절한 논의이다", "모름/무응답"),
+                    type = "qual", 
+                    palette = "Set2", 
+                    direction = 1) +
+  theme(plot.title = element_text(hjust = 0.5, 
+                                  size = 18, 
+                                  family = "KoPubWorldDotum Bold")) 
+ggsave("./pics/Quiz240902_Q7_RnB.png", dpi = 120, width = 960, height = 840, units = "px")
+```
+
+Mosaic Plot 은 이 집계결과를 시각적으로 잘 보여줍니다. "바람직한 논의이다"에 부연설명을 붙인 Red 에서 "바람직힌 논의이다"라고 응답한 백분율이 "부적절한 논의이다"에 부연설명을 붙인 Black 에서 "바람직한 논의이다"라고 응답한 백분율보다 높고, 여론조사 결과를 "제대로 보여주고 있다"고 응답한 백분율이 매우 낮고, Black 에서 "부적절한 논의이다"라고 응답한 백분율은 Red 에서 "부적절한 논의이다"라고 응답한 백분율보다 월등히 높습니다.
+
+<!--
+### % 합계
+
+```{r, overall percentage, echo = FALSE}
+tbl_q4 <- quiz$Q4 %>%
+  table(useNA = "no") %>%
+  prop.table %>%
+  `*`(100) %>%
+  c("계" = sum(.)) %>%
+  format(digits = 2, nsmall = 1)
+# names(tbl_q4)[4] <- "계"
+tbl_q4 %>%
+  pander
+```
+-->
+
+## 마감 시간으로부터 제출 시간의 분포
+
+### 분포표
+
+```{r, echo = FALSE, warning = FALSE}
+N <- nrow(quiz)
+days_tbl <- 
+  quiz$days %>%
+  cut(breaks = c(0:14), include.lowest = TRUE) %>%
+  table(quiz$group, .) 
+days_tbl %>%
+  cbind("계" = rowSums(.)) %>%
+  rbind("계" = colSums(.)) %>%
+  pander(caption = "일 단위")
+```
+
+분포표로부터 두 가지 문제를 살펴보겠습니다. 첫째, 날마다 고르게 제출하는가? 둘쨰, Red, Black 간에 통게적으로 유의한 차이가 있는가?
+각 문제를 살펴보기 위해서는 분포표의 일부분을 대상으로 카이제곱 테스트를 수행합니다.
+
+### 날마다 고르게 제출하는가?
+
+```{r, echo = FALSE, warning = FALSE}
+days_tbl %>%
+  rbind("계" = colSums(.)) %>%
+  `[`(3, 1:14) %>%
+  pander
+days_chisq_test <-
+  days_tbl %>%
+  rbind("계" = colSums(.)) %>%
+  `[`(3, 1:14) %>%
+  chisq.test(simulate.p.value = FALSE) 
+days_chisq_test %>%
+  pander
+```
+
+날마다 고르게 제출하는지 알아 보았습니다. 분포표의 "계"행에서 '계'열을 제외하고 카이제곱테스트를 수행합니다. 분포표 만으로도 쉽게 파악할 수 있지만 카이제곱테스트가 명확히 해 줍니다. 카이제곱 통계량은 `r format(days_chisq_test[1], digits = 2, nsmall = 3)`, 자유도는 `r format(days_chisq_test[2], digits = 2, nsmall = 0)`, p-value 는 `r format(days_chisq_test[3], digits = 2, nsmall = 4)` 이므로 결코 고르게 제출한다고 말할 수 없겠습니다. 막대그래프로 살펴 보겠습니다.
+
+### 막대그래프
+
+```{r, echo = FALSE}
+# png(file = "./pics/2302/quiz_submission_8.png", width = 640, height = 480)
+suppressMessages({
+par(family = "KoPubWorldDotum Medium")
+b <- 
+  quiz$days %>%
+  cut(breaks = c(0:14), include.lowest = TRUE) %>%
+  table %>%
+  rev %>%
+  barplot(space = 0, names.arg = rep(c("월", "화", "수", "목", "금", "토", "일"), 2),
+          col = c(rep("white", 13), "pink"),
+          ylim = c(0, 300)) 
+text(x = b[14, 1], y = sum(days_tbl[, 1]), 
+     labels = paste0(sum(days_tbl[, 1]), "명"), pos = 3)
+text(x = b[14, 1], y = sum(days_tbl[, 1]) / 2, 
+     labels = paste0(format(sum(days_tbl[, 1]) / N * 100, digits = 1, nsmall = 0), "%"))
+title(main = paste0("Quiz240902 (", N, "명 제출)"))
+# title(main = "일 단위 퀴즈 제출 인원", sub = paste0("Quiz230925 (", N, "명 제출)"))
+dev.copy(png, file = "./pics/2402/quiz_submission_1.png", width = 640, height = 480)
+invisible(dev.off())
+})
+```
+
+막대그래프는 총 제출인원 `r N`(명) 중에 `r sum(days_tbl[, 1])`(명),  `r format(sum(days_tbl[, 1]) / N * 100, digits = 1, nsmall = 0)`(%)가 마감일에 몰리는 것을 보여주고 있습니다.
+
+### Red, Black 간에 닮았는가?
+
+```{r, echo = FALSE, warning = FALSE}
+days_tbl %>%
+  rbind("계" = colSums(.)) %>%
+  `[`(-3, 1:14) %>%
+  pander
+days_RnB_chisq_test <-
+  days_tbl %>%
+  `[`(-3, 1:14) %>%
+  chisq.test(simulate.p.value = FALSE) 
+days_RnB_chisq_test %>%
+  pander
+```
+
+제출시간의 분포가 Red, Black 간에 닮았는지 알아 보았습니다. 이번에는 분포표의 첫번쨰와 두번쨰 행, '계'열을 제외한 나머지 열에 대해서 카이제곱테스트를 수행합니다. 카이제곱 통계량은 `r format(days_RnB_chisq_test[1], digits = 2, nsmall = 3)`, 자유도는 `r format(days_RnB_chisq_test[2], digits = 2, nsmall = 2)`, p-value 는 `r format(days_RnB_chisq_test[3], digits = 2, nsmall = 4)` 이므로 제출 시간의 분포는 Red, Black 간에 통계적으로 유의한 차이가 관찰되지 않습니다. 이 사실을 Mosaic Plot 을 이용하여 시각적으로 살펴보겠습니다. 닮았다고 느껴지나요?
+
+### Mosaic Plot
+
+```{r, echo = FALSE, fig.width = 10, fig.height = 5}
+library(ggplot2)
+source("./mosaic_gg.R")
+m2_list <- days_tbl[, 14:1] %>%
+  mosaic_gg
+m2 <- m2_list$m
+df2 <- m2_list$df
+p_df2 <- m2_list$p_df
+names(df2[, 2]) <- "Days"
+m2 + geom_text(aes(x = center, y = 1.05), 
+              family = "KoPubWorldDotum Medium",
+              label = rep(rep(c("월", "화", "수", "목", "금", "토", "일"), each = 2), times = 2)) +
+  theme_bw(base_family = "KoPubWorldDotum Medium") +
+  labs(title = "마감일로부터 제출시간의 분포", x = "마감일로부터 일수(누적 %)", y = "인원 백분율(%)") +
+  scale_fill_brewer(name = "그룹", 
+                    labels = c("Red", 
+                               "Black"),
+                    type = "qual", 
+                    palette = "Set1", 
+                    direction = 1) +
+  theme(plot.title = element_text(hjust = 0.5, 
+                                  size = 18, 
+                                  family = "KoPubWorldDotum Bold"),
+        axis.text.x = element_text(angle = -90, vjust = 0.5)) 
+ggsave("./pics/Quiz240902_submission_1.png", dpi = 120, width = 960, height = 840, units = "px")
+```
+
+```{r, save, echo = FALSE}
+saveRDS(quiz, file = "./quiz240902.RDS")
+save.image("./quiz240902.RData")
+```
+
+
