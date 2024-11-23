@@ -396,9 +396,6 @@ tbl_q5_a <-
   rbind("계" = colSums(.))
 tbl_q5_a %>% 
   pander 
-tbl_q5_a[-3, -5] %>% 
-  chisq.test(simulate.p.value = FALSE) %>%
-  pander
 chisq_test_q5 <- 
   tbl_q5_a %>%
   `[`(-3, -5) %>%
@@ -469,9 +466,9 @@ ptbl_q6 %>%
 
 # 국민부담률 적정 수준
 
-## Q7. 아일랜드와 OECD 평균
-
 질문 내용에 의도하는 바를 담으면 어떨까요? OECD 국가 중 국민부담률이 매우 낮은 편인 아일랜드의 사례를 들어서 감세정책이 가져온 긍정적적인 효과에 대해서 설명하고 우리나라의 바람직한 조정 방향은 무엇이냐고 묻는 것을 Red, 감세 정책이 가져온 부정적인 효과에 대해서 설명하고 우리나라의 바람직한 조정 방향은 무엇이냐고 묻는 것을 Black 에 배치했을 때, 설명이 영향을 미치지 않으면 Red 와 Black에 차이가 없어야 할텐데 집계결과는 어떻게 나오고 있나요? 분명히 영향을 미치고 있는 것으로 보입니다. 통계적으로 매우 유의한 차이가 관찰되고 있습니다. 감세정책의 효과가 긍정적이라고 설명한 Red 에서는 낮춰야 한다는 응답이, 감세정책의 효과가 부정적이라고 설명한 Black 에서는 높여야 한다는 응답이 높게 나온 것을 볼 수 있고, 따라서 p-value 가 엄청나게 작은 값을 보여주고 있습니다. 
+
+## Q7. 아일랜드와 OECD 평균
 
 ```{r, echo = FALSE, out.width = "67%", align = "left"}
 include_graphics("./pics/Quiz240315_Q7_Red.png")
@@ -686,7 +683,7 @@ m2 + geom_text(aes(x = center, y = 1.05),
                                   size = 18, 
                                   family = "KoPubWorldDotum Bold"),
         axis.text.x = element_text(angle = -90, vjust = 0.5)) 
-ggsave("./pics/Quiz240930_submission_3.png", dpi = 120, width = 960, height = 840, units = "px")
+ggsave("./pics/Quiz240916_submission_3.png", dpi = 120, width = 960, height = 840, units = "px")
 ```
 
 ```{r, save, echo = FALSE}

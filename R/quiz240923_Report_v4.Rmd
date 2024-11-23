@@ -664,7 +664,7 @@ m2 + geom_text(aes(x = center, y = 1.05),
                                   size = 18, 
                                   family = "KoPubWorldDotum Bold"),
         axis.text.x = element_text(angle = -90, vjust = 0.5)) 
-ggsave("./pics/Quiz240930_submission_4.png", dpi = 120, width = 960, height = 840, units = "px")
+ggsave("./pics/Quiz240923_submission_4.png", dpi = 120, width = 960, height = 840, units = "px")
 ```
 
 ```{r, save, echo = FALSE}

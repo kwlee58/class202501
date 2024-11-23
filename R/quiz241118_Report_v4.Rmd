@@ -26,25 +26,24 @@ Q7에서는 Framing Effects 를 알아 보기 위하여 동일한 내용을 Red�
 그리고, 제출시간의 분포가 날마다 고른지, Red, Black 간에는 닮았는지 알아봅니다.
 
 ```{r, data, echo = FALSE, results = 'hide', message = FALSE}
-class_roll <- 
+class_roll1115 <- 
   readRDS("./class_roll_241115.RDS")
+class_roll1115 %<>% 
+  data.frame
+class_roll <- 
+  read_excel("./data/class_roll241122.xlsx", 
+             range = "B1:G800")
 class_roll %<>% 
   data.frame
-# class_roll <- 
-#   read_excel("./data/class_roll241122.xlsx", 
-#              range = "B2:I897",
-#              col_names = FALSE)
-# class_roll %<>% 
-#   data.frame
-# str(class_roll)
-# names(class_roll) <- 
-#   c("college", "dept", "year", "id", "name", "status", "email", "cell_no")
-# class_roll$group <- 
-#   class_roll0510$group[match(class_roll$id, class_roll0510$id)]
-# saveRDS(class_roll, file = "./class_roll_241118.RDS")
+str(class_roll)
+names(class_roll) <- 
+  c("dept", "id", "name", "status", "email", "cell_no")
+class_roll$group <- 
+  class_roll1115$group[match(class_roll$id, class_roll1115$id)]
+saveRDS(class_roll, file = "./class_roll_241122.RDS")
 quiz <- 
   read_excel("./data/quiz241118.xlsx",
-             range = "A1:Y191")
+             range = "A1:Y221")
 names(quiz) <- 
   c("time", "email", "dept", "id", "name", "Q1", "Q2", "Q3", 
     paste("Q4", 1:5, sep = "_"), paste("Q5", 1:8, sep = "_"),
@@ -580,12 +579,12 @@ days_tbl %>%
 ```{r, echo = FALSE, warning = FALSE}
 days_tbl %>%
   rbind("계" = colSums(.)) %>%
-  `[`(3, 10:14) %>%
+  `[`(3, 9:14) %>%
   pander
 days_chisq_test <-
   days_tbl %>%
   rbind("계" = colSums(.)) %>%
-  `[`(3, 10:14) %>%
+  `[`(3, 9:14) %>%
   chisq.test(simulate.p.value = FALSE) 
 days_chisq_test %>%
   pander
@@ -623,11 +622,11 @@ invisible(dev.off())
 ```{r, echo = FALSE, warning = FALSE}
 days_tbl %>%
   rbind("계" = colSums(.)) %>%
-  `[`(-3, 10:14) %>%
+  `[`(-3, 9:14) %>%
   pander
 days_RnB_chisq_test <-
   days_tbl %>%
-  `[`(-3, 10:14) %>%
+  `[`(-3, 9:14) %>%
   chisq.test(simulate.p.value = FALSE) 
 days_RnB_chisq_test %>%
   pander
