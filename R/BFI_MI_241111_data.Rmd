@@ -39,7 +39,7 @@ str(class_roll)
 
 ```{r}
 BFI <- "./data/BFI241111.xlsx" %>% 
-  read_excel(range = "A1:AA495",
+  read_excel(range = "A1:AA522",
              col_names = TRUE)
 BFI %<>%
   data.frame
@@ -84,6 +84,7 @@ BFI_wrong_ids <- BFI_wrong_ids %>%
     ID == "20245185" ~ "20245186",
     ID == "영어영문학과" ~ "20241236",
     ID == "20212546" ~ "20212549",
+    ID == "202410197" ~ "20241097",
     TRUE ~ ID
   ))
 # 3. MI 에서 id 틀린 행을 제거하고 옳은 id 갖춘 행으로 교체하기
@@ -103,7 +104,7 @@ BFI_hours <- as.numeric(difftime("2024-11-25 09:00:00", BFI$Time,
 
 ```{r}
 MI <- "./data/MI241111.xlsx" %>% 
-  read_excel(range = "A1:BQ485",
+  read_excel(range = "A1:BQ513",
              col_names = TRUE)
 MI %<>%
   data.frame
