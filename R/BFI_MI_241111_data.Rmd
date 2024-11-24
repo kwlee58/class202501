@@ -39,7 +39,7 @@ str(class_roll)
 
 ```{r}
 BFI <- "./data/BFI241111.xlsx" %>% 
-  read_excel(range = "A1:AA522",
+  read_excel(range = "A1:AA729",
              col_names = TRUE)
 BFI %<>%
   data.frame
@@ -65,7 +65,8 @@ duplicated(BFI$ID) %>%
   which %>%
   BFI[., c("ID", "Name")]
 BFI[BFI$ID == "20242702", c("ID", "Name")]
-BFI <- BFI[-117, ]
+BFI[BFI$ID == "20243020", c("ID", "Name")]
+BFI <- BFI[-c(117, 598), ]
 # BFI <- unique(BFI)
 str(BFI)
 #> ID 잘못 적은 친구
@@ -85,6 +86,8 @@ BFI_wrong_ids <- BFI_wrong_ids %>%
     ID == "영어영문학과" ~ "20241236",
     ID == "20212546" ~ "20212549",
     ID == "202410197" ~ "20241097",
+    ID == "사회복지학부" ~ "20242314",
+    ID == "광고홍보학과" ~ "20192634",
     TRUE ~ ID
   ))
 # 3. MI 에서 id 틀린 행을 제거하고 옳은 id 갖춘 행으로 교체하기
@@ -93,6 +96,25 @@ BFI <- BFI %>%
   bind_rows(BFI_wrong_ids)
 #> ID 잘못 적은 친구 수정사항 확인
 BFI[BFI$ID %in% setdiff(BFI$ID, class_roll$ID), c("ID", "Name")]
+#> "중간이다"를 도배한 친구 기록 삭제
+# 동일한 값으로 일관된 응답을 입력한 사용자를 적발하는 함수
+identify_uniform_responses <- function(data, uniform_value = "중간이다") {
+  # 각 행이 특정 값으로만 일관되는지 확인
+  uniform_rows <- apply(data, 1, function(row) all(row == uniform_value))
+  
+  # 일관된 응답을 입력한 행 번호 또는 ID 출력
+  offenders <- which(uniform_rows) # 행 번호 
+}
+
+# 예시 데이터에 적용 (ID 열이 있다고 가정)
+result <- identify_uniform_responses(BFI[, 6:17], "3")
+
+# 결과 확인
+print(result)   # 일관된 응답을 입력한 행 번호
+print(BFI[result, c("ID", "Name")])    # 일관된 응답을 입력한 데이터
+str(BFI)
+BFI <- BFI[-result, ]
+str(BFI)
 #> 마감일로부터 제출시점의 기간
 BFI_days <- as.numeric(difftime("2024-11-25 09:00:00", BFI$Time, 
                                  tz = "Asia/Seoul", units = 'days'))
@@ -104,7 +126,7 @@ BFI_hours <- as.numeric(difftime("2024-11-25 09:00:00", BFI$Time,
 
 ```{r}
 MI <- "./data/MI241111.xlsx" %>% 
-  read_excel(range = "A1:BQ513",
+  read_excel(range = "A1:BQ721",
              col_names = TRUE)
 MI %<>%
   data.frame
@@ -128,6 +150,18 @@ MI <- MI[-109, ]
 MI[5:60] %<>%
   sapply(FUN = {. %>% strsplit(split = "[.]") %>% sapply(`[`, 1)}) %>%
   as.numeric
+# 동일한 값으로 일관된 응답을 입력한 사용자를 적발
+
+# 예시 데이터에 적용 (ID 열이 있다고 가정)
+result_M <- identify_uniform_responses(MI[, 5:60], "3")
+
+# 결과 확인
+print(result_M)   # 일관된 응답을 입력한 행 번호
+print(MI[result_M, c("ID", "Name")])    # 일관된 응답을 입력한 데이터
+str(MI)
+# 부적절한 응답 삭제
+MI <- MI[-result_M, ]
+str(MI)
 kable(head(MI[c(3, 5:18)]))
 kable(head(MI[c(3, 19:32)]))
 kable(head(MI[c(3, 33:46)]))
@@ -151,6 +185,10 @@ MI_wrong_ids <- MI_wrong_ids %>%
   mutate(ID = case_when(
     ID == "바이오메디컬" ~ "20243615",
     ID == "20233903" ~ "20243903",
+    ID == "2024618" ~ "20246218",
+    ID == "2024242220" ~ "20242420",
+    ID == "2023390" ~ "20233930",
+    ID == "20182929" ~ "20182919",
     TRUE ~ ID
   ))
 # 3. MI 에서 id 틀린 행을 제거하고 옳은 id 갖춘 행으로 교체하기

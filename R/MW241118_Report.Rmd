@@ -31,15 +31,8 @@ include_graphics("./pics/MW_Game_scores.png")
 
 ```{r, data, echo = FALSE, results = 'hide'}
 #> 엑셀 자료 읽어들이기
-# MW <- "./data/MW241118.xlsx" %>%
-#   read.xlsx(sheetIndex = 1, 
-#             startRow = 1, endRow = 451, 
-#             colIndex = 2:14, 
-#             colClasses = rep("character", 18), 
-#             header = TRUE, 
-#             stringsAsFactors = FALSE)
 MW <- "./data/MW241118.xlsx" %>%
-  read_excel(range = "C1:O187",
+  read_excel(range = "C1:O225",
              col_types = "text")
 str(MW)
 #> Names for the Columns
@@ -106,10 +99,10 @@ kable(records)
 #> Define the rule of scores of the game through an anonymous function with switch
 score <- function(x) {
   switch(x,
-         홀홀 = c(-3, -3),
-         홀짝 = c(6, -6),
-         짝홀 = c(-6, 6),
-         짝짝 = c(3, 3))
+         "홀홀" = c(-3, -3),
+         "홀짝" = c(6, -6),
+         "짝홀" = c(-6, 6),
+         "짝짝" = c(3, 3))
   }
 #> Collapse the results of each trial of the game, 예시
 sample_coll <- sapply(records[records$Team == records$Team[1], -1], paste, collapse = "") 

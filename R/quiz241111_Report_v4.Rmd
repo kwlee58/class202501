@@ -43,7 +43,7 @@ class_roll$group <- class_roll1108$group[match(class_roll$id, class_roll1108$id)
 saveRDS(class_roll, file = "./class_roll_241115.RDS")
 quiz <- 
   read_excel("./data/quiz241111.xlsx",
-             range = "A2:N484",
+             range = "A2:N705",
              col_names = FALSE)
 str(quiz)
 names(quiz) <- 
@@ -121,6 +121,9 @@ quiz_wrong_ids <- quiz_wrong_ids %>%
     id == "20222525" ~ "20222526",
     id == "20215019" ~ "20215109",
     id == "202027691" ~ "20202761",
+    id == "2022530" ~ "20222530",
+    id == "20222801" ~ "20223801",
+    id == "202123235" ~ "20213235",
     TRUE ~ id
   ))
 # 3. quiz 에서 id 틀린 행을 제거하고 옳은 id 갖춘 행으로 교체하기
@@ -148,7 +151,7 @@ quiz %>%
 # which(duplicated(quiz$id)) %>%
 #   quiz[., c("id", "name")]
 quiz %>%
-  filter(name %in% c("최성민"))
+  filter(name %in% c("최성민", "김세은"))
 quiz <- quiz %>% 
   arrange(id, desc(time)) %>%
   distinct(id, .keep_all = TRUE)
@@ -182,11 +185,11 @@ wrong_group <- quiz %>%
   filter(group2 != group)
 
 #> 잘못된 그룹 정보 출력
-wrong_group %>%
-  select(time, id, group2, group) %>%
-  arrange(time) %>%
-  rename("제출시간" = time, "학번" = id, "랜덤화출석부" = group2, "구글예습퀴즈" = group) %>%
-  pander(row.names = FALSE)
+# wrong_group %>%
+#   select(time, id, group2, group) %>%
+#   arrange(time) %>%
+#   rename("제출시간" = time, "학번" = id, "랜덤화출석부" = group2, "구글예습퀴즈" = group) %>%
+#   pander(row.names = FALSE)
 
 #> 옛 코드
 # quiz$group2 <- class_roll$group[match(quiz$id, class_roll$id)]
