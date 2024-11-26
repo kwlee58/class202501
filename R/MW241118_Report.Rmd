@@ -11,6 +11,7 @@ library(readxl)
 library(pander)
 library(knitr)
 library(magrittr)
+library(dplyr)
 panderOptions('table.split.table', Inf)
 panderOptions('table.alignment.rownames', 'left')
 panderOptions('table.alignment.default', 'right')
@@ -32,7 +33,7 @@ include_graphics("./pics/MW_Game_scores.png")
 ```{r, data, echo = FALSE, results = 'hide'}
 #> 엑셀 자료 읽어들이기
 MW <- "./data/MW241118.xlsx" %>%
-  read_excel(range = "C1:O225",
+  read_excel(range = "C1:O277",
              col_types = "text")
 str(MW)
 #> Names for the Columns
@@ -87,12 +88,81 @@ apply(records["Team"], MARGIN = 2, table)
 # records[249, "Team"] <- "노지대흥승"
 ```
 
+```{r, cleaning, echo = FALSE, results = 'hide'}
+#> 출석부 불러오기
+class_roll <- 
+  readRDS("./class_roll_241122.RDS")
+#> 학번 잘못 써서 고생시키는 녀석들 찾아내는 코드
+wrong_id <- setdiff(MW$id, class_roll$id)
+MW %>%
+  filter(id %in% wrong_id) %>%
+  select(id, name)
+# 1. 잘못된 id 가진 행 찾기
+MW_wrong_ids <- MW %>%
+  anti_join(class_roll, by = "id") 
+# 2. 잘못된 id를 따로 저장하고 수정하기
+wrong_ids <- MW_wrong_ids$id
+MW_wrong_ids <- MW_wrong_ids %>%
+  mutate(id = case_when(
+    id == "29181623" ~ "20191623",
+    id == "2020994" ~ "20202994",
+    TRUE ~ id
+  ))
+# 3. MW 에서 id 틀린 행을 제거하고 옳은 id 갖춘 행으로 교체하기
+MW <- MW %>%
+  filter(!id %in% wrong_ids) %>%
+  bind_rows(MW_wrong_ids)
+# 확인 
+MW[MW$id %in% setdiff(MW$id, class_roll$id), c("id", "name")]
+
+#> 틀린 학번 수정하여 되돌리기 (작동하지 않음. 참고로만)
+# MW <- MW %>%
+#   #> `left_join`으로 `name`과 `dept`를 기준으로 교정 정보를 추가
+#   left_join(class_roll %>% select(id, name, dept), 
+#             by = "name", 
+#             suffix = c("", "_correct")) %>%
+#   #> `id_correct`가 있는 경우 이를 사용하여 `id`를 교정하고, 그렇지 않으면 기존의 `id`를 유지
+#   mutate(id = if_else(!is.na(id_correct) & id != id_correct, id_correct, id)) %>%
+#   #> 임시로 추가된 `id_correct` 열 제거
+#   select(-id_correct)
+
+#> 중복 제출자
+# MW %>%
+#   filter(duplicated(id)) %>%
+#   select(time, id, name) %>%
+#   arrange(time)
+# which(duplicated(MW$id)) %>%
+#   MW[., c("id", "name")]
+# MW %>%
+#   filter(name %in% c("최정환"))
+# MW <- MW %>% 
+#   arrange(id, desc(time)) %>%
+#   distinct(id, .keep_all = TRUE)
+#> 불참자들
+# absentee <- class_roll %>%
+#   anti_join(MW, by = "id") %>%
+#   select(id, name, group) %>%
+#   arrange(id)
+# absentee <- 
+#   class_roll[class_roll$id %in% setdiff(class_roll$id, MW$id), c("id", "name", "group")] %>%
+#   `[`(order(.$name), ) 
+# absentee %>%
+#   pander(row.names = FALSE) 
+# absentee %>%
+#   count(group) %>%
+#   print()
+# absentee$group %>%
+#   table
+```
+
+
 ```{r, echo = FALSE}
 kable(records)
 ```
 
 <P style = "page-break-before:always">
 
+<!--
 ### 팀별 기록
 
 ```{r, score, echo = FALSE, results = 'markup'}
@@ -204,8 +274,8 @@ pander(data.frame("협동이 비교적 잘된 팀(팀 점수 48이상)" = sum(re
 #> Worst team scores
 kable(result_df[result_df$"팀" %in% worst_names, -1], row.names = FALSE) 
 pander(data.frame("협동이 잘 안되는 팀(팀 점수 -30이하 또는 팀원 간 점수 차이 60이상)" = sum(result_df$"팀" %in% worst_names) / 2, check.names = FALSE))
-# str(quiz1128)
 ```
+-->
 
 <!--
 ### Save and Exit
