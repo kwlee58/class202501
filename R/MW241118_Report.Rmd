@@ -33,7 +33,7 @@ include_graphics("./pics/MW_Game_scores.png")
 ```{r, data, echo = FALSE, results = 'hide'}
 #> 엑셀 자료 읽어들이기
 MW <- "./data/MW241118.xlsx" %>%
-  read_excel(range = "C1:O315",
+  read_excel(range = "C1:O357",
              col_types = "text")
 str(MW)
 #> Names for the Columns

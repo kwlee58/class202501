@@ -48,7 +48,7 @@ class_roll %<>%
 #   class_roll0517$group[match(class_roll$id, class_roll0517$id)]
 # saveRDS(class_roll, file = "./class_roll241125.RDS")
 quiz <- "./data/quiz241125.xlsx" %>% 
-  read_excel(range = "A1:N146",
+  read_excel(range = "A1:N190",
              col_types = c("date", rep("text", 13)))
 quiz %>% 
   str
@@ -701,12 +701,12 @@ days_tbl %>%
 ```{r, echo = FALSE, warning = FALSE}
 days_tbl %>%
   rbind("계" = colSums(.)) %>%
-  `[`(3, 12:14) %>%
+  `[`(3, 11:14) %>%
   pander
 days_chisq_test <-
   days_tbl %>%
   rbind("계" = colSums(.)) %>%
-  `[`(3, 12:14) %>%
+  `[`(3, 11:14) %>%
   chisq.test(simulate.p.value = FALSE) 
 days_chisq_test %>%
   pander
@@ -744,11 +744,11 @@ invisible(dev.off())
 ```{r, echo = FALSE, warning = FALSE}
 days_tbl %>%
   rbind("계" = colSums(.)) %>%
-  `[`(-3, 12:14) %>%
+  `[`(-3, 11:14) %>%
   pander
 days_RnB_chisq_test <-
   days_tbl %>%
-  `[`(-3, 12:14) %>%
+  `[`(-3, 11:14) %>%
   chisq.test(simulate.p.value = FALSE) 
 days_RnB_chisq_test %>%
   pander
