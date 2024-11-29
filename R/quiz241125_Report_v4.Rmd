@@ -349,6 +349,8 @@ quiz_2 %>%
 ```
 -->
 
+다음은 집계결과로부터 어느 날짜에 몇 명의 생일이 같은지 순서대로 정리한 것입니다. 가끔 이 결과를 보고 "나도 제출했는데 내 생일이 빠졌다"고 의문을 제기하는 사람들이 있습니다만 그 사람과 생일 같은 사람이 없는 것 뿐입니다. 집계가 진행되면서 당연히도 생일 같은 사람들의 수효는 늘어나게 마련입니다. 그럼에도 그 인원은 이론적으로 계산한 기대인원과 표준오차 범위에 거의 들어가는 것을 관찰할 수 있습니다. 보고서의 맨 위에 집계 시점이 나옵니다. 시간 경과에 따라 생일이 같은 사람의 수효과 늘어나는 것과 그 수효가 이론적으로 에측한 범위에 들어가는지 살펴보기 바랍니다.
+
 ### 어느 날에 몇 명씩 생일이 같은가?
 
 ```{r, echo = FALSE}
@@ -388,9 +390,7 @@ V_N <- . %>% {E_N(.) + . * ( . - 1) * (1 - (363 / 365)) ^ ( . - 2)}
 생일이 같은 날은 `r b_days`일입니다.
 $N$을 전체 인원이라 할 때, 기대 인원은 $N\times\{1- (\frac{364}{365})^{N-1}\}$, 
 분산은 $N\times\{1- (\frac{364}{365})^{N-1}\} + N\times(N-1)\times\{1-(\frac{363}{365})^{N-2}\}$로 계산됩니다.
-
-무응답이거나 결석한 학생을 제외한 응답 인원 `r N1`명에 대하여 기대인원을 계산하면 `r N1 %>% E_N %>% round(1)`명,
-표준오차는 `r N1 %>% V_N %>% sqrt %>% round(1)`명으로 계산되어 관찰된 인원이 그 범위에 잘 들어감을 알 수 있다.
+무응답이거나 결석한 학생을 제외한 응답 인원 `r N1`명에 대하여 공식에 따라 기대인원을 계산하면 `r N1 %>% E_N %>% round(1)`명, 표준오차는 `r N1 %>% V_N %>% sqrt %>% round(1)`명으로 계산되어 관찰된 인원이 그 범위에 잘 들어감을 알 수 있다.
 
 #### 기대되는 인원
 
@@ -413,6 +413,7 @@ N1 %>%
   pander
 ```
 
+제출한 생일 날짜들을 월별로 정리하였습니다. 아래 교차표로부터 두 가지 질문을 던져볼 수 있겠습니다. 응답자들은 월별로 고르게 출생하였을까? 출생한 달의 분포는 Red, Black 간에 닮았는가? 이 질문에 답하기 위해서 카이제곱 테스트를 수행합니다. 
 ### 태어난 달의 분포는?
 
 ```{r, month of the birthdates, echo = FALSE}
@@ -428,6 +429,8 @@ months_tbl %>%
   kable(align = "r")
 ```
 
+월별로 고르게 출생하였는지 알아보려면 위의 교차표에서 "계" 행의 1월부터 12월까지를 잘라 내어 카이제곱 균일성 테스트를 수행해야 합니다. 이 때 1월부터 12월까지 12개의 범주가 있으니까 자유도는 하나를 뺀 11이 됩니다. 
+
 ### 월별로 고르게 출생하였는가?
 
 ```{r, echo = FALSE, warning = FALSE}
@@ -441,7 +444,7 @@ months_chisq_test %>%
   pander
 ```
 
-월별로 고르게 출생하였는지 알아보기 위하여 수행한 카이제곱 테스트에서 카이제곱 통계량은 `r format(months_chisq_test[1], digits = 2, nsmall = 3)`, 자유도는 `r format(months_chisq_test[2], digits = 2, nsmall = 2)`, p-value 는 `r format(months_chisq_test[3], digits = 2, nsmall = 4)` 이므로 월별로 고르게 출생하고 있음을 시사합니다.
+월별로 고르게 출생하였는지 알아보기 위하여 수행한 카이제곱 테스트에서 카이제곱 통계량은 `r format(months_chisq_test[1], digits = 2, nsmall = 3)`, 자유도는 `r format(months_chisq_test[2], digits = 2, nsmall = 2)`, p-value 는 `r format(months_chisq_test[3], digits = 2, nsmall = 4)` 이므로 월별로 고르게 출생하고 있음을 시사합니다. 가장 많이 태어난 달은 `r names(months_tbl[3, -13][months_tbl[3, -13] == max(months_tbl[3, -13])])`에 `r months_tbl[3, -13][months_tbl[3, -13] == max(months_tbl[3, -13])]`(명)이고 가장 적게 태어난 달은 `r names(months_tbl[3, -13][months_tbl[3, -13] == min(months_tbl[3, -13])])`에 `r months_tbl[3, -13][months_tbl[3, -13] == min(months_tbl[3, -13])]`(명)입니다. 태어난 달의 분포가 Red, Black 간에 닮았는지 살펴보기 위하여 "계"행과 "계"열을 삭제한 다음 교차표에 카이제곱 테스트를 수행합니다.  
 
 ### Red and Black
 
@@ -456,7 +459,7 @@ months_RnB_chisq_test %>%
   pander
 ```
 
-Red, Black 간에 출생의 분포가 닮았는지 알아보기 위하여 수행한 카이제곱 테스트에서 카이제곱 통계량은 `r format(months_RnB_chisq_test[1], digits = 2, nsmall = 3)`, 자유도는 `r format(months_RnB_chisq_test[2], digits = 2, nsmall = 2)`, p-value 는 `r format(months_RnB_chisq_test[3], digits = 2, nsmall = 4)` 이므로 Red, Black 간에 출생의 분포는 매우 닮았음을 알 수 있습니다.
+Red, Black 간에 출생의 분포가 닮았는지 알아보기 위하여 수행한 카이제곱 테스트에서 카이제곱 통계량은 `r format(months_RnB_chisq_test[1], digits = 2, nsmall = 3)`, 자유도는 `r format(months_RnB_chisq_test[2], digits = 2, nsmall = 2)`, p-value 는 `r format(months_RnB_chisq_test[3], digits = 2, nsmall = 4)` 이므로 Red, Black 간에 출생의 분포는 닮았음을 알 수 있습니다.
 
 ## Q2. Matching Problem
 
