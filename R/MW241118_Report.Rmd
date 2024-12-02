@@ -33,7 +33,7 @@ include_graphics("./pics/MW_Game_scores.png")
 ```{r, data, echo = FALSE, results = 'hide'}
 #> 엑셀 자료 읽어들이기
 MW <- "./data/MW241118.xlsx" %>%
-  read_excel(range = "C1:O357",
+  read_excel(range = "C1:O615",
              col_types = "text")
 str(MW)
 #> Names for the Columns
@@ -162,7 +162,6 @@ kable(records)
 
 <P style = "page-break-before:always">
 
-<!--
 ### 팀별 기록
 
 ```{r, score, echo = FALSE, results = 'markup'}
@@ -275,7 +274,6 @@ pander(data.frame("협동이 비교적 잘된 팀(팀 점수 48이상)" = sum(re
 kable(result_df[result_df$"팀" %in% worst_names, -1], row.names = FALSE) 
 pander(data.frame("협동이 잘 안되는 팀(팀 점수 -30이하 또는 팀원 간 점수 차이 60이상)" = sum(result_df$"팀" %in% worst_names) / 2, check.names = FALSE))
 ```
--->
 
 <!--
 ### Save and Exit
