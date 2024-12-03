@@ -48,7 +48,7 @@ class_roll$group <-
   class_roll1122$group[match(class_roll$id, class_roll1122$id)]
 saveRDS(class_roll, file = "./class_roll_241129.RDS")
 quiz <- "./data/quiz241125.xlsx" %>% 
-  read_excel(range = "A1:N368",
+  read_excel(range = "A1:N386",
              col_types = c("date", rep("text", 13)))
 quiz %>% 
   str
@@ -92,6 +92,7 @@ quiz_wrong_ids <- quiz_wrong_ids %>%
     id == "20202195" ~ "20202915",
     id == "2026215" ~ "20246215",
     id == "20245161`" ~ "20245161",
+    id == "중국학과" ~ "20241509",
     TRUE ~ id
   ))
 # 3. quiz 에서 id 틀린 행을 제거하고 옳은 id 갖춘 행으로 교체하기
