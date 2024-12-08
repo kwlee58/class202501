@@ -48,7 +48,7 @@ class_roll$group <-
   class_roll1122$group[match(class_roll$id, class_roll1122$id)]
 saveRDS(class_roll, file = "./class_roll_241129.RDS")
 quiz <- "./data/quiz241125.xlsx" %>% 
-  read_excel(range = "A1:N446",
+  read_excel(range = "A1:N725",
              col_types = c("date", rep("text", 13)))
 quiz %>% 
   str
@@ -93,6 +93,9 @@ quiz_wrong_ids <- quiz_wrong_ids %>%
     id == "2026215" ~ "20246215",
     id == "20245161`" ~ "20245161",
     id == "중국학과" ~ "20241509",
+    id == "24" & name == "박혜원" ~ "20243225",
+    id == "20162756" ~ "20162755",
+    id == "20205183" ~ "20205173",
     TRUE ~ id
   ))
 # 3. quiz 에서 id 틀린 행을 제거하고 옳은 id 갖춘 행으로 교체하기
@@ -121,7 +124,7 @@ quiz %>%
 # which(duplicated(quiz$id)) %>%
 #   quiz[., c("id", "name")]
 quiz %>%
-  filter(name %in% c("박성빈", "김민교"))
+  filter(name %in% c("박성빈", "김민교", "박두환", "고현아", "최승아"))
 quiz <- quiz %>% 
   arrange(id, desc(time)) %>%
   distinct(id, .keep_all = TRUE)
@@ -301,11 +304,11 @@ wrong_group <- quiz %>%
   filter(group2 != group)
 
 #> 잘못된 그룹 정보 출력
-wrong_group %>%
-  select(time, id, group2, group) %>%
-  arrange(time) %>%
-  rename("제출시간" = time, "학번" = id, "랜덤화출석부" = group2, "구글예습퀴즈" = group) %>%
-  pander(row.names = FALSE)
+# wrong_group %>%
+#   select(time, id, group2, group) %>%
+#   arrange(time) %>%
+#   rename("제출시간" = time, "학번" = id, "랜덤화출석부" = group2, "구글예습퀴즈" = group) %>%
+#   pander(row.names = FALSE)
 
 #> 옛 코드
 # quiz$group2 <- class_roll$group[match(quiz$id, class_roll$id)]
@@ -383,7 +386,7 @@ b_counts <-
 b_max <-
   max(dup_b_days)
 b_max_dates <-
-  rownames(dup_b_days)[dup_b_days %in% b_max]
+  rownames(dup_b_days)[dup_b_days == b_max]
 #   kable(row.names = NA, align = 'lc')
 ```
 
@@ -976,12 +979,12 @@ days_tbl %>%
 ```{r, echo = FALSE, warning = FALSE}
 days_tbl %>%
   rbind("계" = colSums(.)) %>%
-  `[`(3, 4:14) %>%
+  `[`(3, 1:14) %>%
   pander
 days_chisq_test <-
   days_tbl %>%
   rbind("계" = colSums(.)) %>%
-  `[`(3, 4:14) %>%
+  `[`(3, 1:14) %>%
   chisq.test(simulate.p.value = FALSE) 
 days_chisq_test %>%
   pander
@@ -1019,11 +1022,11 @@ invisible(dev.off())
 ```{r, echo = FALSE, warning = FALSE}
 days_tbl %>%
   rbind("계" = colSums(.)) %>%
-  `[`(-3, 4:14) %>%
+  `[`(-3, 1:14) %>%
   pander
 days_RnB_chisq_test <-
   days_tbl %>%
-  `[`(-3, 4:14) %>%
+  `[`(-3, 1:14) %>%
   chisq.test(simulate.p.value = FALSE) 
 days_RnB_chisq_test %>%
   pander
