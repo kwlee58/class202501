@@ -41,6 +41,8 @@ class(gorilla$id) <- "character"
 # class(gorilla$Q9_1) <- "numeric"
 str(gorilla)
 table(gorilla$Q9_1)
+# class(gorilla$Q9_1) <- "integer"
+# which(is.na(gorilla$Q9_1))
 saveRDS(gorilla, file = "./gorilla2401_RDS")
 gorilla$Q1 %<>%
   factor(levels = c("가", "나"), 
