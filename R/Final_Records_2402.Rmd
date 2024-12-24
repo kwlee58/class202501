@@ -22,7 +22,7 @@ panderOptions("table.split.table", Inf)
 ```{r, Total Scores, message = FALSE, echo = FALSE, warning = FALSE}
 class_roll <- readRDS("./class_roll_241206.RDS")
 total <-
-  read_excel(path = "./data/Final_Records_2402.xlsx",
+  read_excel(path = "./data/Final_Records_2402_1224.xlsx",
              range = "A1:L798",
              col_types = c(rep("text", 6), rep("numeric", 6)))
 total <- data.frame(total)
