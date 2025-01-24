@@ -649,7 +649,7 @@ rownames(tbl_q8_a) <- c("Red(구체적 질문)", "Black(추상적 질문)", "계
 pander(tbl_q8_a, caption = "Red에 구체적 질문, Black에 추상적 질문")
 ```
 
-구체적인 질문을 배치한 Red의 경우 총 `r format(tbl_q8_a[1, 3], digits = 3, nsmall = 0)`(명)이 응답하였고 `r format(tbl_q8_a[1, 1], digits = 3, nsmall = 0)`(명)이 정답인  {Beer, 17}(을)를 올렸습니다. 추상적인 질문을 배치한 Black의 경우 총 `r format(tbl_q8_a[2, 3], digits = 3, nsmall = 0)`(명)이 응답하였고 `r format(tbl_q7_a[2, 1], digits = 3, nsmall = 0)`(명)이 정답인 {A,3}(을)를 올려서 구체적인 질문에 압도적으로 많은 정답이 나온 것을 알 수 있습니다. 이를 백분율로 비교해 보면
+구체적인 질문을 배치한 Red의 경우 총 `r format(tbl_q8_a[1, 3], digits = 3, nsmall = 0)`(명)이 응답하였고 `r format(tbl_q8_a[1, 1], digits = 3, nsmall = 0)`(명)이 정답인  {Beer, 17}(을)를 올렸습니다. 추상적인 질문을 배치한 Black의 경우 총 `r format(tbl_q8_a[2, 3], digits = 3, nsmall = 0)`(명)이 응답하였고 `r format(tbl_q8_a[2, 1], digits = 3, nsmall = 0)`(명)이 정답인 {A,3}(을)를 올려서 구체적인 질문에 압도적으로 많은 정답이 나온 것을 알 수 있습니다. 이를 백분율로 비교해 보면
 
 ### % 비교.  
 
@@ -731,7 +731,7 @@ pander(tbl_q9_a, caption = "Wason Selection Task 인지편향 분석")
 ```
 
 {A, 2, B, 3}에서 어느 카드를(들을) 골라야 "한쪽 면이 모음이면, 다른 쪽 면은 짝수이다"라는 규칙을 지키고 있는 지 확인할 수 있는가? 라는 질문이 Q7에 먼저 나오는 것을 Red에 배치하고, Black 에서는 {A, 2, B, 3}에 대한 질문이 Q8에 나오도록 배치했습니다. 많은 사람들은 이 질문에 대해서 A와 2를 뒤집으려 합니다. A는 모음이니까 확인해야 할 것 같고, 2는 짝수이니까 확인하려고 듭니다. 여기서 확증 편향이 나타납니다. 사람들은 주어진 규칙을 확인하기 위해 당장 눈에 들어오는 모음과 짝수, 즉 A와 2를 확인하려는 경향이 강합니다. 그러나 논리적으로 규칙을 검증하려면 짝수가 아닌 홀수 카드를 뒤집어야 합니다. "한쪽 면이 모음이면, 다른 쪽 면은 짝수이다"와 동등한 규칙은 "한쪽 면이 짝수가 아니면, 다른 쪽 면은 모응이 아니다"이기 때문입니다. 짝수가 아니면 홀수이니까 3을 뒤집어야 하는 것이죠. 추상적 
-질문이 먼저 Q7에 나온 Red의 경우 총 `r format(tbl_q9_a[1, 4], digits = 3, nsmall = 0)`(명)이 응답하였고 `r format(tbl_q9_a[1, 1], digits = 3, nsmall = 0)`(명)이 확증편향에서 비롯된 {A,2}를 올렸습니다. 정답인 {A,3}를 올린 `r format(tbl_q9_a[1, 2], digits = 3, nsmall = 0)`(명)보다 훨씬 많습니다. 추상적 질문이 Q8에 나온 Black 의 경우 총 `r format(tbl_q9_a[2, 4], digits = 3, nsmall = 0)`(명)이 응답하였고 `r format(tbl_q7_a[2, 1], digits = 3, nsmall = 0)`(명)이 확증편향에서 비롯된 {A,2}를 올렸습니다. 정답인 {A,3}를 올린 `r format(tbl_q9_a[2, 2], digits = 3, nsmall = 0)`(명)보다 훨씬 많습니다. 합해서 `r format(tbl_q7_a[3, 1], digits = 3, nsmall = 0)`(명)이 확증편향에서 비롯된 {A,2}를 올렸고, `r format(tbl_q7_a[3, 2], digits = 3, nsmall = 0)`(명)이 정답인 {A,3}를 올렸습니다. 이는 확증편향
+질문이 먼저 Q7에 나온 Red의 경우 총 `r format(tbl_q9_a[1, 4], digits = 3, nsmall = 0)`(명)이 응답하였고 `r format(tbl_q9_a[1, 1], digits = 3, nsmall = 0)`(명)이 확증편향에서 비롯된 {A,2}를 올렸습니다. 정답인 {A,3}를 올린 `r format(tbl_q9_a[1, 2], digits = 3, nsmall = 0)`(명)보다 훨씬 많습니다. 추상적 질문이 Q8에 나온 Black 의 경우 총 `r format(tbl_q9_a[2, 4], digits = 3, nsmall = 0)`(명)이 응답하였고 `r format(tbl_q9_a[2, 1], digits = 3, nsmall = 0)`(명)이 확증편향에서 비롯된 {A,2}를 올렸습니다. 정답인 {A,3}를 올린 `r format(tbl_q9_a[2, 2], digits = 3, nsmall = 0)`(명)보다 훨씬 많습니다. 합해서 `r format(tbl_q9_a[3, 1], digits = 3, nsmall = 0)`(명)이 확증편향에서 비롯된 {A,2}를 올렸고, `r format(tbl_q9_a[3, 2], digits = 3, nsmall = 0)`(명)이 정답인 {A,3}를 올렸습니다. 이는 확증편향
 에서 비롯된 응답이 정답의 2배를 넘습니다. 백분율로 살펴 보겠습니다.
 
 ### % 비교.  
