@@ -96,22 +96,27 @@ red_and_black <- function(k) {
   
   # Calculate Chi-square for each category
   X1 <- calc_id_chi_square(class_roll)
-  X2 <- calc_email_chi_square(class_roll)
-  X3 <- calc_phone_chi_square(class_roll)
-  X4 <- calc_lastname_chi_square(class_roll)
-  X5 <- calc_college_chi_square(class_roll)
+#  X2 <- calc_email_chi_square(class_roll)
+#  X3 <- calc_phone_chi_square(class_roll)
+#  X4 <- calc_lastname_chi_square(class_roll)
+#  X5 <- calc_college_chi_square(class_roll)
   
   # Sum of all Chi-square statistics
-  Xsum <- X1 + X2 + X3 + X4 + X5
+#  Xsum <- X1 + X2 + X3 + X4 + X5
+  
+  Xsum <- X1
   
   # Return the sum and individual components (for detailed analysis)
-  list(Xsum = Xsum, X1 = X1, X2 = X2, X3 = X3, X4 = X4, X5 = X5)
+#  list(Xsum = Xsum, X1 = X1, X2 = X2, X3 = X3, X4 = X4, X5 = X5)
+  
+  list(Xsum = Xsum, X1 = X1)
+  
 }
 ```
 
 ## Search for Best Configuration
 
-```{r, for PC, echo = TRUE, eval = FALSE}
+```{r, for PC, echo = FALSE, eval = FALSE}
 #> Windows version
 library(parallel)
 M1 <- 1
@@ -148,7 +153,7 @@ Xmin <- names(Xsum[which(Xsum == min(Xsum))])
 Xmin
 ```
 
-```{r, for Mac, echo = TRUE, eval = TRUE}
+```{r, for Mac, echo = FALSE, eval = TRUE}
 #> Mac or Linux Version
 library(parallel)
 M1 <- 1
@@ -167,8 +172,6 @@ Xsum <- sapply(results, function(res) res$Xsum)
 # Xsum <- Xsum_list$Xsum
 names(Xsum) <- M1:M2
 Xmin <- names(Xsum[which(Xsum == min(Xsum))])
-data.frame("Xmin" = Xmin) %>%
-  pander
 ```
 -->
 
@@ -217,23 +220,23 @@ Xsum %>%
 
 best_config <- red_and_black(Xmin)
 X1_min <- best_config$X1
-X2_min <- best_config$X2
-X3_min <- best_config$X3
-X4_min <- best_config$X4
-X5_min <- best_config$X5
+# X2_min <- best_config$X2
+# X3_min <- best_config$X3
+# X4_min <- best_config$X4
+# X5_min <- best_config$X5
 ```
 -->
 
 ## Plot
 
 ```{r, echo = FALSE}
-hist(Xsum, prob = TRUE, nclass = 30, xlim = c(0, 80), ylim = c(0, 0.06))
-x <- seq(0, 80, by = 0.1)
-lines(x, dchisq(x, df = 32), col = "red")
-legend("topright", inset = 0.05, legend = c("Xsum", "Chi-square(32)"), col = c("black", "red"), lty = 1)
-plot(density(Xsum), xlim = c(0, 80), ylim = c(0, 0.06), main = "Density Estimation of Xsum")
-lines(x, dchisq(x, df = 32), col = "red")
-legend("topright", inset = 0.05, legend = c("Xsum", "Chi-square(32)"), col = c("black", "red"), lty = 1)
+hist(Xsum, prob = TRUE, nclass = 30, xlim = c(0, 25), ylim = c(0, 0.2))
+x <- seq(0, 25, by = 0.1)
+lines(x, dchisq(x, df = 6), col = "red")
+legend("topright", inset = 0.05, legend = c("Xsum", "Chi-square(6)"), col = c("black", "red"), lty = 1)
+plot(density(Xsum), xlim = c(0, 25), ylim = c(0, 0.2), main = "Density Estimation of Xsum")
+lines(x, dchisq(x, df = 6), col = "red")
+legend("topright", inset = 0.05, legend = c("Xsum", "Chi-square(6)"), col = c("black", "red"), lty = 1)
 ```
 
 <!--
@@ -248,18 +251,18 @@ ggplot(data.frame(Xsum = Xsum), aes(x = Xsum)) +
   geom_histogram(aes(y = after_stat(density), color = "Xsum"), bins = 30, fill = NA, linewidth = 0.5, na.rm = TRUE) +  
   
   # Chi-square(32) 분포 (붉은 선으로 설정)
-  stat_function(fun = dchisq, args = list(df = 32), aes(color = "Chi-square(32)"), linewidth = 0.5) +
+  stat_function(fun = dchisq, args = list(df = 6), aes(color = "Chi-square(6)"), linewidth = 0.5) +
   
   # 축 범위 설정
-  xlim(0, 70) + ylim(0, 0.06) +
+  xlim(0, 25) + ylim(0, 0.2) +
   
   # 제목과 축 라벨 설정
   labs(title = "Histogram of Xsum", x = "Xsum", y = "Density") +
   
   # 수동 색상 설정 (Xsum은 검은색, Chi-square(32)은 빨간색)
-  scale_color_manual(values = c("Chi-square(32)" = "red", "Xsum" = "black"), 
+  scale_color_manual(values = c("Chi-square(6)" = "red", "Xsum" = "black"), 
                      name = NULL,
-                     labels = c("Chi-square(32) Density", "Histogram of Xsum")) +
+                     labels = c("Chi-square(6) Density", "Histogram of Xsum")) +
   
   # 범례를 선 스타일로 표시
   guides(color = guide_legend(override.aes = list(linetype = c("solid", "solid"), 
@@ -282,18 +285,18 @@ ggplot(data.frame(Xsum = Xsum), aes(x = Xsum)) +
   geom_density(aes(color = "Xsum"), linetype = "solid", linewidth = 0.5, na.rm = TRUE) +
   
   # Chi-square(32)의 카이제곱 분포 곡선 (붉은색)
-  stat_function(fun = dchisq, args = list(df = 32), aes(color = "Chi-square(32)"), linetype = "solid", linewidth = 0.5) +
+  stat_function(fun = dchisq, args = list(df = 6), aes(color = "Chi-square(6)"), linetype = "solid", linewidth = 0.5) +
   
   # 축 범위 설정
-  xlim(0, 70) + ylim(0, 0.06) +
+  xlim(0, 25) + ylim(0, 0.2) +
   
   # 제목과 축 라벨 설정
   labs(title = "Density Estimation of Xsum", x = "Xsum", y = "Density") +
   
   # 색상 수동 설정
-  scale_color_manual(values = c("Chi-square(32)" = "red", "Xsum" = "black"), 
+  scale_color_manual(values = c("Chi-square(6)" = "red", "Xsum" = "black"), 
                      name = NULL, 
-                     labels = c("Chi-square(32) Density", "Smoothed Xsum")) +
+                     labels = c("Chi-square(6) Density", "Smoothed Xsum")) +
   
   # 범례를 선 스타일로 변경
    guides(color = guide_legend(override.aes = list(linetype = "solid", 
@@ -344,9 +347,10 @@ colnames(result1) <- c("Statistic", "P-value")
 pander(result1, caption = "Chi-square Statistic and P-value")
 ```
 
+<!--
 ## e-mail 서비스업체
 
-```{r, e_mail, echo = FALSE, eval = TRUE}
+```{r, e_mail, echo = FALSE, eval = FALSE}
 isp <- class_roll$email %>%
   strsplit("@", fixed = TRUE) %>%
   sapply("[", 2) %>%
@@ -372,7 +376,7 @@ pander(result2, caption = "Chi-square Statistic and P-value")
 
 ## 전화번호의 분포
 
-```{r, cell_no, echo = FALSE, eval = TRUE}
+```{r, cell_no, echo = FALSE, eval = FALSE}
 cut_label <- paste(paste0(0:9, "000"), paste0(0:9, "999"), 
                    sep = "~")
 class_roll$cell_no %>%
@@ -395,7 +399,7 @@ pander(result3, caption = "Chi-square Statistic and P-value")
 
 ## 성씨 분포
 
-```{r, name, echo = FALSE, eval = TRUE}
+```{r, name, echo = FALSE, eval = FALSE}
 f_name <- class_roll$name %>%
   substring(first = 1, last = 1) 
 f_name %>%
@@ -417,7 +421,7 @@ pander(result4, caption = "Chi-square Statistic and P-value")
 
 ## 단과대학
 
-```{r, college, echo = FALSE, eval = TRUE}
+```{r, college, echo = FALSE, eval = FALSE}
 class_roll %$%
   table(.$group, .$college) %>%
   pander(col.names = c("간호", "경영", "글로벌융합", "미디어", "미래융합", "반도체/디스플레이", "사회과학", "인문", "자연과학A", "자연과학B", "정보과학"))
@@ -431,3 +435,4 @@ colnames(result5) <- c("Statistic", "P-value")
 # pander()로 출력
 pander(result5, caption = "Chi-square Statistic and P-value")
 ```
+-->

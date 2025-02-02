@@ -19,7 +19,7 @@ panderOptions('table.split.table', Inf)
 ## Data
 
 ```{r, data, echo = TRUE, results = 'show', warning = TRUE}
-class_roll <- readRDS("./class_roll_240824.RDS")
+class_roll <- readRDS("./class_roll_240906.RDS")
 str(class_roll)
 ```
 
@@ -151,8 +151,8 @@ Xmin
 ```{r, for Mac, echo = TRUE, eval = TRUE}
 #> Mac or Linux Version
 library(parallel)
-M1 <- 1
-M2 <- 100
+M1 <- 4000001
+M2 <- 5000000
 
 # Number of cores on your machine
 num_cores <- detectCores() - 1
