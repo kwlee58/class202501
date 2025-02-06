@@ -304,24 +304,28 @@ pander(score)
 
 <P style = "page-break-before:always">
 
-### Red and Black 비교
+## Red and Black 비교
+
+### Summary
 
 ```{r, summary by group, echo = FALSE, eval = TRUE}
 score %>%
   tapply(., literacy$group, FUN = { . %>% summary %>% round(digits = 1) }) %>%
   pander
 # stem(score, scale = 2)
-score %>%
-  stem(scale = 0.5)
+# score %>%
+#   stem(scale = 0.5)
 Red <- literacy %$%
   `==`(group, "Red")
 Black <- literacy %$%
   `==`(group, "Black")
 ```
 
+### 줄기-잎 그림
+
 - Red
 
-```{r, stem for Red, eval = TRUE}
+```{r, stem for Red, echo = FALSE, eval = TRUE}
 score %>%
   `[`(literacy$group == "Red") %>%
   stem(scale = 0.5)
@@ -329,7 +333,7 @@ score %>%
 
 - Black
 
-```{r, stem for Black, eval = TRUE}
+```{r, stem for Black, echo = FALSE, eval = TRUE}
 score %>%
   `[`(literacy$group == "Black") %>%
   stem(scale = 0.5)
