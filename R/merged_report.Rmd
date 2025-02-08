@@ -1,0 +1,43 @@
+---
+title: "Merged Report"
+author: "Kee-Won Lee"
+date: "2025-02-08"
+output: 
+  html_document:
+    toc: yes
+    toc_depth: 3
+---
+
+```{r, setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE, message = FALSE, warning = FALSE, progress = FALSE)
+```
+
+```{r, echo=FALSE, results='hide'}
+rmd_files <- c("./Quiz240902_Report_v4.Rmd", 
+               "./Quiz240909_Report_v4.Rmd", 
+               "./Quiz240916_Report_v4.Rmd",
+               "./Quiz240923_Report_v4.Rmd",
+               "./Quiz240930_Report_v3.Rmd",
+               "./Literacy_google_p_240930.Rmd",
+               "./Quiz241007_Report_v3.Rmd",
+               "./Quiz241014_Report_v3.Rmd",
+               "./Quiz241021_Report_v3.Rmd",
+               "./Oxford_Happiness2402_Report.Rmd",
+               "./Quiz241028_Report_v3.Rmd",
+               "./Quiz241104_Report_v3.Rmd",
+               "./food_comp2402.Rmd",
+               "./Quiz241111_Report_v4.Rmd",
+               "./BFI_MI_241111_Summary_p.Rmd",
+               "./Quiz241118_Report_v4.Rmd",
+               "./Quiz241125_Report_v4.Rmd")
+for (file in rmd_files) {
+  options(knitr.duplicate.label = "allow") 
+  knitr::knit_child(file)
+}
+```
+
+```{r, child = c(rmd_files)}
+```
+
+
+

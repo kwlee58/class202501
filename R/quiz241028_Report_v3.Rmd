@@ -1,7 +1,8 @@
 ---
 title: "Quiz 241028 (Default Effects)"
 author: "coop711"
-date: "`r format(Sys.time(), '%Y-%m-%d %H:%M:%S')`"
+date : "2024-10-28"
+# date: "`r format(Sys.time(), '%Y-%m-%d %H:%M:%S')`"
 output: html_document
 ---
 

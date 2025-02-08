@@ -1,7 +1,8 @@
 ---
 title: "Food Habits Comparison 241104"
 author: "coop711"
-date: "`r format(Sys.time(), '%Y-%m-%d %H:%M:%S')`"
+date : "2024-11-04"
+# date: "`r format(Sys.time(), '%Y-%m-%d %H:%M:%S')`"
 output: html_document
 ---
 
