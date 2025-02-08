@@ -181,7 +181,7 @@ Red, Black 을 잘못 선택한 `r length(wrong_group)`명을 랜덤하게 둘�
 
 이 경우 공평한 동전던지기를 확률 법칙으로 표현한 이항분포로부터 계산할 수 있습니다. 
 
-시행횟수가 `r length(wrong_group)`이고 한 번 시행에서 성공확률이 1/2 인 이항분포에서 성공갯수가`r min(wrong_tbl[1, 2], wrong_tbl[2, 1])`이하이거나 `r max(wrong_tbl[1, 2], wrong_tbl[2, 1])`이상을 관찰할 확률은 `r round(pbinom(min(wrong_tbl[1, 2], wrong_tbl[2, 1]), length(wrong_group), 1/2) * 2,  digits = 2)`입니다. 
+시행횟수가 `r length(wrong_group)`이고 한 번 시행에서 성공확률이 1/2 인 이항분포에서 성공갯수가`r min(wrong_tbl[1, 2], wrong_tbl[2, 1])`이하이거나 `r max(wrong_tbl[1, 2], wrong_tbl[2, 1])`이상을 관찰할 확률은 `r round(pbinom(min(wrong_tbl[1, 2], wrong_tbl[2, 1]), length(wrong_group), 1/2) * 2,  digits = 3)`입니다. 
 
 공평한 동전 던지기에서 앞면이 `r min(wrong_tbl[1, 2], wrong_tbl[2, 1])`개 이하 나오는 확률은 `r max(wrong_tbl[1, 2], wrong_tbl[2, 1])`개 이상 나오는 확률과 같기 때문에 사실상 한쪽만 계산해서 2배 해 주면 됩니다. 
 

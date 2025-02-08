@@ -22,8 +22,11 @@ options(width=180)
 ## 실험의 목적
 
 9주차 구글 예습 설문지 집계결과를 분석합니다. 
-Q1~Q6에서는 랜덤화의 효과로 Red, Black 이 얼마나 닮았는지 알아봅니다.
+
+Q1~Q6에서는 랜덤화의 효과로 Red, Black이 얼마나 닮았는지 알아봅니다.
+
 Q7에서는 Default Effects 에 대한 데이터실험 결과에 대하여 분석합니다.
+
 제출시간의 분포가 날마다 고른지, Red, Black 간에는 닮았는지 알아봅니다.
 
 ```{r, data, echo = FALSE, results = 'hide', message = FALSE}
@@ -208,15 +211,55 @@ wrong_tbl <-
   table("랜덤화출석부" = quiz$group2, "구글예습퀴즈" = quiz$group)
 
 wrong_tbl %>%
-  pander(row.names = c("Red(랜덤화출석부)", "Black(랜덤화출석부)"), 
+  rbind("계" = colSums(.)) %>%
+  pander(row.names = c("Red(랜덤화출석부)", "Black(랜덤화출석부)", "계"), 
          col.names = c("Red(구글예습퀴즈)", "Black(구글예습퀴즈)"))
 ```
 
-랜덤화출석부에 있는 Red, Black 과 실제 구글설문에 올린 Red, Black 이 다른 사람들의 수효는 `r nrow(wrong_group)`명입니다. Red를 Black 이라고 한 사람이 `r wrong_tbl[1, 2]`명, Black 을 Red 라고 한 사람이 `r wrong_tbl[2, 1]`명입니다. 
+<!--
+랜덤화출석부에 있는 Red, Black 과 실제 구글설문에 올린 Red, Black 이 다른 사람들의 수효는 `r nrow(wrong_group)`명입니다. 
+
+Red를 Black 이라고 한 사람이 `r wrong_tbl[1, 2]`명, Black 을 Red 라고 한 사람이 `r wrong_tbl[2, 1]`명입니다. 
+
+두 가지 방법으로 분석합니다.
+
+우선 Red, Black 을 잘못 선택한 `r nrow(wrong_group)`명을 랜덤하게 둘로 나누면 어느 한 쪽 집단에 들어갈 기대인원은 `r nrow(wrong_group)`명을 둘로 나눈 `r nrow(wrong_group) / 2`(명)이고, 표준오차는 `r nrow(wrong_group)`의 제곱근에 1/2을 곱해 준 `r round(sqrt(nrow(wrong_group)) / 2, digits  = 1)`명이 됩니다. 
+
+실제로 Red를 Black 이라고 한 사람수, `r wrong_tbl[1, 2]`명이나 Black 을 Red 라고 한 사람수, `r wrong_tbl[2, 1]`명은 기대인원으로부터 표준오차 범위에 아주 잘 들어갑니다. 
+
+두 번째 분석 방법은 확률을 계산해 보는 것입니다. 
+
+Red, Black 을 잘못 선택한 `r nrow(wrong_group)`명을 랜덤하게 둘로 나눌 때, 실제로 관찰된 `r max(wrong_tbl[1, 2], wrong_tbl[2, 1])`명 이상이나 `r min(wrong_tbl[1, 2], wrong_tbl[2, 1])`명이하로  잘못 선택한 사람수가 나올 가능성은 얼마나 되는가 입니다. 
+
+이 경우 공평한 동전던지기를 확률 법칙으로 표현한 이항분포로부터 계산할 수 있습니다. 
+
+시행횟수가 `r nrow(wrong_group)`이고 한 번 시행에서 성공확률이 1/2 인 이항분포에서 성공횟수가 `r min(wrong_tbl[1, 2], wrong_tbl[2, 1])`이하이거나 `r max(wrong_tbl[1, 2], wrong_tbl[2, 1])`이상을 관찰할 확률은 `r min(1, round(pbinom(min(wrong_tbl[1, 2], wrong_tbl[2, 1]), nrow(wrong_group), 1/2) * 2,  digits = 3))`입니다. 
+
+공평한 동전 던지기에서 앞면이 `r min(wrong_tbl[1, 2], wrong_tbl[2, 1])`개 이하 나오는 확률은 `r max(wrong_tbl[1, 2], wrong_tbl[2, 1])`개 이상 나오는 확률과 같기 때문에 사실상 한쪽만 계산해서 2배 해 주면 됩니다. 
+
+다만, 이번 실험과 같이 3명씩 동일한 결과가 나온 경우에는 중복되는 확률을 빼 주어야 합니다. 
+
+이 값을 p-value 라고 하는데, p-value가 0.05보다 작을 때 **통계적으로 유의한 차이를 관찰**하였다고 말합니다. 
+
+즉, 공평한 동전을 던지는 것과 같은 과정이라고 가정하였을 때 실제로 관찰된 값들이 가정으로부터 얼마나 떨어져 있는지를 표현한 것입니다.
+
+0.05는 이런 실험을 스무 번 정도 반복하면 1번 나올 정도로 드문 사건을 의미합니다. 
+
+즉 가정이 잘못되었다는 것입니다.
+
+그런데 Red, Black 을 잘못 표시한 사람들의 분포에서 관찰된 p-value 는 0.05와는 비교도 안될 정도로 큰 값입니다.
+
+따라서 두 집단이 랜덤화 효과가 작동하여 **통계적으로 유의한 차이를 보이지 않는다**고 할 수 있습니다. 
+-->
 
 ## 응답인원의 Red, Black
 
-Red 로 응답한 인원은 `r colSums(wrong_tbl)[1]`명, Black 에 응답한 인원은 `r colSums(wrong_tbl)[2]`명입니다. 전체 응답인원 `r sum(wrong_tbl)` 명을 랜덤하게 둘로 나눌 때 어느 한 쪽의 기대인원은 이를 반으로 나눠 준`r sum(wrong_tbl) / 2`명이고, 표준오차는 이의 제곱근에 1/2을 곱해 준 `r round(sqrt(sum(wrong_tbl)) * 1 / 2, digits = 1)` 명입니다. 따라서 Red, Black 각 그룹에 관찰된 인원은 기대인원으로부터 표준오차 범위 안에 들어갑니다. 
+Red 로 응답한 인원은 `r colSums(wrong_tbl)[1]`명, Black 에 응답한 인원은 `r colSums(wrong_tbl)[2]`명입니다. 
+
+전체 응답인원 `r sum(wrong_tbl)` 명을 랜덤하게 둘로 나눌 때 어느 한 쪽의 기대인원은 전체 응답인원의 절반인 `r sum(wrong_tbl) / 2`명이고, 표준오차는 전체 응답인원의 제곱근에 1/2을 곱해 준 `r round(sqrt(sum(wrong_tbl)) * 1 / 2, digits = 1)` 명입니다. 
+
+따라서 Red, Black 각 그룹에 관찰된 인원은 기대인원으로부터 표준오차 범위 안에 들어갑니다.
+랜덤화출석부에 있는 Red, Black 과 실제 구글설문에 올린 Red, Black 이 다른 사람들의 수효는 `r nrow(wrong_group)`명입니다. Red를 Black 이라고 한 사람이 `r wrong_tbl[1, 2]`명, Black 을 Red 라고 한 사람이 `r wrong_tbl[2, 1]`명입니다.
 
 # 퀴즈 응답 비교
 
@@ -244,7 +287,11 @@ chisq_test_q1 %>%
   pander
 ```
 
-Q1의 집계 결과가 Red, Black 간에 통계적으로 유의한 차이가 있는지 알아보기 위하여 카이제곱 테스트를 수행하였습니다. 그 결과 카이제곱 통계량은 `r chisq_test_q1[1] %>% format(digits = 2, nsmall = 3)`, 자유도는 `r chisq_test_q1[2] %>% format(digits = 2, nsmall = 2)` , p-value 는 `r chisq_test_q1[3] %>% format(digits = 2, nsmall = 4)`이므로 Red, Black 간에 통계적으로 유의한 차이를 보이지 않습니다. 실제로 닮은 게 느껴집니까?
+Q1의 집계 결과가 Red, Black 간에 통계적으로 유의한 차이가 있는지 알아보기 위하여 카이제곱 테스트를 수행하였습니다. 
+
+그 결과 카이제곱 통계량은 `r chisq_test_q1[1] %>% format(digits = 2, nsmall = 3)`, 자유도는 `r chisq_test_q1[2] %>% format(digits = 2, nsmall = 2)` , p-value 는 `r chisq_test_q1[3] %>% format(digits = 2, nsmall = 4)`이므로 Red, Black 간에 통계적으로 유의한 차이를 보이지 않습니다. 
+
+실제로 닮은 게 느껴집니까?
 
 ### 실업률 가장 낮은 나라 (%)
 
@@ -285,7 +332,11 @@ chisq_test_q2 %>%
   pander
 ```
 
-Q2의 집계 결과가 Red, Black 간에 통계적으로 유의한 차이가 있는지 알아보기 위하여 카이제곱 테스트를 수행하였습니다. 그 결과 카이제곱 통계량은 `r chisq_test_q2[1] %>% format(digits = 2, nsmall = 3)`, 자유도는 `r chisq_test_q2[2] %>% format(digits = 2, nsmall = 2)`, p-value 는 `r chisq_test_q2[3] %>% format(digits = 2, nsmall = 4)`이므로 Red, Black 간에 통계적으로 유의한 차이를 보이지 않습니다. 실제로 닮은 게 느껴집니까?
+Q2의 집계 결과가 Red, Black 간에 통계적으로 유의한 차이가 있는지 알아보기 위하여 카이제곱 테스트를 수행하였습니다. 
+
+그 결과 카이제곱 통계량은 `r chisq_test_q2[1] %>% format(digits = 2, nsmall = 3)`, 자유도는 `r chisq_test_q2[2] %>% format(digits = 2, nsmall = 2)`, p-value 는 `r chisq_test_q2[3] %>% format(digits = 2, nsmall = 4)`이므로 Red, Black 간에 통계적으로 유의한 차이를 보이지 않습니다. 
+
+실제로 닮은 게 느껴집니까?
 
 ### 고용률? (%)
 
@@ -326,7 +377,11 @@ chisq_test_q3 %>%
   pander
 ```
 
-Q3의 집계 결과가 Red, Black 간에 통계적으로 유의한 차이가 있는지 알아보기 위하여 카이제곱 테스트를 수행하였습니다. 그 결과 카이제곱 통계량은 `r chisq_test_q3[1] %>% format(digits = 2, nsmall = 3)`, 자유도는 `r chisq_test_q3[2] %>% format(digits = 2, nsmall = 2)`, p-value 는 `r chisq_test_q3[3] %>% format(digits = 2, nsmall = 4)`이므로 Red, Black 간에 통계적으로 유의한 차이를 보이지 않습니다. 실제로 닮은 게 느껴집니까?
+Q3의 집계 결과가 Red, Black 간에 통계적으로 유의한 차이가 있는지 알아보기 위하여 카이제곱 테스트를 수행하였습니다. 
+
+그 결과 카이제곱 통계량은 `r chisq_test_q3[1] %>% format(digits = 2, nsmall = 3)`, 자유도는 `r chisq_test_q3[2] %>% format(digits = 2, nsmall = 2)`, p-value 는 `r chisq_test_q3[3] %>% format(digits = 2, nsmall = 4)`이므로 Red, Black 간에 통계적으로 유의한 차이를 보이지 않습니다. 
+
+실제로 닮은 게 느껴집니까?
 
 ### 취업자란? (%)
 
@@ -367,7 +422,11 @@ chisq_test_q4 %>%
   pander
 ```
 
-Q4의 집계 결과가 Red, Black 간에 통계적으로 유의한 차이가 있는지 알아보기 위하여 카이제곱 테스트를 수행하였습니다. 그 결과 카이제곱 통계량은 `r chisq_test_q4[1] %>% format(digits = 2, nsmall = 3)`, 자유도는 `r chisq_test_q4[2] %>% format(digits = 2, nsmall = 2)`, p-value 는 `r chisq_test_q4[3] %>% format(digits = 2, nsmall = 4)`이므로 Red, Black 간에 통계적으로 유의한 차이를 보이지 않습니다. 실제로 닮은 게 느껴집니까?
+Q4의 집계 결과가 Red, Black 간에 통계적으로 유의한 차이가 있는지 알아보기 위하여 카이제곱 테스트를 수행하였습니다. 
+
+그 결과 카이제곱 통계량은 `r chisq_test_q4[1] %>% format(digits = 2, nsmall = 3)`, 자유도는 `r chisq_test_q4[2] %>% format(digits = 2, nsmall = 2)`, p-value 는 `r chisq_test_q4[3] %>% format(digits = 2, nsmall = 4)`이므로 Red, Black 간에 통계적으로 유의한 차이를 보이지 않습니다. 
+
+실제로 닮은 게 느껴집니까?
 
 ### %
 
@@ -408,7 +467,11 @@ chisq_test_q5 %>%
   pander
 ```
 
-Q5의 집계 결과가 Red, Black 간에 통계적으로 유의한 차이가 있는지 알아보기 위하여 카이제곱 테스트를 수행하였습니다. 그 결과 카이제곱 통계량은 `r chisq_test_q5[1] %>% format(digits = 2, nsmall = 3)`, 자유도는 `r chisq_test_q5[2] %>% format(digits = 2, nsmall = 2)`, p-value 는 `r chisq_test_q5[3] %>% format(digits = 2, nsmall = 4)`이므로 Red, Black 간에 통계적으로 유의한 차이를 보이지 않습니다. 실제로 닮은 게 느껴집니까?
+Q5의 집계 결과가 Red, Black 간에 통계적으로 유의한 차이가 있는지 알아보기 위하여 카이제곱 테스트를 수행하였습니다. 
+
+그 결과 카이제곱 통계량은 `r chisq_test_q5[1] %>% format(digits = 2, nsmall = 3)`, 자유도는 `r chisq_test_q5[2] %>% format(digits = 2, nsmall = 2)`, p-value 는 `r chisq_test_q5[3] %>% format(digits = 2, nsmall = 4)`이므로 Red, Black 간에 통계적으로 유의한 차이를 보이지 않습니다. 
+
+실제로 닮은 게 느껴집니까?
 
 ### %
 
@@ -449,7 +512,11 @@ chisq_test_q6 %>%
   pander
 ```
 
-Q6의 집계 결과가 Red, Black 간에 통계적으로 유의한 차이가 있는지 알아보기 위하여 카이제곱 테스트를 수행하였습니다. 그 결과 카이제곱 통계량은 `r chisq_test_q6[1] %>% format(digits = 2, nsmall = 3)`, 자유도는 `r chisq_test_q6[2] %>% format(digits = 2, nsmall = 2)`, p-value 는 `r chisq_test_q6[3] %>% format(digits = 2, nsmall = 4)`이므로 Red, Black 간에 통계적으로 유의한 차이를 보이지 않습니다. 실제로 닮은 게 느껴집니까?
+Q6의 집계 결과가 Red, Black 간에 통계적으로 유의한 차이가 있는지 알아보기 위하여 카이제곱 테스트를 수행하였습니다. 
+
+그 결과 카이제곱 통계량은 `r chisq_test_q6[1] %>% format(digits = 2, nsmall = 3)`, 자유도는 `r chisq_test_q6[2] %>% format(digits = 2, nsmall = 2)`, p-value 는 `r chisq_test_q6[3] %>% format(digits = 2, nsmall = 4)`이므로 Red, Black 간에 통계적으로 유의한 차이를 보이지 않습니다. 
+
+실제로 닮은 게 느껴집니까?
 
 ### %
 
@@ -471,7 +538,9 @@ ptbl_q6 %>%
 
 ## Q7. ... 하면 표시하세요.의 효과
 
-표시하지 않으면 사후 장기기증 의사가 있는 것으로 간주하는 경우(Red)와 표시하면 사후 장기기증 의사가 있는 것으로 간주하는 경우(Black), 표시하지 않으면 사후 장기기증 의사가 있다고 보는 질문지(Red)에 사후 장기기증 의사 비율이 더 높게 나오는 것으로 알려져 있으나 관찰 결과는 반대로 나옵니다. 어디에 디폴트를 설정하느냐에 따라 조사결과가 달라지는 것으로 알려져 있으나 응답 결과는 랜덤화 효과에 가깝게 나와서 당황스럽습니다.
+표시하지 않으면 사후 장기기증 의사가 있는 것으로 간주하는 경우(Red)와 표시하면 사후 장기기증 의사가 있는 것으로 간주하는 경우(Black), 표시하지 않으면 사후 장기기증 의사가 있다고 보는 질문지(Red)에 사후 장기기증 의사 비율이 더 높게 나오는 것으로 알려져 있으나 관찰 결과는 반대로 나옵니다. 
+
+어디에 디폴트를 설정하느냐에 따라 조사결과가 달라지는 것으로 알려져 있으나 응답 결과는 랜덤화 효과에 가깝게 나와서 당황스럽습니다.
 
 ```{r, echo = FALSE, out.width = "67%", fig.align = "left"}
 include_graphics("./pics/Quiz240426_Q7_Red.png")
@@ -500,7 +569,13 @@ chisq_test_q7 %>%
   pander
 ```
 
-Q7의 Red 는 default 가 사후 장기기증 의사가 있는 것으로서 사후 장기기증 의사가 없으면 표시토록 하고, Black 은 default 가 사후 장기기증 의사가 없는 것으로서 사후 장기기증 의사가 있으면 표시토록 합니다. 표시하는 것조차 귀찮은 사람들은 당연히 default 를 따를 것으로 기대되어 Red 에서는 장기기증 의사가 있다는 응답 비율이 더 높고, Black 에서는 장기기증의사가 없다는 응답 비율이 더 높을 것으로 기대되었지만 지난 학기들의 기록이나 이번 학기의 집계결과를 보면 그렇지 않아서 당황스럽습니다.  여기서 수행하고 있는 카이제곱 테스트는 default 를 어떻게 설정하느냐의 효과가 통계적으로 유의한지 알아보기 위한 것입니다. 그 결과 카이제곱 통계량은 `r chisq_test_q7[1] %>% format(digits = 2, nsmall = 2)`, 자유도는 `r chisq_test_q7[2] %>% format(digits = 2, nsmall = 2)`, p-value 는 `r chisq_test_q7[3] %>% format(digits = 2, nsmall = 2)`이므로 default의 설정을 바꾼 것은 사후 장기기증 의사에 통계적으로 유의한 차이를 보이지 않습니다. 
+Q7의 Red 는 default 가 사후 장기기증 의사가 있는 것으로서 사후 장기기증 의사가 없으면 표시토록 하고, Black 은 default 가 사후 장기기증 의사가 없는 것으로서 사후 장기기증 의사가 있으면 표시토록 합니다.
+
+표시하는 것조차 귀찮은 사람들은 당연히 default 를 따를 것으로 기대되어 Red 에서는 장기기증 의사가 있다는 응답 비율이 더 높고, Black 에서는 장기기증의사가 없다는 응답 비율이 더 높을 것으로 기대되었지만 지난 학기들의 기록이나 이번 학기의 집계결과를 보면 그렇지 않아서 당황스럽습니다.  
+
+여기서 수행하고 있는 카이제곱 테스트는 default 를 어떻게 설정하느냐의 효과가 통계적으로 유의한지 알아보기 위한 것입니다. 
+
+그 결과 카이제곱 통계량은 `r chisq_test_q7[1] %>% format(digits = 2, nsmall = 2)`, 자유도는 `r chisq_test_q7[2] %>% format(digits = 2, nsmall = 2)`, p-value 는 `r chisq_test_q7[3] %>% format(digits = 2, nsmall = 2)`이므로 default의 설정을 바꾼 것은 사후 장기기증 의사에 통계적으로 유의한 차이를 보이지 않습니다. 
 
 ### % 비교
 
@@ -516,7 +591,11 @@ ptbl_q7_a %>%
   pander
 ```
 
-이를 백분율로 살펴보면 사후 장기기증 의사가 없으면 표시하라는 Red에서 사후 장기기증 의사가 있다고 응답한 백분율, `r format(ptbl_q7_a[1, 1], digits = 2, nsmall = 1)`(%)(이)나 사후 장기기증 의사가 있으면 표시하라는 Black 에서 사후 장기기증 의사가 있다고 응답한 백분율, `r format(ptbl_q7_a[2, 1], digits = 2, nsmall = 1)`(%)(이)나 큰 차이가 없어서 default의 설정이 응답에는 통계적으로 유의한 영향을 주지 못한다는 것을 명확히 알 수 있습니다. 오히려 기대와는 반대로 장기기증 의사가 있으면 표시해야 하는 Black 의 사후 장기기증 의사가 있다는 응답 백분율이 더 높습니다. 어쨌든 통계적으로 유의한 차이를 관찰하지 못했으므로  Red, Black 은 합쳐서 분석하는 것이 타당합니다. 그 결과는 다음과 같습니다.
+이를 백분율로 살펴보면 사후 장기기증 의사가 없으면 표시하라는 Red에서 사후 장기기증 의사가 있다고 응답한 백분율, `r format(ptbl_q7_a[1, 1], digits = 2, nsmall = 1)`(%)(이)나 사후 장기기증 의사가 있으면 표시하라는 Black 에서 사후 장기기증 의사가 있다고 응답한 백분율, `r format(ptbl_q7_a[2, 1], digits = 2, nsmall = 1)`(%)(이)나 큰 차이가 없어서 default의 설정이 응답에는 통계적으로 유의한 영향을 주지 못한다는 것을 명확히 알 수 있습니다. 
+
+오히려 기대와는 반대로 장기기증 의사가 있으면 표시해야 하는 Black 의 사후 장기기증 의사가 있다는 응답 백분율이 더 높습니다. 
+
+어쨌든 통계적으로 유의한 차이를 관찰하지 못했으므로  Red, Black 은 합쳐서 분석하는 것이 타당합니다. 그 결과는 다음과 같습니다.
 
 ### 합산(%)
 
@@ -566,7 +645,9 @@ m + geom_text(aes(x = center, y = 1.05),
 ggsave("./pics/Quiz241028_Q7_RnB.png", dpi = 120, width = 960, height = 840, units = "px")
 ```
 
-Mosaic Plot 은 이 집계결과를 시각적으로 잘 보여줍니다. default 의 설정에 거의 무관할 정도로 응답이 비슷하기 때문에 Red, Black 이 닮았고, 사후 장기기증 의사가 있다고 응답한 백분율도 닮은 것을 잘 알 수 있습니다.
+Mosaic Plot 은 이 집계결과를 시각적으로 잘 보여줍니다. 
+
+default 의 설정에 거의 무관할 정도로 응답이 비슷하기 때문에 Red, Black 이 닮았고, 사후 장기기증 의사가 있다고 응답한 백분율도 닮은 것을 잘 알 수 있습니다.
 
 ## Thinking, Fast and Slow
 
@@ -576,7 +657,9 @@ Mosaic Plot 은 이 집계결과를 시각적으로 잘 보여줍니다. default
 include_graphics("./pics/organ_donation_01.png")
 ```
 
-우리의 관찰은 Thinking, Fast and Slow (Daniel Kahneman, 2011) 의 default effects 에서 소개한 유럽의 사례와는 아주 차이가 많이 납니다. 2003년 오스트리아는 100%, 스웨덴은 86%가 사후 장기기증 의사가 있다고 한 반면에 독일은 12%, 덴마크는 4% 밖에 사후 장기기증 의사가 있다는 조사 결과가 나왔습니다.
+우리의 관찰은 Thinking, Fast and Slow (Daniel Kahneman, 2011) 의 default effects 에서 소개한 유럽의 사례와는 아주 차이가 많이 납니다. 
+
+2003년 오스트리아는 100%, 스웨덴은 86%가 사후 장기기증 의사가 있다고 한 반면에 독일은 12%, 덴마크는 4% 밖에 사후 장기기증 의사가 있다는 조사 결과가 나왔습니다.
 
 ### Facts Found
 
@@ -584,7 +667,9 @@ include_graphics("./pics/organ_donation_01.png")
 include_graphics("./pics/organ_donation_02.png")
 ```
 
-여기서 결정적인 차이는 오스트리아와 스웨덴은 사후 장기기증 의사가 없으면 표시를 해야 하고, 독일과 덴마크는 사후 장기기증 의사가 있으면 표시를 해야 하는 시스템이었다는 점입니다. 여러분들의 응답과는 아주 다른 상황이죠? 
+여기서 결정적인 차이는 오스트리아와 스웨덴은 사후 장기기증 의사가 없으면 표시를 해야 하고, 독일과 덴마크는 사후 장기기증 의사가 있으면 표시를 해야 하는 시스템이었다는 점입니다. 
+
+여러분들의 응답과는 아주 다른 상황이죠? 
 
 ### Original Article (Johnson & Goldstein 2003)
 
@@ -592,7 +677,11 @@ include_graphics("./pics/organ_donation_02.png")
 include_graphics("./pics/default_effects_by_country.png")
 ```
 
-Johnson and Goldstein 의 원전에 나오는 그래프를 옮겨 왔습니다. 황금색으로 표시한 나라들은 사후 장기기증 의사를 직접 표시해야 하는 나라들이고 하늘색으로 표시한 나라들은 사후 장기기증 의사를 default 로 하여 사후 장기기증 의사가 없으면 직접 표시해야 하는 나라들입니다. 여기서 오스트리아, 독일, 스웨덴, 덴마크의 수치를 확인해 보세요.
+Johnson and Goldstein의 원전에 나오는 그래프를 옮겨 왔습니다. 
+
+황금색으로 표시한 나라들은 사후 장기기증 의사를 직접 표시해야 하는 나라들이고 하늘색으로 표시한 나라들은 사후 장기기증 의사를 default 로 하여 사후 장기기증 의사가 없으면 직접 표시해야 하는 나라들입니다. 
+
+여기서 오스트리아, 독일, 스웨덴, 덴마크의 수치를 확인해 보세요.
 
 ## 마감 시간으로부터 제출 시간의 분포
 
@@ -610,7 +699,12 @@ days_tbl %>%
   pander(caption = "일 단위")
 ```
 
-분포표로부터 두 가지 문제를 살펴보겠습니다. 첫째, 날마다 고르게 제출하는가? 둘쨰, Red, Black 간에 통게적으로 유의한 차이가 있는가?
+분포표로부터 두 가지 문제를 살펴보겠습니다. 
+
+첫째, 날마다 고르게 제출하는가? 
+
+둘쨰, Red, Black 간에 통게적으로 유의한 차이가 있는가?
+
 각 문제를 살펴보기 위해서는 분포표의 일부분을 대상으로 카이제곱 테스트를 수행합니다.
 
 ### 날마다 고르게 제출하는가?
@@ -629,7 +723,15 @@ days_chisq_test %>%
   pander
 ```
 
-날마다 고르게 제출하는지 알아 보았습니다. 분포표의 "계"행에서 '계'열을 제외하고 카이제곱테스트를 수행합니다. 분포표 만으로도 쉽게 파악할 수 있지만 카이제곱테스트가 명확히 해 줍니다. 카이제곱 통계량은 `r format(days_chisq_test[1], digits = 2, nsmall = 2)`, 자유도는 `r format(days_chisq_test[2], digits = 2, nsmall = 2)`, p-value 는 `r format(days_chisq_test[3], digits = 2, nsmall = 2)` 이므로 특정 날짜에 몰리고 있음을 시사합니다. 막대그래프로 살펴 보겠습니다.
+날마다 고르게 제출하는지 알아 보았습니다. 
+
+분포표의 "계"행에서 '계'열을 제외하고 카이제곱테스트를 수행합니다. 
+
+분포표 만으로도 쉽게 파악할 수 있지만 카이제곱테스트가 명확히 해 줍니다. 
+
+카이제곱 통계량은 `r format(days_chisq_test[1], digits = 2, nsmall = 2)`, 자유도는 `r format(days_chisq_test[2], digits = 2, nsmall = 2)`, p-value 는 `r format(days_chisq_test[3], digits = 2, nsmall = 2)` 이므로 날짜별로 고르게 제출하고 있지 않음을 시사합니다. 
+
+막대그래프로 살펴 보겠습니다.
 
 ### 막대그래프
 
@@ -671,7 +773,13 @@ days_RnB_chisq_test %>%
   pander
 ```
 
-제출시간의 분포가 Red, Black 간에 닮았는지 알아 보았습니다. 이번에는 분포표의 첫번쨰와 두번쨰 행, '계'열을 제외한 나머지 열에 대해서 카이제곱테스트를 수행합니다. 카이제곱 통계량은 `r format(days_RnB_chisq_test[1], digits = 2, nsmall = 3)`, 자유도는 `r format(days_RnB_chisq_test[2], digits = 2, nsmall = 2)`, p-value 는 `r format(days_RnB_chisq_test[3], digits = 2, nsmall = 4)` 이므로 제출 시간의 분포는 Red, Black 간에 통계적으로 유의한 차이가 관찰되지 않습니다. 이 사실을 Mosaic Plot 을 이용하여 시각적으로 살펴보겠습니다. 닮았다고 느껴지나요?
+제출시간의 분포가 Red, Black 간에 닮았는지 알아 보았습니다. 
+
+이번에는 분포표의 첫번쨰와 두번쨰 행, '계'열을 제외한 나머지 열에 대해서 카이제곱테스트를 수행합니다. 
+
+카이제곱 통계량은 `r format(days_RnB_chisq_test[1], digits = 2, nsmall = 3)`, 자유도는 `r format(days_RnB_chisq_test[2], digits = 2, nsmall = 2)`, p-value 는 `r format(days_RnB_chisq_test[3], digits = 2, nsmall = 4)`이므로 제출 시간의 분포는 Red, Black 간에 통계적으로 유의한 차이가 관찰되지 않습니다. 
+
+이 사실을 Mosaic Plot 을 이용하여 시각적으로 살펴보겠습니다. 닮았다고 느껴지나요?
 
 ### Mosaic Plot
 

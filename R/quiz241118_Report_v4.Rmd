@@ -1,7 +1,8 @@
 ---
 title: "Quiz 241118 (Framing Effects)"
 author: "coop711"
-date: "`r format(Sys.time(), '%Y-%m-%d %H:%M:%S')`"
+date : "2024-11-18"
+# date: "`r format(Sys.time(), '%Y-%m-%d %H:%M:%S')`"
 output: html_document
 ---
 
@@ -21,8 +22,11 @@ options(width = 180)
 ## 실험의 목적
 
 12주차 구글 예습 설문지 집계결과를 분석합니다. 
+
 Q1~Q6에서는 랜덤화의 효과로 Red, Black 이 얼마나 닮았는지 알아봅니다.
-Q7에서는 Framing Effects 를 알아 보기 위하여 동일한 내용을 Red에서는 생존을 프레임으로 프로그램을 비교하고, Black에서는 사망을  프레임으로 프로그램을 비교할 때 생존 프레임에서는 확실한 생존 인원을 선호하고, 사망 프레임에서는 운에 기대어 모두 사망하지 않는 프로그램을 선호한다는 것을 보여 줍니다.  
+
+Q7에서는 Framing Effects 를 알아 보기 위하여 동일한 내용을 Red에서는 생존을 프레임으로 프로그램을 비교하고, Black에서는 사망을  프레임으로 프로그램을 비교할 때 생존 프레임에서는 확실한 생존 인원을 선호하고, 사망 프레임에서는 운에 기대어 모두 사망하지 않는 프로그램을 선호한다는 것을 보여 줍니다.
+
 그리고, 제출시간의 분포가 날마다 고른지, Red, Black 간에는 닮았는지 알아봅니다.
 
 ```{r, data, echo = FALSE, results = 'hide', message = FALSE}
@@ -214,16 +218,54 @@ wrong_tbl <-
   table("랜덤화출석부" = quiz$group2, "구글예습퀴즈" = quiz$group)
 
 wrong_tbl %>%
-  pander(row.names = c("Red(랜덤화출석부)", "Black(랜덤화출석부)"), 
+  rbind("계" = colSums(.)) %>%
+  pander(row.names = c("Red(랜덤화출석부)", "Black(랜덤화출석부)", "계"), 
          col.names = c("Red(구글예습퀴즈)", "Black(구글예습퀴즈)"))
 ```
 
-랜덤화출석부에 있는 Red, Black 과 실제 구글설문에 올린 Red, Black 이 다른 사람들의 수효는 `r nrow(wrong_group)`명입니다. Red를 Black 이라고 한 사람이 `r wrong_tbl[1, 2]`명, Black 을 Red 라고 한 사람이 `r wrong_tbl[2, 1]`명입니다. 
+<!--
+랜덤화출석부에 있는 Red, Black 과 실제 구글설문에 올린 Red, Black 이 다른 사람들의 수효는 `r nrow(wrong_group)`명입니다. 
+
+Red를 Black 이라고 한 사람이 `r wrong_tbl[1, 2]`명, Black 을 Red 라고 한 사람이 `r wrong_tbl[2, 1]`명입니다. 
+
+두 가지 방법으로 분석합니다.
+
+우선 Red, Black 을 잘못 선택한 `r nrow(wrong_group)`명을 랜덤하게 둘로 나누면 어느 한 쪽 집단에 들어갈 기대인원은 `r nrow(wrong_group)`명을 둘로 나눈 `r nrow(wrong_group) / 2`(명)이고, 표준오차는 `r nrow(wrong_group)`의 제곱근에 1/2을 곱해 준 `r round(sqrt(nrow(wrong_group)) / 2, digits  = 1)`명이 됩니다. 
+
+실제로 Red를 Black 이라고 한 사람수, `r wrong_tbl[1, 2]`명이나 Black 을 Red 라고 한 사람수, `r wrong_tbl[2, 1]`명은 기대인원으로부터 표준오차 범위에 아주 잘 들어갑니다. 
+
+두 번째 분석 방법은 확률을 계산해 보는 것입니다. 
+
+Red, Black 을 잘못 선택한 `r nrow(wrong_group)`명을 랜덤하게 둘로 나눌 때, 실제로 관찰된 `r max(wrong_tbl[1, 2], wrong_tbl[2, 1])`명 이상이나 `r min(wrong_tbl[1, 2], wrong_tbl[2, 1])`명이하로  잘못 선택한 사람수가 나올 가능성은 얼마나 되는가 입니다. 
+
+이 경우 공평한 동전던지기를 확률 법칙으로 표현한 이항분포로부터 계산할 수 있습니다. 
+
+시행횟수가 `r nrow(wrong_group)`이고 한 번 시행에서 성공확률이 1/2 인 이항분포에서 성공횟수가 `r min(wrong_tbl[1, 2], wrong_tbl[2, 1])`이하이거나 `r max(wrong_tbl[1, 2], wrong_tbl[2, 1])`이상을 관찰할 확률은 `r min(1, round(pbinom(min(wrong_tbl[1, 2], wrong_tbl[2, 1]), nrow(wrong_group), 1/2) * 2,  digits = 3))`입니다. 
+
+공평한 동전 던지기에서 앞면이 `r min(wrong_tbl[1, 2], wrong_tbl[2, 1])`개 이하 나오는 확률은 `r max(wrong_tbl[1, 2], wrong_tbl[2, 1])`개 이상 나오는 확률과 같기 때문에 사실상 한쪽만 계산해서 2배 해 주면 됩니다. 
+
+다만, 이번 실험과 같이 3명씩 동일한 결과가 나온 경우에는 중복되는 확률을 빼 주어야 합니다. 
+
+이 값을 p-value 라고 하는데, p-value가 0.05보다 작을 때 **통계적으로 유의한 차이를 관찰**하였다고 말합니다. 
+
+즉, 공평한 동전을 던지는 것과 같은 과정이라고 가정하였을 때 실제로 관찰된 값들이 가정으로부터 얼마나 떨어져 있는지를 표현한 것입니다.
+
+0.05는 이런 실험을 스무 번 정도 반복하면 1번 나올 정도로 드문 사건을 의미합니다. 
+
+즉 가정이 잘못되었다는 것입니다.
+
+그런데 Red, Black 을 잘못 표시한 사람들의 분포에서 관찰된 p-value 는 0.05와는 비교도 안될 정도로 큰 값입니다.
+
+따라서 두 집단이 랜덤화 효과가 작동하여 **통계적으로 유의한 차이를 보이지 않는다**고 할 수 있습니다. 
+-->
 
 ## 응답인원의 Red, Black
 
-Red 로 응답한 인원은 `r colSums(wrong_tbl)[1]`명, Black 에 응답한 인원은 `r colSums(wrong_tbl)[2]`명입니다. 전체 응답인원 `r sum(wrong_tbl)` 명을 랜덤하게 둘로 나눌 때 어느 한 쪽의 기대인원은 이를 반으로 나눠 준`r sum(wrong_tbl) / 2`명이고, 표준오차는 이의 제곱근에 1/2을 곱해 준 `r round(sqrt(sum(wrong_tbl)) * 1 / 2, digits = 1)` 명입니다. 따라서 Red, Black 각 그룹에 관찰된 인원은 기대인원으로부터 표준오차 범위 안에 들어갑니다.
+Red 로 응답한 인원은 `r colSums(wrong_tbl)[1]`명, Black 에 응답한 인원은 `r colSums(wrong_tbl)[2]`명입니다. 
 
+전체 응답인원 `r sum(wrong_tbl)` 명을 랜덤하게 둘로 나눌 때 어느 한 쪽의 기대인원은 전체 응답인원의 절반인 `r sum(wrong_tbl) / 2`명이고, 표준오차는 전체 응답인원의 제곱근에 1/2을 곱해 준 `r round(sqrt(sum(wrong_tbl)) * 1 / 2, digits = 1)` 명입니다. 
+
+따라서 Red, Black 각 그룹에 관찰된 인원은 기대인원으로부터 표준오차 범위 안에 들어갑니다.
 
 # 퀴즈 응답 비교
 
@@ -250,7 +292,11 @@ chisq_test_q1 %>%
   pander
 ```
 
-Q1의 집계 결과가 Red, Black 간에 통계적으로 유의한 차이가 있는지 알아보기 위하여 카이제곱 테스트를 수행하였습니다. 그 결과 카이제곱 통계량은 `r chisq_test_q1[1] %>% format(digits = 2, nsmall = 3)`, 자유도는 `r chisq_test_q1[2] %>% format(digits = 2, nsmall = 2)` , p-value 는 `r chisq_test_q1[3] %>% format(digits = 2, nsmall = 4)`이므로 Red, Black 간에 통계적으로 유의한 차이를 보이지 않습니다. 실제로 닮은 게 느껴집니까?
+Q1의 집계 결과가 Red, Black 간에 통계적으로 유의한 차이가 있는지 알아보기 위하여 카이제곱 테스트를 수행하였습니다. 
+
+그 결과 카이제곱 통계량은 `r chisq_test_q1[1] %>% format(digits = 2, nsmall = 3)`, 자유도는 `r chisq_test_q1[2] %>% format(digits = 2, nsmall = 2)` , p-value 는 `r chisq_test_q1[3] %>% format(digits = 2, nsmall = 4)`이므로 Red, Black 간에 통계적으로 유의한 차이를 보이지 않습니다. 
+
+실제로 닮은 게 느껴집니까?
 
 ### 방관자 효과(%)
 
@@ -291,7 +337,11 @@ chisq_test_q2 %>%
   pander
 ```
 
-Q2의 집계 결과가 Red, Black 간에 통계적으로 유의한 차이가 있는지 알아보기 위하여 카이제곱 테스트를 수행하였습니다. 그 결과 카이제곱 통계량은 `r chisq_test_q2[1] %>% format(digits = 2, nsmall = 3)`, 자유도는 `r chisq_test_q2[2] %>% format(digits = 2, nsmall = 2)`, p-value 는 `r chisq_test_q2[3] %>% format(digits = 2, nsmall = 4)`이므로 Red, Black 간에 통계적으로 유의한 차이를 보이지 않습니다. 실제로 닮은 게 느껴집니까?
+Q2의 집계 결과가 Red, Black 간에 통계적으로 유의한 차이가 있는지 알아보기 위하여 카이제곱 테스트를 수행하였습니다. 
+
+그 결과 카이제곱 통계량은 `r chisq_test_q2[1] %>% format(digits = 2, nsmall = 3)`, 자유도는 `r chisq_test_q2[2] %>% format(digits = 2, nsmall = 2)`, p-value 는 `r chisq_test_q2[3] %>% format(digits = 2, nsmall = 4)`이므로 Red, Black 간에 통계적으로 유의한 차이를 보이지 않습니다. 
+
+실제로 닮은 게 느껴집니까?
 
 ### 450V까지 누르는 사람 (%)
 
@@ -332,7 +382,11 @@ chisq_test_q3 %>%
   pander
 ```
 
-Q3의 집계 결과가 Red, Black 간에 통계적으로 유의한 차이가 있는지 알아보기 위하여 카이제곱 테스트를 수행하였습니다. 그 결과 카이제곱 통계량은 `r chisq_test_q3[1] %>% format(digits = 2, nsmall = 3)`, 자유도는 `r chisq_test_q3[2] %>% format(digits = 2, nsmall = 2)`, p-value 는 `r chisq_test_q3[3] %>% format(digits = 2, nsmall = 4)`이므로 Red, Black 간에 통계적으로 유의한 차이를 보이지 않습니다. 실제로 닮은 게 느껴집니까?
+Q3의 집계 결과가 Red, Black 간에 통계적으로 유의한 차이가 있는지 알아보기 위하여 카이제곱 테스트를 수행하였습니다. 
+
+그 결과 카이제곱 통계량은 `r chisq_test_q3[1] %>% format(digits = 2, nsmall = 3)`, 자유도는 `r chisq_test_q3[2] %>% format(digits = 2, nsmall = 2)`, p-value 는 `r chisq_test_q3[3] %>% format(digits = 2, nsmall = 4)`이므로 Red, Black 간에 통계적으로 유의한 차이를 보이지 않습니다. 
+
+실제로 닮은 게 느껴집니까?
 
 ### Power of 3 (%)
 
@@ -373,7 +427,11 @@ chisq_test_q4 %>%
   pander
 ```
 
-Q4의 집계 결과가 Red, Black 간에 통계적으로 유의한 차이가 있는지 알아보기 위하여 카이제곱 테스트를 수행하였습니다. 그 결과 카이제곱 통계량은 `r chisq_test_q4[1] %>% format(digits = 2, nsmall = 3)`, 자유도는 `r chisq_test_q4[2] %>% format(digits = 2, nsmall = 2)`, p-value 는 `r chisq_test_q4[3] %>% format(digits = 2, nsmall = 4)`이므로 Red, Black 간에 통계적으로 유의한 차이를 보이지 않습니다. 실제로 닮은 게 느껴집니까?
+Q4의 집계 결과가 Red, Black 간에 통계적으로 유의한 차이가 있는지 알아보기 위하여 카이제곱 테스트를 수행하였습니다. 
+
+그 결과 카이제곱 통계량은 `r chisq_test_q4[1] %>% format(digits = 2, nsmall = 3)`, 자유도는 `r chisq_test_q4[2] %>% format(digits = 2, nsmall = 2)`, p-value 는 `r chisq_test_q4[3] %>% format(digits = 2, nsmall = 4)`이므로 Red, Black 간에 통계적으로 유의한 차이를 보이지 않습니다. 
+
+실제로 닮은 게 느껴집니까?
 
 ### 몇 개나 맞추나? (%)
 
@@ -414,7 +472,11 @@ chisq_test_q5 %>%
   pander
 ```
 
-Q5의 집계 결과가 Red, Black 간에 통계적으로 유의한 차이가 있는지 알아보기 위하여 카이제곱 테스트를 수행하였습니다. 그 결과 카이제곱 통계량은 `r chisq_test_q5[1] %>% format(digits = 2, nsmall = 3)`, 자유도는 `r chisq_test_q5[2] %>% format(digits = 2, nsmall = 2)`, p-value 는 `r chisq_test_q5[3] %>% format(digits = 2, nsmall = 4)`이므로 Red, Black 간에 통계적으로 유의한 차이를 보이지 않습니다. 실제로 닮은 게 느껴집니까?
+Q5의 집계 결과가 Red, Black 간에 통계적으로 유의한 차이가 있는지 알아보기 위하여 카이제곱 테스트를 수행하였습니다. 
+
+그 결과 카이제곱 통계량은 `r chisq_test_q5[1] %>% format(digits = 2, nsmall = 3)`, 자유도는 `r chisq_test_q5[2] %>% format(digits = 2, nsmall = 2)`, p-value 는 `r chisq_test_q5[3] %>% format(digits = 2, nsmall = 4)`이므로 Red, Black 간에 통계적으로 유의한 차이를 보이지 않습니다. 
+
+실제로 닮은 게 느껴집니까?
 
 ### 몇 개나 맞추나? (%)
 
@@ -455,7 +517,11 @@ chisq_test_q6 %>%
   pander
 ```
 
-Q6의 집계 결과가 Red, Black 간에 통계적으로 유의한 차이가 있는지 알아보기 위하여 카이제곱 테스트를 수행하였습니다. 그 결과 카이제곱 통계량은 `r chisq_test_q6[1] %>% format(digits = 2, nsmall = 3)`, 자유도는 `r chisq_test_q6[2] %>% format(digits = 2, nsmall = 2)`, p-value 는 `r chisq_test_q6[3] %>% format(digits = 2, nsmall = 4)`이므로 Red, Black 간에 통계적으로 유의한 차이를 (보이고 있습니다.) 보이지 않습니다. 실제로 닮은 게 느껴집니까?
+Q6의 집계 결과가 Red, Black 간에 통계적으로 유의한 차이가 있는지 알아보기 위하여 카이제곱 테스트를 수행하였습니다. 
+
+그 결과 카이제곱 통계량은 `r chisq_test_q6[1] %>% format(digits = 2, nsmall = 3)`, 자유도는 `r chisq_test_q6[2] %>% format(digits = 2, nsmall = 2)`, p-value 는 `r chisq_test_q6[3] %>% format(digits = 2, nsmall = 4)`이므로 Red, Black 간에 통계적으로 유의한 차이를 (보이고 있습니다.) 보이지 않습니다.
+
+실제로 닮은 게 느껴집니까?
 
 ### 자기성찰지능 (%)
 
@@ -477,14 +543,18 @@ ptbl_q6 %>%
 
 ## Q7. 삶과 죽음
 
-이 질문은 프레임을 어떻게 설정하느냐에 따라 반응이 확연하게 달라진다는 Framing effects를 보여 줍니다. 600명 중 200명이 사는 거나 400명이 죽는 것, 모두 살리는 거나 모두 죽지 않는 것이나 같은 내용임에도 반응이 다르게 나타납니다. 생존 프레임에서는 확실한 생존자 수효를 보장하는 프로그램을 선호하고, 사망 프레임에서는 모두 사망하지 않기를 운에 기대는 프로그램을 선호하는 반응이 많다는 것을 확인합니다. 
+이 질문은 프레임을 어떻게 설정하느냐에 따라 반응이 확연하게 달라진다는 Framing effects를 보여 줍니다. 
+
+600명 중 200명이 사는 거나 400명이 죽는 것, 모두 살리는 거나 모두 죽지 않는 것이나 같은 내용임에도 반응이 다르게 나타납니다. 
+
+생존 프레임에서는 확실한 생존자 수효를 보장하는 프로그램을 선호하고, 사망 프레임에서는 모두 사망하지 않기를 운에 기대는 프로그램을 선호하는 반응이 많다는 것을 확인합니다. 
 
 ```{r, echo = FALSE, out.width = "67%"}
-include_graphics("./pics/Quiz230517_Q7_Red.png")
+include_graphics("./pics/Quiz241118_Q7_Red.png")
 ```
 
 ```{r, echo = FALSE, out.width = "67%"}
-include_graphics("./pics/Quiz230517_Q7_Black.png")
+include_graphics("./pics/Quiz241118_Q7_Black.png")
 ```
 
 ### 집계
@@ -506,8 +576,14 @@ chisq_test_q7 %>%
   pander
 ```
 
-Q7의 Red는 생존 프레임으로 600명 중 200명을 확실히 살리는 프로그램하고 600명 모두 살릴 확률은 1/3이고 모두 사망 확률은 2/3로 사실상 살릴 수 있는 기대인원은 200명으로 같지만 확실히 살린다는 프로그램을 더 선호하고, Black은 사망 프레임으로 Red 와 동일한 프로그램임에도 설명하기를 600명 중 400명이 확실히 죽는 프로그램하고 모두 사망하지 않을 확률은 1/3이고, 모두 사망할 확률은 2/3인 프로그램 중에서 선택하라고 했을 때 사망 프레임이 씌워져 있는 프로그램 중에서는 그나마 운에 기댈 수 있는 프로그램을 더 선호한다는 것을 명확히 보여 줍니다. 모두 살린다는 것이나 모두 사망하지 않는다는 것은 같은 말입니다. 그 결과 Red, Black 의 차이를 분석하기 위한 카이제곱 통계량은 `r chisq_test_q7[1] %>% format(digits = 2, nsmall = 3)`, 자유도는 `r chisq_test_q7[2] %>% format(digits = 2, nsmall = 2)`, p-value 는 `r chisq_test_q7[3] %>% format(digits = 2, nsmall = 4)` 으로 
-프레임의 차이가 통계적으로 유의함을 보여 줍니다. 즉, Framing Effects가 있는 것으로 파악됩니다. 
+Q7의 Red는 생존 프레임으로 600명 중 200명을 확실히 살리는 프로그램하고 600명 모두 살릴 확률은 1/3이고 모두 사망 확률은 2/3로 사실상 살릴 수 있는 기대인원은 200명으로 같지만 확실히 살린다는 프로그램을 더 선호하고, Black은 사망 프레임으로 Red 와 동일한 프로그램임에도 설명하기를 600명 중 400명이 확실히 죽는 프로그램하고 모두 사망하지 않을 확률은 1/3이고, 모두 사망할 확률은 2/3인 프로그램 중에서 선택하라고 했을 때 사망 프레임이 씌워져 있는 프로그램 중에서는 그나마 운에 기댈 수 있는 프로그램을 더 선호한다는 것을 명확히 보여 줍니다. 
+
+모두 살린다는 것이나 모두 사망하지 않는다는 것은 같은 말입니다. 
+
+그 결과 Red, Black 의 차이를 분석하기 위한 카이제곱 통계량은 `r chisq_test_q7[1] %>% format(digits = 2, nsmall = 3)`, 자유도는 `r chisq_test_q7[2] %>% format(digits = 2, nsmall = 2)`, p-value 는 `r chisq_test_q7[3] %>% format(digits = 2, nsmall = 4)` 으로 
+프레임의 차이가 통계적으로 유의함을 보여 줍니다. 
+
+즉, Framing Effects가 확실히 영향을 주고 있는 것으로 파악됩니다. 
 
 ### % 비교.  
 
@@ -559,7 +635,9 @@ m + geom_text(aes(x = center, y = 1.05),
 ggsave("./pics/Quiz221109_Q7_RnB.png", dpi = 120, width = 960, height = 840, units = "px")
 ```
 
-Mosaic Plot 은 이 집계결과를 시각적으로 잘 보여줍니다. 생존 프레임과 사망 프레임에 따라 프로그램의 선호가 달라짐을 명확히 보여줍니다.
+Mosaic Plot 은 이 집계결과를 시각적으로 잘 보여줍니다. 
+
+생존 프레임과 사망 프레임에 따라 프로그램의 선호가 달라짐을 명확히 보여줍니다.
 
 ## 마감 시간으로부터 제출 시간의 분포
 
@@ -577,7 +655,12 @@ days_tbl %>%
   pander(caption = "일 단위")
 ```
 
-분포표로부터 두 가지 문제를 살펴보겠습니다. 첫째, 날마다 고르게 제출하는가? 둘쨰, Red, Black 간에 통게적으로 유의한 차이가 있는가?
+분포표로부터 두 가지 문제를 살펴보겠습니다. 
+
+첫째, 날마다 고르게 제출하는가? 
+
+둘쨰, Red, Black 간에 통게적으로 유의한 차이가 있는가?
+
 각 문제를 살펴보기 위해서는 분포표의 일부분을 대상으로 카이제곱 테스트를 수행합니다.
 
 ### 날마다 고르게 제출하는가?
@@ -596,7 +679,13 @@ days_chisq_test %>%
   pander
 ```
 
-날마다 고르게 제출하는지 알아 보았습니다. 분포표의 "계"행에서 '계'열을 제외하고 카이제곱테스트를 수행합니다. 분포표 만으로도 쉽게 파악할 수 있지만 카이제곱테스트가 명확히 해 줍니다. 카이제곱 통계량은 `r format(days_chisq_test[1], digits = 2, nsmall = 3)`, 자유도는 `r format(days_chisq_test[2], digits = 2, nsmall = 2)`, p-value 는 `r format(days_chisq_test[3], digits = 2, nsmall = 4)` 이므로 특정한 날짜에 제출이 집중되고 있음을 시사합니다. 막대그래프로 살펴 보겠습니다.
+날마다 고르게 제출하는지 알아 보았습니다. 
+
+분포표의 "계"행에서 '계'열을 제외하고 카이제곱테스트를 수행합니다. 
+
+분포표 만으로도 쉽게 파악할 수 있지만 카이제곱테스트가 명확히 해 줍니다. 카이제곱 통계량은 `r format(days_chisq_test[1], digits = 2, nsmall = 3)`, 자유도는 `r format(days_chisq_test[2], digits = 2, nsmall = 2)`, p-value 는 `r format(days_chisq_test[3], digits = 2, nsmall = 4)` 이므로 날짜 별로 고르게 제출하지 않았다는 점을 강력히 시사합니다.
+
+막대그래프로 살펴 보겠습니다.
 
 ### 막대그래프
 
@@ -638,7 +727,13 @@ days_RnB_chisq_test %>%
   pander
 ```
 
-제출시간의 분포가 Red, Black 간에 닮았는지 알아 보았습니다. 이번에는 분포표의 첫번쨰와 두번쨰 행, '계'열을 제외한 나머지 열에 대해서 카이제곱테스트를 수행합니다. 카이제곱 통계량은 `r format(days_RnB_chisq_test[1], digits = 2, nsmall = 2)`, 자유도는 `r format(days_RnB_chisq_test[2], digits = 2, nsmall = 3)`, p-value 는 `r format(days_RnB_chisq_test[3], digits = 2, nsmall = 4)` 이므로 제출 시간의 분포는 Red, Black 간에 통계적으로 유의한 차이가 관찰되지 않습니다. 이 사실을 Mosaic Plot 을 이용하여 시각적으로 살펴보겠습니다. 닮았다고 느껴지나요?
+제출시간의 분포가 Red, Black 간에 닮았는지 알아 보았습니다. 
+
+이번에는 분포표의 첫번쨰와 두번쨰 행, '계'열을 제외한 나머지 열에 대해서 카이제곱테스트를 수행합니다. 카이제곱 통계량은 `r format(days_RnB_chisq_test[1], digits = 2, nsmall = 2)`, 자유도는 `r format(days_RnB_chisq_test[2], digits = 2, nsmall = 3)`, p-value 는 `r format(days_RnB_chisq_test[3], digits = 2, nsmall = 4)` 이므로 제출 시간의 분포는 Red, Black 간에 통계적으로 유의한 차이가 관찰되지 않습니다. 
+
+이 사실을 Mosaic Plot 을 이용하여 시각적으로 살펴보겠습니다. 
+
+닮았다고 느껴지나요?
 
 ### Mosaic Plot
 

@@ -156,6 +156,7 @@ label_ptbl <- literacy_ptbl %>%
 
 막대그래프로 답안 분포를 시각적으로 살핀다. 차후 나오는 정답률과 함께 어느 문항에서 어느 답안을 많이 고르는지 파악하는 데 활용한다.
 
+<!--
 ### `barplot`
 
 ```{r, echo = FALSE, fig.width = 9, fig.height = 12}
@@ -190,6 +191,7 @@ title(main = "문해력조사 문항별 응답", cex.main = 1.8, line = -0.5)
 # dev.copy(png, file = "./pics/Literacy_240930.png", width = 640, height = 840)
 invisible(dev.off())
 ```
+-->
 
 ### `ggplot`
 
@@ -373,9 +375,9 @@ score %>%
 
 <P style = "page-break-before:always">
 
-## t test
+### t-test
 
-Red 와 Black으로부터 관찰된 점수들의 평균에 대하여 t test를 적용하였더니 기초통계량에서 살핀 것을 뒷받침해 주듯이 p-value 가 매우 큰 값이 나왔습니다. 평균은 매우 닮았다는 뜻입니다.
+Red 와 Black으로부터 관찰된 점수들의 평균에 대하여 t test를 적용하였더니 기초통계량에서 살핀 것을 뒷받침해 주듯이 p-value 가 0.05보다 큰 값이 나왔습니다. 평균은 닮았다는 뜻입니다.
 
 ```{r, t test, echo = FALSE, eval = TRUE}
 literacy %$%
@@ -384,10 +386,10 @@ literacy %$%
 ```
 
 ## 문해력 등급 판정
+
+### 분포표
     
 * I수준(24점 이하), II수준(28 ~ 48점), III수준(52 ~ 72점), IV수준(76점 이상) 
-
-카이제곱테스트로 Red와 Black에 들어간 등급별 인원수가 얼마나 닮았는지를 살펴보았지만 t-test에서와 마찬가지로 통계적으로 유의한 차이가 관찰되었습니다. 
     
 ```{r, literacy grade, echo = FALSE, warning = FALSE}
 grade <- ifelse(score <= 24, "I", 
@@ -408,6 +410,13 @@ grade %>%
   c("계" = sum(.)) %>%
   t %>%
   kable(caption = "문해력 등급 분포(%)")
+```
+
+### Red and Black 
+
+**카이제곱 테스트**로 Red와 Black에 들어간 등급별 인원수가 얼마나 닮았는지를 살펴보았지만 t-test와 마찬가지로 통계적으로 유의한 차이가 관찰되지 않았습니다. 
+
+```{r, literacy grade RnB, echo = FALSE, warning = FALSE}
 grade_tbl_group <- literacy %$%
   table("Group" = .$group, "문해력 등급 분포" = grade, exclude = NULL)
 grade_tbl_group %>%
@@ -415,14 +424,14 @@ grade_tbl_group %>%
   rbind("계" = colSums(.)) %>%
   kable(caption = "그룹별 문해력 등급 분포")
 grade_tbl_group %>%
-  `[`(, -1) %>%
+  `[`(, -5) %>%
   chisq.test(simulate.p.value = FALSE) %>%
   pander
 ```
 
 <P style = "page-break-before:always">
 
-## 문항 유형별 점수 분석
+<!--## 문항 유형별 점수 분석-->
 
 ```{r, item by type, echo = FALSE}
 type_kr <- "./data/literacy_type.txt" %>%
