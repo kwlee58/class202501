@@ -6,6 +6,8 @@ date : "2024-11-11"
 output: html_document
 ---
 
+# 11주차 데이터실험 집계
+
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 # install.packages("pander", repos = "https://cran.rstudio.com")
@@ -176,7 +178,7 @@ absentee %>%
 #   table
 ```
 
-## Red, Black을 잘못 표시한 사람들
+### Red, Black을 잘못 표시한 사람들
 
 ```{r, wrong group, echo = FALSE}
 #> group2 생성
@@ -252,7 +254,7 @@ Red, Black 을 잘못 선택한 `r nrow(wrong_group)`명을 랜덤하게 둘로 
 따라서 두 집단이 랜덤화 효과가 작동하여 **통계적으로 유의한 차이를 보이지 않는다**고 할 수 있습니다. 
 -->
 
-## 응답인원의 Red, Black
+### 응답인원의 Red, Black
 
 Red 로 응답한 인원은 `r colSums(wrong_tbl)[1]`명, Black 에 응답한 인원은 `r colSums(wrong_tbl)[2]`명입니다. 
 
@@ -263,8 +265,6 @@ Red 로 응답한 인원은 `r colSums(wrong_tbl)[1]`명, Black 에 응답한 �
 ```{r, randomization, echo = FALSE, results = 'hide'}
 quiz %>% str
 ```
-
-# 퀴즈 응답 비교
 
 ## Q1. 1분위와 5분위의 평균소비성향 비교
 
@@ -319,7 +319,7 @@ ptbl_q1 %>%
 include_graphics("./pics/Quiz230510_Q2.png")
 ```
 
-## 집계
+### 집계
 
 ```{r, echo = FALSE, warning = FALSE}
 tbl_q2_a <- quiz$Q2 %>% 
@@ -342,7 +342,7 @@ Q2의 집계 결과가 Red, Black 간에 통계적으로 유의한 차이가 있
 
 실제로 닮은 게 느껴집니까?
 
-## %
+### %
 
 ```{r, echo = FALSE}
 ptbl_q2 <- 
@@ -364,7 +364,7 @@ ptbl_q2 %>%
 include_graphics("./pics/Quiz230510_Q3.png")
 ```
 
-## 집계
+### 집계
 
 ```{r, state arithmetic, echo = FALSE, warning = FALSE}
 tbl_q3_a <- quiz$Q3 %>%
@@ -387,7 +387,7 @@ Q3의 집계 결과가 Red, Black 간에 통계적으로 유의한 차이가 있
 
 실제로 닮은 게 느껴집니까?
 
-## %
+### %
 
 ```{r, state arithmetic in percentage, echo = FALSE}
 ptbl_q3 <- 
@@ -409,7 +409,7 @@ ptbl_q3 %>%
 include_graphics("./pics/Quiz230510_Q4.png")
 ```
 
-## 집계
+### 집계
 
 ```{r, labour force, echo = FALSE, warning = FALSE}
 tbl_q4_a <- quiz$Q4 %>%
@@ -432,7 +432,7 @@ Q4의 집계 결과가 Red, Black 간에 통계적으로 유의한 차이가 있
 
 실제로 닮은 게 느껴집니까?
 
-## %
+### %
 
 ```{r, labour force in percentage, echo = FALSE}
 ptbl_q4 <- 

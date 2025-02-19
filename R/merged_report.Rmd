@@ -1,7 +1,7 @@
 ---
-title: "Merged Report"
+title: "Data Lab Overview"
 author: "Kee-Won Lee"
-date: "2025-02-08"
+date: "2025-02-09"
 output: 
   html_document:
     toc: yes
@@ -13,7 +13,14 @@ knitr::opts_chunk$set(echo = FALSE, message = FALSE, warning = FALSE, progress =
 ```
 
 ```{r, echo=FALSE, results='hide'}
-rmd_files <- c("./Quiz240902_Report_v4.Rmd", 
+rmd_files <- c("./Red_and_Black_240824_Report_v2.Rmd", 
+               "./Red_and_Black_240906_Report.Rmd", 
+               "./Red_and_Black_prototype_first_page.Rmd",
+#              "./Red_and_Black_prototype_id_100.Rmd",
+#              "./Red_and_Black_prototype_id_1000.Rmd",
+#               "./Red_and_Black_prototype_id_10000.Rmd",
+#               "./Red_and_Black_prototype_id_100000.Rmd",
+               "./Quiz240902_Report_v4.Rmd", 
                "./Quiz240909_Report_v4.Rmd", 
                "./Quiz240916_Report_v4.Rmd",
                "./Quiz240923_Report_v4.Rmd",
@@ -36,7 +43,23 @@ for (file in rmd_files) {
 }
 ```
 
+```{r, echo = FALSE, eval = FALSE}
+html_files <- c("Red_and_Black_prototype_id_100.html", "Red_and_Black_prototype_id_1000.html")  # Multiple HTML files
+
+cat('<div id="html1">')
+htmltools::includeHTML("Red_and_Black_prototype_id_100.html")
+cat('</div>')
+```
+
 ```{r, child = c(rmd_files)}
+```
+
+```{r, echo = FALSE, eval = FALSE}
+html_files <- c("Red_and_Black_prototype_id_100.html", "Red_and_Black_prototype_id_1000.html")  # Multiple HTML files
+
+cat('<div id="html2" style="margin-top: 20px;">')
+htmltools::includeHTML("Red_and_Black_prototype_id_1000.html")
+cat('</div>')
 ```
 
 

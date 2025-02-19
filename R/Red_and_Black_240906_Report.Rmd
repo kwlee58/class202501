@@ -28,9 +28,9 @@ str(class_roll)
 str(class_roll0824)
 ```
 
-# Randomization Effects
+## Randomization Report (수강신청 변경 반영)
 
-## 수강신청 변경 기간 중 나간 사람들
+### 수강신청 변경 기간 중 나간 사람들
 
 ```{r, echo = FALSE}
 id_out <- setdiff(class_roll0824$id, class_roll$id)
@@ -46,7 +46,7 @@ class_roll0824$group %>%
   pander
 ```
 
-## 학번
+### 학번
 
 ```{r, echo = FALSE}
 class_roll$id_2 <-
@@ -63,7 +63,7 @@ tbl1 %>%
 #   pander
 ```
 
-## e-mail 서비스업체
+### e-mail 서비스업체
 
 ```{r, e_mail, echo = FALSE, eval = TRUE}
 isp <- class_roll$email %>%
@@ -84,7 +84,7 @@ tbl4 %>%
 #   pander
 ```
 
-## 전화번호 끝 네자리
+### 전화번호 끝 네자리
 
 <!--
 ### 분포표
@@ -117,7 +117,7 @@ class_roll$cell_no %>%
 ```
 -->
 
-## 5대 성씨분포
+### 5대 성씨분포
 
 ```{r, echo = FALSE}
 f_name <- class_roll$name %>%
@@ -134,7 +134,7 @@ tbl6 %>%
 # pander
 ```
 
-## 단과대학
+### 단과대학
 
 ```{r, echo = FALSE}
 tbl7 <- 

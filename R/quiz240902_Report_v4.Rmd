@@ -5,7 +5,7 @@ date: "2024-09-02"
 output: html_document
 ---
 
-# Chapter 1
+# 1주차 데이터 실험 집계
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
@@ -20,7 +20,7 @@ panderOptions('table.alignment.default', 'right')
 options(width=180)
 ```
 
-### 실험의 목적
+## 실험의 목적
 
 1주차 구글 예습 설문지 집계결과를 분석합니다. 
 
@@ -213,15 +213,13 @@ Red 로 응답한 인원은 `r colSums(wrong_tbl)[1]`명, Black 에 응답한 �
 pander(summary(quiz))
 ```
 
-## Quiz 응답 비교
-
-### Q1. Dewey as good as elected, statistics convince Roper
+## Q1. Dewey as good as elected, statistics convince Roper
 
 ```{r, echo = FALSE, out.width = "100%", fig.align = "left"}
 include_graphics("./pics/Quiz210302_01.png")
 ```
 
-#### Roper(Counts) 
+### Roper(Counts) 
 
 ```{r, Roper, echo = FALSE}
 tbl_q1_a <- quiz$Q1 %>% 
@@ -244,7 +242,7 @@ Q1의 집계 결과가 Red, Black 간에 통계적으로 유의한 차이가 있
 
 실제로 닮은 게 느껴집니까?
 
-#### Roper(%)
+### Roper(%)
 
 ```{r, Roper in percentage, echo = FALSE}
 ptbl_q1 <- 
@@ -260,13 +258,13 @@ ptbl_q1 %>%
 
 정답률은 Red, Black 을 합하여 계산하는데, `r ptbl_q1[2] %>% format(digits = 2, nsmall = 1)`(%) 입니다.
 
-### Q2. Statistics is the science of learning from data, ...
+## Q2. Statistics is the science of learning from data, ...
 
 ```{r, echo = FALSE, out.width = "100%", align = "left"}
 include_graphics("./pics/Quiz210302_02.png")
 ```
 
-#### ASA(Counts) 
+### ASA(Counts) 
 
 ```{r, ASA, echo = FALSE, warning = FALSE}
 tbl_q2_a <- quiz$Q2 %>% 
@@ -289,7 +287,7 @@ Q2의 집계 결과가 Red, Black 간에 통계적으로 유의한 차이가 있
 
 실제로 닮은 게 느껴집니까?
 
-#### ASA(%)
+### ASA(%)
 
 ```{r, ASA in percentage, echo = FALSE}
 ptbl_q2 <- 
@@ -305,13 +303,13 @@ ptbl_q2 %>%
 
 정답률은 Red, Black 을 합하여 계산하는데, `r ptbl_q2[1] %>% format(digits = 2, nsmall = 1)`(%) 입니다.
 
-### Q3. How to lie with statistics
+## Q3. How to lie with statistics
 
 ```{r, echo = FALSE, out.width = "100%", align = "left"}
 include_graphics("./pics/Quiz210302_03.png")
 ```
 
-#### D.Huff(Counts) 
+### D.Huff(Counts) 
 
 ```{r, D.Huff, echo = FALSE}
 tbl_q3_a <- quiz$Q3 %>% 
@@ -335,7 +333,7 @@ Q3의 집계 결과가 Red, Black 간에 통계적으로 유의한 차이가 있
 
 실제로 닮은 게 느껴집니까?
 
-#### D.Huff(%)
+### D.Huff(%)
 
 ```{r, D.Huff in percentage, echo = FALSE}
 ptbl_q3 <- 
@@ -351,7 +349,7 @@ ptbl_q3 %>%
 
 정답률은 Red, Black 을 합하여 계산하는데, `r ptbl_q3[2] %>% format(digits = 2, nsmall = 1)`(%) 입니다.
 
-### Q4. 종부세
+## Q4. 종부세
 
 "바람직한 논의이다"라는 선택지에 부연설명을 붙이거나(Red), "부적절한 논의이다"라는 선택지에 부연설명을 붙였을 때(Black), 부연설명의 여부에 따라 응답이 달라지는 지 살펴본 결과 기대한 바와 같이 양 집단에 통계적으로 유의한 수준의 차이가 났습니다. 
 
@@ -361,7 +359,7 @@ ptbl_q3 %>%
 
 실제 결과가 그러지 못한 이유를 따져보면 바로 부연설명을 붙였다는 데서 차이가 난다고 결론을 내릴 수 있는 것입니다.
 
-#### 질문지 선택지에 부연설명 
+### 질문지 선택지에 부연설명 
 
 ```{r, echo = FALSE, out.width = "67%", fig.align = "left"}
 include_graphics("./pics/Quiz240902_Q4_Red.png")
@@ -371,7 +369,7 @@ include_graphics("./pics/Quiz240902_Q4_Red.png")
 include_graphics("./pics/Quiz240902_Q4_Black.png")
 ```
 
-#### 집계
+### 집계
 
 ```{r, investigation, echo = FALSE}
 tbl_q4_a <- quiz$Q4 %>%
@@ -406,7 +404,7 @@ Black에는 같은 주장에 대하여 부적절한 논의라는 쪽에 부정�
 
 따라서 부연설명이 영향을 끼치지 않는다는 가정이 잘못되었다는 것을 논리적으로 입증할 수 있습니다.
 
-#### % 비교.  
+### % 비교.  
 
 ```{r, investigation in percentage, echo = FALSE}
 ptbl_q4_a <- 
@@ -426,7 +424,7 @@ ptbl_q4_a %>%
 
 부연설명을 어디에 붙이느냐에 따라 반응이 달라진다는 것을 잘 알 수 있습니다. 
 
-#### Mosaic Plot
+### Mosaic Plot
 
 ```{r, mosaic plot, echo = FALSE, fig.width = 7, fig.height = 5, eval = TRUE}
 library(ggplot2)
@@ -480,9 +478,9 @@ tbl_q4 %>%
 ```
 -->
 
-### 마감 시간으로부터 제출 시간의 분포
+## 마감 시간으로부터 제출 시간의 분포
 
-#### 분포표
+### 분포표
 
 ```{r, echo = FALSE, warning = FALSE}
 N <- nrow(quiz)
@@ -504,7 +502,7 @@ days_tbl %>%
 
 각 문제를 살펴보기 위해서는 분포표의 일부분을 대상으로 카이제곱 테스트를 수행합니다.
 
-#### 날마다 고르게 제출하는가?
+### 날마다 고르게 제출하는가?
 
 ```{r, echo = FALSE, warning = FALSE}
 days_tbl %>%
@@ -530,7 +528,7 @@ days_chisq_test %>%
 
 막대그래프로 살펴 보겠습니다.
 
-#### 막대그래프
+### 막대그래프
 
 ```{r, echo = FALSE}
 # png(file = "./pics/2302/quiz_submission_8.png", width = 640, height = 480)
@@ -557,7 +555,7 @@ invisible(dev.off())
 
 막대그래프는 총 제출인원 `r N`(명) 중에 `r sum(days_tbl[, 1])`(명),  `r format(sum(days_tbl[, 1]) / N * 100, digits = 1, nsmall = 0)`(%)가 마감일에 몰리는 것을 보여주고 있습니다.
 
-#### Red, Black 간에 닮았는가?
+### Red, Black 간에 닮았는가?
 
 ```{r, echo = FALSE, warning = FALSE}
 days_tbl %>%
@@ -582,7 +580,7 @@ days_RnB_chisq_test %>%
 
 닮았다고 느껴지나요?
 
-#### Mosaic Plot
+### Mosaic Plot
 
 ```{r, echo = FALSE, fig.width = 10, fig.height = 5}
 library(ggplot2)

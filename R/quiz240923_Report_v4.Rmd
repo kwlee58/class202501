@@ -5,6 +5,8 @@ date: "2024-09-23"
 output: html_document
 ---
 
+# 4주차 데이터 실험 집계
+
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 # install.packages("pander", repos = "https://cran.rstudio.com")
@@ -152,7 +154,7 @@ absentee %>%
 #   table
 ```
 
-## Red, Black을 잘못 표시한 사람들
+### Red, Black을 잘못 표시한 사람들
 
 ```{r, wrong group, echo = FALSE}
 #> group2 생성
@@ -223,15 +225,13 @@ Red, Black 을 잘못 선택한 `r nrow(wrong_group)`명을 랜덤하게 둘로 
 
 따라서 두 집단이 랜덤화 효과가 작동하여 **통계적으로 유의한 차이를 보이지 않는다**고 할 수 있습니다. 
 
-## 응답인원의 Red, Black
+### 응답인원의 Red, Black
 
 Red 로 응답한 인원은 `r colSums(wrong_tbl)[1]`명, Black 에 응답한 인원은 `r colSums(wrong_tbl)[2]`명입니다. 
 
 전체 응답인원 `r sum(wrong_tbl)` 명을 랜덤하게 둘로 나눌 때 어느 한 쪽의 기대인원은 전체 응답인원의 절반인 `r sum(wrong_tbl) / 2`명이고, 표준오차는 전체 응답인원의 제곱근에 1/2을 곱해 준 `r round(sqrt(sum(wrong_tbl)) * 1 / 2, digits = 1)` 명입니다. 
 
 따라서 Red, Black 각 그룹에 관찰된 인원은 기대인원으로부터 표준오차 범위 안에 들어갑니다.
-
-# 퀴즈 응답 비교
 
 ## Q1. 세종대왕 시대 조세제도
 
@@ -433,10 +433,6 @@ tbl_q5_a <-
   rbind("계" = colSums(.))
 tbl_q5_a %>% 
   pander 
-tbl_q5_a %>% 
-  `[`(-3, -5) %>%
-  chisq.test(simulate.p.value = FALSE) %>%
-  pander
 chisq_test_q5 <- 
   tbl_q5_a %>%
   `[`(-3, -5) %>%
@@ -513,13 +509,11 @@ ptbl_q6 %>%
 
 정답률은 Red, Black 을 합하여 계산하는데, `r ptbl_q6[5] %>% format(digits = 2, nsmall = 1)`(%) 입니다. 
 
-# 주당 근로 69시간제 도입 찬반
+## Q7. 부연설명의 효과 : 주당 근로 69시간제 도입 찬반
 
 부연설명을 찬성 쪽에 붙이는가(Red), 또는 반대 쪽에 붙이는가(Black)에 따라 응답이 영향을 받는 것으로 관찰됩니다. 
 
 찬반여부에 대한 카이제곱테스트의 p-value를 놓고 볼 때 그 차이가 통계적으로 매우 유의합니다. 
-
-## Q7. 부연설명의 효과
 
 ```{r, echo = FALSE, out.width = "67%", fig.align = "left"}
 include_graphics("./pics/Quiz240322_Q7_Red.png")
@@ -529,9 +523,7 @@ include_graphics("./pics/Quiz240322_Q7_Red.png")
 include_graphics("./pics/Quiz240322_Q7_Black.png")
 ```
 
-부연설명을 찬성 쪽에 붙이는가(Red), 또는 반대 쪽에 붙이는가(Black)에 따라 응답이 영향을 받는 것으로 관찰됩니다. 
-
-찬반여부에 대한 카이제곱테스트의 p-value를 놓고 볼 때 그 차이가 통계적으로 매우 유의합니다. 
+### 집계
 
 ```{r, investigation, echo = FALSE, warning = FALSE}
 tbl_q7_a <- 
@@ -590,7 +582,9 @@ ptbl_q7_a %>%
 
 반면 반대를 유도하는 부연설명을 붙인 Black에서 "찬성한다"고 응답하는 사람들의 백분율, `r format(ptbl_q7_a[2, 1], digits = 2, nsmall = 1)`(%)은 "반대한다"고 응답하는 사람들의 백분율, `r format(ptbl_q7_a[2, 2], digits = 2, nsmall = 1)`(%) 보다 훨씬 적습니다. 
 
-찬성을 유도하는 부연설명을 붙이느냐, 반대를 유도하는 부연설명을 붙이느냐에 따라 반응이 달라진다는 것을 잘 알 수 있습니다. Red 와 Black 이 워낙 차이가 나지만 전체적으로 어느 정도가 "찬성한다"하고 어느 정도가 "반대한다"고 응답하였는지 합쳐 보겠습니다.
+찬성을 유도하는 부연설명을 붙이느냐, 반대를 유도하는 부연설명을 붙이느냐에 따라 반응이 달라진다는 것을 잘 알 수 있습니다. 
+
+Red 와 Black 이 워낙 차이가 나지만 전체적으로 어느 정도가 "찬성한다"하고 어느 정도가 "반대한다"고 응답하였는지 합쳐 보겠습니다.
 
 ### % 합계
 

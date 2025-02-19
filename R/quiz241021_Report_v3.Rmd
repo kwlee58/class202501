@@ -6,6 +6,8 @@ date : "2024-11-25"
 output: html_document
 ---
 
+# 8주차 데이터 실험 집계 
+
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 library(readxl)
@@ -172,7 +174,7 @@ absentee %>%
 #   table
 ```
 
-## Red, Black을 잘못 표시한 사람들
+### Red, Black을 잘못 표시한 사람들
 
 ```{r, wrong group, echo = FALSE}
 #> group2 생성
@@ -246,7 +248,7 @@ Red, Black 을 잘못 선택한 `r nrow(wrong_group)`명을 랜덤하게 둘로 
 
 따라서 두 집단이 랜덤화 효과가 작동하여 **통계적으로 유의한 차이를 보이지 않는다**고 할 수 있습니다. 
 
-## 응답인원의 Red, Black
+### 응답인원의 Red, Black
 
 Red 로 응답한 인원은 `r colSums(wrong_tbl)[1]`명, Black 에 응답한 인원은 `r colSums(wrong_tbl)[2]`명입니다. 
 
@@ -254,8 +256,6 @@ Red 로 응답한 인원은 `r colSums(wrong_tbl)[1]`명, Black 에 응답한 �
 
 따라서 Red, Black 각 그룹에 관찰된 인원은 기대인원으로부터 표준오차 범위 안에 들어갑니다.
 랜덤화출석부에 있는 Red, Black 과 실제 구글설문에 올린 Red, Black 이 다른 사람들의 수효는 `r nrow(wrong_group)`명입니다. Red를 Black 이라고 한 사람이 `r wrong_tbl[1, 2]`명, Black 을 Red 라고 한 사람이 `r wrong_tbl[2, 1]`명입니다. 
-
-# 퀴즈 응답 비교
 
 ## Q1. 랜덤화 플라시보 대조군 설계의 특징 
 
@@ -395,7 +395,7 @@ ptbl_q3 %>%
 
 정답률은 Red, Black 을 합하여 계산하는데, `r ptbl_q3[4] %>% format(digits = 2, nsmall = 1)`(%) 입니다. 
 
-# Cognitive Response Test
+## Cognitive Response Test
 
 3초 안에 답하려면 틀리기 쉬운 문제들로 구성한 인지반응 테스트인데 정답률이 상당히 높습니다. 
 

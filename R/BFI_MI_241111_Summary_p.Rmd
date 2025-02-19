@@ -5,6 +5,8 @@ date: "2024-11-11"
 output: html_document
 ---
 
+# Big Five Personality and Multiple Intelligence
+
 <!--
 ### Data Reading
 
@@ -147,7 +149,7 @@ b_fill +
 ggsave("./pics/BFP_strengths2302.png", dpi = 120, width = 10, height = 7.5, units = "in")
 ```
 
-## BFP와 과제제출 시간 
+### BFP와 과제제출 시간 
 
 마감일이 되어서야 질문지에 응답하는 사람들과 그 이전에 응답하는 사람들이 BFP 와 어떤 관련이 있는지 알아 보겠습니다. 
 
@@ -315,7 +317,7 @@ y2_breaks_m <-
   unname
 ```
 
-## Bar Plot
+### Bar Plot
 
 ```{r, echo = FALSE, fig.width = 8, fig.height = 6, message = FALSE}
 m_fill <- BFI_MI_full %>%
@@ -339,9 +341,11 @@ m_fill +
 ggsave("./pics/MI_strengths2302.png", dpi = 120, width = 10, height = 7.5, units = "in")
 ```
 
+<!--
 ## 개별 BFP와 3대 강점지능
 
 ```{r, one data frame, echo = FALSE}
 BFI_MI_full %>%
   kable(align = "c")
 ```
+-->

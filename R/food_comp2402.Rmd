@@ -6,6 +6,8 @@ date : "2024-11-04"
 output: html_document
 ---
 
+# 식생활습관 교육동영상 시청 효과 
+
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 # install.packages("pander", repos = "https://cran.rstudio.com")
