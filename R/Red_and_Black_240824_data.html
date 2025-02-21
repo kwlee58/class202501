@@ -377,7 +377,6 @@ str(class_roll)</code></pre>
 ##  $ status : chr [1:811] &quot;휴학생&quot; &quot;학생&quot; &quot;학생&quot; &quot;학생&quot; ...
 ##  $ email  : chr [1:811] &quot;opix97@naver.com&quot; &quot;thddnjs1030@naver.com&quot; &quot;jklucky09@naver.com&quot; &quot;hyu05145@naver.com&quot; ...
 ##  $ cell_no: chr [1:811] &quot;01057620963&quot; &quot;01039148280&quot; &quot;01074433725&quot; &quot;01083419425&quot; ...</code></pre>
-<pre class="r"><code>source(&quot;./RnB_2024_v5.R&quot;)</code></pre>
 </div>
 <div id="randomization" class="section level2">
 <h2>Randomization</h2>
@@ -386,8 +385,7 @@ N &lt;- nrow(class_roll)
 class_roll$group &lt;- 
   sample(1:N) %%
   2 %&gt;%
-  factor(levels = c(0, 1), labels = c(&quot;Red&quot;, &quot;Black&quot;))
-# red_and_black(94269)</code></pre>
+  factor(levels = c(0, 1), labels = c(&quot;Red&quot;, &quot;Black&quot;))</code></pre>
 <div id="학년" class="section level3">
 <h3>학년</h3>
 <pre class="r"><code>tbl0 &lt;- class_roll$year %&gt;%
@@ -813,9 +811,9 @@ Xsum_min</code></pre>
 ##  10.48828</code></pre>
 <!--
 
-```r
+``` r
 saveRDS(class_roll, file = "./class_roll_240824.RDS")
-save.image("./red_and_black_240824_data.RData")
+# save.image("./red_and_black_240824_data.RData")
 ```
 -->
 </div>

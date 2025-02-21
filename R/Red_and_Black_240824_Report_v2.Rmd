@@ -1,0 +1,229 @@
+---
+title: "Randomization Report (240824)"
+author: "coop711"
+date: "2024-08-24"
+output: html_document
+---
+
+# 01. 출석부 랜덤화 결과 요약
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(pander)
+library(knitr)
+library(magrittr)
+panderOptions('table.split.table', Inf)
+panderOptions('table.alignment.rownames', 'left')
+panderOptions('table.alignment.default', 'right')
+```
+
+<!--# Data Reading-->
+
+```{r, data, echo = FALSE, results = 'hide'}
+class_roll <- readRDS("./class_roll_240824.RDS")
+# load("./red_and_black_240824_data.RData")
+str(class_roll)
+```
+
+## 실험의 목적
+
+출석부에 나오는 5개 변수(학번, 이메일주소, 휴대폰번호, 이름, 단과대학)를 토대로 백만번씩 10회의 랜덤화 작업을 수행하여 찾은 Red, Black 간에 가장 닮은 구성이 실제로 얼마나 닮았는지 느껴 봅니다. 
+
+통계학에서 사용하는 "랜덤"의 의미가 일상적으로 사용하는 "랜덤"의 의미와 어떤 차이가 있는지 살펴보고, 확률적 법칙에 따른다는 것을 Red, Black의 분포로부터 실감합니다. 
+
+반복횟수가 적었던 2021년 1학기 이전의 출석부 랜덤화 결과와도 비교합니다.   
+
+## Random 
+
+### 랜덤화 출석부 개요
+
+8월24일 출석부에 나와 있는 변수(단과대학, 학번, 이름, 이메일주소, 휴대전화)들을 활용하여 수강생 들을 Red 와 Black 두 집단으로 랜덤하게 나눈 결과입니다. 
+
+Red 와 Black 은 초기값에 따라 랜덤하게 배열이 바뀌는 데 닮은 정도를 계산하는 통계 방법을 동원하여 여러 번 초기값을 바꾸어가며 반복 시행한 중에서 가장 잘 닮은 것을 고릅니다. 
+
+배열을 랜덤하게 바꾸는 시행횟수를  1백만번씩 열번 반복한 중 가장 닮은 구성을 찾았습니다. imac24 로 2시간 이상 걸리는 작업입니다. 
+
+여기서 가장 닮았다는 기준을 어떻게 설정한 것이냐는 질문이 나오게 마련인데 2주차 데이터실험에서 설명할 예정입니다. 
+
+수강신청 변경이 완료되면 새로 들어온 사람들을 포함하는 랜덤화 작업을 수행해서 Red, Black 을 다시 정해 줍니다. 
+
+### "랜덤"의 의미 (ChatGPT 4o)
+
+네이버 영어 사전에서는 random 의 뜻을 <형용사> 무작위의, 닥치는 대로[임의로/마구잡이로] 라고 간단히 설명하고 있지만 ChatGPT 에게 물어보면 다양한 맥락에서 다른 의미로 쓰이고 있다고 합니다. 
+
+일상에서 "랜덤"은 보통 예상치 못하거나 예상과 다른 일이 발생했을 때 사용됩니다. 
+
+예: "그 사람이 갑자기 랜덤한 질문을 던졌어." 
+
+여기서 '랜덤'은 비논리적이거나 맥락과 동떨어진 행동을 의미합니다. 
+
+사회문제로 부각되고 있는 무차별 살인은 random killing 입니다. 
+
+닥치는대로, 마구잡이로라는 의미이죠.<br><br> 
+
+통계학에서 "랜덤(random)"의 의미는 어떤 결과나 선택이 예측되지 않고, 모든 가능한 결과가 일정한 확률로 나타나는 현상을 지칭합니다. 
+
+이는 통계 분석의 기본 전제 중 하나로, 데이터를 수집하고 해석할 때 중요한 개념입니다. 
+
+즉, 무작위성, 확률 분포, 독립성을 특성으로 합니다. 
+
+여기서 예측할 수 없다는 것은 개별 사건의 결과를 사전에 알 수 없다는 뜻입니다. 
+
+모든 가능한 결과가 일정한 확률로 나타난다는 것은 장기적으로 관찰했을 때 각 결과의 출현 비율이 일정하게 수렴한다는 뜻입니다. 
+
+즉, 개별 사건은 예측할 수 없지만, 전체적인 경향은 확률 분포를 통해 예측할 수 있습니다. 
+
+공평한 동전이나 주사위를 던지는 것은 랜덤한 행위입니다. 
+
+어떤 결과가 나올지 미리 확정할 수는 없어도 앞, 뒷면 혹은 1, 2, 3, 4, 5, 6 중 어느 결과가 동등한 확률로 나온다는 사실은 미리 알 수 있죠. 
+
+확률적 법칙에 따르는 것입니다. 
+
+그리고 각각은 서로 독립적으로 시행되고 있죠. 앞의 시행 결과가 뒤의 시행 결과에 영향을 주지 않습니다. 
+
+통계학에서 "랜덤"은 "무작위"와 같은 뜻이고, "마구잡이로"나 "닥치는대로"가 아닙니다. <br><br>
+
+randomness 는 여러 분야에서 중요한 역할을 합니다. 
+
+통계학에서는 표본을 랜덤하게 (무작위로) 추출하여 편향 없는 데이터를 수집하고, 컴퓨터 과학에서는 암호화 과정에 randomness 를 사용하여 보안을 강화합니다. 
+
+### 랜덤화 출석부 생성
+
+자료 이름에 나와 있듯이 랜덤화 출석부를 생성하는 과정은 randomization  입니다. Wikipedia 에 나오는 설명을 옮겨보면<br><br>
+
+"Randomization is the process of making something random. Randomization is not haphazard; ..."<br><br>
+
+라고 해서 마구잡이(haphazard)가 아님을 강조합니다. 
+
+여기서 나누는 방식은 공평한 동전을 던져서 앞면이 나오는 사람들은 Red, 뒷면이 나오는 사람들은 Black 으로 나누는 것과 같습니다.
+
+한두 번 던져서는 공평한 동전인지 알 수 없겠지만 무수히 많이 던지다 보면 앞면이나 뒷면이 나오는 비율이 1/2로 수렴해 가는 것을 알 수 있습니다. 
+
+이러한 원리를 여러분의 출석부에 적용해서 두 집단으로 나누었습니다. 
+
+출석부에 나오는 전체인원을 동전의 앞면과 뒷면에 따라 나누는 것과 같은 방식입니다.
+
+이렇게 확률 법칙을 이용하여 공평하게  나눈 두 집단은 닮게 됩니다. 
+
+어느 정도 닮을 지, 즉 오차의 크기도 계산할 수 있습니다.
+
+이러한 실험을 반복하면 그 중에서도 두 집단의 여러 변수가 더 닮은 구성을 찾을 수 있습니다. 
+
+계산하는 컴퓨터가 바쁠 뿐입니다. 
+
+## Randomization Report
+
+이 랜덤화 보고서는 백만번의 시도를 열 번 반복 시행한 중에 두 집단이 가장 잘 닮았다고 판단되는 구성을 기초로 작성한 것입니다. 
+
+자세한 수행과정은 2주차 데이터실험 게시판에 올릴 예정입니다. 
+
+가장 닮은 구성을 선정한 이유는 이번 학기 동안 데이터실험에서 활용할 것이기 때문입니다. 
+
+이와 같이 확률 이론으로부터 두 집단은 매우  닮을 것으로 기대되는데 실제 결과를 자세히 살펴보고 퀴즈를 풀어 보세요.
+
+### 학번
+
+```{r, echo = FALSE}
+class_roll$id_2 <-
+  class_roll$id %>%
+  substr(1, 4) %>%
+  ifelse(. <= 2018, "2018", .)
+tbl1 <- class_roll %$%
+  table(.$group, .$id_2) %>%
+  `colnames<-`(c("2018 이전", 2019:2024)) 
+tbl1 %>%
+  pander
+# tbl1 %>%
+#   chisq.test(simulate.p.value = FALSE) %>%
+#   pander
+```
+
+### e-mail 서비스업체
+
+```{r, e_mail, echo = FALSE, eval = TRUE}
+isp <- class_roll$email %>%
+  strsplit("@", fixed = TRUE) %>%
+  sapply("[", 2) %>%
+  strsplit("[.]", fixed = FALSE) %>%
+  sapply("[", 1)
+tbl4 <- isp %>%
+  `%in%`(c("naver", "gmail")) %>%
+  ifelse(isp, "기타서비스") %>%
+  factor(levels = c("naver", "gmail", "기타서비스"),
+         labels = c("네이버", "구글", "기타서비스")) %>%
+  table(class_roll$group, .) 
+tbl4 %>%
+  pander
+# tbl4 %>%
+#   chisq.test(simulate.p.value = FALSE) %>%
+#   pander
+```
+
+### 전화번호 끝 네자리
+
+<!--
+### 분포표
+-->
+
+```{r, echo = FALSE}
+cut_label <- paste(paste0(0:9, "000"), paste0(0:9, "999"), 
+                   sep = "~")
+tbl5 <- class_roll$cell_no %>%
+  substr(start = 8, stop = 11) %>%
+  sapply(as.numeric) %>%
+  cut(labels = cut_label, 
+      breaks = seq(0, 10000, by = 1000)) %>%
+  table(class_roll$group, .) 
+tbl5 %>%
+  pander
+# tbl5 %>%
+#   chisq.test(simulate.p.value = FALSE) %>%
+# pander
+```
+
+<!--### 히스토그램
+
+```{r, echo = FALSE}
+class_roll$cell_no %>%
+  substr(start = 8, stop = 11) %>%
+  sapply(as.numeric) %>% 
+  hist(main = "Cell Phone Number Last 4 Digits")
+# hist(cell_numbers)
+```
+-->
+
+### 5대 성씨분포
+
+```{r, echo = FALSE}
+f_name <- class_roll$name %>%
+  substring(first = 1, last = 1) 
+tbl6 <- f_name %>%
+  `%in%`(c("김", "이", "박", "최", "정")) %>%
+  ifelse(f_name, "기타") %>%
+  factor(levels = c("김", "이", "박", "최", "정", "기타")) %>%
+  table(class_roll$group, .) 
+tbl6 %>%
+  pander
+# tbl6 %>%
+#   chisq.test(simulate.p.value = FALSE) %>%
+# pander
+```
+
+### 단과대학
+
+```{r, echo = FALSE}
+tbl7 <- 
+  class_roll %$%
+  table(.$group, .$college) 
+tbl7 %>%
+  pander(col.names = c("간호", "경영", "글로벌융합", "미디어", "미래융합", "반도체/디스플레이", "사회과학", "인문", "자연과학A", "자연과학B", "정보과학"))
+# tbl7 %>%
+#   chisq.test(simulate.p.value = FALSE) %>%
+# pander
+```
+
+<!--
+```{r, save, echo=FALSE, message=FALSE, results='hide'}
+# save.image("../R/red_and_black_240824_data.RData")
+```
+-->

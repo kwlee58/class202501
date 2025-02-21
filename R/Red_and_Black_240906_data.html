@@ -377,7 +377,6 @@ str(class_roll)</code></pre>
 ##  $ status : chr [1:813] &quot;학생&quot; &quot;학생&quot; &quot;학생&quot; &quot;학생&quot; ...
 ##  $ email  : chr [1:813] &quot;jcy1569@naver.com&quot; &quot;opix97@naver.com&quot; &quot;thddnjs1030@naver.com&quot; &quot;jklucky09@naver.com&quot; ...
 ##  $ cell_no: chr [1:813] &quot;01091971569&quot; &quot;01057620963&quot; &quot;01039148280&quot; &quot;01074433725&quot; ...</code></pre>
-<pre class="r"><code>source(&quot;./RnB_2024_v5.R&quot;)</code></pre>
 </div>
 <div id="randomization" class="section level2">
 <h2>Randomization</h2>
@@ -392,7 +391,7 @@ class_roll$group &lt;-
 ### 학년
 
 
-```r
+``` r
 tbl0 <- class_roll$year %>%
   table(class_roll$group, .) 
 tbl0 %>%
@@ -813,7 +812,7 @@ Xsum_min</code></pre>
 ##  10.21015</code></pre>
 <!--
 
-```r
+``` r
 saveRDS(class_roll, file = "./class_roll_240906.RDS")
 save.image("./red_and_black_240906_data.RData")
 ```
