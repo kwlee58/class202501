@@ -21,12 +21,12 @@ panderOptions('table.split.table', Inf)
 ## Data
 
 ```{r, data, echo = TRUE, results = 'show', warning = TRUE}
-# class_roll <- read_excel("./data/class_roll_250221.xlsx", 
-#                         range = "B1:H591")
+# class_roll <- read_excel("./data/class_roll_250222.xlsx", 
+#                         range = "B1:H601")
 # str(class_roll)
 # names(class_roll) <- c("college", "dept", "id", "name", "status", "email", "cell_no")
 # str(class_roll)
-class_roll <- readRDS("class_roll_250221.RDS")
+class_roll <- readRDS("class_roll_250222.RDS")
 str(class_roll)
 ```
 
