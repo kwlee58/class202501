@@ -5,7 +5,7 @@ title: "Red and Black : Search for the Best"
 output: html_document
 ---
 
-## 5개 변수, N = 7000001 ~ 8000000
+## 5개 변수, N = 2000001 ~ 3000000
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
@@ -17,13 +17,16 @@ library(dplyr)
 panderOptions('table.split.table', Inf)
 ```
 
-
 <!--
 ## Data
 
 ```{r, data, echo = TRUE, results = 'show', warning = TRUE}
-class_roll <- readRDS("class_roll_250225.RDS")
+class_roll <- read_excel("./data/class_roll_250225.xlsx", 
+                        range = "B1:H611")
 str(class_roll)
+names(class_roll) <- c("dept", "college", "id", "name", "status", "email", "cell_no")
+str(class_roll)
+saveRDS(class_roll, file = "class_roll_250225.RDS")
 ```
 
 ## Helper Functions
@@ -40,7 +43,7 @@ calculate_chi_square <- function(data, group_var) {
 
 # Function to handle Student ID category
 calc_id_chi_square <- function(data) {
-  data$id_2 <- data$id %>% substr(1, 4) %>% ifelse(as.numeric(.) <= 2018, "2018", .)
+  data$id_2 <- data$id %>% substr(1, 4) %>% ifelse(as.numeric(.) <= 2018 | as.numeric(.) >= 2025, "18 or 25", .)
   calculate_chi_square(data, data$id_2)
 }
 
@@ -154,8 +157,8 @@ Xmin
 ```{r, for Mac, echo = TRUE, eval = TRUE}
 #> Mac or Linux Version
 library(parallel)
-M1 <- 7000001
-M2 <- 8000000
+M1 <- 2000001
+M2 <- 3000000
 
 # Number of cores on your machine
 num_cores <- detectCores() - 1
@@ -331,10 +334,10 @@ class_roll$group <-
 class_roll$id_2 <-
   class_roll$id %>%
   substr(1, 4) %>%
-  ifelse(. <= 2018, "2018", .)
+  ifelse(. <= 2018 | . >= 2025, "18 or 25", .)
 class_roll %$%
   table(.$group, .$id_2) %>%
-  `colnames<-`(c("2018 이전", 2019:2024)) %>%
+  `colnames<-`(c("18이전과 25", 2019:2024)) %>%
   pander
 # 데이터 프레임 생성
 result1 <- data.frame(
@@ -423,7 +426,7 @@ pander(result4, caption = "Chi-square Statistic and P-value")
 ```{r, college, echo = FALSE, eval = TRUE}
 class_roll %$%
   table(.$group, .$college) %>%
-  pander(col.names = c("간호", "경영", "글로벌융합", "미디어", "미래융합", "반도체/디스플레이", "사회과학", "인문", "자연과학A", "자연과학B", "정보과학"))
+  pander(col.names = c("간호", "경영", "글로벌융합", "미디어", "미래융합", "반도체/디스플레이", "사회과학A", "사회과학B", "인문", "자연과학", "정보과학"))
 # 데이터 프레임 생성
 result5 <- data.frame(
   Statistic = round(X5_min, 2),

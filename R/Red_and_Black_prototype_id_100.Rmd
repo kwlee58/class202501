@@ -21,7 +21,7 @@ panderOptions('table.split.table', Inf)
 ## Data
 
 ```{r, data, echo = TRUE, results = 'show', warning = TRUE}
-class_roll <- readRDS("./class_roll_240906.RDS")
+class_roll <- readRDS("./class_roll_250225.RDS")
 str(class_roll)
 ```
 
@@ -39,7 +39,7 @@ calculate_chi_square <- function(data, group_var) {
 
 # Function to handle Student ID category
 calc_id_chi_square <- function(data) {
-  data$id_2 <- data$id %>% substr(1, 4) %>% ifelse(as.numeric(.) <= 2018, "2018", .)
+  data$id_2 <- data$id %>% substr(1, 4) %>% ifelse(as.numeric(.) <= 2018 | as.numeric(.) >= 2025, "18 or 25", .)
   calculate_chi_square(data, data$id_2)
 }
 
@@ -333,10 +333,10 @@ class_roll$group <-
 class_roll$id_2 <-
   class_roll$id %>%
   substr(1, 4) %>%
-  ifelse(. <= 2018, "2018", .)
+  ifelse(. <= 2018 | . >= 2025, "18 or 25", .)
 class_roll %$%
   table(.$group, .$id_2) %>%
-  `colnames<-`(c("2018 이전", 2019:2024)) %>%
+  `colnames<-`(c("18이전과 25", 2019:2024)) %>%
   pander
 # 데이터 프레임 생성
 result1 <- data.frame(
@@ -426,7 +426,7 @@ pander(result4, caption = "Chi-square Statistic and P-value")
 ```{r, college, echo = FALSE, eval = FALSE}
 class_roll %$%
   table(.$group, .$college) %>%
-  pander(col.names = c("간호", "경영", "글로벌융합", "미디어", "미래융합", "반도체/디스플레이", "사회과학", "인문", "자연과학A", "자연과학B", "정보과학"))
+  pander(col.names = c("간호", "경영", "글로벌융합", "미디어", "미래융합", "반도체/디스플레이", "사회과학A", "사회과학B", "인문", "자연과학", "정보과학"))
 # 데이터 프레임 생성
 result5 <- data.frame(
   Statistic = round(X5_min, 2),
