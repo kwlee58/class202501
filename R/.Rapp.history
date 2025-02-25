@@ -5,3 +5,5 @@ rpubsupload("Red_and_Black 2202 : Search for the Best (First 1 Million Trials)",
 rpubsUpload("Red_and_Black 2202 : Search for the Best (First 1 Million Trials)", "./Red_and_Black_2202_0_1.html")
 rpubsUpload(title = "Red_and_Black 2202 : Search for the Best (First 1 Million Trials)", htmlFile = "./Red_and_Black_2202_0_1.html")
 load("/Users/kwlee/My_Google_Drive/Works/Class/Statistics/R.WD/Class_data/class202401/R/red_and_black_optimum_data_230901_id_college_100000.RData")
+load("/Users/kwlee/Documents/class202501/R/quiz240524.RData")
+ls()
