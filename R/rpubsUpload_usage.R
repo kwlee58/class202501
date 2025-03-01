@@ -1,7 +1,7 @@
 library(markdown)
-result0 <- 
-  rpubsUpload("Red and Black 250225 : Search for the Best 1st 1 Million Trials", 
-              "./R/Red_and_Black_prototype_250225_v5_0_1.html")
+result1 <- 
+  rpubsUpload("Red and Black 250301 : Search for the Best 2nd 1 Million Trials", 
+              "./R/Red_and_Black_prototype_v5.html")
 result0
 
 ## Mac 에서 오류 발생해도 URL 그대로 사용하면 됨.
