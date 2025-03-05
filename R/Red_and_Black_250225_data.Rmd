@@ -1,5 +1,5 @@
 ---
-title: "Red and Black 250221"
+title: "Red and Black 250225"
 # author: "coop711"
 # date: "`r Sys.Date()`"
 output: html_document
@@ -17,7 +17,12 @@ panderOptions('table.split.table', Inf)
 ## Data
 
 ```{r, data}
-class_roll <- readRDS("./class_roll_250225.RDS")
+## 반드시 excel 자료에서 읽어 들여야 함. 
+## RDS 파일로 읽어 들이면 랜덤화 과정에서 그룹이 섞이게 됨.
+class_roll <- read_excel("./data/class_roll_250225.xlsx", 
+                        range = "B1:H611")
+str(class_roll)
+names(class_roll) <- c("dept", "college", "id", "name", "status", "email", "cell_no")
 str(class_roll)
 ```
 

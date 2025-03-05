@@ -30,7 +30,13 @@ Q4에서는 같은 내용의 질문지인데 "바람직한 논의이다"라는 �
 
 끝으로 제출시간의 분포가 날마다 고른지, Red, Black 간에는 닮았는지 알아봅니다.
 
-```{r, data, echo = FALSE, message = FALSE, results = 'hide'}
+```{r, data0, echo = FALSE, message = FALSE, results = 'hide'}
+## 2월25일자 랜덤화 출석부
+class_roll <- readRDS("./class_roll_250225.RDS") %>%
+  select(dept, id, name, status, email, cell_no, group)
+```
+
+```{r, data, echo = FALSE, message = FALSE, results = 'hide', eval = FALSE}
 ## 2월25일자 랜덤화 출석부
 class_roll0225 <- readRDS("./class_roll_250225.RDS") %>%
   select(dept, id, name, status, email, cell_no, group)
@@ -76,11 +82,11 @@ saveRDS(class_roll, file = "./class_roll_250317_1st_wk.RDS")
 saveRDS(class_roll_id_new2, file = "./class_roll_250317_id_new2.RDS")
 ```
 
-```{r, data2, echo = FALSE, message = FALSE, results = 'hide'}
+```{r, data3, echo = FALSE, message = FALSE, results = 'hide'}
 # Quiz Assortment  
 quiz <- 
   read_excel("./data/quiz_250303.xlsx",
-             range = "A2:K136",
+             range = "A2:K163",
              col_names = FALSE)
 names(quiz) <- 
   c("time", "email", "dept", "id", "name", "Q1", "Q2", "Q3", "group", "Q4_R", "Q4_B")
@@ -94,9 +100,9 @@ quiz %<>%
   mutate(Q4_B = if_else(Q4_B == "상위 계층에 감세 혜택을 집중시킬 수 있는 부적절한 논의이다",
                         "부적절한 논의이다", Q4_B))
 quiz$Q4 <- ifelse(is.na(quiz$Q4_R), quiz$Q4_B, quiz$Q4_R)
-quiz %>%
-  filter(id %in% id_new) %>%
-  select(id, name, group)
+# quiz %>%
+#   filter(id %in% id_new) %>%
+#   select(id, name, group)
 setdiff(class_roll$id, quiz$id)
 # quiz$group <- class_roll$group[match(quiz$id, class_roll$id)]
 sapply(quiz[, c("Q1", "Q2", "Q3", "Q4")], table, useNA = "ifany")
@@ -156,15 +162,15 @@ quiz[quiz$name == "최재혁", ]
 quiz[quiz$name == "우로겸", ]
 quiz[quiz$id == "20242128", ]
 #> 불참자들
-absentee <- class_roll0317 %>%
-  anti_join(quiz, by = "id") %>%
-  select(id, name) %>%
-  arrange(id)
+# absentee <- class_roll0317 %>%
+#   anti_join(quiz, by = "id") %>%
+#   select(id, name) %>%
+#   arrange(id)
 # absentee <- 
 #   class_roll0317[class_roll0317$id %in% setdiff(class_roll0317$id, quiz$id), c("id", "name")] %>%
 #   `[`(order(.$id), ) 
-absentee %>%
-  pander(row.names = FALSE) 
+# absentee %>%
+#   pander(row.names = FALSE) 
 # absentee$group %>%
 #   table
 #> 마감기한으로부터 제출시점의 기간
@@ -188,10 +194,10 @@ wrong_group <- which(quiz$group != quiz$group2)
 #   `[`(order(.$name), ) %>%
 #   `colnames<-`(c("학번", "이름", "랜덤화출석부", "구글예습퀴즈")) %>%
 #   pander(row.names = FALSE)
-# quiz[wrong_group, c("time", "id", "name", "group2", "group")] %>%
-#   `[`(order(.$time), ) %>%
-#   `colnames<-`(c("제출시간", "학번", "이름", "랜덤화출석부", "구글예습퀴즈")) %>%
-#   pander(row.names = FALSE)
+quiz[wrong_group, c("time", "id", "name", "group2", "group")] %>%
+  `[`(order(.$time), ) %>%
+  `colnames<-`(c("제출시간", "학번", "이름", "랜덤화출석부", "구글예습퀴즈")) %>%
+  pander(row.names = FALSE)
 wrong_tbl <- table("랜덤화출석부" = quiz$group2, 
                    "구글예습퀴즈" = quiz$group)
 wrong_tbl %>%
@@ -254,7 +260,7 @@ include_graphics("./pics/Quiz210302_01.png")
 
 ### Roper(Counts) 
 
-```{r, Roper, echo = FALSE}
+```{r, Roper, echo = FALSE, warning = FALSE}
 tbl_q1_a <- quiz$Q1 %>% 
   table(quiz$group, ., useNA = "ifany") %>%
   cbind("계" = rowSums(.)) %>%
@@ -344,7 +350,7 @@ include_graphics("./pics/Quiz210302_03.png")
 
 ### D.Huff(Counts) 
 
-```{r, D.Huff, echo = FALSE}
+```{r, D.Huff, echo = FALSE, warning = FALSE}
 tbl_q3_a <- quiz$Q3 %>% 
   table(quiz$group, ., useNA = "ifany") %>%
   cbind("계" = rowSums(.)) %>%
@@ -395,11 +401,11 @@ ptbl_q3 %>%
 ### 질문지 선택지에 부연설명 
 
 ```{r, echo = FALSE, out.width = "67%", fig.align = "left"}
-include_graphics("./pics/Quiz250303_Q4_Red.png")
+include_graphics("./pics/Quiz240902_Q4_Red.png")
 ```
 
 ```{r, echo = FALSE, out.width = "67%", fig.align = "left"}
-include_graphics("./pics/Quiz250303_Q4_Black.png")
+include_graphics("./pics/Quiz240902_Q4_Black.png")
 ```
 
 ### 집계
@@ -540,12 +546,12 @@ days_tbl %>%
 ```{r, echo = FALSE, warning = FALSE}
 days_tbl %>%
   rbind("계" = colSums(.)) %>%
-  `[`(3, 1:14) %>%
+  `[`(3, 12:14) %>%
   pander
 days_chisq_test <-
   days_tbl %>%
   rbind("계" = colSums(.)) %>%
-  `[`(3, 1:14) %>%
+  `[`(3, 12:14) %>%
   chisq.test(simulate.p.value = FALSE) 
 days_chisq_test %>%
   pander
@@ -593,11 +599,11 @@ invisible(dev.off())
 ```{r, echo = FALSE, warning = FALSE}
 days_tbl %>%
   rbind("계" = colSums(.)) %>%
-  `[`(-3, 1:14) %>%
+  `[`(-3, 12:14) %>%
   pander
 days_RnB_chisq_test <-
   days_tbl %>%
-  `[`(-3, 1:14) %>%
+  `[`(-3, 12:14) %>%
   chisq.test(simulate.p.value = FALSE) 
 days_RnB_chisq_test %>%
   pander
