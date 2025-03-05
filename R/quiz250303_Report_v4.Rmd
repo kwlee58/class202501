@@ -86,7 +86,7 @@ saveRDS(class_roll_id_new2, file = "./class_roll_250317_id_new2.RDS")
 # Quiz Assortment  
 quiz <- 
   read_excel("./data/quiz_250303.xlsx",
-             range = "A2:K163",
+             range = "A2:K184",
              col_names = FALSE)
 names(quiz) <- 
   c("time", "email", "dept", "id", "name", "Q1", "Q2", "Q3", "group", "Q4_R", "Q4_B")

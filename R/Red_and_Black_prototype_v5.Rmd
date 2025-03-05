@@ -5,7 +5,7 @@ title: "Red and Black : Search for the Best"
 output: html_document
 ---
 
-## 5변수, 1,000,001 ~ 2,000,000
+## 5변수, 8,000,001 ~ 9,000,000
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
@@ -157,8 +157,8 @@ Xmin
 ```{r, for Mac, echo = TRUE, eval = TRUE}
 #> Mac or Linux Version
 library(parallel)
-M1 <- 1000001
-M2 <- 2000000
+M1 <- 8000001
+M2 <- 9000000
 
 # Number of cores on your machine
 num_cores <- detectCores() - 1
