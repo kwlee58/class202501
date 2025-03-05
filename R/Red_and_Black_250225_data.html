@@ -357,16 +357,14 @@ display: none;
 <h2>Data</h2>
 <pre class="r"><code>class_roll &lt;- readRDS(&quot;./class_roll_250225.RDS&quot;)
 str(class_roll)</code></pre>
-<pre><code>## Classes &#39;tbl_df&#39;, &#39;tbl&#39; and &#39;data.frame&#39;:    610 obs. of  9 variables:
+<pre><code>## Classes &#39;tbl_df&#39;, &#39;tbl&#39; and &#39;data.frame&#39;:    606 obs. of  7 variables:
 ##  $ dept   : chr  &quot;경영학과&quot; &quot;철학전공&quot; &quot;법학과&quot; &quot;사학전공&quot; ...
 ##  $ college: chr  &quot;경영대학&quot; &quot;인문대학&quot; &quot;사회과학대학B&quot; &quot;인문대학&quot; ...
 ##  $ id     : chr  &quot;20152816&quot; &quot;20171054&quot; &quot;20172727&quot; &quot;20181117&quot; ...
 ##  $ name   : chr  &quot;김민규&quot; &quot;신재헌&quot; &quot;변우진&quot; &quot;홍민표&quot; ...
 ##  $ status : chr  &quot;학생&quot; &quot;학생&quot; &quot;학생&quot; &quot;학생&quot; ...
 ##  $ email  : chr  &quot;2041103@naver.com&quot; &quot;1998sin@naver.com&quot; &quot;buj0109@naver.com&quot; &quot;mp0945@naver.com&quot; ...
-##  $ cell_no: chr  &quot;01066429078&quot; &quot;01020171322&quot; &quot;01096209322&quot; &quot;01051159972&quot; ...
-##  $ group  : Factor w/ 2 levels &quot;Red&quot;,&quot;Black&quot;: 2 2 2 1 1 1 1 2 2 2 ...
-##  $ id_2   : chr  &quot;18 or 25&quot; &quot;18 or 25&quot; &quot;18 or 25&quot; &quot;18 or 25&quot; ...</code></pre>
+##  $ cell_no: chr  &quot;01066429078&quot; &quot;01020171322&quot; &quot;01096209322&quot; &quot;01051159972&quot; ...</code></pre>
 </div>
 <div id="randomization" class="section level2">
 <h2>Randomization</h2>
@@ -424,23 +422,23 @@ tbl1 %&gt;%
 <tbody>
 <tr class="odd">
 <td align="center"><strong>Red</strong></td>
-<td align="center">7</td>
+<td align="center">8</td>
 <td align="center">11</td>
 <td align="center">23</td>
-<td align="center">36</td>
-<td align="center">55</td>
-<td align="center">24</td>
-<td align="center">149</td>
+<td align="center">35</td>
+<td align="center">52</td>
+<td align="center">22</td>
+<td align="center">152</td>
 </tr>
 <tr class="even">
 <td align="center"><strong>Black</strong></td>
-<td align="center">9</td>
+<td align="center">8</td>
 <td align="center">11</td>
 <td align="center">26</td>
-<td align="center">34</td>
-<td align="center">53</td>
-<td align="center">27</td>
-<td align="center">145</td>
+<td align="center">35</td>
+<td align="center">56</td>
+<td align="center">29</td>
+<td align="center">138</td>
 </tr>
 </tbody>
 </table>
@@ -449,7 +447,7 @@ tbl1 %&gt;%
   `[[`(1)
 X1min</code></pre>
 <pre><code>## X-squared 
-## 0.7587457</code></pre>
+##  1.968468</code></pre>
 </div>
 <div id="학번-홀짝" class="section level3">
 <h3>학번 홀짝</h3>
@@ -476,13 +474,13 @@ tbl2 %&gt;%
 <tbody>
 <tr class="odd">
 <td align="center"><strong>Red</strong></td>
-<td align="center">144</td>
-<td align="center">161</td>
+<td align="center">154</td>
+<td align="center">149</td>
 </tr>
 <tr class="even">
 <td align="center"><strong>Black</strong></td>
-<td align="center">165</td>
-<td align="center">140</td>
+<td align="center">154</td>
+<td align="center">149</td>
 </tr>
 </tbody>
 </table>
@@ -491,7 +489,7 @@ tbl2 %&gt;%
   `[[`(1)
 X2min</code></pre>
 <pre><code>## X-squared 
-##  2.892301</code></pre>
+##         0</code></pre>
 </div>
 <div id="학적-상태" class="section level3">
 <h3>학적 상태</h3>
@@ -515,13 +513,13 @@ tbl3 %&gt;%
 <tbody>
 <tr class="odd">
 <td align="center"><strong>Red</strong></td>
-<td align="center">6</td>
-<td align="center">299</td>
+<td align="center">5</td>
+<td align="center">298</td>
 </tr>
 <tr class="even">
 <td align="center"><strong>Black</strong></td>
-<td align="center">4</td>
-<td align="center">301</td>
+<td align="center">5</td>
+<td align="center">298</td>
 </tr>
 </tbody>
 </table>
@@ -530,7 +528,7 @@ tbl3 %&gt;%
   `[[`(1)
 X3min</code></pre>
 <pre><code>## X-squared 
-## 0.4066667</code></pre>
+##         0</code></pre>
 </div>
 <div id="e-mail-서비스업체" class="section level3">
 <h3>e-mail 서비스업체</h3>
@@ -560,12 +558,12 @@ tbl4 %&gt;%
 <tr class="odd">
 <td align="center"><strong>Red</strong></td>
 <td align="center">206</td>
-<td align="center">99</td>
+<td align="center">97</td>
 </tr>
 <tr class="even">
 <td align="center"><strong>Black</strong></td>
-<td align="center">210</td>
-<td align="center">95</td>
+<td align="center">209</td>
+<td align="center">94</td>
 </tr>
 </tbody>
 </table>
@@ -573,8 +571,8 @@ tbl4 %&gt;%
   chisq.test(simulate.p.value = TRUE) %&gt;%
   `[[`(1)
 X4min</code></pre>
-<pre><code>## X-squared 
-## 0.1209358</code></pre>
+<pre><code>##  X-squared 
+## 0.06880717</code></pre>
 </div>
 <div id="전화번호의-분포" class="section level3">
 <h3>전화번호의 분포</h3>
@@ -620,29 +618,29 @@ tbl5 %&gt;%
 <tbody>
 <tr class="odd">
 <td align="center"><strong>Red</strong></td>
-<td align="center">33</td>
+<td align="center">40</td>
 <td align="center">35</td>
-<td align="center">21</td>
-<td align="center">30</td>
-<td align="center">33</td>
+<td align="center">20</td>
+<td align="center">29</td>
+<td align="center">32</td>
 <td align="center">29</td>
 <td align="center">27</td>
-<td align="center">36</td>
+<td align="center">32</td>
 <td align="center">25</td>
-<td align="center">36</td>
+<td align="center">34</td>
 </tr>
 <tr class="even">
 <td align="center"><strong>Black</strong></td>
-<td align="center">38</td>
-<td align="center">40</td>
-<td align="center">25</td>
 <td align="center">31</td>
+<td align="center">40</td>
+<td align="center">26</td>
+<td align="center">32</td>
 <td align="center">33</td>
-<td align="center">28</td>
+<td align="center">26</td>
 <td align="center">24</td>
-<td align="center">30</td>
-<td align="center">23</td>
-<td align="center">33</td>
+<td align="center">34</td>
+<td align="center">22</td>
+<td align="center">35</td>
 </tr>
 </tbody>
 </table>
@@ -651,7 +649,7 @@ tbl5 %&gt;%
   `[[`(1)
 X5min</code></pre>
 <pre><code>## X-squared 
-##  2.002903</code></pre>
+##  3.026408</code></pre>
 </div>
 <div id="성씨-분포" class="section level3">
 <h3>성씨 분포</h3>
@@ -688,21 +686,21 @@ tbl6 %&gt;%
 <tbody>
 <tr class="odd">
 <td align="center"><strong>Red</strong></td>
-<td align="center">71</td>
-<td align="center">40</td>
-<td align="center">27</td>
-<td align="center">18</td>
-<td align="center">16</td>
-<td align="center">133</td>
+<td align="center">64</td>
+<td align="center">42</td>
+<td align="center">26</td>
+<td align="center">26</td>
+<td align="center">13</td>
+<td align="center">132</td>
 </tr>
 <tr class="even">
 <td align="center"><strong>Black</strong></td>
-<td align="center">66</td>
-<td align="center">43</td>
-<td align="center">29</td>
-<td align="center">21</td>
-<td align="center">15</td>
-<td align="center">131</td>
+<td align="center">73</td>
+<td align="center">39</td>
+<td align="center">30</td>
+<td align="center">13</td>
+<td align="center">18</td>
+<td align="center">130</td>
 </tr>
 </tbody>
 </table>
@@ -711,7 +709,7 @@ tbl6 %&gt;%
   `[[`(1)
 X6min</code></pre>
 <pre><code>## X-squared 
-## 0.6405229</code></pre>
+##  6.143118</code></pre>
 </div>
 </div>
 <div id="단과대학" class="section level2">
@@ -755,31 +753,31 @@ tbl7 %&gt;%
 <tbody>
 <tr class="odd">
 <td align="center"><strong>Red</strong></td>
-<td align="center">17</td>
-<td align="center">35</td>
+<td align="center">15</td>
+<td align="center">40</td>
+<td align="center">9</td>
+<td align="center">31</td>
 <td align="center">12</td>
+<td align="center">9</td>
+<td align="center">30</td>
 <td align="center">27</td>
-<td align="center">10</td>
-<td align="center">10</td>
-<td align="center">27</td>
-<td align="center">29</td>
-<td align="center">44</td>
-<td align="center">50</td>
-<td align="center">44</td>
+<td align="center">40</td>
+<td align="center">51</td>
+<td align="center">39</td>
 </tr>
 <tr class="even">
 <td align="center"><strong>Black</strong></td>
-<td align="center">15</td>
+<td align="center">17</td>
+<td align="center">36</td>
+<td align="center">14</td>
+<td align="center">21</td>
+<td align="center">7</td>
+<td align="center">7</td>
+<td align="center">29</td>
+<td align="center">30</td>
 <td align="center">41</td>
-<td align="center">12</td>
-<td align="center">26</td>
-<td align="center">9</td>
-<td align="center">6</td>
-<td align="center">32</td>
-<td align="center">28</td>
-<td align="center">39</td>
+<td align="center">50</td>
 <td align="center">51</td>
-<td align="center">46</td>
 </tr>
 </tbody>
 </table>
@@ -788,13 +786,13 @@ tbl7 %&gt;%
   `[[`(1) 
 X7min</code></pre>
 <pre><code>## X-squared 
-##  2.467007</code></pre>
+##   6.70844</code></pre>
 <div id="sum-of-chi_squares" class="section level3">
 <h3>Sum of Chi_Squares</h3>
 <pre class="r"><code>Xsum_min &lt;- X1min + X2min + X3min + X4min + X5min + X6min + X7min
 Xsum_min</code></pre>
 <pre><code>## X-squared 
-##  9.289081</code></pre>
+##  17.91524</code></pre>
 <pre class="r"><code>saveRDS(class_roll, file = &quot;./class_roll_250225.RDS&quot;)
 # save.image(&quot;./red_and_black_240824_data.RData&quot;)</code></pre>
 <p>–&gt;</p>

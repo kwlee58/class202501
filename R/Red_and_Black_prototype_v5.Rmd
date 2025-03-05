@@ -5,7 +5,7 @@ title: "Red and Black : Search for the Best"
 output: html_document
 ---
 
-## 5변수, 5,000,001 ~ 6,000,000
+## 5변수, 1,000,001 ~ 2,000,000
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
@@ -21,12 +21,12 @@ panderOptions('table.split.table', Inf)
 ## Data
 
 ```{r, data, echo = TRUE, results = 'show', warning = TRUE}
-class_roll <- read_excel("./data/class_roll_250301.xlsx", 
-                        range = "B1:H607")
+class_roll <- read_excel("./data/class_roll_250304.xlsx", 
+                        range = "B1:H612")
 str(class_roll)
 names(class_roll) <- c("dept", "college", "id", "name", "status", "email", "cell_no")
 str(class_roll)
-saveRDS(class_roll, file = "class_roll_250225.RDS")
+saveRDS(class_roll, file = "class_roll_250304.RDS")
 ```
 
 ## Helper Functions
@@ -157,8 +157,8 @@ Xmin
 ```{r, for Mac, echo = TRUE, eval = TRUE}
 #> Mac or Linux Version
 library(parallel)
-M1 <- 5000001
-M2 <- 6000000
+M1 <- 1000001
+M2 <- 2000000
 
 # Number of cores on your machine
 num_cores <- detectCores() - 1
