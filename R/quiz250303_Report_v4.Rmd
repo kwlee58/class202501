@@ -10,6 +10,7 @@ output: html_document
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 library(readxl)
+library(readODS)
 library(pander)
 library(knitr)
 library(magrittr)
@@ -84,13 +85,18 @@ saveRDS(class_roll_id_new2, file = "./class_roll_250317_id_new2.RDS")
 
 ```{r, data3, echo = FALSE, message = FALSE, results = 'hide'}
 # Quiz Assortment  
+# quiz <- 
+#   read_ods("./data/quiz_250303.ods",
+#              range = "A2:K192",
+#              col_names = FALSE)
 quiz <- 
   read_excel("./data/quiz_250303.xlsx",
-             range = "A2:K184",
+             range = "A2:K229",
              col_names = FALSE)
 names(quiz) <- 
   c("time", "email", "dept", "id", "name", "Q1", "Q2", "Q3", "group", "Q4_R", "Q4_B")
 str(quiz)
+quiz$time <- as.POSIXct(quiz$time, format = "%m/%d%/Y %H:%M:%S", tz = "Asia/Seoul")
 quiz <- data.frame(quiz)
 class(quiz$id) <- "character"
 quiz %<>%
@@ -546,12 +552,12 @@ days_tbl %>%
 ```{r, echo = FALSE, warning = FALSE}
 days_tbl %>%
   rbind("계" = colSums(.)) %>%
-  `[`(3, 12:14) %>%
+  `[`(3, 11:14) %>%
   pander
 days_chisq_test <-
   days_tbl %>%
   rbind("계" = colSums(.)) %>%
-  `[`(3, 12:14) %>%
+  `[`(3, 11:14) %>%
   chisq.test(simulate.p.value = FALSE) 
 days_chisq_test %>%
   pander
@@ -599,11 +605,11 @@ invisible(dev.off())
 ```{r, echo = FALSE, warning = FALSE}
 days_tbl %>%
   rbind("계" = colSums(.)) %>%
-  `[`(-3, 12:14) %>%
+  `[`(-3, 11:14) %>%
   pander
 days_RnB_chisq_test <-
   days_tbl %>%
-  `[`(-3, 12:14) %>%
+  `[`(-3, 11:14) %>%
   chisq.test(simulate.p.value = FALSE) 
 days_RnB_chisq_test %>%
   pander
