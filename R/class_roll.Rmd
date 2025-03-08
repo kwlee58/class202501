@@ -1,0 +1,56 @@
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(readxl)
+library(pander)
+library(knitr)
+library(magrittr)
+library(dplyr)
+panderOptions('table.split.table', Inf)
+```
+
+## Data
+
+```{r, data, echo = TRUE, results = 'show', warning = TRUE}
+setwd("./R")
+class_roll0304 <- read_excel("./data/class_roll_250304.xlsx", 
+                        range = "B1:H612")
+str(class_roll0304)
+names(class_roll0304) <- c("dept", "college", "id", "name", "status", "email", "cell_no")
+str(class_roll0304)
+class_roll0306 <- read_excel("./data/class_roll_250306.xlsx", 
+                        range = "B1:H611")
+str(class_roll0306)
+names(class_roll0306) <- c("dept", "college", "id", "name", "status", "email", "cell_no")
+str(class_roll0306)
+class_roll0307 <- read_excel("./data/class_roll_250307.xlsx", 
+                        range = "B1:H611")
+str(class_roll0307)
+names(class_roll0307) <- c("dept", "college", "id", "name", "status", "email", "cell_no")
+str(class_roll0307)
+class_roll0308 <- read_excel("./data/class_roll_250308.xlsx", 
+                        range = "B1:H611")
+str(class_roll0308)
+names(class_roll0308) <- c("dept", "college", "id", "name", "status", "email", "cell_no")
+str(class_roll0308)
+class_roll0308_2 <- read_excel("./data/class_roll_250308_2.xlsx", 
+                        range = "B1:H611")
+str(class_roll0308_2)
+names(class_roll0308_2) <- c("dept", "college", "id", "name", "status", "email", "cell_no")
+str(class_roll0308_2)
+class_roll0308_3 <- read_excel("./data/class_roll_250308_3.xlsx", 
+                        range = "B1:H611")
+str(class_roll0308_3)
+names(class_roll0308_3) <- c("dept", "college", "id", "name", "status", "email", "cell_no")
+str(class_roll0308_3)
+setdiff(class_roll0304$id, class_roll0306$id)
+setdiff(class_roll0306$id, class_roll0304$id)
+setdiff(class_roll0306$id, class_roll0307$id)
+setdiff(class_roll0307$id, class_roll0306$id)
+setdiff(class_roll0308$id, class_roll0307$id)
+setdiff(class_roll0307$id, class_roll0308$id)
+setdiff(class_roll0308$id, class_roll0308_2$id)
+setdiff(class_roll0308_2$id, class_roll0308$id)
+setdiff(class_roll0308_3$id, class_roll0308_2$id)
+setdiff(class_roll0308_2$id, class_roll0308_3$id)
+data.frame(class_roll0308_2$id, class_roll0308$id)
+```
