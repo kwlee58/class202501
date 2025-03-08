@@ -29,7 +29,7 @@ str(class_roll)
 ## Randomization
 
 ```{r, randomization}
-set.seed(3676563)
+set.seed(3005029)
 N <- nrow(class_roll) 
 class_roll$group <- 
   sample(1:N) %%

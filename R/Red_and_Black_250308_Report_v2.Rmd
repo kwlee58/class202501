@@ -1,5 +1,5 @@
 ---
-title: "Randomization Report (250225)"
+title: "Randomization Report (250308)"
 author: "coop711"
 date: "2025-02-25"
 output: html_document
@@ -20,7 +20,7 @@ panderOptions('table.alignment.default', 'right')
 <!--# Data Reading-->
 
 ```{r, data, echo = FALSE, results = 'hide'}
-class_roll <- readRDS("./class_roll_250225.RDS")
+class_roll <- readRDS("./class_roll_250308.RDS")
 # load("./red_and_black_240824_data.RData")
 str(class_roll)
 ```
@@ -224,6 +224,6 @@ tbl7 %>%
 
 <!--
 ```{r, save, echo=FALSE, message=FALSE, results='hide'}
-# save.image("../R/red_and_black_250225_data.RData")
+# save.image("../R/red_and_black_250308_data.RData")
 ```
 -->
