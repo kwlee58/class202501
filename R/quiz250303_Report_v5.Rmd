@@ -52,12 +52,14 @@ id_out <- setdiff(class_roll0225$id, class_roll0308$id)
 id_stay <- intersect(class_roll0225$id, class_roll0308$id)
 ## 새로 들어 온 사람들만의 출석부
 class_roll_id_new <- class_roll0308 %>%
-  filter(id %in% id_new)
+  filter(id %in% id_new) %>%
+  arrange(name)
 ## 2월25일, 3월8일 통합 랜덤화 출석부 (기존 수강생들은 2월25일 Red, Black 적용)
 ## 2월25일 등록하고 나간 수강생 중에도 1주차 퀴즈는 수행하였을 가능성이 있기 때문에 0225 전체 적용
 class_roll <- 
   rbind(class_roll0225, class_roll_id_new)
 saveRDS(class_roll, file = "./class_roll_0225_0308.RDS")
+saveRDS(class_roll_id_new, file = "class_roll_250308_id_new.RDS")
 ```
 
 ```{r, data2, echo = FALSE, message = FALSE, results = 'hide', eval = TRUE}
@@ -87,9 +89,9 @@ class_roll_id_new2 <- class_roll_id_new2 %>%
 ## 2월25일 등록하고 나간 수강생 중에도 1주차 퀴즈는 수행하였을 가능성이 있기 때문에 0225 전체 적용 
 class_roll <- 
   rbind(class_roll0225, class_roll_id_new, class_roll_id_new2)
-saveRDS(class_roll, file = "./class_roll_250309_1st_wk.RDS")
+saveRDS(class_roll, file = "./class_roll_0225_0309.RDS")
 saveRDS(class_roll_id_new2, file = "./class_roll_250309_id_new2.RDS")
-## 3월10일 오전 상황 반영
+## 3월10일 상황 반영
 class_roll0310 <- read_excel("./data/class_roll_250310.xlsx", 
                              range = "B1:H611")
 str(class_roll0310)
@@ -98,9 +100,11 @@ str(class_roll0310)
 ## 나간 사람들의 학번과 그룹
 id_out3 <-
   setdiff(class_roll0309$id, class_roll0310$id)
-
-class_roll0309 %>%
+class_roll0225_0309 <- readRDS("class_roll_0225_0309.RDS")
+class_roll0225_0309 %>%
   filter(id %in% id_out3)
+# class_roll0309 %>%
+#   filter(id %in% id_out3)
 ## 새로 들어온 사람들의 학번
 id_new3 <- 
   setdiff(class_roll0310$id, class_roll0309$id)
@@ -108,15 +112,14 @@ id_new3 <-
 class_roll_id_new3 <- class_roll0310 %>%
   filter(id %in% id_new3)
 ## 새로 들어온 사람들 그룹은 직접 지정
-class_roll_id_new3$group <- c(rep("Black", 8), "Red")
+class_roll_id_new3$group <- c(rep("Black", 7), rep("Red", 5))
 class_roll_id_new3 <- class_roll_id_new3 %>%
   select(dept, id, name, status, email, cell_no, group)
 ## 2월25일, 3월9일, 3월10일 통합 랜덤화 출석부 (기존 수강생들은 02/25 Red, Black 적용)
 ## 2월25일 등록하고 나간 수강생 중에도 1주차 퀴즈는 수행하였을 가능성이 있기 때문에 0225 전체 적용 
 class_roll <- 
-  rbind(class_roll0225, class_roll_id_new, class_roll_id_new2, class_roll_id_new3)
-saveRDS(class_roll, file = "./class_roll_250310_1st_wk.RDS")
-saveRDS(class_roll_id_new2, file = "./class_roll_250309_id_new2.RDS")
+  rbind(class_roll0225_0309, class_roll_id_new3)
+saveRDS(class_roll, file = "./class_roll_0225_0310.RDS")
 saveRDS(class_roll_id_new3, file = "./class_roll_250310_id_new3.RDS")
 ```
 
@@ -128,7 +131,7 @@ saveRDS(class_roll_id_new3, file = "./class_roll_250310_id_new3.RDS")
 #              col_names = FALSE)
 quiz <- 
   read_excel("./data/quiz_250303.xlsx",
-             range = "A2:K386",
+             range = "A2:K406",
              col_names = FALSE)
 names(quiz) <- 
   c("time", "email", "dept", "id", "name", "Q1", "Q2", "Q3", "group", "Q4_R", "Q4_B")
@@ -502,7 +505,7 @@ ptbl_q4_a %>%
 
 "바람직한 논의이다"에 부연설명을 붙인 Red에서 "바람직한 논의이다"라고 응답하는 사람들의 백분율, `r format(ptbl_q4_a[1, 1], digits = 2, nsmall = 1)`(%)은 "부적절한 논의이다"에 부연설명을 붙인 Black 에서 "바람직한 논의이다"라고 응답하는 사람들의 백분율, `r format(ptbl_q4_a[2, 1], digits = 2, nsmall = 1)`(%) 보다 높습니다. 
 
-반면 "부적절한 논의이다"에 부연설명을 붙인 Black 에서 "부적절한 논의이다"라고 응답하는 사람들의 백분율, `r format(ptbl_q4_a[2, 2], digits = 2, nsmall = 1)`(%)은 Red 에서 "부적적한 논의이다"라고 응답하는 사람들의 백분율, `r format(ptbl_q4_a[1, 2], digits = 2, nsmall = 1)`(%) 보다 높습니다. 
+반면 "부적절한 논의이다"에 부연설명을 붙인 Black 에서 "부적절한 논의이다"라고 응답하는 사람들의 백분율, `r format(ptbl_q4_a[2, 2], digits = 2, nsmall = 1)`(%)은 Red 에서 "부적절한 논의이다"라고 응답하는 사람들의 백분율, `r format(ptbl_q4_a[1, 2], digits = 2, nsmall = 1)`(%) 보다 높습니다. 
 
 부연설명을 어디에 붙이느냐에 따라 반응이 달라진다는 것을 잘 알 수 있습니다. 
 
@@ -589,12 +592,12 @@ days_tbl %>%
 ```{r, echo = FALSE, warning = FALSE}
 days_tbl %>%
   rbind("계" = colSums(.)) %>%
-  `[`(3, 8:14) %>%
+  `[`(3, 7:14) %>%
   pander
 days_chisq_test <-
   days_tbl %>%
   rbind("계" = colSums(.)) %>%
-  `[`(3, 8:14) %>%
+  `[`(3, 7:14) %>%
   chisq.test(simulate.p.value = FALSE) 
 days_chisq_test %>%
   pander
@@ -642,11 +645,11 @@ invisible(dev.off())
 ```{r, echo = FALSE, warning = FALSE}
 days_tbl %>%
   rbind("계" = colSums(.)) %>%
-  `[`(-3, 8:14) %>%
+  `[`(-3, 7:14) %>%
   pander
 days_RnB_chisq_test <-
   days_tbl %>%
-  `[`(-3, 8:14) %>%
+  `[`(-3, 7:14) %>%
   chisq.test(simulate.p.value = FALSE) 
 days_RnB_chisq_test %>%
   pander
