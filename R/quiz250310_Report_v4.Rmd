@@ -49,7 +49,7 @@ class_roll0310 <-
 class_roll <- class_roll0310
 quiz <- 
   read_excel("./data/quiz_250310.xlsx",
-             range = "A2:N88",
+             range = "A2:N98",
              col_names = FALSE)
 names(quiz) <- 
   c("time", "email", "dept", "id", "name", 
@@ -116,7 +116,7 @@ quiz_wrong_ids <- quiz %>%
 wrong_ids <- quiz_wrong_ids$id
 quiz_wrong_ids <- quiz_wrong_ids %>%
   mutate(id = case_when(
-    id == "202434134" ~ "20243414",
+    id == "20223051" ~ "20223501",
     id == "20242728" ~ "20232728",
     id == "2024210*9" ~ "20242109",
     id == "2024308" ~ "20243048",
@@ -182,11 +182,11 @@ wrong_group <- quiz %>%
   filter(group2 != group)
 
 #> 잘못된 그룹 정보 출력
-# wrong_group %>%
-#   select(time, id, group2, group) %>%
-#   arrange(time) %>%
-#   rename(제출시간 = time, 학번 = id, 랜덤화출석부 = group2, 구글예습퀴즈 = group) %>%
-#   pander(row.names = FALSE)
+wrong_group %>%
+  select(time, id, group2, group) %>%
+  arrange(time) %>%
+  rename(제출시간 = time, 학번 = id, 랜덤화출석부 = group2, 구글예습퀴즈 = group) %>%
+  pander(row.names = FALSE)
 
 #> 옛 코드
 # quiz$group2 <- class_roll$group[match(quiz$id, class_roll$id)]
