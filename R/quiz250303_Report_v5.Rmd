@@ -125,13 +125,9 @@ saveRDS(class_roll_id_new3, file = "./class_roll_250310_id_new3.RDS")
 
 ```{r, data3, echo = FALSE, message = FALSE, results = 'hide'}
 # Quiz Assortment  
-# quiz <- 
-#   read_ods("./data/quiz_250303.ods",
-#              range = "A2:K192",
-#              col_names = FALSE)
 quiz <- 
   read_excel("./data/quiz_250303.xlsx",
-             range = "A2:K406",
+             range = "A2:K432",
              col_names = FALSE)
 names(quiz) <- 
   c("time", "email", "dept", "id", "name", "Q1", "Q2", "Q3", "group", "Q4_R", "Q4_B")

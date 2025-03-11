@@ -6,6 +6,7 @@ output: html_document
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 library(pander)
+library(readxl)
 library(knitr)
 library(magrittr)
 library(dplyr)
@@ -18,13 +19,22 @@ panderOptions('table.split.table', Inf)
 
 ```{r, data, echo = FALSE}
 class_roll0225 <- readRDS("./class_roll_250225.RDS")
+class_roll0310 <- read_excel("./data/class_roll_250310.xlsx", 
+                        range = "B1:H611")
+str(class_roll0310)
+names(class_roll0310) <- c("dept", "college", "id", "name", "status", "email", "cell_no")
 # class_roll <- readRDS("./class_roll_250308.RDS")
 load("./red_and_black_250308_data.RData")
+class_roll0308 <- class_roll[, -c(2, 9)]
+id_out_23 <- setdiff(class_roll0308$id, class_roll0310$id)
+class_roll0308_stay <- class_roll0308 %>%
+  filter(!id %in% id_out_23)
 class_roll_id_new <- readRDS("class_roll_250308_id_new.RDS")
 class_roll_id_new2 <- readRDS("class_roll_250309_id_new2.RDS")
 class_roll_id_new3 <- readRDS("class_roll_250310_id_new3.RDS")
 class_roll_id_new_1_3 <- rbind(class_roll_id_new, class_roll_id_new2, class_roll_id_new3)
 str(class_roll_id_new_1_3)
+class_roll <- rbind(class_roll0308_stay, class_roll_id_new2, class_roll_id_new3)
 ```
 -->
 
@@ -123,8 +133,8 @@ class_roll %>%
   pander(caption = "Black", colnames = c("학번", "이름"), row.names = FALSE)
 ```
 
-```{r, echo = FALSE}
-saveRDS(class_roll, file = "./class_roll_250308.RDS")
+```{r, class_roll, }
+saveRDS(class_roll, file = "./class_roll_250310.RDS")
 ```
 
 <P style="page-break-before:always">
