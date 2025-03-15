@@ -1,5 +1,5 @@
 ---
-title: "랜덤화 출석부 (250310)"
+title: "랜덤화 출석부 (250314)"
 output: html_document
 ---
 
@@ -14,6 +14,7 @@ library(tidyr)
 panderOptions('table.split.table', Inf)
 ```
 
+<!--
 ### Data
 
 ```{r, data, echo = FALSE}
@@ -22,7 +23,7 @@ class_roll0310 <- read_excel("./data/class_roll_250310.xlsx",
                         range = "B1:H611")
 str(class_roll0310)
 names(class_roll0310) <- c("dept", "college", "id", "name", "status", "email", "cell_no")
-# class_roll <- readRDS("./class_roll_250308.RDS")
+# class_roll <- readRDS("./class_roll_250310.RDS")
 load("./red_and_black_250308_data.RData")
 class_roll0308 <- class_roll[, -c(2, 9)]
 id_out_23 <- setdiff(class_roll0308$id, class_roll0310$id)
@@ -32,8 +33,25 @@ class_roll_id_new <- readRDS("class_roll_250308_id_new.RDS")
 class_roll_id_new2 <- readRDS("class_roll_250309_id_new2.RDS")
 class_roll_id_new3 <- readRDS("class_roll_250310_id_new3.RDS")
 class_roll_id_new_1_3 <- rbind(class_roll_id_new, class_roll_id_new2, class_roll_id_new3)
+class_roll_id_new4 <- readRDS("class_roll_250314_id_new4.RDS")
 str(class_roll_id_new_1_3)
-class_roll <- rbind(class_roll0308_stay, class_roll_id_new2, class_roll_id_new3)
+class_roll0310 <- rbind(class_roll0308_stay, class_roll_id_new2, class_roll_id_new3)
+str(class_roll0310)
+## 3월14일 상황 반영
+class_roll0314 <- read_excel("./data/class_roll_250314.xlsx", 
+                        range = "B1:H611")
+str(class_roll0314)
+names(class_roll0314) <- c("dept", "college", "id", "name", "status", "email", "cell_no")
+class_roll0314 <- class_roll0314[, -2]
+str(class_roll0314)
+id_out_4 <- setdiff(class_roll0310$id, class_roll0314$id)
+class_roll0310_stay <- class_roll0310 %>%
+  filter(!id %in% id_out_4)
+str(class_roll0310_stay)
+class_roll_id_new4 <- readRDS("class_roll_250314_id_new4.RDS")
+class_roll_id_new_1_4 <- rbind(class_roll_id_new_1_3, class_roll_id_new4)
+str(class_roll_id_new_1_4)
+class_roll <- rbind(class_roll0310_stay, class_roll_id_new_1_4)
 ```
 -->
 
@@ -42,7 +60,7 @@ class_roll <- rbind(class_roll0308_stay, class_roll_id_new2, class_roll_id_new3)
 ```{r, echo = FALSE}
 # class_roll %>%
 #  subset(., subset = .$id %in% id_new) 
-class_roll_id_new_1_3 %>%
+class_roll_id_new_1_4 %>%
   arrange(name) %>%
   select(id, name, group) %>%
 #  rename("학번" = id, "이름" = name, "그룹" = group) %>%
@@ -54,10 +72,11 @@ class_roll_id_new_1_3 %>%
 
 ```{r, echo = FALSE}
 # 1. 각 데이터에 날짜 정보 추가
+class_roll0225 <- class_roll0225[, -c(2, 9)]
 class_roll0225 <- class_roll0225 %>%
   mutate(date = "0225")
 
-class_roll <- class_roll %>%
+class_roll <- readRDS("./class_roll_250310.RDS") %>%
   mutate(date = "0308")
 
 # 2. 두 데이터 결합 (id와 날짜를 기준으로)

@@ -11,7 +11,7 @@
 
 
 
-<title>랜덤화 출석부 (250310)</title>
+<title>랜덤화 출석부 (250314)</title>
 
 <script>// Pandoc 2.9 adds attributes on both header and div. We remove the former (to
 // be compatible with the behavior of Pandoc < 2.8).
@@ -348,31 +348,91 @@ display: none;
 
 
 
-<h1 class="title toc-ignore">랜덤화 출석부 (250310)</h1>
+<h1 class="title toc-ignore">랜덤화 출석부 (250314)</h1>
 
 </div>
 
 
-<div id="data" class="section level3">
-<h3>Data</h3>
-<pre><code>## tibble [610 × 7] (S3: tbl_df/tbl/data.frame)
-##  $ 학과(전공) : chr [1:610] &quot;간호학과&quot; &quot;간호학과&quot; &quot;간호학과&quot; &quot;간호학과&quot; ...
-##  $ 단과대학   : chr [1:610] &quot;간호대학&quot; &quot;간호대학&quot; &quot;간호대학&quot; &quot;간호대학&quot; ...
-##  $ 학번       : chr [1:610] &quot;20196285&quot; &quot;20226281&quot; &quot;20236228&quot; &quot;20236281&quot; ...
-##  $ 이름       : chr [1:610] &quot;조연서&quot; &quot;임승언&quot; &quot;김재원&quot; &quot;이진우&quot; ...
-##  $ 역할       : chr [1:610] &quot;학생&quot; &quot;군휴학생&quot; &quot;학생&quot; &quot;학생&quot; ...
-##  $ 이메일 주소: chr [1:610] &quot;999justin@naver.com&quot; &quot;lsa3173@naver.com&quot; &quot;jaenn103@naver.com&quot; &quot;dragon2003n@naver.com&quot; ...
-##  $ 휴대 전화  : chr [1:610] &quot;01092431659&quot; &quot;01035834684&quot; &quot;01089051911&quot; &quot;01047158287&quot; ...</code></pre>
-<pre><code>## tibble [46 × 7] (S3: tbl_df/tbl/data.frame)
-##  $ dept   : chr [1:46] &quot;디지털미디어콘텐츠전공&quot; &quot;경영대학&quot; &quot;디지털미디어콘텐츠전공&quot; &quot;경영학과&quot; ...
-##  $ id     : chr [1:46] &quot;20246703&quot; &quot;20252916&quot; &quot;20242508&quot; &quot;20241020&quot; ...
-##  $ name   : chr [1:46] &quot;고연서&quot; &quot;김래현&quot; &quot;김민찬&quot; &quot;김유하&quot; ...
-##  $ status : chr [1:46] &quot;학생&quot; &quot;학생&quot; &quot;학생&quot; &quot;학생&quot; ...
-##  $ email  : chr [1:46] &quot;yeonseo9033@gmail.com&quot; &quot;bestkrh@naver.com&quot; &quot;minchan6020@gmail.com&quot; &quot;sghsyuha@naver.com&quot; ...
-##  $ cell_no: chr [1:46] &quot;01071949033&quot; &quot;01055643887&quot; &quot;01030886973&quot; &quot;01025101192&quot; ...
-##  $ group  : Factor w/ 2 levels &quot;Red&quot;,&quot;Black&quot;: 2 2 2 1 1 1 1 1 2 1 ...</code></pre>
-<p>–&gt;</p>
-</div>
+<!--
+### Data
+
+
+```
+## tibble [610 × 7] (S3: tbl_df/tbl/data.frame)
+##  $ 학과(전공) : chr [1:610] "간호학과" "간호학과" "간호학과" "간호학과" ...
+##  $ 단과대학   : chr [1:610] "간호대학" "간호대학" "간호대학" "간호대학" ...
+##  $ 학번       : chr [1:610] "20196285" "20226281" "20236228" "20236281" ...
+##  $ 이름       : chr [1:610] "조연서" "임승언" "김재원" "이진우" ...
+##  $ 역할       : chr [1:610] "학생" "군휴학생" "학생" "학생" ...
+##  $ 이메일 주소: chr [1:610] "999justin@naver.com" "lsa3173@naver.com" "jaenn103@naver.com" "dragon2003n@naver.com" ...
+##  $ 휴대 전화  : chr [1:610] "01092431659" "01035834684" "01089051911" "01047158287" ...
+```
+
+```
+## tibble [46 × 7] (S3: tbl_df/tbl/data.frame)
+##  $ dept   : chr [1:46] "디지털미디어콘텐츠전공" "경영대학" "디지털미디어콘텐츠전공" "경영학과" ...
+##  $ id     : chr [1:46] "20246703" "20252916" "20242508" "20241020" ...
+##  $ name   : chr [1:46] "고연서" "김래현" "김민찬" "김유하" ...
+##  $ status : chr [1:46] "학생" "학생" "학생" "학생" ...
+##  $ email  : chr [1:46] "yeonseo9033@gmail.com" "bestkrh@naver.com" "minchan6020@gmail.com" "sghsyuha@naver.com" ...
+##  $ cell_no: chr [1:46] "01071949033" "01055643887" "01030886973" "01025101192" ...
+##  $ group  : Factor w/ 2 levels "Red","Black": 2 2 2 1 1 1 1 1 2 1 ...
+```
+
+```
+## tibble [610 × 7] (S3: tbl_df/tbl/data.frame)
+##  $ dept   : chr [1:610] "철학전공" "법학과" "사학전공" "심리학과" ...
+##  $ id     : chr [1:610] "20171054" "20172727" "20181117" "20182101" ...
+##  $ name   : chr [1:610] "신재헌" "변우진" "홍민표" "강미소" ...
+##  $ status : chr [1:610] "학생" "학생" "학생" "학생" ...
+##  $ email  : chr [1:610] "1998sin@naver.com" "buj0109@naver.com" "mp0945@naver.com" "zesprie@naver.com" ...
+##  $ cell_no: chr [1:610] "01020171322" "01096209322" "01051159972" "01082373567" ...
+##  $ group  : Factor w/ 2 levels "Red","Black": 1 2 1 2 2 2 2 2 2 1 ...
+```
+
+```
+## tibble [610 × 7] (S3: tbl_df/tbl/data.frame)
+##  $ 학과(전공) : chr [1:610] "철학전공" "법학과" "사학전공" "심리학과" ...
+##  $ 단과대학   : chr [1:610] "인문대학" "사회과학대학" "인문대학" "사회과학대학" ...
+##  $ 학번       : chr [1:610] "20171054" "20172727" "20181117" "20182101" ...
+##  $ 이름       : chr [1:610] "신재헌" "변우진" "홍민표" "강미소" ...
+##  $ 역할       : chr [1:610] "학생" "학생" "학생" "학생" ...
+##  $ 이메일 주소: chr [1:610] "1998sin@naver.com" "buj0109@naver.com" "mp0945@naver.com" "zesprie@naver.com" ...
+##  $ 휴대 전화  : chr [1:610] "01020171322" "01096209322" "01051159972" "01082373567" ...
+```
+
+```
+## tibble [610 × 6] (S3: tbl_df/tbl/data.frame)
+##  $ dept   : chr [1:610] "철학전공" "법학과" "사학전공" "심리학과" ...
+##  $ id     : chr [1:610] "20171054" "20172727" "20181117" "20182101" ...
+##  $ name   : chr [1:610] "신재헌" "변우진" "홍민표" "강미소" ...
+##  $ status : chr [1:610] "학생" "학생" "학생" "학생" ...
+##  $ email  : chr [1:610] "1998sin@naver.com" "buj0109@naver.com" "mp0945@naver.com" "zesprie@naver.com" ...
+##  $ cell_no: chr [1:610] "01020171322" "01096209322" "01051159972" "01082373567" ...
+```
+
+```
+## tibble [607 × 7] (S3: tbl_df/tbl/data.frame)
+##  $ dept   : chr [1:607] "철학전공" "법학과" "사학전공" "심리학과" ...
+##  $ id     : chr [1:607] "20171054" "20172727" "20181117" "20182101" ...
+##  $ name   : chr [1:607] "신재헌" "변우진" "홍민표" "강미소" ...
+##  $ status : chr [1:607] "학생" "학생" "학생" "학생" ...
+##  $ email  : chr [1:607] "1998sin@naver.com" "buj0109@naver.com" "mp0945@naver.com" "zesprie@naver.com" ...
+##  $ cell_no: chr [1:607] "01020171322" "01096209322" "01051159972" "01082373567" ...
+##  $ group  : Factor w/ 2 levels "Red","Black": 1 2 1 2 2 2 2 2 2 1 ...
+```
+
+```
+## tibble [49 × 7] (S3: tbl_df/tbl/data.frame)
+##  $ dept   : chr [1:49] "디지털미디어콘텐츠전공" "경영대학" "디지털미디어콘텐츠전공" "경영학과" ...
+##  $ id     : chr [1:49] "20246703" "20252916" "20242508" "20241020" ...
+##  $ name   : chr [1:49] "고연서" "김래현" "김민찬" "김유하" ...
+##  $ status : chr [1:49] "학생" "학생" "학생" "학생" ...
+##  $ email  : chr [1:49] "yeonseo9033@gmail.com" "bestkrh@naver.com" "minchan6020@gmail.com" "sghsyuha@naver.com" ...
+##  $ cell_no: chr [1:49] "01071949033" "01055643887" "01030886973" "01025101192" ...
+##  $ group  : Factor w/ 2 levels "Red","Black": 2 2 2 1 1 1 1 1 2 1 ...
+```
+-->
 <div id="수강변경-기간-중-들어온-사람들" class="section level2">
 <h2>수강변경 기간 중 들어온 사람들</h2>
 <table style="width:40%;">
@@ -451,24 +511,34 @@ display: none;
 <td align="center">Black</td>
 </tr>
 <tr class="odd">
+<td align="center">20206612</td>
+<td align="center">박도은</td>
+<td align="center">Black</td>
+</tr>
+<tr class="even">
 <td align="center">20222116</td>
 <td align="center">박서희</td>
 <td align="center">Red</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td align="center">20242717</td>
 <td align="center">박선근</td>
 <td align="center">Red</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td align="center">20222326</td>
 <td align="center">박하민</td>
 <td align="center">Black</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td align="center">20252122</td>
 <td align="center">신승우</td>
 <td align="center">Red</td>
+</tr>
+<tr class="even">
+<td align="center">20255214</td>
+<td align="center">윤석희</td>
+<td align="center">Black</td>
 </tr>
 <tr class="odd">
 <td align="center">20243831</td>
@@ -511,111 +581,116 @@ display: none;
 <td align="center">Black</td>
 </tr>
 <tr class="odd">
+<td align="center">20195226</td>
+<td align="center">이준협</td>
+<td align="center">Black</td>
+</tr>
+<tr class="even">
 <td align="center">20253241</td>
 <td align="center">이진헌</td>
 <td align="center">Red</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td align="center">20253018</td>
 <td align="center">이한울</td>
 <td align="center">Red</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td align="center">20243944</td>
 <td align="center">임지인</td>
 <td align="center">Black</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td align="center">20245245</td>
 <td align="center">장현서</td>
 <td align="center">Black</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td align="center">20256773</td>
 <td align="center">정경환</td>
 <td align="center">Red</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td align="center">20253244</td>
 <td align="center">정다은</td>
 <td align="center">Red</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td align="center">20256637</td>
 <td align="center">정민서</td>
 <td align="center">Black</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td align="center">20252433</td>
 <td align="center">정민서</td>
 <td align="center">Red</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td align="center">20223428</td>
 <td align="center">정선영</td>
 <td align="center">Black</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td align="center">20253725</td>
 <td align="center">정유리</td>
 <td align="center">Red</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td align="center">20241091</td>
 <td align="center">정유찬</td>
 <td align="center">Red</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td align="center">20217073</td>
 <td align="center">지예슬</td>
 <td align="center">Black</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td align="center">20243429</td>
 <td align="center">최승빈</td>
 <td align="center">Black</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td align="center">20233433</td>
 <td align="center">최재희</td>
 <td align="center">Red</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td align="center">20252139</td>
 <td align="center">최태선</td>
 <td align="center">Red</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td align="center">20255271</td>
 <td align="center">최현준</td>
 <td align="center">Black</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td align="center">20255273</td>
 <td align="center">한수민</td>
 <td align="center">Red</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td align="center">20243848</td>
 <td align="center">함효린</td>
 <td align="center">Black</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td align="center">20221111</td>
 <td align="center">허윤진</td>
 <td align="center">Black</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td align="center">20253840</td>
 <td align="center">황다은</td>
 <td align="center">Red</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td align="center">20183016</td>
 <td align="center">황동준</td>
 <td align="center">Black</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td align="center">20254146</td>
 <td align="center">황보연</td>
 <td align="center">Red</td>
