@@ -1,8 +1,8 @@
 ---
 title: "Quiz 250303"
 author: "coop711"
-# date: "2025-03-03"
-date: "`r format(Sys.time(), '%Y-%m-%d %H:%M:%S')`"
+date: "2025-03-03"
+# date: "`r format(Sys.time(), '%Y-%m-%d %H:%M:%S')`"
 output: html_document
 ---
 
@@ -10,6 +10,7 @@ output: html_document
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
+Sys.setenv(TZ = "Asia/Seoul")
 library(readxl)
 library(readODS)
 library(pander)
@@ -158,12 +159,14 @@ saveRDS(class_roll_id_new4, file = "./class_roll_250314_id_new4.RDS")
 # Quiz Assortment  
 quiz <- 
   read_excel("./data/quiz_250303.xlsx",
-             range = "A2:K500",
+             range = "A2:K582",
              col_names = FALSE)
 names(quiz) <- 
   c("time", "email", "dept", "id", "name", "Q1", "Q2", "Q3", "group", "Q4_R", "Q4_B")
 str(quiz)
-quiz$time <- as.POSIXct(quiz$time, format = "%m/%d%/Y %H:%M:%S", tz = "Asia/Seoul")
+## as.POSIXct 는 말썽 초래.
+# quiz$time <- as.POSIXct(quiz$time, format = "%m/%d%/Y %H:%M:%S", tz = "Asia/Seoul")
+quiz$time <- format(quiz$time, format = "%Y-%m-%d %H:%M:%S")
 quiz <- data.frame(quiz)
 class(quiz$id) <- "character"
 quiz %<>%
@@ -191,6 +194,9 @@ quiz$Q3 <- factor(quiz$Q3,
 quiz$Q4 <- factor(quiz$Q4, 
                   levels = c("바람직한 논의이다", "부적절한 논의이다", "모름/무응답"))
 table(quiz$Q4, useNA = "ifany")
+```
+
+```{r, cleaning, echo = FALSE, results = 'hide'}
 #> 학번 잘못 써서 고생시키는 녀석들 찾아내는 코드
 wrong_id <- setdiff(quiz$id, class_roll$id)
 quiz %>%
@@ -206,6 +212,7 @@ quiz_wrong_ids <- quiz_wrong_ids %>%
     id == "2024274" ~ "20242743",
     id == "2020301" ~ "20203014",
     id == "2024748" ~ "20242748",
+    id == "20242616" ~ "20242615",
     TRUE ~ id
   ))
 # 3. quiz 에서 id 틀린 행을 제거하고 옳은 id 갖춘 행으로 교체하기
@@ -227,25 +234,36 @@ quiz <- quiz %>%
 #> 중복 제출자
 which(duplicated(quiz$id)) %>%
   quiz[., c("id", "name")]
-quiz[quiz$name == "최재혁", ]
-quiz[quiz$name == "우로겸", ]
-quiz[quiz$id == "20242128", ]
+#> 중복 제출자
+quiz %>%
+  filter(duplicated(id)) %>%
+  select(id, name)
+# which(duplicated(quiz$id)) %>%
+#   quiz[., c("id", "name")]
+quiz %>%
+  filter(id %in% c("20242917", "20243023", "20241232", "20256637", "20223044"))
+# quiz[quiz$name %in% c("최재혁", "박지연"), ] #> 최재혁, 박지연이 중복 제출
+quiz <- quiz %>% 
+  arrange(id, desc(time)) %>%
+  distinct(id, .keep_all = TRUE)
 #> 불참자들
-# absentee <- class_roll0317 %>%
-#   anti_join(quiz, by = "id") %>%
-#   select(id, name) %>%
-#   arrange(id)
-# absentee <- 
-#   class_roll0317[class_roll0317$id %in% setdiff(class_roll0317$id, quiz$id), c("id", "name")] %>%
-#   `[`(order(.$id), ) 
-# absentee %>%
-#   pander(row.names = FALSE) 
-# absentee$group %>%
-#   table
+class_roll0314 <- readRDS("./class_roll_250314.RDS")
+absentee <- class_roll0314 %>%
+  anti_join(quiz, by = "id") %>%
+  select(id, name) %>%
+  arrange(id)
+absentee <- 
+  class_roll0314[class_roll0314$id %in% setdiff(class_roll0314$id, quiz$id), c("id", "name", "group")] %>%
+  `[`(order(.$id), ) 
+absentee %>%
+  pander(row.names = FALSE) 
+absentee$group %>%
+  table
 #> 마감기한으로부터 제출시점의 기간
-quiz$days <- as.numeric(difftime("2025-03-17 09:00:00", quiz$time, units = 'days'))
-quiz$hours <- as.numeric(difftime("2025-03-17 09:00:00", quiz$time, units = 'hours'))
+quiz$days <- as.numeric(difftime("2025-03-17 00:00:00", quiz$time, units = 'days'))
+quiz$hours <- as.numeric(difftime("2025-03-17 00:00:00", quiz$time, units = 'hours'))
 str(quiz)
+table(as.Date(quiz$time))
 ```
 
 ### Red, Black을 잘못 표시한 사람들
@@ -263,10 +281,10 @@ wrong_group <- which(quiz$group != quiz$group2)
 #   `[`(order(.$name), ) %>%
 #   `colnames<-`(c("학번", "이름", "랜덤화출석부", "구글예습퀴즈")) %>%
 #   pander(row.names = FALSE)
-quiz[wrong_group, c("time", "id", "group2", "group")] %>%
-  `[`(order(.$time), ) %>%
-  `colnames<-`(c("제출시간", "학번", "랜덤화출석부", "구글예습퀴즈")) %>%
-  pander(row.names = FALSE)
+# quiz[wrong_group, c("time", "id", "group2", "group")] %>%
+#   `[`(order(.$time), ) %>%
+#   `colnames<-`(c("제출시간", "학번", "랜덤화출석부", "구글예습퀴즈")) %>%
+#   pander(row.names = FALSE)
 wrong_tbl <- table("랜덤화출석부" = quiz$group2, 
                    "구글예습퀴즈" = quiz$group)
 wrong_tbl %>%
@@ -598,6 +616,7 @@ tbl_q4 %>%
 N <- nrow(quiz)
 days_tbl <- 
   quiz$days %>%
+#  floor %>%
   cut(breaks = c(0:14), include.lowest = TRUE) %>%
   table(quiz$group, .) 
 days_tbl %>%
@@ -619,12 +638,12 @@ days_tbl %>%
 ```{r, echo = FALSE, warning = FALSE}
 days_tbl %>%
   rbind("계" = colSums(.)) %>%
-  `[`(3, 3:14) %>%
+  `[`(3, 1:14) %>%
   pander
 days_chisq_test <-
   days_tbl %>%
   rbind("계" = colSums(.)) %>%
-  `[`(3, 3:14) %>%
+  `[`(3, 1:14) %>%
   chisq.test(simulate.p.value = FALSE) 
 days_chisq_test %>%
   pander
@@ -672,11 +691,11 @@ invisible(dev.off())
 ```{r, echo = FALSE, warning = FALSE}
 days_tbl %>%
   rbind("계" = colSums(.)) %>%
-  `[`(-3, 3:14) %>%
+  `[`(-3, 1:14) %>%
   pander
 days_RnB_chisq_test <-
   days_tbl %>%
-  `[`(-3, 3:14) %>%
+  `[`(-3, 1:14) %>%
   chisq.test(simulate.p.value = FALSE) 
 days_RnB_chisq_test %>%
   pander

@@ -55,7 +55,7 @@ class_roll <- rbind(class_roll0310_stay, class_roll_id_new_1_4)
 ```
 -->
 
-## 수강변경 기간 중 들어온 사람들
+## 수강변경 기간 이후 들어온 사람들
 
 ```{r, echo = FALSE}
 # class_roll %>%
@@ -116,6 +116,7 @@ wide_class_roll %>%
   pander(col.names = c("학번", "이름", "2월25일 그룹", "3월8일 그룹"))
 ```
 
+<!--
 ## 전체 랜덤화 출석부 (3월10일 기준)
 
 ```{r, echo = FALSE}
@@ -152,8 +153,9 @@ class_roll %>%
 ```
 
 ```{r, class_roll, }
-saveRDS(class_roll, file = "./class_roll_250310.RDS")
+saveRDS(class_roll, file = "./class_roll_250314_pooled.RDS")
 ```
 
 <P style="page-break-before:always">
+-->
 
