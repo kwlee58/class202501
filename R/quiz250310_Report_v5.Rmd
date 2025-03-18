@@ -44,12 +44,20 @@ class_roll0314$group <-
   class_roll0310$group[match(class_roll0314$id, class_roll0310$id)]
 #> 폐강으로 인하여 들어 온 수강생들의 그룹 설정
 na_gr <- which(is.na(class_roll0314$group)) 
+class_roll0314[na_gr, ]
+#> 나간 사람들이 모두 Black 이므로
 class_roll0314[na_gr, "group"] <- c("Black")
 saveRDS(class_roll0314, file = "./class_roll_250314.RDS")
-class_roll <- class_roll0314
+#> 3월17일 기준 수강철회자 파악 후 조치
+class_roll0317 <- class_roll0314 %>%
+  filter(id != "20252139")
+# class_roll0317 <- class_roll0314[!(class_roll0314$id == "20252139"), ]
+saveRDS(class_roll0317, file = "./class_roll_250317.RDS")
+class_roll <- class_roll0317
+#> quiz reading
 quiz <- 
   read_excel("./data/quiz_250310.xlsx",
-             range = "A2:N362",
+             range = "A2:N376",
              col_names = FALSE)
 names(quiz) <- 
   c("time", "email", "dept", "id", "name", 
@@ -122,6 +130,7 @@ wrong_ids <- quiz_wrong_ids$id
 quiz_wrong_ids <- quiz_wrong_ids %>%
   mutate(id = case_when(
     id == "20223051" ~ "20223501",
+    id == "20246475" ~ "20246745",
     TRUE ~ id
   ))
 # 3. quiz 에서 id 틀린 행을 제거하고 옳은 id 갖춘 행으로 교체하기

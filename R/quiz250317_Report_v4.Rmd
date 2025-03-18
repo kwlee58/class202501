@@ -50,7 +50,7 @@ class_roll0314 <- data.frame(class_roll0314)
 class_roll <- class_roll0314
 quiz <- 
   read_excel("./data/quiz_250317.xlsx",
-             range = "A2:N44",
+             range = "A2:N81",
              col_names = FALSE)
 names(quiz) <- 
   c("time", "email", "dept", "id", "name", 
