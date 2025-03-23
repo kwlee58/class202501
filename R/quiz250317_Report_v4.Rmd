@@ -2,6 +2,7 @@
 title: "Quiz 250317"
 author: "coop711"
 date: "2025-03-17"
+# date: "`r format(Sys.time(), '%Y-%m-%d %H:%M:%S')`"
 output: html_document
 ---
 
@@ -35,32 +36,49 @@ class_roll0314 <-
   readRDS("./class_roll_250314.RDS")
 class_roll0314 <- data.frame(class_roll0314)
 ## 수강 철회 반영 새 출석부
-# class_roll0927 <- 
-#   read_excel("./data/class_roll240927.xlsx", range = "B1:G808")
-# str(class_roll0927)
-# names(class_roll0927) <- 
-#   c("dept", "id", "name", "status", "email", "cell_no")
-# class_roll0927$group <- 
-#   class_roll0913$group[match(class_roll0927$id, class_roll0913$id)]
-#> 폐강으로 인하여 들어 온 수강생들의 그룹 설정
-# na_gr <- which(is.na(class_roll0913$group)) 
-# class_roll0913[na_gr, "group"] <- c("Red", "Black")
-#> class_roll_240927 저장
-# saveRDS(class_roll0927, file = "./class_roll_240927.RDS")
-class_roll <- class_roll0314
+class_roll0321 <- read_excel("./data/class_roll_250321.xlsx", 
+                        range = "B1:H605")
+names(class_roll0321) <- c("dept", "college", "id", "name", "status", "email", "cell_no")
+str(class_roll0321)
+class_roll0321$group <- 
+  class_roll0314$group[match(class_roll0321$id, class_roll0314$id)]
+#> class_roll_250321 저장
+saveRDS(class_roll0321, file = "./class_roll_250321.RDS")
+class_roll <- class_roll0321
 quiz <- 
   read_excel("./data/quiz_250317.xlsx",
-             range = "A2:N81",
+             range = "A2:N329",
              col_names = FALSE)
 names(quiz) <- 
   c("time", "email", "dept", "id", "name", 
     "Q1", "Q2", "Q3", "Q4", "Q5", "Q6", "group", "Q7_R", "Q7_B")
+str(quiz)
 ## TZ Asia/Seoul 로 설정. UTC 왜곡 배제 효과
+# quiz$time <- as.POSIXct(quiz$time, tz = "Asia/Seoul")
 quiz$time <- format(quiz$time, format = "%Y-%m-%d %H:%M:%S")
-## 자정 전에 제출한 사람의 시간 조정
+## 자정 전에 들어 온 사람은 몇 명이나?
+as.Date(quiz$time) %>%
+  table
+# 03-16 제출자 인덱스 찾기
+idx <- which(as.Date(quiz$time) == as.Date("2025-03-16"))
+
+# 새 시간 생성: 2025-03-17 00:01:00, 00:02:00, ...
+# new_times <- as.POSIXct("2025-03-17 00:01:00") + 60 * (seq_along(idx) - 1)
+
+# 해당 사람들의 시간 업데이트
+# quiz$time[idx] <- new_times
+
+# 강제로 타임존 설정
+# attr(quiz$time, "tzone") <- "Asia/Seoul"
+
+# 확인
+# table(as.Date(format(quiz$time, format = "%Y-%m-%d", tz = "Asia/Seoul")))
+## 자정 전에 제출한 사람의 시간 수동 조정
 quiz[quiz$id == "20237008", "time"] <- c("2025-03-17 00:00:01")
 quiz[quiz$id == "20226782", "time"] <- c("2025-03-17 00:00:02")
 str(quiz)
+as.Date(quiz$time) %>%
+  table
 quiz <- data.frame(quiz)
 class(quiz$id) <- "character"
 quiz$Q2 <- paste0(quiz$Q2 * 100, "%")
@@ -102,6 +120,10 @@ quiz$Q7 <-
                     "높여야 한다", 
                     "모름/무응답"))
 #> 마감기한으로부터 제출시점의 기간
+# quiz$days <- 
+#   as.numeric(difftime(as.POSIXct("2025-03-31 00:00:00", format = "%Y-%m-%d %H:%M:%S"),
+#                       as.POSIXct(quiz$time, format = "%Y-%m-%d %H:%M:%S"), 
+#                       units = 'days'))
 quiz$days <- 
   as.numeric(difftime("2025-03-31 00:00:00", quiz$time, units = 'days'))
 quiz$hours <- 
@@ -156,7 +178,7 @@ quiz %>%
 # which(duplicated(quiz$id)) %>%
 #   quiz[., c("id", "name")]
 quiz %>%
-  filter(name %in% c("허지수"))
+  filter(id %in% c("20213320", "20241232"))
 # quiz[quiz$name %in% c("최재혁", "박지연"), ] #> 최재혁, 박지연이 중복 제출
 quiz <- quiz %>% 
   arrange(id, desc(time)) %>%
@@ -265,7 +287,7 @@ include_graphics("./pics/Quiz230315_Q1.png")
 
 ### 국세와 지방세 비중(집계표)
 
-```{r, national vs local tax, echo = FALSE}
+```{r, national vs local tax, echo = FALSE,warning = FALSE}
 tbl_q1_a <- 
   quiz$Q1 %>% 
   table(quiz$group, ., useNA = "ifany") %>%
@@ -276,7 +298,7 @@ tbl_q1_a %>%
 chisq_test_q1 <- 
   tbl_q1_a %>%
   `[`(-3, -6) %>%
-  chisq.test(simulate.p.value = TRUE) 
+  chisq.test(simulate.p.value = FALSE) 
 chisq_test_q1 %>%
   pander
 ```
@@ -710,12 +732,12 @@ days_tbl %>%
 ```{r, echo = FALSE, warning = FALSE}
 days_tbl %>%
   rbind("계" = colSums(.)) %>%
-  `[`(3, 13:14) %>%
+  `[`(3, 8:14) %>%
   pander
 days_chisq_test <-
   days_tbl %>%
   rbind("계" = colSums(.)) %>%
-  `[`(3, 13:14) %>%
+  `[`(3, 8:14) %>%
   chisq.test(simulate.p.value = FALSE) 
 days_chisq_test %>%
   pander
@@ -763,11 +785,11 @@ invisible(dev.off())
 ```{r, echo = FALSE, warning = FALSE}
 days_tbl %>%
   rbind("계" = colSums(.)) %>%
-  `[`(-3, 13:14) %>%
+  `[`(-3, 8:14) %>%
   pander
 days_RnB_chisq_test <-
   days_tbl %>%
-  `[`(-3, 13:14) %>%
+  `[`(-3, 8:14) %>%
   chisq.test(simulate.p.value = FALSE) 
 days_RnB_chisq_test %>%
   pander

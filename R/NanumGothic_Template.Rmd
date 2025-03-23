@@ -1,0 +1,38 @@
+---
+title: "Nanum Gothic 테스트"
+author: "Kee-Won Lee"
+date: "`r format(Sys.time(), '%Y-%m-%d %H:%M:%S')`"
+output:
+  pdf_document:
+    latex_engine: xelatex
+    dev: cairo_pdf
+    keep_tex: true
+header-includes:
+  - \usepackage{fontspec}
+  - \setmainfont{NanumGothic}
+  - \setsansfont{NanumGothic}
+  - \setmonofont{NanumGothic}
+---
+
+```{r setup, include=FALSE}
+library(showtext)
+font_add(family = "nanum", 
+         regular = "/Users/kwlee/Library/Fonts/NanumGothic-Regular.ttf",
+         bold    = "/Users/kwlee/Library/Fonts/NanumGothic-Bold.ttf",
+         italic  = "/Users/kwlee/Library/Fonts/NanumGothic-ExtraBold.ttf")
+showtext_auto()
+```
+
+## 예제 그래프 (base plot)
+```{r base-plot}
+plot(1:10, main = "나눔고딕 한글 테스트", family = "nanum", font.main = 3)
+```
+
+## 예제 그래프 (ggplot2)
+```{r ggplot}
+library(ggplot2)
+ggplot(mtcars, aes(x = factor(cyl))) +
+  geom_bar() +
+  labs(title = "나눔고딕 제목입니다") +
+  theme(text = element_text(family = "nanum", face = "bold"))
+```

@@ -2,7 +2,15 @@
 title: "Quiz 250310"
 author: "coop711"
 date: "`r format(Sys.time(), '%Y-%m-%d %H:%M:%S')`"
-output: html_document
+output:
+  pdf_document: 
+    latex_engine: xelatex
+    keep_tex: true
+    dev: cairo_pdf
+header-includes:
+  - \usepackage{fontspec}
+#   - \setmainfont{nanum Sans KR}
+  - \setmainfont{NanumGothic}
 ---
 
 # 2주차 데이터 실험 집계
@@ -15,6 +23,21 @@ library(knitr)
 library(magrittr)
 library(dplyr)
 library(stringdist)
+library(showtext)
+# font_add(family = "nanum", regular = "/Users/kwlee/Library/Fonts/nanumSansKR-VariableFont_wght.ttf")
+# font_add(family = "nanum", 
+#          regular = "/Users/kwlee/Library/Fonts/NanumGothic-Regular.ttf",
+#          bold    = "/Users/kwlee/Library/Fonts/NanumGothic-Bold.ttf",
+#          italic  = "/Users/kwlee/Library/Fonts/NanumGothic-ExtraBold.ttf")
+font_add(family = "kopub", 
+         regular = "/Users/kwlee/Library/Fonts/KoPubWorld Dotum Medium.ttf",
+         bold = "/Users/kwlee/Library/Fonts/KoPubWorld Dotum Bold.ttf",
+         italic  = "/Users/kwlee/Library/Fonts/KoPubWorld Dotum Light.ttf")
+font_add(family = "Spoqa", 
+         regular = "/Users/kwlee/Library/Fonts/SpoqaHanSansNeo-Regular.ttf",
+         bold = "/Users/kwlee/Library/Fonts/SpoqaHanSansNeo-Bold.ttf",
+         italic  = "/Users/kwlee/Library/Fonts/SpoqaHanSansNeo-Light.ttf")
+showtext_auto()
 panderOptions('table.split.table', Inf)
 panderOptions('table.alignment.rownames', 'left')
 panderOptions('table.alignment.default', 'right')
@@ -57,7 +80,7 @@ class_roll <- class_roll0317
 #> quiz reading
 quiz <- 
   read_excel("./data/quiz_250310.xlsx",
-             range = "A2:N565",
+             range = "A2:N453",
              col_names = FALSE)
 names(quiz) <- 
   c("time", "email", "dept", "id", "name", 
@@ -131,8 +154,6 @@ quiz_wrong_ids <- quiz_wrong_ids %>%
   mutate(id = case_when(
     id == "20223051" ~ "20223501",
     id == "20246475" ~ "20246745",
-    id == "20318005" ~ "20218005",
-    id == "20241714" ~ "20241713",
     TRUE ~ id
   ))
 # 3. quiz 에서 id 틀린 행을 제거하고 옳은 id 갖춘 행으로 교체하기
@@ -159,7 +180,7 @@ quiz %>%
 # which(duplicated(quiz$id)) %>%
 #   quiz[., c("id", "name")]
 quiz %>%
-  filter(id %in% c("20246620"))
+  filter(name %in% c("최재혁", "박지연", "최민재", "최자영", "김준서"))
 # quiz[quiz$name %in% c("최재혁", "박지연"), ] #> 최재혁, 박지연이 중복 제출
 quiz <- quiz %>% 
   arrange(id, desc(time)) %>%
@@ -194,11 +215,11 @@ wrong_group <- quiz %>%
   filter(group2 != group)
 
 #> 잘못된 그룹 정보 출력
-# wrong_group %>%
-#   select(time, id, group2, group) %>%
-#   arrange(time) %>%
-#   rename(제출시간 = time, 학번 = id, 랜덤화출석부 = group2, 구글예습퀴즈 = group) %>%
-#   pander(row.names = FALSE)
+wrong_group %>%
+  select(time, id, group2, group) %>%
+  arrange(time) %>%
+  rename(제출시간 = time, 학번 = id, 랜덤화출석부 = group2, 구글예습퀴즈 = group) %>%
+  pander(row.names = FALSE)
 
 #> 옛 코드
 # quiz$group2 <- class_roll$group[match(quiz$id, class_roll$id)]
@@ -230,9 +251,7 @@ Red를 Black 이라고 한 사람이 `r wrong_tbl[1, 2]`명, Black 을 Red 라�
 
 우선 Red, Black 을 잘못 선택한 `r nrow(wrong_group)`명을 랜덤하게 둘로 나누면 어느 한 쪽 집단에 들어갈 기대인원은 `r nrow(wrong_group)`명을 둘로 나눈 `r nrow(wrong_group) / 2`(명)이고, 표준오차는 `r nrow(wrong_group)`의 제곱근에 1/2을 곱해 준 `r round(sqrt(nrow(wrong_group)) / 2, digits  = 1)`명이 됩니다. 
 
-실제로 Red를 Black 이라고 한 사람수, `r wrong_tbl[1, 2]`명이나 Black 을 Red 라고 한 사람수, `r wrong_tbl[2, 1]`명은 기대인원으로부터 표준오차 범위 안에 아주 잘 들어갑니다. 
-
-사실 표준오차 범위 안에 들어가는 정도가 아니라 `r nrow(wrong_group)`명을 랜덤하게 둘로 나눌 때, 이 이상 닮게 나올 수 없을 정도이죠.
+실제로 Red를 Black 이라고 한 사람수, `r wrong_tbl[1, 2]`명이나 Black 을 Red 라고 한 사람수, `r wrong_tbl[2, 1]`명은 기대인원으로부터 표준오차 범위 안에 아주 잘 들어갑니다.
 
 두 번째 분석 방법은 확률을 계산해 보는 것입니다. 
 
@@ -241,8 +260,6 @@ Red, Black 을 잘못 선택한 `r nrow(wrong_group)`명을 랜덤하게 둘로 
 이 경우 공평한 동전던지기를 확률 법칙으로 표현한 이항분포로부터 계산할 수 있습니다. 
 
 시행횟수가 `r nrow(wrong_group)`이고 한 번 시행에서 성공확률이 1/2 인 이항분포에서 성공횟수가 `r min(wrong_tbl[1, 2], wrong_tbl[2, 1])`이하이거나 `r max(wrong_tbl[1, 2], wrong_tbl[2, 1])`이상을 관찰할 확률은 `r round(pbinom(min(wrong_tbl[1, 2], wrong_tbl[2, 1]), nrow(wrong_group), 1/2) * 2,  digits = 3)`입니다. 
-
-나올 수 있는 모든 경우가 포함되었다는 뜻이고 가장 닮은 경우가 나온 것입니다.
 
 공평한 동전 던지기에서 앞면이 `r min(wrong_tbl[1, 2], wrong_tbl[2, 1])`개 이하 나오는 확률은 `r max(wrong_tbl[1, 2], wrong_tbl[2, 1])`개 이상 나오는 확률과 같기 때문에 사실상 한쪽만 계산해서 2배 해 주면 됩니다. 
 
@@ -266,8 +283,6 @@ Red 로 응답한 인원은 `r colSums(wrong_tbl)[1]`명, Black 에 응답한 �
 
 따라서 Red, Black 각 그룹에 관찰된 인원은 기대인원으로부터 표준오차 범위, 혹은 두배의 표준오차 범위 안에 들어갑니다.
 
-물론 이 경우에도 `r sum(wrong_tbl)` 명을 랜덤하게 둘로 나눌 때 더 이상 닮기 어려울 정도로 닮은 인원이 관찰되었습니다만, 일반적으로 기대인원으로부터 표준오차 범위, 혹은 두배의 표준오차 범위 안에 들어간다는 것은 기억해 둘 필요가 있습니다. 
-
 ## Q1. 춘추전국시대에 국가통계관리의 중요성 강조
 
 ```{r, echo = FALSE, out.width = "75%", align = "left"}
@@ -276,7 +291,7 @@ include_graphics("./pics/Quiz210309_01.png")
 
 ### 관자(집계표)
 
-```{r, Kwanzi, echo = FALSE, warning = FALSE}
+```{r, Kwanzi, echo = FALSE}
 tbl_q1_a <- 
   quiz$Q1 %>% 
   table(quiz$group, ., useNA = "ifany") %>%
@@ -287,7 +302,7 @@ tbl_q1_a %>%
 chisq_test_q1 <- 
   tbl_q1_a %>%
   `[`(-3, -6) %>%
-  chisq.test(simulate.p.value = FALSE) 
+  chisq.test(simulate.p.value = TRUE) 
 chisq_test_q1 %>%
   pander
 ```
@@ -333,7 +348,7 @@ tbl_q2_a %>%
 chisq_test_q2 <- 
   tbl_q2_a %>%
   `[`(-3, -c(2, 6)) %>%
-  chisq.test(simulate.p.value = FALSE) 
+  chisq.test(simulate.p.value = TRUE) 
 chisq_test_q2 %>%
   pander
 ```
@@ -415,7 +430,7 @@ include_graphics("./pics/Quiz230308_Q4.png")
 
 ### 총인구 최대 시기(집계표)
 
-```{r, total population, echo = FALSE, warning = FALSE}
+```{r, total population, echo = FALSE}
 tbl_q4_a <- 
   quiz$Q4 %>% 
   table(quiz$group, ., useNA = "ifany") %>%
@@ -427,7 +442,7 @@ tbl_q4_a %>%
 chisq_test_q4 <- 
   tbl_q4_a %>%
   `[`(-3, -5) %>%
-  chisq.test(simulate.p.value = FALSE) 
+  chisq.test(simulate.p.value = TRUE) 
 chisq_test_q4 %>%
   pander
 ```
@@ -462,7 +477,7 @@ include_graphics("./pics/Quiz230308_Q5.png")
 
 ### 소멸위험 단계 개선 지역(집계표)
 
-```{r, echo = FALSE, warning = FALSE}
+```{r, echo = FALSE}
 tbl_q5_a <- 
   quiz$Q5 %>% 
   table(quiz$group, ., useNA = "ifany") %>%
@@ -474,7 +489,7 @@ tbl_q5_a %>%
 chisq_test_q5 <- 
   tbl_q5_a %>%
   `[`(-3, -5) %>%
-  chisq.test(simulate.p.value = FALSE) 
+  chisq.test(simulate.p.value = TRUE) 
 chisq_test_q5 %>%
   pander
 ```
@@ -686,9 +701,9 @@ df$Var2 %<>%
 p_df$Var2 %<>% 
   factor(labels = c("원형그래프", "막대그래프"))
 m + geom_text(aes(x = center, y = 1.05), 
-              family = "KoPubWorldDotum Medium",
+              family = "Spoqa",
               label = df[, 2]) +
-  theme_bw(base_family = "KoPubWorldDotum Medium") +
+  theme_bw(base_family = "Spoqa") +
   labs(title = "눈속임그래프의 인식", x = "Red or Black(누적 %)", y = "인원(%, 명)") +
   scale_fill_brewer(name = "응답", 
                     labels = c("제대로 보여주고 있다", 
@@ -699,7 +714,8 @@ m + geom_text(aes(x = center, y = 1.05),
                     direction = 1) +
   theme(plot.title = element_text(hjust = 0.5, 
                                   size = 18, 
-                                  family = "KoPubWorldDotum Bold")) 
+                                  family = "Spoqa",
+                                  face = "bold")) 
 ggsave("./pics/Quiz250310_Q7_RnB.png", dpi = 120, width = 960, height = 840, units = "px")
 ```
 
@@ -736,12 +752,12 @@ days_tbl %>%
 ```{r, echo = FALSE, warning = FALSE}
 days_tbl %>%
   rbind("계" = colSums(.)) %>%
-  `[`(3, 1:14) %>%
+  `[`(3, 2:14) %>%
   pander
 days_chisq_test <-
   days_tbl %>%
   rbind("계" = colSums(.)) %>%
-  `[`(3, 1:14) %>%
+  `[`(3, 2:14) %>%
   chisq.test(simulate.p.value = FALSE) 
 days_chisq_test %>%
   pander
@@ -762,7 +778,7 @@ days_chisq_test %>%
 ```{r, echo = FALSE}
 # png(file = "./pics/2302/quiz_submission_8.png", width = 640, height = 480)
 suppressMessages({
-par(family = "KoPubWorldDotum Medium")
+par(family = "Spoqa")
 b <- 
   quiz$days %>%
   cut(breaks = c(0:14), include.lowest = TRUE) %>%
@@ -775,7 +791,7 @@ text(x = b[14, 1], y = sum(days_tbl[, 1]),
      labels = paste0(sum(days_tbl[, 1]), "명"), pos = 3)
 text(x = b[14, 1], y = sum(days_tbl[, 1]) / 2, 
      labels = paste0(format(sum(days_tbl[, 1]) / N * 100, digits = 1, nsmall = 0), "%"))
-title(main = paste0("Quiz250310 (", N, "명 제출)"))
+title(main = paste0("Quiz250310 (", N, "명 제출)"), font.main = 2)
 # title(main = "일 단위 퀴즈 제출 인원", sub = paste0("Quiz230925 (", N, "명 제출)"))
 dev.copy(png, file = "./pics/2402/quiz_submission_2.png", width = 640, height = 480)
 invisible(dev.off())
@@ -789,11 +805,11 @@ invisible(dev.off())
 ```{r, echo = FALSE, warning = FALSE}
 days_tbl %>%
   rbind("계" = colSums(.)) %>%
-  `[`(-3, 1:14) %>%
+  `[`(-3, 2:14) %>%
   pander
 days_RnB_chisq_test <-
   days_tbl %>%
-  `[`(-3, 1:14) %>%
+  `[`(-3, 2:14) %>%
   chisq.test(simulate.p.value = FALSE) 
 days_RnB_chisq_test %>%
   pander
@@ -821,9 +837,9 @@ df2 <- m2_list$df
 p_df2 <- m2_list$p_df
 names(df2[, 2]) <- "Days"
 m2 + geom_text(aes(x = center, y = 1.05), 
-              family = "KoPubWorldDotum Medium",
+              family = "kopub",
               label = rep(rep(c("월", "화", "수", "목", "금", "토", "일"), each = 2), times = 2)) +
-  theme_bw(base_family = "KoPubWorldDotum Medium") +
+  theme_bw(base_family = "Spoqa") +
   labs(title = "마감일로부터 제출시간의 분포", x = "마감일로부터 일수(누적 %)", y = "인원 백분율(%)") +
   scale_fill_brewer(name = "그룹", 
                     labels = c("Red", 
@@ -833,7 +849,8 @@ m2 + geom_text(aes(x = center, y = 1.05),
                     direction = 1) +
   theme(plot.title = element_text(hjust = 0.5, 
                                   size = 18, 
-                                  family = "KoPubWorldDotum Bold"),
+                                  family = "Spoqa",
+                                  face = "bold"),
         axis.text.x = element_text(angle = -90, vjust = 0.5)) 
 ggsave("./pics/Quiz250310_submission_2.png", dpi = 120, width = 960, height = 840, units = "px")
 ```
