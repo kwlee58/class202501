@@ -54,7 +54,7 @@ Q7에서는 같은 눈속임 그래프인데 원형그래프의 각도를 속일
 
 끝으로 제출시간의 분포가 날마다 고른지, Red, Black 간에는 닮았는지 알아봅니다.
 
-```{r, data, message=FALSE, echo=FALSE, results='hide'}
+```{r, data, message=FALSE, echo = FALSE, results='hide'}
 class_roll0310 <- 
   readRDS("./class_roll_250310.RDS")
 ## Red_and_Black_250310_roll_v2.Rmd 에서 생성된 RDS 파일이어야 함.
@@ -80,7 +80,7 @@ class_roll <- class_roll0317
 #> quiz reading
 quiz <- 
   read_excel("./data/quiz_250310.xlsx",
-             range = "A2:N453",
+             range = "A2:N565",
              col_names = FALSE)
 names(quiz) <- 
   c("time", "email", "dept", "id", "name", 

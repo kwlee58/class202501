@@ -80,7 +80,7 @@
 
 \title{Quiz 250310}
 \author{coop711}
-\date{2025-03-22 23:50:18}
+\date{2025-03-24 23:32:54}
 
 \begin{document}
 \maketitle
@@ -145,6 +145,9 @@ Q7에서는 같은 눈속임 그래프인데 원형그래프의 각도를 속일
 2025-03-20 14:54:36 & 20246923 & Black & Red \\
 2025-03-20 20:52:14 & 20242949 & Black & Red \\
 2025-03-22 00:55:57 & 20246606 & Black & Red \\
+2025-03-23 11:51:35 & 20242585 & Red & Black \\
+2025-03-23 14:27:48 & 20243513 & Black & Red \\
+2025-03-23 19:53:42 & 20227107 & Red & Black \\
 \end{longtable}
 
 \begin{longtable}[]{@{}
@@ -163,39 +166,39 @@ Black(구글예습퀴즈)
 \endhead
 \bottomrule\noalign{}
 \endlastfoot
-\textbf{Red(랜덤화출석부)} & 219 & 10 \\
-\textbf{Black(랜덤화출석부)} & 11 & 212 \\
-\textbf{계} & 230 & 222 \\
+\textbf{Red(랜덤화출석부)} & 268 & 12 \\
+\textbf{Black(랜덤화출석부)} & 12 & 269 \\
+\textbf{계} & 280 & 281 \\
 \end{longtable}
 
 랜덤화출석부에 있는 Red, Black 과 실제 구글설문에 올린 Red, Black 이
-다른 사람들의 수효는 21명입니다.
+다른 사람들의 수효는 24명입니다.
 
-Red를 Black 이라고 한 사람이 10명, Black 을 Red 라고 한 사람이
-11명입니다.
+Red를 Black 이라고 한 사람이 12명, Black 을 Red 라고 한 사람이
+12명입니다.
 
 두 가지 방법으로 분석합니다.
 
-우선 Red, Black 을 잘못 선택한 21명을 랜덤하게 둘로 나누면 어느 한 쪽
-집단에 들어갈 기대인원은 21명을 둘로 나눈 10.5(명)이고, 표준오차는 21의
-제곱근에 1/2을 곱해 준 2.3명이 됩니다.
+우선 Red, Black 을 잘못 선택한 24명을 랜덤하게 둘로 나누면 어느 한 쪽
+집단에 들어갈 기대인원은 24명을 둘로 나눈 12(명)이고, 표준오차는 24의
+제곱근에 1/2을 곱해 준 2.4명이 됩니다.
 
-실제로 Red를 Black 이라고 한 사람수, 10명이나 Black 을 Red 라고 한
-사람수, 11명은 기대인원으로부터 표준오차 범위 안에 아주 잘 들어갑니다.
+실제로 Red를 Black 이라고 한 사람수, 12명이나 Black 을 Red 라고 한
+사람수, 12명은 기대인원으로부터 표준오차 범위 안에 아주 잘 들어갑니다.
 
 두 번째 분석 방법은 확률을 계산해 보는 것입니다.
 
-Red, Black 을 잘못 선택한 21명을 랜덤하게 둘로 나눌 때, 실제로 관찰된
-11명 이상이나 10명이하로 잘못 선택한 사람수가 나올 가능성은 얼마나
+Red, Black 을 잘못 선택한 24명을 랜덤하게 둘로 나눌 때, 실제로 관찰된
+12명 이상이나 12명이하로 잘못 선택한 사람수가 나올 가능성은 얼마나
 되는가 입니다.
 
 이 경우 공평한 동전던지기를 확률 법칙으로 표현한 이항분포로부터 계산할
 수 있습니다.
 
-시행횟수가 21이고 한 번 시행에서 성공확률이 1/2 인 이항분포에서
-성공횟수가 10이하이거나 11이상을 관찰할 확률은 1입니다.
+시행횟수가 24이고 한 번 시행에서 성공확률이 1/2 인 이항분포에서
+성공횟수가 12이하이거나 12이상을 관찰할 확률은 1.161입니다.
 
-공평한 동전 던지기에서 앞면이 10개 이하 나오는 확률은 11개 이상 나오는
+공평한 동전 던지기에서 앞면이 12개 이하 나오는 확률은 12개 이상 나오는
 확률과 같기 때문에 사실상 한쪽만 계산해서 2배 해 주면 됩니다.
 
 이 값을 p-value 라고 하는데, p-value가 0.05보다 작을 때
@@ -218,11 +221,11 @@ Red, Black 을 잘못 선택한 21명을 랜덤하게 둘로 나눌 때, 실제�
 \subsubsection{응답인원의 Red,
 Black}\label{uxc751uxb2f5uxc778uxc6d0uxc758-red-black}
 
-Red 로 응답한 인원은 230명, Black 에 응답한 인원은 222명입니다.
+Red 로 응답한 인원은 280명, Black 에 응답한 인원은 281명입니다.
 
-전체 응답인원 452 명을 랜덤하게 둘로 나눌 때 어느 한 쪽의 기대인원은
-전체 응답인원의 절반인 226명이고, 표준오차는 전체 응답인원의 제곱근에
-1/2을 곱해 준 10.6 명입니다.
+전체 응답인원 561 명을 랜덤하게 둘로 나눌 때 어느 한 쪽의 기대인원은
+전체 응답인원의 절반인 280.5명이고, 표준오차는 전체 응답인원의 제곱근에
+1/2을 곱해 준 11.8 명입니다.
 
 따라서 Red, Black 각 그룹에 관찰된 인원은 기대인원으로부터 표준오차
 범위, 혹은 두배의 표준오차 범위 안에 들어갑니다.
@@ -262,15 +265,15 @@ Red 로 응답한 인원은 230명, Black 에 응답한 인원은 222명입니�
 \endhead
 \bottomrule\noalign{}
 \endlastfoot
-\textbf{Red} & 35 & 5 & 183 & 7 & 0 & 230 \\
-\textbf{Black} & 19 & 13 & 176 & 10 & 4 & 222 \\
-\textbf{계} & 54 & 18 & 359 & 17 & 4 & 452 \\
+\textbf{Red} & 40 & 9 & 224 & 8 & 1 & 282 \\
+\textbf{Black} & 25 & 17 & 223 & 11 & 5 & 281 \\
+\textbf{계} & 65 & 26 & 447 & 19 & 6 & 563 \\
 \end{longtable}
 
 \begin{longtable}[]{@{}
   >{\raggedleft\arraybackslash}p{(\columnwidth - 4\tabcolsep) * \real{0.2361}}
   >{\raggedleft\arraybackslash}p{(\columnwidth - 4\tabcolsep) * \real{0.0694}}
-  >{\raggedleft\arraybackslash}p{(\columnwidth - 4\tabcolsep) * \real{0.2083}}@{}}
+  >{\raggedleft\arraybackslash}p{(\columnwidth - 4\tabcolsep) * \real{0.1389}}@{}}
 \caption{Pearson's Chi-squared test with simulated p-value (based on
 2000 replicates): \texttt{.}}\tabularnewline
 \toprule\noalign{}
@@ -295,13 +298,13 @@ P value
 \endhead
 \bottomrule\noalign{}
 \endlastfoot
-12.82 & NA & 0.007996 * * \\
+9.064 & NA & 0.05947 \\
 \end{longtable}
 
 Q1의 집계 결과가 Red, Black 간에 통계적으로 유의한 차이가 있는지
 알아보기 위하여 카이제곱 테스트를 수행하였습니다.
 
-그 결과 카이제곱 통계량은 12.82, 자유도는 NA , p-value 는 0.0080이므로
+그 결과 카이제곱 통계량은 9.06, 자유도는 NA , p-value 는 0.0595이므로
 Red, Black 간에 통계적으로 유의한 차이를 보이지 않습니다.
 
 실제로 닮은 게 느껴집니까?
@@ -309,12 +312,12 @@ Red, Black 간에 통계적으로 유의한 차이를 보이지 않습니다.
 \subsubsection{관자(\%)}\label{uxad00uxc790}
 
 \begin{longtable}[]{@{}
-  >{\centering\arraybackslash}p{(\columnwidth - 10\tabcolsep) * \real{0.1111}}
-  >{\centering\arraybackslash}p{(\columnwidth - 10\tabcolsep) * \real{0.0972}}
-  >{\centering\arraybackslash}p{(\columnwidth - 10\tabcolsep) * \real{0.1111}}
   >{\centering\arraybackslash}p{(\columnwidth - 10\tabcolsep) * \real{0.0972}}
   >{\centering\arraybackslash}p{(\columnwidth - 10\tabcolsep) * \real{0.0972}}
-  >{\centering\arraybackslash}p{(\columnwidth - 10\tabcolsep) * \real{0.1250}}@{}}
+  >{\centering\arraybackslash}p{(\columnwidth - 10\tabcolsep) * \real{0.0972}}
+  >{\centering\arraybackslash}p{(\columnwidth - 10\tabcolsep) * \real{0.0972}}
+  >{\centering\arraybackslash}p{(\columnwidth - 10\tabcolsep) * \real{0.0972}}
+  >{\centering\arraybackslash}p{(\columnwidth - 10\tabcolsep) * \real{0.1111}}@{}}
 \toprule\noalign{}
 \begin{minipage}[b]{\linewidth}\centering
 공자
@@ -333,7 +336,7 @@ Red, Black 간에 통계적으로 유의한 차이를 보이지 않습니다.
 \endhead
 \bottomrule\noalign{}
 \endlastfoot
-11.95 & 3.98 & 79.42 & 3.76 & 0.88 & 100.00 \\
+11.5 & 4.6 & 79.4 & 3.4 & 1.1 & 100.0 \\
 \end{longtable}
 
 정답률은 Red, Black 을 합하여 계산하는데, 79.4(\%) 입니다.
@@ -374,9 +377,9 @@ Red, Black 간에 통계적으로 유의한 차이를 보이지 않습니다.
 \endhead
 \bottomrule\noalign{}
 \endlastfoot
-\textbf{Red} & 0 & 1 & 8 & 72 & 149 & 230 \\
-\textbf{Black} & 2 & 2 & 7 & 73 & 138 & 222 \\
-\textbf{계} & 2 & 3 & 15 & 145 & 287 & 452 \\
+\textbf{Red} & 0 & 2 & 9 & 94 & 177 & 282 \\
+\textbf{Black} & 2 & 4 & 9 & 94 & 172 & 281 \\
+\textbf{계} & 2 & 6 & 18 & 188 & 349 & 563 \\
 \end{longtable}
 
 \begin{longtable}[]{@{}
@@ -407,13 +410,13 @@ P value
 \endhead
 \bottomrule\noalign{}
 \endlastfoot
-2.316 & NA & 0.5932 \\
+2.056 & NA & 0.6752 \\
 \end{longtable}
 
 Q2의 집계 결과가 Red, Black 간에 통계적으로 유의한 차이가 있는지
 알아보기 위하여 카이제곱 테스트를 수행하였습니다.
 
-그 결과 카이제곱 통계량은 2.316, 자유도는 NA, p-value 는 0.5932이므로
+그 결과 카이제곱 통계량은 2.056, 자유도는 NA, p-value 는 0.6752이므로
 Red, Black 간에 통계적으로 유의한 차이를 보이지 않습니다.
 
 실제로 닮은 게 느껴집니까?
@@ -446,10 +449,10 @@ Red, Black 간에 통계적으로 유의한 차이를 보이지 않습니다.
 \endhead
 \bottomrule\noalign{}
 \endlastfoot
-0.44 & 0.66 & 3.32 & 32.08 & 63.50 & 100.00 \\
+0.36 & 1.07 & 3.20 & 33.39 & 61.99 & 100.00 \\
 \end{longtable}
 
-정답률은 Red, Black 을 합하여 계산하는데, 63.5(\%) 입니다.
+정답률은 Red, Black 을 합하여 계산하는데, 62.0(\%) 입니다.
 
 \subsection{Q3. 우리나라 생산가능인구 감소
 시기}\label{q3.-uxc6b0uxb9acuxb098uxb77c-uxc0dduxc0b0uxac00uxb2a5uxc778uxad6c-uxac10uxc18c-uxc2dcuxae30}
@@ -484,9 +487,9 @@ Red, Black 간에 통계적으로 유의한 차이를 보이지 않습니다.
 \endhead
 \bottomrule\noalign{}
 \endlastfoot
-\textbf{Red} & 25 & 183 & 18 & 4 & 230 \\
-\textbf{Black} & 22 & 174 & 21 & 5 & 222 \\
-\textbf{계} & 47 & 357 & 39 & 9 & 452 \\
+\textbf{Red} & 31 & 224 & 23 & 4 & 282 \\
+\textbf{Black} & 23 & 227 & 25 & 6 & 281 \\
+\textbf{계} & 54 & 451 & 48 & 10 & 563 \\
 \end{longtable}
 
 \begin{longtable}[]{@{}
@@ -516,13 +519,13 @@ P value
 \endhead
 \bottomrule\noalign{}
 \endlastfoot
-0.6189 & 3 & 0.8921 \\
+1.687 & 3 & 0.6399 \\
 \end{longtable}
 
 Q3의 집계 결과가 Red, Black 간에 통계적으로 유의한 차이가 있는지
 알아보기 위하여 카이제곱 테스트를 수행하였습니다.
 
-그 결과 카이제곱 통계량은 0.619, 자유도는 3, p-value 는 0.8921이므로
+그 결과 카이제곱 통계량은 1.687, 자유도는 3, p-value 는 0.6399이므로
 Red, Black 간에 통계적으로 유의한 차이를 보이지 않습니다.
 
 실제로 닮은 게 느껴집니까?
@@ -552,10 +555,10 @@ Red, Black 간에 통계적으로 유의한 차이를 보이지 않습니다.
 \endhead
 \bottomrule\noalign{}
 \endlastfoot
-10.4 & 79.0 & 8.6 & 2.0 & 100.0 \\
+9.6 & 80.1 & 8.5 & 1.8 & 100.0 \\
 \end{longtable}
 
-정답률은 Red, Black 을 합하여 계산하는데, 79.0(\%) 입니다.
+정답률은 Red, Black 을 합하여 계산하는데, 80.1(\%) 입니다.
 
 \subsection{Q4. 우리나라 총인구 최대
 시기}\label{q4.-uxc6b0uxb9acuxb098uxb77c-uxcd1duxc778uxad6c-uxcd5cuxb300-uxc2dcuxae30}
@@ -590,15 +593,15 @@ Red, Black 간에 통계적으로 유의한 차이를 보이지 않습니다.
 \endhead
 \bottomrule\noalign{}
 \endlastfoot
-\textbf{Red} & 40 & 22 & 167 & 1 & 230 \\
-\textbf{Black} & 20 & 23 & 171 & 8 & 222 \\
-\textbf{계} & 60 & 45 & 338 & 9 & 452 \\
+\textbf{Red} & 47 & 27 & 205 & 3 & 282 \\
+\textbf{Black} & 29 & 27 & 215 & 10 & 281 \\
+\textbf{계} & 76 & 54 & 420 & 13 & 563 \\
 \end{longtable}
 
 \begin{longtable}[]{@{}
   >{\raggedleft\arraybackslash}p{(\columnwidth - 4\tabcolsep) * \real{0.2361}}
   >{\raggedleft\arraybackslash}p{(\columnwidth - 4\tabcolsep) * \real{0.0694}}
-  >{\raggedleft\arraybackslash}p{(\columnwidth - 4\tabcolsep) * \real{0.2083}}@{}}
+  >{\raggedleft\arraybackslash}p{(\columnwidth - 4\tabcolsep) * \real{0.1667}}@{}}
 \caption{Pearson's Chi-squared test with simulated p-value (based on
 2000 replicates): \texttt{.}}\tabularnewline
 \toprule\noalign{}
@@ -623,13 +626,13 @@ P value
 \endhead
 \bottomrule\noalign{}
 \endlastfoot
-12.04 & NA & 0.005997 * * \\
+8.269 & NA & 0.04048 * \\
 \end{longtable}
 
 Q4의 집계 결과가 Red, Black 간에 통계적으로 유의한 차이가 있는지
 알아보기 위하여 카이제곱 테스트를 수행하였습니다.
 
-그 결과 카이제곱 통계량은 12.043, 자유도는 NA, p-value 는 0.0060이므로
+그 결과 카이제곱 통계량은 8.269, 자유도는 NA, p-value 는 0.0405이므로
 Red, Black 간에 통계적으로 유의한 차이를 보이지 않습니다.
 
 실제로 닮은 게 느껴집니까?
@@ -659,10 +662,10 @@ Red, Black 간에 통계적으로 유의한 차이를 보이지 않습니다.
 \endhead
 \bottomrule\noalign{}
 \endlastfoot
-13.3 & 10.0 & 74.8 & 2.0 & 100.0 \\
+13.5 & 9.6 & 74.6 & 2.3 & 100.0 \\
 \end{longtable}
 
-정답률은 Red, Black 을 합하여 계산하는데, 74.8(\%) 입니다.
+정답률은 Red, Black 을 합하여 계산하는데, 74.6(\%) 입니다.
 
 \subsection{Q5. 소멸위험 단계 개선
 지역}\label{q5.-uxc18cuxba78uxc704uxd5d8-uxb2e8uxacc4-uxac1cuxc120-uxc9c0uxc5ed}
@@ -697,9 +700,9 @@ Red, Black 간에 통계적으로 유의한 차이를 보이지 않습니다.
 \endhead
 \bottomrule\noalign{}
 \endlastfoot
-\textbf{Red} & 12 & 11 & 194 & 13 & 230 \\
-\textbf{Black} & 8 & 12 & 192 & 10 & 222 \\
-\textbf{계} & 20 & 23 & 386 & 23 & 452 \\
+\textbf{Red} & 13 & 14 & 241 & 14 & 282 \\
+\textbf{Black} & 9 & 14 & 245 & 13 & 281 \\
+\textbf{계} & 22 & 28 & 486 & 27 & 563 \\
 \end{longtable}
 
 \begin{longtable}[]{@{}
@@ -730,13 +733,13 @@ P value
 \endhead
 \bottomrule\noalign{}
 \endlastfoot
-1.104 & NA & 0.7621 \\
+0.7955 & NA & 0.8656 \\
 \end{longtable}
 
 Q5의 집계 결과가 Red, Black 간에 통계적으로 유의한 차이가 있는지
 알아보기 위하여 카이제곱 테스트를 수행하였습니다.
 
-그 결과 카이제곱 통계량은 1.104, 자유도는 NA, p-value 는 0.7621이므로
+그 결과 카이제곱 통계량은 0.795, 자유도는 NA, p-value 는 0.8656이므로
 Red, Black 간에 통계적으로 유의한 차이를 보이지 않습니다.
 
 실제로 닮은 게 느껴집니까?
@@ -766,10 +769,10 @@ Red, Black 간에 통계적으로 유의한 차이를 보이지 않습니다.
 \endhead
 \bottomrule\noalign{}
 \endlastfoot
-4.4 & 5.1 & 85.4 & 5.1 & 100.0 \\
+3.9 & 5.0 & 86.3 & 4.8 & 100.0 \\
 \end{longtable}
 
-정답률은 Red, Black 을 합하여 계산하는데, 85.4(\%) 입니다.
+정답률은 Red, Black 을 합하여 계산하는데, 86.3(\%) 입니다.
 
 \subsection{Q6. 조출생률과
 합계출산율}\label{q6.-uxc870uxcd9cuxc0dduxb960uxacfc-uxd569uxacc4uxcd9cuxc0b0uxc728}
@@ -804,9 +807,9 @@ Red, Black 간에 통계적으로 유의한 차이를 보이지 않습니다.
 \endhead
 \bottomrule\noalign{}
 \endlastfoot
-\textbf{Red} & 141 & 29 & 38 & 22 & 230 \\
-\textbf{Black} & 109 & 47 & 35 & 31 & 222 \\
-\textbf{계} & 250 & 76 & 73 & 53 & 452 \\
+\textbf{Red} & 163 & 34 & 56 & 29 & 282 \\
+\textbf{Black} & 140 & 56 & 48 & 37 & 281 \\
+\textbf{계} & 303 & 90 & 104 & 66 & 563 \\
 \end{longtable}
 
 \begin{longtable}[]{@{}
@@ -836,13 +839,13 @@ P value
 \endhead
 \bottomrule\noalign{}
 \endlastfoot
-9.872 & 3 & 0.01968 * \\
+8.707 & 3 & 0.03345 * \\
 \end{longtable}
 
 Q6의 집계 결과가 Red, Black 간에 통계적으로 유의한 차이가 있는지
 알아보기 위하여 카이제곱 테스트를 수행하였습니다.
 
-그 결과 카이제곱 통계량은 9.872, 자유도는 3, p-value 는 0.0197이므로
+그 결과 카이제곱 통계량은 8.707, 자유도는 3, p-value 는 0.0335이므로
 Red, Black 간에 통계적으로 유의한 차이를 보이지 않습니다.
 
 실제로 닮은 게 느껴집니까?
@@ -872,10 +875,10 @@ Red, Black 간에 통계적으로 유의한 차이를 보이지 않습니다.
 \endhead
 \bottomrule\noalign{}
 \endlastfoot
-55.3 & 16.8 & 16.2 & 11.7 & 100.0 \\
+53.8 & 16.0 & 18.5 & 11.7 & 100.0 \\
 \end{longtable}
 
-정답률은 Red, Black 을 합하여 계산하는데, 55.3(\%) 입니다.
+정답률은 Red, Black 을 합하여 계산하는데, 53.8(\%) 입니다.
 
 \subsection{Q7. 눈속임 그래프(Cheating
 Charts)}\label{q7.-uxb208uxc18duxc784-uxadf8uxb798uxd504cheating-charts}
@@ -924,9 +927,9 @@ Red에는 원형그래프의 각도를 속이고, Black 에는 막대그래프�
 \endhead
 \bottomrule\noalign{}
 \endlastfoot
-\textbf{Red(김영란법 국회통과)} & 51 & 150 & 29 & 230 \\
-\textbf{Black(고위공직자 범죄수사처 설립)} & 81 & 92 & 49 & 222 \\
-\textbf{계} & 132 & 242 & 78 & 452 \\
+\textbf{Red(김영란법 국회통과)} & 65 & 180 & 37 & 282 \\
+\textbf{Black(고위공직자 범죄수사처 설립)} & 100 & 119 & 62 & 281 \\
+\textbf{계} & 165 & 299 & 99 & 563 \\
 \end{longtable}
 
 \begin{longtable}[]{@{}
@@ -956,7 +959,7 @@ P value
 \endhead
 \bottomrule\noalign{}
 \endlastfoot
-25.71 & 2 & 2.608e-06 * * * \\
+26.18 & 2 & 2.065e-06 * * * \\
 \end{longtable}
 
 Q7의 Red에는 김영란법 국회통과에 대한 여론조사 결과를 원형그래프로
@@ -964,25 +967,25 @@ Q7의 Red에는 김영란법 국회통과에 대한 여론조사 결과를 원�
 데이터와 전혀 맞지 않게 왜곡하여 마치 잘했다와 잘못했다의 비율이 거의
 대등한 것처럼 각도를 조정하였습니다.
 
-230명이 응답한 가운데 51명이 결과를 ``제대로 보여주고 있다''는 반응을
-보이고, 150명이 결과를 ``제대로 보여주고 있지 않다''는 반응을 보입니다.
+282명이 응답한 가운데 65명이 결과를 ``제대로 보여주고 있다''는 반응을
+보이고, 180명이 결과를 ``제대로 보여주고 있지 않다''는 반응을 보입니다.
 
 Black은 2017년 대선의 대선주자 여론조사에서 33\%의 지지율을 기록한
 문재인 예비후보와 22\%의 지지율을 기록한 안희정 예비후보의 지지율 막대가
 거의 비슷한 것처럼 왜곡하였습니다.
 
-222명이 응답한 가운데 81명이 여론조사 결과를 '' 제대로 보여주고 있다''는
-반응을 보이고, 92명이 여론조사 결과를 ``제대로 보여주고 있지 않다''는
-반응을 보입니다.
+281명이 응답한 가운데 100명이 여론조사 결과를 '' 제대로 보여주고
+있다''는 반응을 보이고, 119명이 여론조사 결과를 ``제대로 보여주고 있지
+않다''는 반응을 보입니다.
 
-그리고 ``모름/무응답''에 답한 인원은 Red에 29명, Black 에 49명이
+그리고 ``모름/무응답''에 답한 인원은 Red에 37명, Black 에 62명이
 었습니다.
 
 카이제곱 테스트는 이와 같은 상황에서 원형그래프를 왜곡할 떄와
 막대그래프를 왜곡할 때 인식의 차이가 통계적으로 유의하다는 것을 보여
 줍니다.
 
-카이제곱 통계량은 25.714, 자유도는 2, p-value 는 2.6e-06(으)로 그래프의
+카이제곱 통계량은 26.180, 자유도는 2, p-value 는 2.1e-06(으)로 그래프의
 유형에 따라 눈속임의 인식에 통계적으로 유의한 차이가 관찰된다는 것을
 보여줍니다.
 
@@ -1024,18 +1027,18 @@ Black은 2017년 대선의 대선주자 여론조사에서 33\%의 지지율을 
 \endhead
 \bottomrule\noalign{}
 \endlastfoot
-\textbf{Red(김영란법 국회통과)} & 22.2 & 65.2 & 12.6 & 100.0 \\
-\textbf{Black(고위공직자 범죄수사처 설립)} & 36.5 & 41.4 & 22.1 &
+\textbf{Red(김영란법 국회통과)} & 23.0 & 63.8 & 13.1 & 100.0 \\
+\textbf{Black(고위공직자 범죄수사처 설립)} & 35.6 & 42.3 & 22.1 &
 100.0 \\
 \end{longtable}
 
 원형그래프의 각도를 왜곡한 Red에서 여론조사 결과를 ``제대로 보여주고
-있다''고 응답하는 사람들의 백분율, 22.2(\%)은 ``제대로 보여주고 있지
-않다''고 응답하는 사람들의 백분율, 65.2(\%) 보다 매우 낮습니다.
+있다''고 응답하는 사람들의 백분율, 23.0(\%)은 ``제대로 보여주고 있지
+않다''고 응답하는 사람들의 백분율, 63.8(\%) 보다 매우 낮습니다.
 
 반면 막대그래프의 높이를 왜곡한 Black에서 여론조사 결과를 ``제대로
-보여주고 있다''고 응답하는 사람들의 백분율, 36.5(\%)은 ``제대로 보여주고
-있지 않다''고 응답하는 사람들의 백분율, 41.4(\%) 보다 적습니다.
+보여주고 있다''고 응답하는 사람들의 백분율, 35.6(\%)은 ``제대로 보여주고
+있지 않다''고 응답하는 사람들의 백분율, 42.3(\%) 보다 적습니다.
 
 원형그래프에서 눈속임을 지각하는 백분율이 막대그래프에서 눈속임을
 지각하는 백분율보다 훨씬 높게 나타나고 있습니다.
@@ -1151,12 +1154,12 @@ Mosaic Plot 은 이 집계결과를 시각적으로 잘 보여줍니다.
 \endhead
 \bottomrule\noalign{}
 \endlastfoot
-\textbf{Red} & 0 & 17 & 9 & 6 & 12 & 8 & 12 & 51 & 20 & 13 & 21 & 13 &
-21 & 27 & 230 \\
-\textbf{Black} & 0 & 10 & 11 & 3 & 6 & 7 & 9 & 43 & 19 & 18 & 20 & 22 &
-26 & 28 & 222 \\
-\textbf{계} & 0 & 27 & 20 & 9 & 18 & 15 & 21 & 94 & 39 & 31 & 41 & 35 &
-47 & 55 & 452 \\
+\textbf{Red} & 52 & 17 & 9 & 6 & 12 & 8 & 12 & 51 & 20 & 13 & 21 & 13 &
+21 & 27 & 282 \\
+\textbf{Black} & 59 & 11 & 11 & 3 & 6 & 7 & 9 & 43 & 19 & 18 & 20 & 21 &
+26 & 28 & 281 \\
+\textbf{계} & 111 & 28 & 20 & 9 & 18 & 15 & 21 & 94 & 39 & 31 & 41 & 34
+& 47 & 55 & 563 \\
 \end{longtable}
 
 분포표로부터 두 가지 문제를 살펴보겠습니다.
@@ -1217,7 +1220,7 @@ Mosaic Plot 은 이 집계결과를 시각적으로 잘 보여줍니다.
 \endhead
 \bottomrule\noalign{}
 \endlastfoot
-27 & 20 & 9 & 18 & 15 & 21 & 94 & 39 & 31 & 41 & 35 & 47 & 55 \\
+28 & 20 & 9 & 18 & 15 & 21 & 94 & 39 & 31 & 41 & 34 & 47 & 55 \\
 \end{longtable}
 
 \begin{longtable}[]{@{}
@@ -1248,7 +1251,7 @@ P value
 \endhead
 \bottomrule\noalign{}
 \endlastfoot
-170.9 & 12 & 3.114e-30 * * * \\
+170.5 & 12 & 3.764e-30 * * * \\
 \end{longtable}
 
 날마다 고르게 제출하는지 알아 보았습니다.
@@ -1257,7 +1260,7 @@ P value
 
 분포표 만으로도 쉽게 파악할 수 있지만 카이제곱테스트가 명확히 해 줍니다.
 
-카이제곱 통계량은 170.91, 자유도는 12.00, p-value 는 3.1e-30 이므로 결코
+카이제곱 통계량은 170.50, 자유도는 12.00, p-value 는 3.8e-30 이므로 결코
 고르게 제출한다고 말할 수 없겠습니다.
 
 막대그래프로 살펴 보겠습니다.
@@ -1266,7 +1269,7 @@ P value
 
 \includegraphics{quiz250310_Report_v6_files/figure-latex/unnamed-chunk-15-1.pdf}
 
-막대그래프는 총 제출인원 452(명) 중에 0(명), 0(\%)가 마감일에 몰리는
+막대그래프는 총 제출인원 563(명) 중에 111(명), 20(\%)가 마감일에 몰리는
 것을 명확히 보여주고 있습니다.
 
 \subsubsection{Red, Black 간에
@@ -1323,7 +1326,7 @@ P value
 \endlastfoot
 \textbf{Red} & 17 & 9 & 6 & 12 & 8 & 12 & 51 & 20 & 13 & 21 & 13 & 21 &
 27 \\
-\textbf{Black} & 10 & 11 & 3 & 6 & 7 & 9 & 43 & 19 & 18 & 20 & 22 & 26 &
+\textbf{Black} & 11 & 11 & 3 & 6 & 7 & 9 & 43 & 19 & 18 & 20 & 21 & 26 &
 28 \\
 \end{longtable}
 
@@ -1354,7 +1357,7 @@ P value
 \endhead
 \bottomrule\noalign{}
 \endlastfoot
-9.773 & 12 & 0.6358 \\
+8.812 & 12 & 0.7189 \\
 \end{longtable}
 
 제출시간의 분포가 Red, Black 간에 닮았는지 알아 보았습니다.
@@ -1362,7 +1365,7 @@ P value
 이번에는 분포표의 첫번쨰와 두번쨰 행, '계'열을 제외한 나머지 열에 대해서
 카이제곱테스트를 수행합니다.
 
-카이제곱 통계량은 9.773, 자유도는 12, p-value 는 0.6358 이므로 제출
+카이제곱 통계량은 8.812, 자유도는 12, p-value 는 0.7189 이므로 제출
 시간의 분포는 Red, Black 간에 통계적으로 유의한 차이가 관찰되지
 않습니다.
 
