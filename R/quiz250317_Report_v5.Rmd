@@ -15,6 +15,7 @@ library(pander)
 library(knitr)
 library(magrittr)
 library(dplyr)
+library(googlesheets4)
 panderOptions('table.split.table', Inf)
 panderOptions('table.alignment.rownames', 'left')
 panderOptions('table.alignment.default', 'right')
@@ -45,10 +46,13 @@ class_roll0321$group <-
 #> class_roll_250321 저장
 saveRDS(class_roll0321, file = "./class_roll_250321.RDS")
 class_roll <- class_roll0321
+sheet_url <- "https://docs.google.com/spreadsheets/d/1bLatHhkcg2q5TYey3zq3U_v6M9SpmAh_mgw9T5dfrPw"
 quiz <- 
-  read_excel("./data/quiz_250317.xlsx",
-             range = "A2:N285",
-             col_names = FALSE)
+  read_sheet(sheet_url)
+# quiz <- 
+#   read_excel("./data/quiz_250317.xlsx",
+#              range = "A2:N285",
+#              col_names = FALSE)
 names(quiz) <- 
   c("time", "email", "dept", "id", "name", 
     "Q1", "Q2", "Q3", "Q4", "Q5", "Q6", "group", "Q7_R", "Q7_B")

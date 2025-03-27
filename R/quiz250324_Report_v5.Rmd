@@ -14,6 +14,7 @@ library(pander)
 library(knitr)
 library(magrittr)
 library(dplyr)
+library(googlesheets4)
 panderOptions('table.split.table', Inf)
 panderOptions('table.alignment.rownames', 'left')
 panderOptions('table.alignment.default', 'right')
@@ -33,10 +34,13 @@ Q7에서는 부연설명을 어느 쪽에 붙이느냐에 따라서 Red 와 Blac
 ```{r, data, echo = FALSE, results = 'hide', message = FALSE}
 class_roll <- readRDS("./class_roll_250321.RDS")
 class_roll <- data.frame(class_roll)
+sheet_url <- "https://docs.google.com/spreadsheets/d/17Jzwh3Erda7boIIo0uEQd-cWpQ4oHxnn6gWMCDJHgm4"
 quiz <- 
-  read_excel("./data/quiz_250324.xlsx",
-             range = "A2:N150",
-             col_names = FALSE)
+  read_sheet(sheet_url)
+# quiz <- 
+#   read_excel("./data/quiz_250324.xlsx",
+#              range = "A2:N150",
+#              col_names = FALSE)
 names(quiz) <- c("time", "email", "dept", "id", "name", "Q1", "Q2", "Q3", "Q4", "Q5", "Q6", "group", "Q7_R", "Q7_B")
 str(quiz)
 quiz <- data.frame(quiz)

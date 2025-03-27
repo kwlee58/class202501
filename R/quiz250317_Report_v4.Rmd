@@ -47,7 +47,7 @@ saveRDS(class_roll0321, file = "./class_roll_250321.RDS")
 class_roll <- class_roll0321
 quiz <- 
   read_excel("./data/quiz_250317.xlsx",
-             range = "A2:N371",
+             range = "A2:N386",
              col_names = FALSE)
 names(quiz) <- 
   c("time", "email", "dept", "id", "name", 
@@ -172,7 +172,7 @@ quiz %>%
 # which(duplicated(quiz$id)) %>%
 #   quiz[., c("id", "name")]
 quiz %>%
-  filter(id %in% c("20213320", "20241232"))
+  filter(id %in% c("20213320", "20241232", "20242328"))
 # quiz[quiz$name %in% c("최재혁", "박지연"), ] #> 최재혁, 박지연이 중복 제출
 quiz <- quiz %>% 
   arrange(id, desc(time)) %>%
@@ -726,12 +726,12 @@ days_tbl %>%
 ```{r, echo = FALSE, warning = FALSE}
 days_tbl %>%
   rbind("계" = colSums(.)) %>%
-  `[`(3, 6:14) %>%
+  `[`(3, 4:14) %>%
   pander
 days_chisq_test <-
   days_tbl %>%
   rbind("계" = colSums(.)) %>%
-  `[`(3, 6:14) %>%
+  `[`(3, 4:14) %>%
   chisq.test(simulate.p.value = FALSE) 
 days_chisq_test %>%
   pander
@@ -779,11 +779,11 @@ invisible(dev.off())
 ```{r, echo = FALSE, warning = FALSE}
 days_tbl %>%
   rbind("계" = colSums(.)) %>%
-  `[`(-3, 6:14) %>%
+  `[`(-3, 4:14) %>%
   pander
 days_RnB_chisq_test <-
   days_tbl %>%
-  `[`(-3, 6:14) %>%
+  `[`(-3, 4:14) %>%
   chisq.test(simulate.p.value = FALSE) 
 days_RnB_chisq_test %>%
   pander
