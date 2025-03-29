@@ -35,7 +35,7 @@ class_roll <- readRDS("./class_roll_250321.RDS")
 class_roll <- data.frame(class_roll)
 quiz <- 
   read_excel("./data/quiz_250324.xlsx",
-             range = "A2:N193",
+             range = "A2:N227",
              col_names = FALSE)
 names(quiz) <- c("time", "email", "dept", "id", "name", "Q1", "Q2", "Q3", "Q4", "Q5", "Q6", "group", "Q7_R", "Q7_B")
 str(quiz)
@@ -192,11 +192,11 @@ wrong_group <- quiz %>%
   filter(group2 != group)
 
 #> 잘못된 그룹 정보 출력
-# wrong_group %>%
-#   select(time, id, group2, group) %>%
-#   arrange(time) %>%
-#   rename("제출시간" = time, "학번" = id, "랜덤화출석부" = group2, "구글예습퀴즈" = group) %>%
-#   pander(row.names = FALSE)
+wrong_group %>%
+  select(time, id, name, group2, group) %>%
+  arrange(time) %>%
+  rename("제출시간" = time, "학번" = id, "이름" = name, "랜덤화출석부" = group2, "구글예습퀴즈" = group) %>%
+  pander(row.names = FALSE)
 
 #> 옛 코드
 # quiz$group2 <- class_roll$group[match(quiz$id, class_roll$id)]
@@ -574,18 +574,18 @@ Black은 같은 상황에서 반대를 유도하는 부연설명을 붙였을 �
 그리고 "모름/무응답"에 답한 인원은 Red에  `r tbl_q7_a[1, 3]`명, Black 에 `r tbl_q7_a[2, 3]`명이 응답하였습니다. 
 
 카이제곱 테스트는 이와 같은 상황에서 
-찬성을 유도하는 부연설명을 붙인 경우와 반대를 유도하는 부연설명을 붙인 경우에 그 차이가 통계적으로 유의하지 않다는 것을 보여 줍니다. 
+찬성을 유도하는 부연설명을 붙인 경우와 반대를 유도하는 부연설명을 붙인 경우에 그 응답의 차이가 통계적으로 유의하다는 것을 보여 줍니다. 
 
 카이제곱 통계량은 `r chisq_test_q7[1] %>% format(digits = 2, nsmall = 3)`, 자유도는 `r chisq_test_q7[2] %>% format(digits = 2, nsmall = 2)`, p-value 는 `r chisq_test_q7[3] %>% format(digits = 2, nsmall = 4)`으로
-부연설명을 어디에 붙여도 그 차이는 통계적으로 유의한지 않은 것으로 나왔습니다. 
+부연설명을 어디에 붙이느냐에 따라 그 차이가 통계적으로 유의한 것으로 나왔습니다. 
 
 여기서 부연설명이 응답에 영향을 끼치지 않는다고 가정해 봅시다. 
 
-그렇다면 Red, Black 의 응답은 Q1~Q3 애서와 같이 랜덤화 효과에 의하여 통계적으로 유의한 차이를 보이지 않을 것입니다. 
+그렇다면 Red, Black 의 응답은 대부분의 Q1 ~ Q6 에서와 같이 랜덤화 효과에 의하여 통계적으로 유의한 차이를 보이지 않을 것입니다. 
 
-그런데 실제로 관찰된 카이제곱 통계값은 통계적으로  유의한 차이를 보여 주지 않았습니다. 
+그런데 실제로 관찰된 카이제곱 통계값은 통계적으로  유의한 차이를 보여 주고 있습니다. 
 
-따라서 부연설명이 영향을 끼치지 않는다는 가정을 받아들일 수밖에 없게 되었습니다.
+따라서 부연설명이 영향을 끼치지 않는다는 가정은 티당치 않은 것으로 볼 수밖에 없게 되었습니다.
 
 이러한 논증 방식을 귀류법이라 합니다.
 

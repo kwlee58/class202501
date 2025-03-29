@@ -153,12 +153,7 @@ wrong_ids <- quiz_wrong_ids$id
 quiz_wrong_ids <- quiz_wrong_ids %>%
   mutate(id = case_when(
     id == "2024603" ~ "20246303",
-    id == "202170325" ~ "20217035",
-    id == "2023537" ~ "20203537",
-    id == "20205260" ~ "20205206",
-    id == "2022238" ~ "20222238",
-    id == "202356705" ~ "20236705",
-    id == "041103" ~ "20233544",
+    id == "20242708" ~ "20243708",
     TRUE ~ id
   ))
 # 3. quiz 에서 id 틀린 행을 제거하고 옳은 id 갖춘 행으로 교체하기
@@ -185,7 +180,7 @@ quiz %>%
 # which(duplicated(quiz$id)) %>%
 #   quiz[., c("id", "name")]
 quiz %>%
-  filter(id %in% c("20213320", "20241232"))
+  filter(id %in% c("20213320", "20241232", "20242328"))
 # quiz[quiz$name %in% c("최재혁", "박지연"), ] #> 최재혁, 박지연이 중복 제출
 quiz <- quiz %>% 
   arrange(id, desc(time)) %>%
