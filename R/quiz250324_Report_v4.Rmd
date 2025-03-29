@@ -35,7 +35,7 @@ class_roll <- readRDS("./class_roll_250321.RDS")
 class_roll <- data.frame(class_roll)
 quiz <- 
   read_excel("./data/quiz_250324.xlsx",
-             range = "A2:N150",
+             range = "A2:N193",
              col_names = FALSE)
 names(quiz) <- c("time", "email", "dept", "id", "name", "Q1", "Q2", "Q3", "Q4", "Q5", "Q6", "group", "Q7_R", "Q7_B")
 str(quiz)
@@ -124,7 +124,7 @@ quiz_wrong_ids <- quiz %>%
 wrong_ids <- quiz_wrong_ids$id
 quiz_wrong_ids <- quiz_wrong_ids %>%
   mutate(id = case_when(
-    id == "2024303" ~ "20243403",
+    id == "202216743" ~ "20243403",
     id == "20243831" ~ "20243731",
     id == "2023122" ~ "20231622",
     id == "2046904" ~ "20246904",
@@ -574,18 +574,18 @@ Black은 같은 상황에서 반대를 유도하는 부연설명을 붙였을 �
 그리고 "모름/무응답"에 답한 인원은 Red에  `r tbl_q7_a[1, 3]`명, Black 에 `r tbl_q7_a[2, 3]`명이 응답하였습니다. 
 
 카이제곱 테스트는 이와 같은 상황에서 
-찬성을 유도하는 부연설명을 붙인 경우와 반대를 유도하는 부연설명을 붙인 경우에 그 차이가 통계적으로 매우, 매우, ... 유의하다는 것을 보여 줍니다. 
+찬성을 유도하는 부연설명을 붙인 경우와 반대를 유도하는 부연설명을 붙인 경우에 그 차이가 통계적으로 유의하지 않다는 것을 보여 줍니다. 
 
 카이제곱 통계량은 `r chisq_test_q7[1] %>% format(digits = 2, nsmall = 3)`, 자유도는 `r chisq_test_q7[2] %>% format(digits = 2, nsmall = 2)`, p-value 는 `r chisq_test_q7[3] %>% format(digits = 2, nsmall = 4)`으로
-부연설명을 어디에 붙이느냐에 따라 반응이 다르게 나온다는 것을 보여줍니다.
+부연설명을 어디에 붙여도 그 차이는 통계적으로 유의한지 않은 것으로 나왔습니다. 
 
 여기서 부연설명이 응답에 영향을 끼치지 않는다고 가정해 봅시다. 
 
 그렇다면 Red, Black 의 응답은 Q1~Q3 애서와 같이 랜덤화 효과에 의하여 통계적으로 유의한 차이를 보이지 않을 것입니다. 
 
-그런데 실제로 관찰된 카이제곱 통계값은 통계적으로 매우 유의한 차이를 보여 줍니다. 
+그런데 실제로 관찰된 카이제곱 통계값은 통계적으로  유의한 차이를 보여 주지 않았습니다. 
 
-따라서 부연설명이 영향을 끼치지 않는다는 가정이 잘못되었다는 것을 논리적으로 입증할 수 있습니다.
+따라서 부연설명이 영향을 끼치지 않는다는 가정을 받아들일 수밖에 없게 되었습니다.
 
 이러한 논증 방식을 귀류법이라 합니다.
 
@@ -607,9 +607,9 @@ ptbl_q7_a %>%
 
 반면 반대를 유도하는 부연설명을 붙인 Black에서 "찬성한다"고 응답하는 사람들의 백분율, `r format(ptbl_q7_a[2, 1], digits = 2, nsmall = 1)`(%)은 "반대한다"고 응답하는 사람들의 백분율, `r format(ptbl_q7_a[2, 2], digits = 2, nsmall = 1)`(%) 보다 훨씬 적습니다. 
 
-찬성을 유도하는 부연설명을 붙이느냐, 반대를 유도하는 부연설명을 붙이느냐에 따라 반응이 달라진다는 것을 잘 알 수 있습니다. 
+찬성을 유도하는 부연설명을 붙이느냐, 반대를 유도하는 부연설명을 붙이느냐에 따라 반응이 진다는 것을 알 수 있지만 그 차이가 통계적으로 유의한 수준은 아닌 것입니다. 
 
-Red 와 Black 이 워낙 차이가 나지만 전체적으로 어느 정도가 "찬성한다"하고 어느 정도가 "반대한다"고 응답하였는지 합쳐 보겠습니다.
+Red 와 Black 간의 차이가 통계적으로 유의하지 않으니까 전체적으로 어느 정도가 "찬성한다"하고 어느 정도가 "반대한다"고 응답하였는지 합쳐 보겠습니다.
 
 ### % 합계
 
@@ -690,7 +690,7 @@ days_tbl %>%
 
 첫째, 날마다 고르게 제출하는가? 
 
-둘째, Red, Black 간에 통게적으로 유의한 차이가 있는가?
+둘째, Red, Black 간에 통계적으로 유의한 차이가 있는가?
 
 각 문제를 살펴보기 위해서는 분포표의 일부분을 대상으로 카이제곱 테스트를 수행합니다.
 
@@ -699,12 +699,12 @@ days_tbl %>%
 ```{r, echo = FALSE, warning = FALSE}
 days_tbl %>%
   rbind("계" = colSums(.)) %>%
-  `[`(3, 11:14) %>%
+  `[`(3, 9:14) %>%
   pander
 days_chisq_test <-
   days_tbl %>%
   rbind("계" = colSums(.)) %>%
-  `[`(3, 11:14) %>%
+  `[`(3, 9:14) %>%
   chisq.test(simulate.p.value = FALSE) 
 days_chisq_test %>%
   pander
@@ -752,11 +752,11 @@ invisible(dev.off())
 ```{r, echo = FALSE, warning = FALSE}
 days_tbl %>%
   rbind("계" = colSums(.)) %>%
-  `[`(-3, 11:14) %>%
+  `[`(-3, 9:14) %>%
   pander
 days_RnB_chisq_test <-
   days_tbl %>%
-  `[`(-3, 11:14) %>%
+  `[`(-3, 9:14) %>%
   chisq.test(simulate.p.value = FALSE) 
 days_RnB_chisq_test %>%
   pander
