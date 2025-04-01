@@ -1,12 +1,12 @@
 ---
-title: "Quiz 250324"
+title: "Quiz 250331 (Framing Effects)"
 author: "coop711"
-# date: "2025-03-24"
-date: "`r format(Sys.time(), '%Y-%m-%d %H:%M:%S')`"
+date: "2025-03-31"
+# date: "`r format(Sys.time(), '%Y-%m-%d %H:%M:%S')`"
 output: html_document
 ---
 
-# 4주차 데이터 실험 집계
+# 5주차 데이터 실험 집계
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
@@ -15,79 +15,76 @@ library(pander)
 library(knitr)
 library(magrittr)
 library(dplyr)
-library(googlesheets4)
 panderOptions('table.split.table', Inf)
 panderOptions('table.alignment.rownames', 'left')
 panderOptions('table.alignment.default', 'right')
-options(width = 180)
+options(width=180)
 ```
 
 ## 실험의 목적
 
-4주차 구글 예습 설문지 집계결과를 분석합니다. 
+5주차 구글 예습 설문지 집계결과를 분석합니다. 
 
 Q1~Q6에서는 랜덤화의 효과로 Red, Black 이 얼마나 닮았는지 알아봅니다.
 
-Q7에서는 부연설명을 어느 쪽에 붙이느냐에 따라서 Red 와 Black 의 응답이 달라지는 것을 알아봅니다.
+Q7에서는 컵에 우유를 반을 쏟은 상황에서 긍정적인 단어를 읽은 그룹하고 부정적인 단어를 읽은 그룹 사이에 어떠한 인식의 차이가 발생하는 지 살펴봅니다. 
 
 끝으로 제출시간의 분포가 날마다 고른지, Red, Black 간에는 닮았는지 알아봅니다.
 
 ```{r, data, echo = FALSE, results = 'hide', message = FALSE}
-class_roll <- readRDS("./class_roll_250321.RDS")
-class_roll <- data.frame(class_roll)
-sheet_url <- "https://docs.google.com/spreadsheets/d/17Jzwh3Erda7boIIo0uEQd-cWpQ4oHxnn6gWMCDJHgm4"
+class_roll0321 <- readRDS("./class_roll_250321.RDS")
+class_roll0321 %<>% 
+  data.frame
+class_roll0331 <- 
+  read_excel("./data/class_roll_250331.xlsx", range = "B1:H603")
+str(class_roll0331)
+names(class_roll0331) <- 
+  c("dept", "college", "id", "name", "status", "email", "cell_no")
+class_roll0331$group <- 
+  class_roll0321$group[match(class_roll0331$id, class_roll0321$id)]
+saveRDS(class_roll0331, file = "./class_roll_250331.RDS")
+class_roll <- class_roll0331
+str(class_roll)
 quiz <- 
-  read_sheet(sheet_url)
-# quiz <- 
-#   read_excel("./data/quiz_250324.xlsx",
-#              range = "A2:N150",
-#              col_names = FALSE)
+  read_excel("./data/quiz_250331.xlsx",
+             range = "A2:N26",
+             col_names = FALSE)
 names(quiz) <- c("time", "email", "dept", "id", "name", "Q1", "Q2", "Q3", "Q4", "Q5", "Q6", "group", "Q7_R", "Q7_B")
 str(quiz)
 quiz <- data.frame(quiz)
 class(quiz$id) <- "character"
-quiz$Q2 <- paste0(quiz$Q2 * 100, "%")
-quiz$Q7_R[quiz$Q7_R == "근로시간과 휴무를 유연하게 조정할 수 있어 찬성한다."] <- "찬성한다."
-quiz$Q7_B[quiz$Q7_B == "노동자가 과도한 연장근로를 받을 수 있어 반대한다."] <- "반대한다."
+# quiz$Q7_R[quiz$Q7_R == "대기업의 비리와 독단 경영을 견제하고, 투명성을 높일 수 있으므로 찬 성한다."] <- "찬성한다."
+# quiz$Q7_B[quiz$Q7_B == "정부가 기업에 과다하게 개입하여 경영자율권을 침해하므로 반대한다."] <- "반대한다."
 quiz$Q7 <- ifelse(is.na(quiz$Q7_R), quiz$Q7_B, quiz$Q7_R)
-str(quiz)
-quiz$dept <- factor(quiz$dept)
+# quiz$dept <- factor(quiz$dept)
 quiz$group <- 
   factor(quiz$group, levels = c("Red", "Black"))
 quiz$Q1 <- 
-  factor(quiz$Q1, 
-         levels = c("과전법 체제에서 전국 토지를 세 등급으로 나누고 실제 수확량을 확인하여 징수하였다.", 
-                    "‘조(租)’는 공전(公田)의 경작자가 국고에 상납하는 지대 또는 사전(私田)의 경작자가 전주에게 바치는 지대를 뜻한다.", 
-                    "‘세(稅)’는 사전의 소유자가 국가에 상납하는 지대를 뜻한다.", 
-                    "실제로 현장에 나가서 수확량을 파악하고 등급을 매기는 답험(踏驗)을 하였다.", 
-                    "등급에 따라 일정한 비율로 세금을 감면해 주는 대동(大同)법을 실시하였다."),
-         labels = c("과전법 체제에서 전국 토지를 세 등급으로 나누고 실제 수확량을 확인하여 징수하였다.", 
-                    "‘조(租)’는 공전(公田)의 경작자가 국고에 상납하는 지대 또는 사전(私田)의 경작자가 전주에게 바치는 지대를 뜻한다.", 
-                    "‘세(稅)’는 사전의 소유자가 국가에 상납하는 지세를 뜻한다.", 
-                    "실제로 현장에 나가서 수확량을 파악하고 등급을 매기는 답험(踏驗)을 하였다.", 
-                    "등급에 따라 일정한 비율로 세금을 감면해 주는 대동(大同)법을 실시하였다."))
+  factor(quiz$Q1, levels = c("민주 문자", "엘리트 문자"))
 quiz$Q2 <- 
-  factor(quiz$Q2, levels = c("10%", "30%", "50%", "70%", "90%"))
+  factor(quiz$Q2, levels = c("한자", "한글"))
 quiz$Q3 <- 
-  factor(quiz$Q3, levels = c("7:3", "6:4", "5:5", "4:6", "3:7"))
+  factor(quiz$Q3, levels = c("하나도 없다", "1개", "2개", "3개", "4개"))
 quiz$Q4 <- 
-  factor(quiz$Q4, levels = c("10분의 1", "15분의 1", "20분의 1", "30분의 1"), 
-                  labels = c("1/10", "1/15", "1/20", "1/30"))
+  factor(quiz$Q4, 
+         levels = c("0.9", "0.8", "0.5", "0.2", "0.1"), 
+         labels = c("90%", "80%", "50%", "20%", "10%"))
 quiz$Q5 <- 
-  factor(quiz$Q5, 
-         levels = c("15만호,  32만명", 
-                    "20만호, 69만명", 
-                    "44만호, 153만명", 
-                    "130만호, 5백만명"), 
-         labels = c("15만호", "20만호", "44만호", "130만호"))
+  factor(quiz$Q5, levels = c("대한민국", "영국",  "이탈리아", "미국"))
 quiz$Q6 <- 
-  factor(quiz$Q6, levels = c("경기", "평안", "전라", "경상", "충청"))
-quiz$Q7 <- 
-  factor(quiz$Q7, 
-         levels = c("찬성한다.", 
-                    "반대한다.",
-                    "모름/무응답"))
-## TZ Asia/Seoul 로 설정. UTC 왜곡 배제 효과
+  factor(quiz$Q6, 
+         levels = c("시간당 중위 임금이 60% 낮다", 
+                    "2배 정도 실직할 가능성이 높다", 
+                    "건강이 좋지 않다", 
+                    "사회활동이나 자원활동에 덜 참여한다", 
+                    "남들을 덜 신뢰한다"),
+         labels = c("60% 낮은 임금", "실직 가능성", "나쁜 건강", "활동 불참", "덜 신뢰"))
+quiz$Q7 %<>%
+  factor(levels = c("휴우, 그래도 반이나 남았네.", "헐, 반 밖에 안 남았네.", "모름/기타"),
+         labels = c("반이나", "반밖에", "모름/기타"))
+table(quiz$Q7, useNA = "ifany")
+#> 마감기한으로부터 제출시점의 기간
+#> ## TZ Asia/Seoul 로 설정. UTC 왜곡 배제 효과
 # quiz$time <- as.POSIXct(quiz$time, tz = "Asia/Seoul")
 quiz$time <- format(quiz$time, format = "%Y-%m-%d %H:%M:%S")
 ## 자정 전에 들어 온 사람은 몇 명이나?
@@ -115,10 +112,9 @@ as.Date(quiz$time) %>%
   table
 quiz <- data.frame(quiz)
 #> 마감기한으로부터 제출시점의 기간
-quiz$days <- as.numeric(difftime("2025-04-07 00:00:00", quiz$time, units = 'days'))
-quiz$hours <- as.numeric(difftime("2025-04-07 00:00:00", quiz$time, units = 'hours'))
+quiz$days <- as.numeric(difftime("2025-04-14 00:00:00", quiz$time, units = 'days'))
+quiz$hours <- as.numeric(difftime("2025-04-14 00:00:00", quiz$time, units = 'hours'))
 str(quiz)
-pander(summary(quiz))
 ```
 
 ```{r, cleaning, echo = FALSE, results = 'hide'}
@@ -134,7 +130,12 @@ quiz_wrong_ids <- quiz %>%
 wrong_ids <- quiz_wrong_ids$id
 quiz_wrong_ids <- quiz_wrong_ids %>%
   mutate(id = case_when(
-    id == "202216743" ~ "20226743",
+    id == "20247109" ~ "20241709",
+    id == "20246278" ~ "20246279",
+    id == "20243491" ~ "20243941",
+    id == "2021209" ~ "20221209",
+    id == "20241529" ~ "20241520",
+    id == "20142513" ~ "20242513",
     TRUE ~ id
   ))
 # 3. quiz 에서 id 틀린 행을 제거하고 옳은 id 갖춘 행으로 교체하기
@@ -157,11 +158,12 @@ quiz <- quiz %>%
 #> 중복 제출자
 quiz %>%
   filter(duplicated(id)) %>%
-  select(id, name)
+  select(time, id, name) %>%
+  arrange(time)
 # which(duplicated(quiz$id)) %>%
 #   quiz[., c("id", "name")]
 quiz %>%
-  filter(name %in% c("안현성", "이강준", "정수영", "박세준"))
+  filter(name %in% c("손연수", "김유진", "김세은"))
 # quiz[quiz$name %in% c("최재혁", "박지연"), ] #> 최재혁, 박지연이 중복 제출
 quiz <- quiz %>% 
   arrange(id, desc(time)) %>%
@@ -179,6 +181,16 @@ absentee %>%
 absentee %>%
   count(group) %>%
   print()
+#> 국민문해력조사 참여자 vs Quiz 참여자
+literacy_roll <- readRDS("./literacy_roll_250331.RDS")
+class_roll %>%
+  filter(id %in% setdiff(literacy_roll$id, quiz$id)) %>%
+  select(id, name, group)
+class_roll %>%
+  filter(id %in% setdiff(quiz$id, literacy_roll$id)) %>%
+  select(id, name, group)
+class_roll[class_roll$id %in% setdiff(literacy_roll$id, quiz$id), c("id", "name", "group")]
+class_roll[class_roll$id %in% setdiff(quiz$id, literacy_roll$id), c("id", "name", "group")]
 # absentee$group %>%
 #   table
 ```
@@ -196,11 +208,11 @@ wrong_group <- quiz %>%
   filter(group2 != group)
 
 #> 잘못된 그룹 정보 출력
-wrong_group %>%
-  select(time, id, group2, group) %>%
-  arrange(time) %>%
-  rename("제출시간" = time, "학번" = id, "랜덤화출석부" = group2, "구글예습퀴즈" = group) %>%
-  pander(row.names = FALSE)
+# wrong_group %>%
+#   select(time, id, group2, group) %>%
+#   arrange(time) %>%
+#   rename("제출시간" = time, "학번" = id, "랜덤화출석부" = group2, "구글예습퀴즈" = group) %>%
+#   pander(row.names = FALSE)
 
 #> 옛 코드
 # quiz$group2 <- class_roll$group[match(quiz$id, class_roll$id)]
@@ -260,19 +272,18 @@ Red 로 응답한 인원은 `r colSums(wrong_tbl)[1]`명, Black 에 응답한 �
 
 전체 응답인원 `r sum(wrong_tbl)` 명을 랜덤하게 둘로 나눌 때 어느 한 쪽의 기대인원은 전체 응답인원의 절반인 `r sum(wrong_tbl) / 2`명이고, 표준오차는 전체 응답인원의 제곱근에 1/2을 곱해 준 `r round(sqrt(sum(wrong_tbl)) * 1 / 2, digits = 1)` 명입니다. 
 
-따라서 Red, Black 각 그룹에 관찰된 인원은 기대인원으로부터 표준오차 범위, 혹은 2배의 표준오차 범위 안에 들어갑니다.
+따라서 Red, Black 각 그룹에 관찰된 인원은 기대인원으로부터 표준오차 범위 안에 들어갑니다.
 
-## Q1. 세종대왕 시대 조세제도
+##  Q1. 한글의 문자 유형
 
-```{r, echo = FALSE, out.width = "75%", align = "left"}
-include_graphics("./pics/Quiz230322_Q1.png")
+```{r, echo = FALSE, out.width = "75%", fig.align = "left"}
+include_graphics("./pics/Quiz210323_Q1.png")
 ```
 
-### 조선초기 조세제도
+### 한글은 민주 문자
 
-```{r, National and Local tax, echo = FALSE, warning = FALSE}
-tbl_q1_a <- 
-  quiz$Q1 %>% 
+```{r, echo = FALSE, warning = FALSE}
+tbl_q1_a <- quiz$Q1 %>% 
   table(quiz$group, ., useNA = "ifany") %>%
   cbind("계" = rowSums(.)) %>%
   rbind("계" = colSums(.))
@@ -280,7 +291,7 @@ tbl_q1_a %>%
   pander 
 chisq_test_q1 <- 
   tbl_q1_a %>%
-  `[`(-3, -6) %>%
+  `[`(-3, -3) %>%
   chisq.test(simulate.p.value = FALSE) 
 chisq_test_q1 %>%
   pander
@@ -292,12 +303,12 @@ Q1의 집계 결과가 Red, Black 간에 통계적으로 유의한 차이가 있
 
 실제로 닮은 게 느껴집니까?
 
-### 조선초기 조세제도(%)
+### 한글은 민주 문자(%)
 
-```{r, National and Local tax in percentage, echo = FALSE, eval = TRUE}
+```{r, echo = FALSE}
 ptbl_q1 <- 
   tbl_q1_a %>% 
-  `[`(3, -6) %>%
+  `[`(3, -3) %>%
   prop.table %>% 
   c("계" = sum(.)) %>%
   `*`(100) 
@@ -306,27 +317,26 @@ ptbl_q1 %>%
   pander
 ```
 
-정답률은 Red, Black 을 합하여 계산하는데, `r ptbl_q1[5] %>% format(digits = 2, nsmall = 1)`(%) 입니다.
+정답률은 Red, Black 을 합하여 계산하는데, `r ptbl_q1[1] %>% format(digits = 2, nsmall = 1)`(%) 입니다.
 
-## Q2. 공법도입에 대한 대신들의 찬성율
+## Q2. 정보혁명과 문자 체계
 
-```{r, echo = FALSE, out.width = "75%", align = "left"}
-include_graphics("./pics/Quiz210913_Q2.png")
+```{r, echo = FALSE, out.width = "75%", fig.align = "left"}
+include_graphics("./pics/Quiz210323_Q2.png")
 ```
 
-### 공법도입과 대신들(집계표)
+### 정보혁명을 이끄는 문자는 한글(집계표)
 
-```{r, tax law and cabinets, echo = FALSE, warning = FALSE}
-tbl_q2_a <- 
-  quiz$Q2 %>% 
+```{r, echo = FALSE, warning = FALSE}
+tbl_q2_a <- quiz$Q2 %>% 
   table(quiz$group, ., useNA = "ifany") %>%
   cbind("계" = rowSums(.)) %>%
   rbind("계" = colSums(.))
 tbl_q2_a %>% 
-  pander 
+  pander
 chisq_test_q2 <- 
   tbl_q2_a %>%
-  `[`(-3, -6) %>%
+  `[`(-3, -3) %>%
   chisq.test(simulate.p.value = FALSE) 
 chisq_test_q2 %>%
   pander
@@ -334,16 +344,16 @@ chisq_test_q2 %>%
 
 Q2의 집계 결과가 Red, Black 간에 통계적으로 유의한 차이가 있는지 알아보기 위하여 카이제곱 테스트를 수행하였습니다. 
 
-그 결과 카이제곱 통계량은 `r chisq_test_q2[1] %>% format(digits = 2, nsmall = 3)`, 자유도는 `r chisq_test_q2[2] %>% format(digits = 2, nsmall = 2)`, p-value 는 `r chisq_test_q2[3] %>% format(digits = 2, nsmall = 4)`이므로 Red, Black 간에 통계적으로 유의한 차이를 보이지 않습니다. 
+그 결과 카이제곱 통계량은 `r chisq_test_q2[1] %>% format(digits = 2, nsmall = 2)`, 자유도는 `r chisq_test_q2[2] %>% format(digits = 2, nsmall = 2)`, p-value 는 `r chisq_test_q2[3] %>% format(digits = 2, nsmall = 2)`이므로 Red, Black 간에 통계적으로 유의한 차이를 보이지 않습니다. 
 
 실제로 닮은 게 느껴집니까?
 
-### 공법도입과 대신들(%)
+### 정보혁명을 이끄는 문자는 한글(%)
 
-```{r, tax law and cabinets in percentage, echo = FALSE}
+```{r, echo = FALSE}
 ptbl_q2 <- 
   tbl_q2_a %>% 
-  `[`(3, -6) %>%
+  `[`(3, -3) %>%
   prop.table %>% 
   c("계" = sum(.)) %>%
   `*`(100) 
@@ -352,22 +362,22 @@ ptbl_q2 %>%
   pander
 ```
 
-정답률은 Red, Black 을 합하여 계산하는데, `r ptbl_q2[1] %>% format(digits = 2, nsmall = 1)`(%) 입니다.
+정답률은 Red, Black 을 합하여 계산하는데, `r ptbl_q2[2] %>% format(digits = 2, nsmall = 1)`(%) 입니다.
 
-## Q3. 공법도입과 품관촌민들의 찬반
+## Q3. 알기 힘든 전문 용어
 
-```{r, echo = FALSE, out.width = "75%", align = "left"}
-include_graphics("./pics/Quiz210316_Q3.png")
+```{r, echo = FALSE, out.width = "75%", fig.align = "left"}
+include_graphics("./pics/Quiz210323_Q3.png", dpi = NA)
 ```
 
-### 품관촌민들의 찬반(집계표)
+### 몇 개나 아나요?(집계표)
 
-```{r, tax law and laymen, echo = FALSE, warning = FALSE}
-tbl_q3_a <- 
-  quiz$Q3 %>% 
+```{r, echo = FALSE, warning = FALSE}
+tbl_q3_a <- quiz$Q3 %>% 
   table(quiz$group, ., useNA = "ifany") %>%
   cbind("계" = rowSums(.)) %>%
   rbind("계" = colSums(.))
+# colnames(tbl_q3_a)[6] %<>% `<-`(., "결석")
 tbl_q3_a %>% 
   pander 
 chisq_test_q3 <- 
@@ -384,9 +394,9 @@ Q3의 집계 결과가 Red, Black 간에 통계적으로 유의한 차이가 있
 
 실제로 닮은 게 느껴집니까?
 
-### 품관촌민들의 찬반(%)
+### 몇 개나 아나요?(%)
 
-```{r, tax law and laymen in percentage, echo = FALSE}
+```{r, echo = FALSE}
 ptbl_q3 <- 
   tbl_q3_a %>% 
   `[`(3, -6) %>%
@@ -398,19 +408,20 @@ ptbl_q3 %>%
   pander
 ```
 
-정답률은 Red, Black 을 합하여 계산하는데, `r ptbl_q3[2] %>% format(digits = 2, nsmall = 1)`(%) 입니다.
+물론, 이 문제에는 정답이 없으므로 정답률은 의미가 없습니다. 
 
-## Q4. 공법
+가장 많은 비율로 응답한 것이 "하나도 없다"이고 `r ptbl_q3[1] %>% format(digits = 2, nsmall = 1)`(%) 입니다.
+
+## Q4. 해방직후 비문해율
 
 ```{r, echo = FALSE, out.width = "75%", fig.align = "left"}
-include_graphics("./pics/Quiz210316_Q4.png")
+include_graphics("./pics/Quiz210323_Q4.png")
 ```
 
-### 기본세율
+### 집계
 
-```{r, sejong , echo = FALSE, warning = FALSE}
-tbl_q4_a <- 
-  quiz$Q4 %>% 
+```{r, echo = FALSE, warning = FALSE}
+tbl_q4_a <- quiz$Q4 %>% 
   table(quiz$group, ., useNA = "ifany") %>%
   cbind("계" = rowSums(.)) %>%
   rbind("계" = colSums(.))
@@ -418,7 +429,7 @@ tbl_q4_a %>%
   pander 
 chisq_test_q4 <- 
   tbl_q4_a %>%
-  `[`(-3, -5) %>%
+  `[`(-3, -6) %>%
   chisq.test(simulate.p.value = FALSE) 
 chisq_test_q4 %>%
   pander
@@ -430,12 +441,12 @@ Q4의 집계 결과가 Red, Black 간에 통계적으로 유의한 차이가 있
 
 실제로 닮은 게 느껴집니까?
 
-### 기본세율(%)
+### %
 
-```{r, sejong in percentage, echo = FALSE}
+```{r, National and Local tax in percentage, echo = FALSE}
 ptbl_q4 <- 
   tbl_q4_a %>% 
-  `[`(3, -5) %>%
+  `[`(3, -6) %>%
   prop.table %>% 
   c("계" = sum(.)) %>%
   `*`(100) 
@@ -444,19 +455,18 @@ ptbl_q4 %>%
   pander
 ```
 
-정답률은 Red, Black 을 합하여 계산하는데, `r ptbl_q4[1] %>% format(digits = 2, nsmall = 1)`(%) 입니다.
+정답률은 Red, Black 을 합하여 계산하는데, `r ptbl_q4[2] %>% format(digits = 2, nsmall = 1)`(%) 입니다.
 
-## Q5. 1423년 조선시대 호구와 인구
+## Q5. 세대간 문해력 격차
 
 ```{r, echo = FALSE, out.width = "75%", fig.align = "left"}
-include_graphics("./pics/Quiz210316_Q5.png")
+include_graphics("./pics/Quiz210323_Q5.png")
 ```
 
-### 호구와 인구
+### 집계
 
-```{r, population, echo = FALSE, warning = FALSE}
-tbl_q5_a <- 
-  quiz$Q5 %>% 
+```{r, echo = FALSE, warning = FALSE}
+tbl_q5_a <- quiz$Q5 %>% 
   table(quiz$group, ., useNA = "ifany") %>%
   cbind("계" = rowSums(.)) %>%
   rbind("계" = colSums(.))
@@ -472,13 +482,13 @@ chisq_test_q5 %>%
 
 Q5의 집계 결과가 Red, Black 간에 통계적으로 유의한 차이가 있는지 알아보기 위하여 카이제곱 테스트를 수행하였습니다. 
 
-그 결과 카이제곱 통계량은 `r chisq_test_q5[1] %>% format(digits = 2, nsmall = 3)`, 자유도는 `r chisq_test_q5[2] %>% format(digits = 2, nsmall = 2)`, p-value 는 `r chisq_test_q5[3] %>% format(digits = 2, nsmall = 4)`이므로 Red, Black 간에 통계적으로 유의한 차이를 보이지 않습니다.
+그 결과 카이제곱 통계량은 `r chisq_test_q5[1] %>% format(digits = 2, nsmall = 3)`, 자유도는 `r chisq_test_q5[2] %>% format(digits = 2, nsmall = 2)`, p-value 는 `r chisq_test_q5[3] %>% format(digits = 2, nsmall = 4)`이므로 Red, Black 간에 통계적으로 유의한 차이를 보이지 않습니다. 
 
 실제로 닮은 게 느껴집니까?
 
-### 호구와 인구(%)
+### %
 
-```{r, population in percentage, echo = FALSE}
+```{r, tax law and cabinets in percentage, echo = FALSE}
 ptbl_q5 <- 
   tbl_q5_a %>% 
   `[`(3, -5) %>%
@@ -490,19 +500,18 @@ ptbl_q5 %>%
   pander
 ```
 
-정답률은 Red, Black 을 합하여 계산하는데, `r ptbl_q5[2] %>% format(digits = 2, nsmall = 1)`(%) 입니다.
+정답률은 Red, Black 을 합하여 계산하는데, `r ptbl_q5[1] %>% format(digits = 2, nsmall = 1)`(%) 입니다.
 
-## Q6. 지방관료와 품관촌민
+## Q6. 문해력 격차의 파급효과
 
 ```{r, echo = FALSE, out.width = "75%", fig.align = "left"}
-include_graphics("./pics/Quiz210316_Q6.png")
+include_graphics("./pics/Quiz210323_Q6.png")
 ```
 
-### 찬반이 반대인 곳(집계표)
+### 집계
 
-```{r, chungchung, echo = FALSE, warning = FALSE}
-tbl_q6_a <- 
-  quiz$Q6 %>% 
+```{r, echo = FALSE, warning = FALSE}
+tbl_q6_a <- quiz$Q6 %>% 
   table(quiz$group, ., useNA = "ifany") %>%
   cbind("계" = rowSums(.)) %>%
   rbind("계" = colSums(.))
@@ -522,9 +531,9 @@ Q6의 집계 결과가 Red, Black 간에 통계적으로 유의한 차이가 있
 
 실제로 닮은 게 느껴집니까?
 
-### 찬반이 반대인 곳(%)
+### %
 
-```{r, chungchung in percentage, echo = FALSE}
+```{r, tax law and laymen in percentage, echo = FALSE}
 ptbl_q6 <- 
   tbl_q6_a %>% 
   `[`(3, -6) %>%
@@ -536,31 +545,42 @@ ptbl_q6 %>%
   pander
 ```
 
-정답률은 Red, Black 을 합하여 계산하는데, `r ptbl_q6[5] %>% format(digits = 2, nsmall = 1)`(%) 입니다. 
+정답률은 Red, Black 을 합하여 계산하는데, `r ptbl_q6[1] %>% format(digits = 2, nsmall = 1)`(%) 입니다. 
 
-## Q7. 부연설명의 효과 : 주당 근로 69시간제 도입 찬반
+## Q7. 프레임을 설정하는 단어의 힘
 
-부연설명을 찬성 쪽에 붙이는가(Red), 또는 반대 쪽에 붙이는가(Black)에 따라 응답이 영향을 받는 것으로 관찰됩니다. 
+컵 가득 음료수를 채웠는데 미끄러지면서 반을 쏟았습니다. 
 
-찬반여부에 대한 카이제곱테스트의 p-value를 놓고 볼 때 그 차이가 통계적으로 매우 유의합니다. 
+이 상황에서 어떤 사람은 "그래도 반이 남았네"라고 긍정적 반응을 하고 또 다른 사람은 "어쩌나 반 밖에 안 남았네"라고 부정적 반응을 보일 수 있습니다. 
+
+만약, 반응을 보이기 전에 Red 에는 긍정적 단어들을 읽게 하고, Black 에는 부정적 단어들을 읽게 한 후 반응을 물어보면 어떻게 될까요? <br><br>
+
+Red, Black 의 성격상 단어를 보기 전에는 긍정적 반응의 비율과 부정적 반응의 비율이 닮을 것으로 기대됩니다. 
+
+그러나 단어를 보고 나서는 반응이 극명하게 나뉘는 것을 관찰하게 됩니다. 
+
+통계적으로 매우, 매우, ... 유의한 차이를 보여 줍니다. 
+
+이것도 일종의 프레이밍이 인식에 미치는 영향이라고 할 수 있겠습니다. 
+
+힘든 상황이라도 긍정적인 생각을 가져야겠죠?
 
 ```{r, echo = FALSE, out.width = "67%", fig.align = "left"}
-include_graphics("./pics/Quiz240322_Q7_Red.png")
+include_graphics("./pics/Quiz240329_Q7_Red.png")
 ```
 
 ```{r, echo = FALSE, out.width = "67%", fig.align = "left"}
-include_graphics("./pics/Quiz240322_Q7_Black.png")
+include_graphics("./pics/Quiz240329_Q7_Black.png")
 ```
 
 ### 집계
 
-```{r, investigation, echo = FALSE, warning = FALSE}
-tbl_q7_a <- 
-  quiz$Q7 %>%
+```{r, vote attitude, echo = FALSE, warning = FALSE}
+tbl_q7_a <- quiz$Q7 %>%
   table(quiz$group, ., useNA = "ifany") %>%
   cbind("계" = rowSums(.)) %>%
   rbind("계" = colSums(.))
-rownames(tbl_q7_a)[1:2] <- c("Red(찬성한다에 부연설명)", "Black(반대한다에 부연설명)")
+rownames(tbl_q7_a)[1:2] <- c("Red(긍정적 단어)", "Black(부정적 단어)")
 tbl_q7_a %>% 
   pander
 chisq_test_q7 <- 
@@ -571,29 +591,32 @@ chisq_test_q7 %>%
   pander
 ```
 
-Q7의 Red는 주당 근로 69시간제의 도입에 찬반을 묻는 질문 중 찬성을 유도하는 부연설명을 붙였을 때  `r tbl_q7_a[1, 4]`명이 응답한 가운데 `r tbl_q7_a[1, 1]`명이 "찬성한다"는 반응을 보이고, `r tbl_q7_a[1, 2]`명이 "반대한다"는 반응을 보입니다. 
+Q7의 Red는 음료수를 쏟은 상황에서 "견딜만 하다" 등의 긍정적인 단어들을 본 사람들인 데 `r tbl_q7_a[1, 4]`명이 응답한 가운데 `r tbl_q7_a[1, 1]`명이 "반이나" 남아 있다는 반응을 보이고, `r tbl_q7_a[1, 2]`명이 "반 밖에" 안 남았다는 반응을 보입니다. 
 
-Black은 같은 상황에서 반대를 유도하는 부연설명을 붙였을 떄 `r tbl_q7_a[2, 4]`명이 응답한 가운데 `r tbl_q7_a[2, 1]`명이 "찬성한다"는 반응을 보이고, `r tbl_q7_a[2, 2]`명이 "반대한다"는 반응을 보입니다. 
+Black은 같은 상황에서 "매우 화가 난다" 등의 부정적인 단어들을 본 사람들인 데 `r tbl_q7_a[2, 4]`명이 응답한 가운데 `r tbl_q7_a[2, 1]`명이 "반이나" 남아 있다는 반응을 보이고, `r tbl_q7_a[2, 2]`명이 "반 밖에" 안 남았다는 반응을 보입니다. 
 
-그리고 "모름/무응답"에 답한 인원은 Red에  `r tbl_q7_a[1, 3]`명, Black 에 `r tbl_q7_a[2, 3]`명이 응답하였습니다. 
+그리고 "모름/기타"에 답한 인원은 Red에  `r tbl_q7_a[1, 3]`명, Black 에 `r tbl_q7_a[2, 3]`명이 응답하였습니다. 
 
-카이제곱 테스트는 이와 같은 상황에서 
-찬성을 유도하는 부연설명을 붙인 경우와 반대를 유도하는 부연설명을 붙인 경우에 그 응답의 차이가 통계적으로 유의하다는 것을 보여 줍니다. 
+랜덤화 효과일까요? 
 
-카이제곱 통계량은 `r chisq_test_q7[1] %>% format(digits = 2, nsmall = 3)`, 자유도는 `r chisq_test_q7[2] %>% format(digits = 2, nsmall = 2)`, p-value 는 `r chisq_test_q7[3] %>% format(digits = 2, nsmall = 4)`으로
-부연설명을 어디에 붙이느냐에 따라 그 차이가 통계적으로 유의한 것으로 나왔습니다. 
+"모름/기타"의 응답이 유난히 닮은 게 이런 해석을 불러 일으킵니다. <br><br> 
 
-여기서 부연설명이 응답에 영향을 끼치지 않는다고 가정해 봅시다. 
+카이제곱 테스트는 이와 같은 상황에서 단어들을 이용하여 긍정적인 프레임을 구성한 경우와 부정적인 프레임을 구성한 경우에 그 차이가 통계적으로 매우, 매우, ... 유의하다는 것을 보여 줍니다. 
 
-그렇다면 Red, Black 의 응답은 대부분의 Q1 ~ Q6 에서와 같이 랜덤화 효과에 의하여 통계적으로 유의한 차이를 보이지 않을 것입니다. 
+카이제곱 통계량은 `r chisq_test_q7[1] %>% format(digits = 2, nsmall = 3)`, 자유도는 `r chisq_test_q7[2] %>% format(digits = 2, nsmall = 2)`, p-value 는 `r chisq_test_q7[3] %>% format(digits = 2, nsmall = 4)` 
+긍정적인 단어나 부정적인 단어를 단지 읽는 것만으로도 프레임이 설정되어 반응이 다르게 나온다는 것을 보여줍니다.<br><br>
 
-그런데 실제로 관찰된 카이제곱 통계값은 통계적으로  유의한 차이를 보여 주고 있습니다. 
+여기서 긍정이나 부정 프레이밍이 응답에 영향을 끼치지 않는다고 가정해 봅시다. 
 
-따라서 부연설명이 영향을 끼치지 않는다는 가정은 티당치 않은 것으로 볼 수밖에 없게 되었습니다.
+그렇다면 Red, Black 의 응답은 Q1~Q3 애서와 같이 랜덤화 효과에 의하여 통계적으로 유의한 차이를 보이지 않을 것입니다. 
+
+그런데 실제로 관찰된 카이제곱 통계값은 통계적으로 매우 유의한 차이를 보여 줍니다. 
+
+따라서 긍정이나 부정 프레이밍이  영향을 끼치지 않는다는 가정이 잘못되었다는 것을 논리적으로 입증할 수 있습니다.
 
 이러한 논증 방식을 귀류법이라 합니다.
 
-### % 비교  
+### % 비교.  
 
 ```{r, investigation in percentage, echo = FALSE}
 ptbl_q7_a <- 
@@ -607,15 +630,15 @@ ptbl_q7_a %>%
   pander
 ```
 
-찬성을 유도하는 부연설명을 붙인 Red에서 "찬성한다"고 응답하는사람들의 백분율, `r format(ptbl_q7_a[1, 1], digits = 2, nsmall = 1)`(%)은 "반대한다"고 응답하는 사람들의 백분율, `r format(ptbl_q7_a[1, 2], digits = 2, nsmall = 1)`(%) 보다 높습니다. 
+긍정적인 단어들을 읽어 본 Red에서 "반이나" 남았다고 응답하는사람들의 백분율, `r format(ptbl_q7_a[1, 1], digits = 2, nsmall = 1)`(%)은 "반 밖에" 안 남았다고 응답하는 사람들의 백분율, `r format(ptbl_q7_a[1, 2], digits = 2, nsmall = 1)`(%) 보다 월등히 높습니다. 
 
-반면 반대를 유도하는 부연설명을 붙인 Black에서 "찬성한다"고 응답하는 사람들의 백분율, `r format(ptbl_q7_a[2, 1], digits = 2, nsmall = 1)`(%)은 "반대한다"고 응답하는 사람들의 백분율, `r format(ptbl_q7_a[2, 2], digits = 2, nsmall = 1)`(%) 보다 훨씬 적습니다. 
+반면 부정적인 단어들을 읽어 본 Black에서 "반이나" 남았다고 응답하는사람들의 백분율, `r format(ptbl_q7_a[2, 1], digits = 2, nsmall = 1)`(%)은 "반 밖에" 안 남았다고 응답하는 사람들의 백분율, `r format(ptbl_q7_a[2, 2], digits = 2, nsmall = 1)`(%) 보다 훨씬 적습니다. 
 
-찬성을 유도하는 부연설명을 붙이느냐, 반대를 유도하는 부연설명을 붙이느냐에 따라 반응이 달라진다는 것을 잘 알 수 있습니다. 
+긍정적인 단어를 읽느냐, 부정적인 단어를 읽느냐에 따라 형성된 프레임의 영향이 막대하다는 것을 잘 알 수 있습니다. 
 
-Red 와 Black 이 워낙 차이가 나지만 전체적으로 어느 정도가 "찬성한다"하고 어느 정도가 "반대한다"고 응답하였는지 합쳐 보겠습니다.
+부Red 와 Black 이 워낙 차이가 나지만 전체적으로 어느 정도가 "반이나" 남았다, 혹은 "반 밖에 " 안 남았다고 응답하였는지 합쳐 보겠습니다.
 
-### % 합계
+### % 합산
 
 ```{r, overall percentage, echo = FALSE}
 ptbl_q7 <- 
@@ -629,17 +652,14 @@ ptbl_q7 %>%
   pander
 ```
 
-"찬성한다"고 응답한 백분율은 Red, Black 합쳐서  `r format(ptbl_q7[1], digits = 2, nsmall = 1)`(%)(으)로  '반대한다"고 응답한 백분율, `r format(ptbl_q7[2], digits = 2, nsmall = 1)`(%) 보다 상당히 적습니다. 
-
-다만, 모름/무응답이 `r format(ptbl_q7[3], digits = 2, nsmall = 1)`(%)로 적지 않습니다.
+"반이나" 남아 있다고 응답한 백분율은 Red, Black 합쳐서  `r format(ptbl_q7[1], digits = 2, nsmall = 1)`(%)(으)로  '반 밖에 " 안 남아 있다고 응답한 백분율, `r format(ptbl_q7[2], digits = 2, nsmall = 1)`(%) 보다 상당히 많습니다. 
 
 ### Mosaic Plot
 
 ```{r, mosaic plot, echo = FALSE, fig.width = 7, fig.height = 5}
 library(ggplot2)
 source("./mosaic_gg.R")
-m_list <- 
-  quiz$Q7 %>%
+m_list <- quiz$Q7 %>%
   table(quiz$group, ., useNA = "ifany") %>%
   t %>%
   mosaic_gg
@@ -648,31 +668,30 @@ df <- m_list$df
 p_df <- m_list$p_df
 names(df)[1] <- "Var1"
 names(p_df)[1] <- "Var1"
-# df$Var1 %<>% factor(labels = c("반이나 남았네", "반밖에 안 남았네", "모름/무응답"))
-df$Var2 %<>% factor(labels = c("찬성한다에 부연설명", "반대한다에 부연설명"))
-# p_df$Var1 %<>% factor(labels = c("반이나 남았네", "반밖에 안 남았네", "모름/무응답"))
-p_df$Var2 %<>% factor(labels = c("찬성한다에 부연설명", "반대한다에 부연설명"))
+# df$Var1 %<>% factor(labels = c("반이나 남았네", "반밖에 안 남았네", "모름/기타"))
+df$Var2 %<>% factor(labels = c("긍정적 단어를 본 집단", "부정적 단어를 본 집단"))
+# p_df$Var1 %<>% factor(labels = c("반이나 남았네", "반밖에 안 남았네", "모름/기타"))
+p_df$Var2 %<>% factor(labels = c("긍정적 단어를 본 집단", "부정적 단어를 본 집단"))
 m + geom_text(aes(x = center, y = 1.05), 
               family = "KoPubWorldDotum Medium",
               label = df[, 2]) +
   theme_bw(base_family = "KoPubWorldDotum Medium") +
-  labs(title = "부연설명의 영향", x = "Red or Black(누적 %)", y = "인원(%, 명)") +
+  labs(title = "컵의 물을 반 엎질렀을 때", x = "Red or Black(누적 %)", y = "인원(%, 명)") +
   scale_fill_brewer(name = "응답", 
-                    labels = c("찬성한다", "반대한다", "모름/무응답"),
+                    labels = c("반이나 남았네", "반밖에 안 남았네", "모름/기타"),
                     type = "qual", 
                     palette = "Set2", 
                     direction = 1) +
   theme(plot.title = element_text(hjust = 0.5, 
                                   size = 18, 
                                   family = "KoPubWorldDotum Bold")) 
-ggsave("./pics/Quiz250324_Q7_RnB.png", dpi = 120, width = 960, height = 840, units = "px")
+ggsave("./pics/Quiz250331_Q7_RnB.png", dpi = 120, width = 960, height = 840, units = "px")
 ```
 
-Mosaic Plot 은 이 집계결과를 시각적으로 잘 보여줍니다. 
+Mosaic Plot 은 이 집계결과를 시각적으로 잘 보여줍니다. 긍정적 단어를 본 Red 에서 "반이나" 남아 있다고 응답한 백분율이 월등
+히 높고, 부정적 단어를 본 Black 에서 "반 밖에" 안 남았다고 응답한 백분율이 월등히 높은 것을 시각적으로 알 수 있습니다. 
 
-찬성을 유도하는 부연설명을 붙인 Red 에서 "찬성한다"고 응답한 백분율이 높고, 반대를 유도하는 부연설명을 붙인 Black 에서 "반대한다"고 응답한 백분율이 월등히 높은 것을 시각적으로 알 수 있습니다. 
-
-<P style = "page-break-before:always">
+덤으로 "모름/기타"의 백분율은 Red, Black 간에 매우 닮았다는 점도 시각적으로 쉽게 파악할 수 있습니다.
 
 ## 마감 시간으로부터 제출 시간의 분포
 
@@ -694,7 +713,7 @@ days_tbl %>%
 
 첫째, 날마다 고르게 제출하는가? 
 
-둘째, Red, Black 간에 통게적으로 유의한 차이가 있는가?
+둘쨰, Red, Black 간에 통게적으로 유의한 차이가 있는가?
 
 각 문제를 살펴보기 위해서는 분포표의 일부분을 대상으로 카이제곱 테스트를 수행합니다.
 
@@ -703,12 +722,12 @@ days_tbl %>%
 ```{r, echo = FALSE, warning = FALSE}
 days_tbl %>%
   rbind("계" = colSums(.)) %>%
-  `[`(3, 6:14) %>%
+  `[`(3, 13:14) %>%
   pander
 days_chisq_test <-
   days_tbl %>%
   rbind("계" = colSums(.)) %>%
-  `[`(3, 6:14) %>%
+  `[`(3, 13:14) %>%
   chisq.test(simulate.p.value = FALSE) 
 days_chisq_test %>%
   pander
@@ -716,11 +735,9 @@ days_chisq_test %>%
 
 날마다 고르게 제출하는지 알아 보았습니다. 
 
-분포표의 "계"행에서 '계'열을 제외하고 카이제곱테스트를 수행합니다. 
+분포표의 "계"행에서 '계'열을 제외하고 카이제곱테스트를 수행합니다. 분포표 만으로도 쉽게 파악할 수 있지만 카이제곱테스트가 명확히 해 줍니다. 
 
-분포표 만으로도 쉽게 파악할 수 있지만 카이제곱테스트가 명확히 해 줍니다. 
-
-카이제곱 통계량은 `r format(days_chisq_test[1], digits = 2, nsmall = 2)`, 자유도는 `r format(days_chisq_test[2], digits = 2, nsmall = 2)`, p-value 는 `r format(days_chisq_test[3], digits = 2, nsmall = 2)` 이므로 결코 고르게 제출한다고 말할 수 없습니다. 
+카이제곱 통계량은 `r format(days_chisq_test[1], digits = 2, nsmall = 2)`, 자유도는 `r format(days_chisq_test[2], digits = 2, nsmall = 2)`, p-value 는 `r format(days_chisq_test[3], digits = 2, nsmall = 2)` 이므로 결코 고르게 제출한다고 말할 수 없겠습니다. 
 
 막대그래프로 살펴 보겠습니다.
 
@@ -742,9 +759,9 @@ text(x = b[14, 1], y = sum(days_tbl[, 1]),
      labels = paste0(sum(days_tbl[, 1]), "명"), pos = 3)
 text(x = b[14, 1], y = sum(days_tbl[, 1]) / 2, 
      labels = paste0(format(sum(days_tbl[, 1]) / N * 100, digits = 1, nsmall = 0), "%"))
-title(main = paste0("Quiz250324 (", N, "명 제출)"))
+title(main = paste0("Quiz250331 (", N, "명 제출)"))
 # title(main = "일 단위 퀴즈 제출 인원", sub = paste0("Quiz230925 (", N, "명 제출)"))
-dev.copy(png, file = "./pics/2402/quiz_submission_4.png", width = 640, height = 480)
+dev.copy(png, file = "./pics/2402/quiz_submission_5.png", width = 640, height = 480)
 invisible(dev.off())
 })
 ```
@@ -756,11 +773,11 @@ invisible(dev.off())
 ```{r, echo = FALSE, warning = FALSE}
 days_tbl %>%
   rbind("계" = colSums(.)) %>%
-  `[`(-3, 6:14) %>%
+  `[`(-3, 13:14) %>%
   pander
 days_RnB_chisq_test <-
   days_tbl %>%
-  `[`(-3, 6:14) %>%
+  `[`(-3, 13:14) %>%
   chisq.test(simulate.p.value = FALSE) 
 days_RnB_chisq_test %>%
   pander
@@ -772,7 +789,7 @@ days_RnB_chisq_test %>%
 
 카이제곱 통계량은 `r format(days_RnB_chisq_test[1], digits = 2, nsmall = 3)`, 자유도는 `r format(days_RnB_chisq_test[2], digits = 2, nsmall = 2)`, p-value 는 `r format(days_RnB_chisq_test[3], digits = 2, nsmall = 4)` 이므로 제출 시간의 분포는 Red, Black 간에 통계적으로 유의한 차이가 관찰되지 않습니다. 
 
-이 사실을 Mosaic Plot 을 이용하여 시각적으로 살펴보겠습니다. 
+이 사실을 Mosaic Plot을 이용하여 시각적으로 살펴보겠습니다. 
 
 닮았다고 느껴지나요?
 
@@ -802,10 +819,10 @@ m2 + geom_text(aes(x = center, y = 1.05),
                                   size = 18, 
                                   family = "KoPubWorldDotum Bold"),
         axis.text.x = element_text(angle = -90, vjust = 0.5)) 
-ggsave("./pics/Quiz250324_submission_4.png", dpi = 120, width = 960, height = 840, units = "px")
+ggsave("./pics/Quiz250331_submission_5.png", dpi = 120, width = 960, height = 840, units = "px")
 ```
 
 ```{r, save, echo = FALSE}
-saveRDS(quiz, file = "./quiz250324.RDS")
-#save.image("./quiz250324.RData")
+saveRDS(quiz, file = "./quiz250331.RDS")
+# save.image("./quiz250331.RData")
 ```
