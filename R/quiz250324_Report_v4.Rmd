@@ -1,5 +1,5 @@
 ---
-title: "Quiz 250324"
+title: "Quiz 250324 (부연설명의 효과)"
 author: "coop711"
 date: "2025-03-24"
 output: html_document
