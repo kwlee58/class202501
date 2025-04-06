@@ -1,8 +1,8 @@
 ---
 title: "Quiz 250324 (부연설명의 효과)"
 author: "coop711"
-# date: "2025-03-24"
-date: "`r format(Sys.time(), '%Y-%m-%d %H:%M:%S')`"
+date: "2025-03-24"
+# date: "`r format(Sys.time(), '%Y-%m-%d %H:%M:%S')`"
 output: html_document
 ---
 
@@ -51,7 +51,7 @@ quiz$Q7_R[quiz$Q7_R == "근로시간과 휴무를 유연하게 조정할 수 있
 quiz$Q7_B[quiz$Q7_B == "노동자가 과도한 연장근로를 받을 수 있어 반대한다."] <- "반대한다."
 quiz$Q7 <- ifelse(is.na(quiz$Q7_R), quiz$Q7_B, quiz$Q7_R)
 str(quiz)
-quiz$dept <- factor(quiz$dept)
+# quiz$dept <- factor(quiz$dept)
 quiz$group <- 
   factor(quiz$group, levels = c("Red", "Black"))
 quiz$Q1 <- 
@@ -129,19 +129,27 @@ quiz %>%
   select(id, name, dept, email)
 # 1. 잘못된 id 가진 행 찾기
 quiz_wrong_ids <- quiz %>%
-  anti_join(class_roll, by = "id") 
+  anti_join(class_roll, by = c("id", "name")) 
 # 2. 잘못된 id를 따로 저장하고 수정하기
 wrong_ids <- quiz_wrong_ids$id
 quiz_wrong_ids <- quiz_wrong_ids %>%
   mutate(id = case_when(
     id == "202216743" ~ "20226743",
     id == "20224114" ~ "20224116",
+    id == "20040813" ~ "20242715",
+    id == "20243713" & name == "김지혜" ~ "20242713",
     TRUE ~ id
   ))
 # 3. quiz 에서 id 틀린 행을 제거하고 옳은 id 갖춘 행으로 교체하기
+# quiz <- quiz %>%
+#   anti_join(quiz_wrong_ids %>% select(id, name), by = c("id", "name")) %>%
+#   bind_rows(quiz_wrong_ids)
+## 20243713 박수빈이 누락되는 문제 해결 필요함.
 quiz <- quiz %>%
   filter(!id %in% wrong_ids) %>%
   bind_rows(quiz_wrong_ids)
+
+
 # quiz[quiz$id %in% setdiff(quiz$id, class_roll$id), c("id", "name", "dept", "group")]
 
 #> 틀린 학번 수정하여 되돌리기 (작동하지 않음. 참고로만)
@@ -162,7 +170,7 @@ quiz %>%
 # which(duplicated(quiz$id)) %>%
 #   quiz[., c("id", "name")]
 quiz %>%
-  filter(name %in% c("안현성", "이강준", "정수영", "박세준"))
+  filter(id %in% c("20241629", "20241514"))
 # quiz[quiz$name %in% c("최재혁", "박지연"), ] #> 최재혁, 박지연이 중복 제출
 quiz <- quiz %>% 
   arrange(id, desc(time)) %>%
@@ -197,11 +205,11 @@ wrong_group <- quiz %>%
   filter(group2 != group)
 
 #> 잘못된 그룹 정보 출력
-wrong_group %>%
-  select(time, id, group2, group) %>%
-  arrange(time) %>%
-  rename("제출시간" = time, "학번" = id, "랜덤화출석부" = group2, "구글예습퀴즈" = group) %>%
-  pander(row.names = FALSE)
+# wrong_group %>%
+#   select(time, id, group2, group) %>%
+#   arrange(time) %>%
+#   rename("제출시간" = time, "학번" = id, "랜덤화출석부" = group2, "구글예습퀴즈" = group) %>%
+#   pander(row.names = FALSE)
 
 #> 옛 코드
 # quiz$group2 <- class_roll$group[match(quiz$id, class_roll$id)]
@@ -231,7 +239,7 @@ Red를 Black 이라고 한 사람이 `r wrong_tbl[1, 2]`명, Black 을 Red 라�
 
 우선 Red, Black 을 잘못 선택한 `r nrow(wrong_group)`명을 랜덤하게 둘로 나누면 어느 한 쪽 집단에 들어갈 기대인원은 `r nrow(wrong_group)`명을 둘로 나눈 `r nrow(wrong_group) / 2`(명)이고, 표준오차는 `r nrow(wrong_group)`의 제곱근에 1/2을 곱해 준 `r round(sqrt(nrow(wrong_group)) / 2, digits  = 1)`명이 됩니다. 
 
-실제로 Red를 Black 이라고 한 사람수, `r wrong_tbl[1, 2]`명이나 Black 을 Red 라고 한 사람수, `r wrong_tbl[2, 1]`명은 기대인원으로부터 표준오차 범위는 벗어 나지만 표준오차 두  배 범위에는 잘  들어갑니다.
+실제로 Red를 Black 이라고 한 사람수, `r wrong_tbl[1, 2]`명이나 Black 을 Red 라고 한 사람수, `r wrong_tbl[2, 1]`명은 기대인원으로부터 표준오차 범위, 혹은 표준오차 두 배 범위에는 잘 들어갑니다.
 
 두 번째 분석 방법은 확률을 계산해 보는 것입니다. 
 
@@ -473,9 +481,7 @@ chisq_test_q5 %>%
 
 Q5의 집계 결과가 Red, Black 간에 통계적으로 유의한 차이가 있는지 알아보기 위하여 카이제곱 테스트를 수행하였습니다. 
 
-그 결과 카이제곱 통계량은 `r chisq_test_q5[1] %>% format(digits = 2, nsmall = 3)`, 자유도는 `r chisq_test_q5[2] %>% format(digits = 2, nsmall = 2)`, p-value 는 `r chisq_test_q5[3] %>% format(digits = 2, nsmall = 4)`이므로 Red, Black 간에 통계적으로 유의한 차이를 보이지 않습니다.
-
-실제로 닮은 게 느껴집니까?
+그 결과 카이제곱 통계량은 `r chisq_test_q5[1] %>% format(digits = 2, nsmall = 3)`, 자유도는 `r chisq_test_q5[2] %>% format(digits = 2, nsmall = 2)`, p-value 는 `r chisq_test_q5[3] %>% format(digits = 2, nsmall = 4)`이므로 Red, Black 간에 통계적으로 유의한 차이를 보이고 있습니다.
 
 ### 호구와 인구(%)
 
@@ -590,7 +596,7 @@ Black은 같은 상황에서 반대를 유도하는 부연설명을 붙였을 �
 
 그런데 실제로 관찰된 카이제곱 통계값은 통계적으로  유의한 차이를 보여 주고 있습니다. 
 
-따라서 부연설명이 영향을 끼치지 않는다는 가정은 티당치 않은 것으로 볼 수밖에 없게 되었습니다.
+따라서 부연설명이 영향을 끼치지 않는다는 가정은 티당치 않은 것으로 볼 수밖에 없습니다.
 
 이러한 논증 방식을 귀류법이라 합니다.
 
@@ -630,9 +636,9 @@ ptbl_q7 %>%
   pander
 ```
 
-"찬성한다"고 응답한 백분율은 Red, Black 합쳐서  `r format(ptbl_q7[1], digits = 2, nsmall = 1)`(%)(으)로  '반대한다"고 응답한 백분율, `r format(ptbl_q7[2], digits = 2, nsmall = 1)`(%) 보다 상당히 적습니다. 
+"찬성한다"고 응답한 백분율은 Red, Black 합쳐서  `r format(ptbl_q7[1], digits = 2, nsmall = 1)`(%)(으)로  '반대한다"고 응답한 백분율, `r format(ptbl_q7[2], digits = 2, nsmall = 1)`(%) 과 약간 적습니다. 
 
-다만, 모름/무응답이 `r format(ptbl_q7[3], digits = 2, nsmall = 1)`(%)로 적지 않습니다.
+그리고, 모름/무응답이 `r format(ptbl_q7[3], digits = 2, nsmall = 1)`(%)로 적지 않습니다.
 
 ### Mosaic Plot
 
