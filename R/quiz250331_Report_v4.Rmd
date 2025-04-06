@@ -137,6 +137,7 @@ quiz_wrong_ids <- quiz_wrong_ids %>%
     id == "202227096" ~ "20227096",
     id == "02053725" ~ "20253725",
     id == "20241595" ~ "20241506",
+    id == "202222713" ~ "20222713",
     TRUE ~ id
   ))
 # 3. quiz 에서 id 틀린 행을 제거하고 옳은 id 갖춘 행으로 교체하기
@@ -183,15 +184,15 @@ absentee %>%
   count(group) %>%
   print()
 #> 국민문해력조사 참여자 vs Quiz 참여자
-# literacy_roll <- readRDS("./literacy_roll250331.RDS")
-# class_roll %>%
-#   filter(id %in% setdiff(literacy_roll$id, quiz$id)) %>%
-#   select(id, name, group)
-# class_roll %>%
-#   filter(id %in% setdiff(quiz$id, literacy_roll$id)) %>%
-#   select(id, name, group)
-# class_roll[class_roll$id %in% setdiff(literacy_roll$id, quiz$id), c("id", "name", "group")]
-# class_roll[class_roll$id %in% setdiff(quiz$id, literacy_roll$id), c("id", "name", "group")]
+literacy_roll <- readRDS("./literacy_roll_250331.RDS")
+class_roll %>%
+  filter(id %in% setdiff(literacy_roll$id, quiz$id)) %>%
+  select(id, name, group)
+class_roll %>%
+  filter(id %in% setdiff(quiz$id, literacy_roll$id)) %>%
+  select(id, name, group)
+class_roll[class_roll$id %in% setdiff(literacy_roll$id, quiz$id), c("id", "name", "group")]
+class_roll[class_roll$id %in% setdiff(quiz$id, literacy_roll$id), c("id", "name", "group")]
 # absentee$group %>%
 #   table
 ```
@@ -723,12 +724,12 @@ days_tbl %>%
 ```{r, echo = FALSE, warning = FALSE}
 days_tbl %>%
   rbind("계" = colSums(.)) %>%
-  `[`(3, 9:14) %>%
+  `[`(3, 8:14) %>%
   pander
 days_chisq_test <-
   days_tbl %>%
   rbind("계" = colSums(.)) %>%
-  `[`(3, 9:14) %>%
+  `[`(3, 8:14) %>%
   chisq.test(simulate.p.value = FALSE) 
 days_chisq_test %>%
   pander
@@ -774,11 +775,11 @@ invisible(dev.off())
 ```{r, echo = FALSE, warning = FALSE}
 days_tbl %>%
   rbind("계" = colSums(.)) %>%
-  `[`(-3, 9:14) %>%
+  `[`(-3, 8:14) %>%
   pander
 days_RnB_chisq_test <-
   days_tbl %>%
-  `[`(-3, 9:14) %>%
+  `[`(-3, 8:14) %>%
   chisq.test(simulate.p.value = FALSE) 
 days_RnB_chisq_test %>%
   pander
@@ -786,7 +787,7 @@ days_RnB_chisq_test %>%
 
 제출시간의 분포가 Red, Black 간에 닮았는지 알아 보았습니다. 
 
-이번에는 분포표의 첫번쨰와 두번쨰 행, '계'열을 제외한 나머지 열에 대해서 카이제곱테스트를 수행합니다. 
+이번에는 분포표의 첫번째와 두번째 행, '계'열을 제외한 나머지 열에 대해서 카이제곱테스트를 수행합니다. 
 
 카이제곱 통계량은 `r format(days_RnB_chisq_test[1], digits = 2, nsmall = 3)`, 자유도는 `r format(days_RnB_chisq_test[2], digits = 2, nsmall = 2)`, p-value 는 `r format(days_RnB_chisq_test[3], digits = 2, nsmall = 4)` 이므로 제출 시간의 분포는 Red, Black 간에 통계적으로 유의한 차이가 관찰되지 않습니다. 
 
