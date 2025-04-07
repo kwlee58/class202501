@@ -1,7 +1,8 @@
 ---
-title: "Quiz 241007 (Which World?)"
+title: "Quiz 250407 (Which World?)"
 author: "coop711"
-date: "2024-10-07"
+# date: "2025-04-07"
+date: "`r format(Sys.time(), '%Y-%m-%d %H:%M:%S')`"
 output: html_document
 ---
 
@@ -580,7 +581,7 @@ ptbl_q6 %>%
   pander
 ```
 
-정답률은 Red, Black 을 합하여 계산하는데, `r ptbl_q6[4] %>% format(digits = 2, nsmall = 1)`(%) 입니다. 
+정답률은 Red, Black 을 합하여 계산하는데, `r ptbl_q6[5] %>% format(digits = 2, nsmall = 1)`(%) 입니다. 
 
 ## Q7. The more, the better? : 내가 남보다, 혹은 남이 나보다
 

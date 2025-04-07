@@ -243,7 +243,7 @@ ggplot(data = literacy_tbl2, mapping = aes(x = Questions)) +
 #> y축 눈금 텍스트 없애기
         axis.text.y = element_blank()) +
 #> x축의 라벨을 막대에 보다 가깝게 조정 (flip해서 x축을 수직으로 세울 예정이므로 y = -30)
-  geom_text(mapping = aes(y = -3, label = Questions)) 
+  geom_text(mapping = aes(y = -7, label = Questions)) 
 #> 좌표를 90도 회전하여 막대들을 수평으로 눕히기
 #  coord_flip()
 ggsave(file = "./pics/Literacy_250331_ggplot.png", bg = "white", dpi = 72, width = 840, height = 480, units = "px")
