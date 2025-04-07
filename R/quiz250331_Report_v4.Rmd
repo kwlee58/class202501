@@ -36,15 +36,15 @@ Q7에서는 컵에 우유를 반을 쏟은 상황에서 긍정적인 단어를 �
 class_roll0321 <- readRDS("./class_roll_250321.RDS")
 class_roll0321 %<>% 
   data.frame
-class_roll0331 <- 
-  read_excel("./data/class_roll_250331.xlsx", range = "B1:H603")
-str(class_roll0331)
-names(class_roll0331) <- 
+class_roll0407 <- 
+  read_excel("./data/class_roll_250407.xlsx", range = "B1:H600")
+str(class_roll0407)
+names(class_roll0407) <- 
   c("dept", "college", "id", "name", "status", "email", "cell_no")
-class_roll0331$group <- 
-  class_roll0321$group[match(class_roll0331$id, class_roll0321$id)]
-saveRDS(class_roll0331, file = "./class_roll_250331.RDS")
-class_roll <- class_roll0331
+class_roll0407$group <- 
+  class_roll0321$group[match(class_roll0407$id, class_roll0321$id)]
+saveRDS(class_roll0407, file = "./class_roll_250407.RDS")
+class_roll <- class_roll0407
 str(class_roll)
 sheet_url <- "https://docs.google.com/spreadsheets/d/1TA3MtPnbBhTjYaEXV99epRUpKEHegIrMvGJL2qgexjg"
 quiz <- 
@@ -54,9 +54,11 @@ quiz <-
 #              range = "A2:N26",
 #              col_names = FALSE)
 names(quiz) <- c("time", "email", "dept", "id", "name", "Q1", "Q2", "Q3", "Q4", "Q5", "Q6", "group", "Q7_R", "Q7_B")
-str(quiz)
 quiz <- data.frame(quiz)
 class(quiz$id) <- "character"
+quiz[quiz$id == "20225208", "dept"] <- "빅데이터전공"
+quiz$dept <- unlist(quiz$dept) 
+str(quiz)
 # quiz$Q7_R[quiz$Q7_R == "대기업의 비리와 독단 경영을 견제하고, 투명성을 높일 수 있으므로 찬 성한다."] <- "찬성한다."
 # quiz$Q7_B[quiz$Q7_B == "정부가 기업에 과다하게 개입하여 경영자율권을 침해하므로 반대한다."] <- "반대한다."
 quiz$Q7 <- ifelse(is.na(quiz$Q7_R), quiz$Q7_B, quiz$Q7_R)
@@ -129,7 +131,7 @@ quiz %>%
   select(id, name, dept, email)
 # 1. 잘못된 id 가진 행 찾기
 quiz_wrong_ids <- quiz %>%
-  anti_join(class_roll, by = "id") 
+  anti_join(class_roll, by = c("id", "name")) 
 # 2. 잘못된 id를 따로 저장하고 수정하기
 wrong_ids <- quiz_wrong_ids$id
 quiz_wrong_ids <- quiz_wrong_ids %>%
@@ -211,9 +213,9 @@ wrong_group <- quiz %>%
 
 #> 잘못된 그룹 정보 출력
 wrong_group %>%
-  select(time, id, name, group2, group) %>%
+  select(time, id, group2, group) %>%
   arrange(time) %>%
-  rename("제출시간" = time, "학번" = id, "이름" = name,  "랜덤화출석부" = group2, "구글예습퀴즈" = group) %>%
+  rename("제출시간" = time, "학번" = id,  "랜덤화출석부" = group2, "구글예습퀴즈" = group) %>%
   pander(row.names = FALSE)
 
 #> 옛 코드
@@ -724,12 +726,12 @@ days_tbl %>%
 ```{r, echo = FALSE, warning = FALSE}
 days_tbl %>%
   rbind("계" = colSums(.)) %>%
-  `[`(3, 8:14) %>%
+  `[`(3, 7:14) %>%
   pander
 days_chisq_test <-
   days_tbl %>%
   rbind("계" = colSums(.)) %>%
-  `[`(3, 8:14) %>%
+  `[`(3, 7:14) %>%
   chisq.test(simulate.p.value = FALSE) 
 days_chisq_test %>%
   pander
@@ -763,7 +765,7 @@ text(x = b[14, 1], y = sum(days_tbl[, 1]) / 2,
      labels = paste0(format(sum(days_tbl[, 1]) / N * 100, digits = 1, nsmall = 0), "%"))
 title(main = paste0("Quiz250331 (", N, "명 제출)"))
 # title(main = "일 단위 퀴즈 제출 인원", sub = paste0("Quiz230925 (", N, "명 제출)"))
-dev.copy(png, file = "./pics/2402/quiz_submission_5.png", width = 640, height = 480)
+dev.copy(png, file = "./pics/2501/quiz_submission_5.png", width = 640, height = 480)
 invisible(dev.off())
 })
 ```
@@ -775,11 +777,11 @@ invisible(dev.off())
 ```{r, echo = FALSE, warning = FALSE}
 days_tbl %>%
   rbind("계" = colSums(.)) %>%
-  `[`(-3, 8:14) %>%
+  `[`(-3, 7:14) %>%
   pander
 days_RnB_chisq_test <-
   days_tbl %>%
-  `[`(-3, 8:14) %>%
+  `[`(-3, 7:14) %>%
   chisq.test(simulate.p.value = FALSE) 
 days_RnB_chisq_test %>%
   pander
