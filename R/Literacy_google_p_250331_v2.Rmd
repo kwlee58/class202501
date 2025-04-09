@@ -42,29 +42,41 @@ class(literacy_roll$Q1) <- "character"
 str(literacy_roll)
 literacy_roll %<>%
   data.frame
+
+#> =================================================
 #> 학번 잘못 써서 고생시키는 녀석들 찾아내는 코드
 wrong_id <- setdiff(literacy_roll$id, class_roll$id)
 literacy_roll %>%
   filter(id %in% wrong_id) %>%
   select(dept, id, name)
-#> id 틀린 사람 찾아서 수정하기
-# 1. 잘못된 id 가진 행 찾기
+
+#> id 또는 name 틀린 사람 찾아서 수정하기
+# 1. 잘못된 id 또는 name 가진 행 찾기
 literacy_wrong_ids <- literacy_roll %>%
-  anti_join(class_roll, by = "id") 
-# 2. 잘못된 id를 따로 저장하고 수정하기
-wrong_ids <- literacy_wrong_ids$id
-literacy_wrong_ids <- 
-  literacy_wrong_ids %>%
-  mutate(id = case_when(
-    id == "20236650" ~ "20243650",
-    id == "24" & name == "박준형" ~ "20244120",
-    id == "소프트웨어학부" & dept == "20245268" ~ "20245268",
-    TRUE ~ id
-  ))
-# 3. quiz 에서 id 틀린 행을 제거하고 옳은 id 갖춘 행으로 교체하기
+  anti_join(class_roll, by = c("id", "name")) 
+# 2. 수정 전 원래의 id와 name 쌍을 저장
+wrong_keys <- literacy_wrong_ids %>% 
+  select(id, name)
+# 3.잘못된 id 또는 name 수정
+literacy_wrong_ids <- literacy_wrong_ids %>%
+  mutate(
+    id = case_when(
+      id == "20236650" ~ "20243650",
+      id == "24" & name == "박준형" ~ "20244120",
+      id == "소프트웨어학부" & dept == "20245268" ~ "20245268",
+      TRUE ~ id
+      ),
+    name = case_when(
+      name == "윤어진ㅁ" ~ "윤어진",
+      TRUE ~ name
+      )
+    )
+# 3. quiz 에서 id 혹은 name 틀린 행을 제거하고 옳은 id 갖춘 행으로 교체하기
 literacy_roll <- literacy_roll %>%
-  filter(!id %in% wrong_ids) %>%
+  anti_join(wrong_keys %>% select(id, name), by = c("id", "name")) %>%
   bind_rows(literacy_wrong_ids)
+#>=============================
+
 #> literacy_roll 에서 학과, 이름 제거하기
 literacy_roll <- literacy_roll %>%
   select(-dept, -name)

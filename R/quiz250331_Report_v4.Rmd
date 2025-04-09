@@ -129,24 +129,34 @@ wrong_id <- setdiff(quiz$id, class_roll$id)
 quiz %>%
   filter(id %in% wrong_id) %>%
   select(id, name, dept, email)
-# 1. 잘못된 id 가진 행 찾기
+
+# 1. 잘못된 id 또는 name 가진 행 찾기
 quiz_wrong_ids <- quiz %>%
   anti_join(class_roll, by = c("id", "name")) 
-# 2. 잘못된 id를 따로 저장하고 수정하기
-wrong_ids <- quiz_wrong_ids$id
+
+# 2. 수정 전 원래의 id와 name 쌍을 저장
+wrong_keys <- quiz_wrong_ids %>% 
+  select(id, name)
+
+# 3. 잘못된 id 또는 name 수정
 quiz_wrong_ids <- quiz_wrong_ids %>%
-  mutate(id = case_when(
-    id == "202227096" ~ "20227096",
-    id == "02053725" ~ "20253725",
-    id == "20241595" ~ "20241506",
-    id == "202222713" ~ "20222713",
+  mutate(
+    id = case_when(
+      id == "202227096" ~ "20227096",
+      id == "02053725" ~ "20253725",
+      id == "20241595" ~ "20241506",
+      id == "202222713" ~ "20222713",
     TRUE ~ id
-  ))
-# 3. quiz 에서 id 틀린 행을 제거하고 옳은 id 갖춘 행으로 교체하기
+    ),
+    name = case_when(
+      name == "이소여" ~ "이소연",
+      TRUE ~ name
+      )
+    )
+# 3. quiz 에서 id 또는 name 틀린 행을 제거하고 옳은 id 또는 name 갖춘 행으로 교체하기
 quiz <- quiz %>%
-  filter(!id %in% wrong_ids) %>%
+  anti_join(wrong_keys %>% select(id, name), by = c("id", "name")) %>%
   bind_rows(quiz_wrong_ids)
-# quiz[quiz$id %in% setdiff(quiz$id, class_roll$id), c("id", "name", "dept", "group")]
 
 #> 틀린 학번 수정하여 되돌리기 (작동하지 않음. 참고로만)
 # quiz <- quiz %>%
@@ -726,12 +736,12 @@ days_tbl %>%
 ```{r, echo = FALSE, warning = FALSE}
 days_tbl %>%
   rbind("계" = colSums(.)) %>%
-  `[`(3, 6:14) %>%
+  `[`(3, 5:14) %>%
   pander
 days_chisq_test <-
   days_tbl %>%
   rbind("계" = colSums(.)) %>%
-  `[`(3, 6:14) %>%
+  `[`(3, 5:14) %>%
   chisq.test(simulate.p.value = FALSE) 
 days_chisq_test %>%
   pander
@@ -777,11 +787,11 @@ invisible(dev.off())
 ```{r, echo = FALSE, warning = FALSE}
 days_tbl %>%
   rbind("계" = colSums(.)) %>%
-  `[`(-3, 6:14) %>%
+  `[`(-3, 5:14) %>%
   pander
 days_RnB_chisq_test <-
   days_tbl %>%
-  `[`(-3, 6:14) %>%
+  `[`(-3, 5:14) %>%
   chisq.test(simulate.p.value = FALSE) 
 days_RnB_chisq_test %>%
   pander
