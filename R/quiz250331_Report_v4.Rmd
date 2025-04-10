@@ -200,10 +200,12 @@ absentee %>%
 literacy_roll <- readRDS("./literacy_roll_250331.RDS")
 class_roll %>%
   filter(id %in% setdiff(literacy_roll$id, quiz$id)) %>%
-  select(id, name, group)
+  select(id, name, group) %>%
+  arrange(id)
 class_roll %>%
   filter(id %in% setdiff(quiz$id, literacy_roll$id)) %>%
-  select(id, name, group)
+  select(id, name, group) %>%
+  arrange(id)
 class_roll[class_roll$id %in% setdiff(literacy_roll$id, quiz$id), c("id", "name", "group")]
 class_roll[class_roll$id %in% setdiff(quiz$id, literacy_roll$id), c("id", "name", "group")]
 # absentee$group %>%
@@ -737,12 +739,12 @@ days_tbl %>%
 ```{r, echo = FALSE, warning = FALSE}
 days_tbl %>%
   rbind("계" = colSums(.)) %>%
-  `[`(3, 4:14) %>%
+  `[`(3, 3:14) %>%
   pander
 days_chisq_test <-
   days_tbl %>%
   rbind("계" = colSums(.)) %>%
-  `[`(3, 4:14) %>%
+  `[`(3, 3:14) %>%
   chisq.test(simulate.p.value = FALSE) 
 days_chisq_test %>%
   pander
@@ -788,11 +790,11 @@ invisible(dev.off())
 ```{r, echo = FALSE, warning = FALSE}
 days_tbl %>%
   rbind("계" = colSums(.)) %>%
-  `[`(-3, 4:14) %>%
+  `[`(-3, 3:14) %>%
   pander
 days_RnB_chisq_test <-
   days_tbl %>%
-  `[`(-3, 4:14) %>%
+  `[`(-3, 3:14) %>%
   chisq.test(simulate.p.value = FALSE) 
 days_RnB_chisq_test %>%
   pander
