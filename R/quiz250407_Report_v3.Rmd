@@ -173,6 +173,7 @@ quiz_wrong_ids <- quiz_wrong_ids %>%
   mutate(
     id = case_when(
       id == "20214009" ~ "20214109",
+      id == "202432226" ~ "20243226",
       TRUE ~ id
       ),
     name = case_when(
@@ -220,7 +221,7 @@ quiz %>%
 # which(duplicated(quiz$id)) %>%
 #   quiz[., c("id", "name")]
 quiz %>%
-  filter(name %in% c("이수빈", "정준우"))
+  filter(id %in% c("20232504"))
 # quiz[quiz$name %in% c("최재혁", "박지연"), ] #> 최재혁, 박지연이 중복 제출
 quiz <- quiz %>% 
   arrange(id, desc(time)) %>%
