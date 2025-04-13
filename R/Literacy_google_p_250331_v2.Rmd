@@ -1,8 +1,8 @@
 ---
 title: "Literacy 250331"
 author: "coop711"
-# date: "2025-03-31"
-date: "`r format(Sys.time(), '%Y-%m-%d %H:%M:%S')`"
+date: "2025-03-31"
+# date: "`r format(Sys.time(), '%Y-%m-%d %H:%M:%S')`"
 output: html_document
 ---
 
@@ -25,7 +25,7 @@ options(width=180)
 ```
 
 ```{r, read data, echo = FALSE, results = 'hide', message = FALSE}
-class_roll <- readRDS("./class_roll_250331.RDS")
+class_roll <- readRDS("./class_roll_250407.RDS")
 sheet_url <- "https://docs.google.com/spreadsheets/d/1I1XKZtv2sIBktX18TjB6czcwI_8xHtfqgIvqczx8HOQ"
 literacy_roll <- 
   read_sheet(sheet_url)
@@ -37,6 +37,7 @@ literacy_roll <- literacy_roll[, -c(1:2)]
 N <- nrow(literacy_roll)
 names(literacy_roll) <- c("dept", "id", "name", paste0("Q", 1:25))
 str(literacy_roll)
+class(literacy_roll$dept) <- "character"
 class(literacy_roll$id) <- "character"
 class(literacy_roll$Q1) <- "character"
 str(literacy_roll)
@@ -62,14 +63,18 @@ literacy_wrong_ids <- literacy_wrong_ids %>%
   mutate(
     id = case_when(
       id == "202013353" ~ "20213353",
-      id == "24" & name == "박준형" ~ "20244120",
-      id == "소프트웨어학부" & dept == "20245268" ~ "20245268",
+      id == "문화산업" & name == "ZOU YUANYUAN" ~ "20218005",
+      id == "202244144" ~ "20244144",
       TRUE ~ id
       ),
     name = case_when(
       name == "윤어진ㅁ" ~ "윤어진",
       TRUE ~ name
-      )
+      ),
+    dept = case_when(
+      dept == "20218005" ~ "문화산업",
+      TRUE ~ dept
+      ),
     )
 # 3. quiz 에서 id 혹은 name 틀린 행을 제거하고 옳은 id 갖춘 행으로 교체하기
 literacy_roll <- literacy_roll %>%
@@ -255,7 +260,7 @@ ggplot(data = literacy_tbl2, mapping = aes(x = Questions)) +
 #> y축 눈금 텍스트 없애기
         axis.text.y = element_blank()) +
 #> x축의 라벨을 막대에 보다 가깝게 조정 (flip해서 x축을 수직으로 세울 예정이므로 y = -30)
-  geom_text(mapping = aes(y = -9, label = Questions)) 
+  geom_text(mapping = aes(y = -15, label = Questions)) 
 #> 좌표를 90도 회전하여 막대들을 수평으로 눕히기
 #  coord_flip()
 ggsave(file = "./pics/Literacy_250331_ggplot.png", bg = "white", dpi = 72, width = 840, height = 480, units = "px")

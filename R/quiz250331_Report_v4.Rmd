@@ -1,8 +1,8 @@
 ---
 title: "Quiz 250331 (Framing Effects)"
 author: "coop711"
-# date: "2025-03-31"
-date: "`r format(Sys.time(), '%Y-%m-%d %H:%M:%S')`"
+date: "2025-03-31"
+# date: "`r format(Sys.time(), '%Y-%m-%d %H:%M:%S')`"
 output: html_document
 ---
 
@@ -148,6 +148,7 @@ quiz_wrong_ids <- quiz_wrong_ids %>%
       id == "202222713" ~ "20222713",
       id == "202013353" ~ "20213353",
       id == "2042918" ~ "20242918",
+      id == "202244144" ~ "20244144",
     TRUE ~ id
     ),
     name = case_when(
@@ -226,11 +227,11 @@ wrong_group <- quiz %>%
   filter(group2 != group)
 
 #> 잘못된 그룹 정보 출력
-wrong_group %>%
-  select(time, id, group2, group) %>%
-  arrange(time) %>%
-  rename("제출시간" = time, "학번" = id,  "랜덤화출석부" = group2, "구글예습퀴즈" = group) %>%
-  pander(row.names = FALSE)
+# wrong_group %>%
+#   select(time, id, group2, group) %>%
+#   arrange(time) %>%
+#   rename("제출시간" = time, "학번" = id,  "랜덤화출석부" = group2, "구글예습퀴즈" = group) %>%
+#   pander(row.names = FALSE)
 
 #> 옛 코드
 # quiz$group2 <- class_roll$group[match(quiz$id, class_roll$id)]
@@ -613,7 +614,7 @@ Q7의 Red는 음료수를 쏟은 상황에서 "견딜만 하다" 등의 긍정�
 
 Black은 같은 상황에서 "매우 화가 난다" 등의 부정적인 단어들을 본 사람들인 데 `r tbl_q7_a[2, 4]`명이 응답한 가운데 `r tbl_q7_a[2, 1]`명이 "반이나" 남아 있다는 반응을 보이고, `r tbl_q7_a[2, 2]`명이 "반 밖에" 안 남았다는 반응을 보입니다. 
 
-그리고 "모름/기타"에 답한 인원은 Red에  `r tbl_q7_a[1, 3]`명, Black 에 `r tbl_q7_a[2, 3]`명이 응답하였습니다. 
+그리고 "모름/기타"에 답한 인원은 Red에  `r tbl_q7_a[1, 3]`명, Black 에 `r tbl_q7_a[2, 3]`명이었습니다. 
 
 랜덤화 효과일까요? 
 
@@ -626,7 +627,7 @@ Black은 같은 상황에서 "매우 화가 난다" 등의 부정적인 단어�
 
 여기서 긍정이나 부정 프레이밍이 응답에 영향을 끼치지 않는다고 가정해 봅시다. 
 
-그렇다면 Red, Black 의 응답은 Q1~Q3 애서와 같이 랜덤화 효과에 의하여 통계적으로 유의한 차이를 보이지 않을 것입니다. 
+그렇다면 Red, Black 의 응답은 Q1 ~ Q6에서와 같이 랜덤화 효과에 의하여 통계적으로 유의한 차이를 보이지 않을 것입니다. 
 
 그런데 실제로 관찰된 카이제곱 통계값은 통계적으로 매우 유의한 차이를 보여 줍니다. 
 
@@ -706,8 +707,7 @@ m + geom_text(aes(x = center, y = 1.05),
 ggsave("./pics/Quiz250331_Q7_RnB.png", dpi = 120, width = 960, height = 840, units = "px")
 ```
 
-Mosaic Plot 은 이 집계결과를 시각적으로 잘 보여줍니다. 긍정적 단어를 본 Red 에서 "반이나" 남아 있다고 응답한 백분율이 월등
-히 높고, 부정적 단어를 본 Black 에서 "반 밖에" 안 남았다고 응답한 백분율이 월등히 높은 것을 시각적으로 알 수 있습니다. 
+Mosaic Plot 은 이 집계결과를 시각적으로 잘 보여줍니다. 긍정적 단어를 본 Red 에서 "반이나" 남아 있다고 응답한 백분율이 월등히 높고, 부정적 단어를 본 Black 에서 "반 밖에" 안 남았다고 응답한 백분율이 월등히 높은 것을 시각적으로 알 수 있습니다. 
 
 덤으로 "모름/기타"의 백분율은 Red, Black 간에 매우 닮았다는 점도 시각적으로 쉽게 파악할 수 있습니다.
 
