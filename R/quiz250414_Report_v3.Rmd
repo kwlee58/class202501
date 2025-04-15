@@ -61,8 +61,22 @@ names(quiz) <-
   c("time", "email", "dept", "id", "name", paste0("Q", 1:6),  "group", "Q7_R", "Q8_R", "Q7_B", "Q8_B")
 class(quiz$id) <- "character"
 str(quiz)
-quiz$Q7 <- coalesce(quiz$Q7_R, quiz$Q7_B)
-quiz$Q8 <- coalesce(quiz$Q8_R, quiz$Q8_B)
+quiz %>%
+  select(Q7_R, Q8_R, Q7_B, Q8_B, group)
+
+clean_nulls <- function(x) {
+  x <- as.character(x)
+  x <- na_if(x, "NULL")
+  x <- na_if(x, ".")
+  x <- na_if(x, "")
+  return(x)
+}
+
+quiz <- quiz %>%
+  mutate(across(c(Q7_R, Q7_B, Q8_R, Q8_B), clean_nulls)) %>%
+  mutate(Q7 = coalesce(Q7_R, Q7_B),
+         Q8 = coalesce(Q8_R, Q8_B))
+
 # quiz$Q7 <- ifelse(is.na(quiz$Q7_R), quiz$Q7_B, quiz$Q7_R)
 # quiz$Q8 <- ifelse(is.na(quiz$Q8_R), quiz$Q8_B, quiz$Q8_R)
 quiz %>%
