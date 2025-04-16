@@ -272,6 +272,7 @@ quiz_wrong_ids <- quiz_wrong_ids %>%
       id == "202013353" ~ "20213353",
       id == "2042918" ~ "20242918",
       id == "202244144" ~ "20244144",
+      id == "20241048" ~ "20241049",
     TRUE ~ id
     ),
     name = case_when(
@@ -459,7 +460,7 @@ include_graphics("./pics/Quiz210406_Q2.png")
 
 ### Selection Bias
 
-```{r, Selection Bias, echo = FALSE}
+```{r, Selection Bias, echo = FALSE, warning = FALSE}
 tbl_q2_a <- 
   quiz$Q2 %>% 
   table(quiz$group, ., useNA = "ifany") %>%
@@ -597,7 +598,7 @@ include_graphics("./pics/Quiz210406_Q5.png")
 
 ### 4배로 늘려야
 
-```{r, echo = FALSE}
+```{r, echo = FALSE, warning = FALSE}
 tbl_q5_a <- 
   quiz$Q5 %>% 
   table(quiz$group, ., useNA = "ifany") %>%
@@ -643,7 +644,7 @@ include_graphics("./pics/Quiz210406_Q6.png")
 
 ### 선거당일 투표하는 유권자 전체
 
-```{r, echo = FALSE}
+```{r, echo = FALSE, warning = FALSE}
 tbl_q6_a <- 
   quiz$Q6 %>% 
   table(quiz$group, ., useNA = "ifany") %>%
@@ -1201,12 +1202,12 @@ days_tbl %>%
 ```{r, echo = FALSE, warning = FALSE}
 days_tbl %>%
   rbind("계" = colSums(.)) %>%
-  `[`(3, 13:14) %>%
+  `[`(3, 12:14) %>%
   pander
 days_chisq_test <-
   days_tbl %>%
   rbind("계" = colSums(.)) %>%
-  `[`(3, 13:14) %>%
+  `[`(3, 12:14) %>%
   chisq.test(simulate.p.value = FALSE) 
 days_chisq_test %>%
   pander
@@ -1252,11 +1253,11 @@ invisible(dev.off())
 ```{r, echo = FALSE, warning = FALSE}
 days_tbl %>%
   rbind("계" = colSums(.)) %>%
-  `[`(-3, 13:14) %>%
+  `[`(-3, 12:14) %>%
   pander
 days_RnB_chisq_test <-
   days_tbl %>%
-  `[`(-3, 13:14) %>%
+  `[`(-3, 12:14) %>%
   chisq.test(simulate.p.value = FALSE) 
 days_RnB_chisq_test %>%
   pander
