@@ -21,13 +21,13 @@ panderOptions("table.split.table", Inf)
 
 ```{r, Total Scores, message = FALSE, echo = FALSE, warning = FALSE}
 # class_roll_final <- 
-#   read_excel(path = "../data/class_roll230607.xlsx",
+#   read_excel(path = "./data/class_roll230607.xlsx",
 #              range = "E1:F1004",
 #              col_types = rep("text", 2))
 # class_roll_final %<>%
 #   data.frame
 # names(class_roll_final) <- c("ID", "Name")
-class_roll <- readRDS("./class_roll_240524.RDS")
+class_roll <- readRDS("./class_roll_240824.RDS")
 total <-
   read_excel(path = "./data/Final_Records_2401_0625_v1.xlsx",
              range = "A1:L877",
