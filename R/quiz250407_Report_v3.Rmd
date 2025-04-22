@@ -1,8 +1,8 @@
 ---
 title: "Quiz 250407 (Which World?)"
 author: "coop711"
-# date: "2025-04-07"
-date: "`r format(Sys.time(), '%Y-%m-%d %H:%M:%S')`"
+date: "2025-04-07"
+# date: "`r format(Sys.time(), '%Y-%m-%d %H:%M:%S')`"
 output: html_document
 ---
 
@@ -10,8 +10,6 @@ output: html_document
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
-# install.packages("pander", repos = "https://cran.rstudio.com")
-# install.packages("xlsx", repos = "https://cran.rstudio.com")
 library(readxl)
 library(pander)
 library(knitr)
@@ -20,7 +18,7 @@ library(dplyr)
 library(googlesheets4)
 panderOptions('table.split.table', Inf)
 panderOptions('table.alignment.rownames', 'left')
-panderOptions('table.alignment.default', 'right')
+panderOptions('table.alignment.default', 'left')
 options(width=180)
 ```
 
@@ -175,6 +173,7 @@ quiz_wrong_ids <- quiz_wrong_ids %>%
       id == "20214009" ~ "20214109",
       id == "202432226" ~ "20243226",
       id == "200225108" ~ "20225108",
+      id == "20040813" ~ "20242715",
       TRUE ~ id
       ),
     name = case_when(
@@ -258,11 +257,11 @@ wrong_group <- quiz %>%
   filter(group2 != group)
 
 #> 잘못된 그룹 정보 출력
-wrong_group %>%
-  select(time, id, group2, group) %>%
-  arrange(time) %>%
-  rename("제출시간" = time, "학번" = id, "랜덤화출석부" = group2, "구글예습퀴즈" = group) %>%
-  pander(row.names = FALSE)
+# wrong_group %>%
+#   select(time, id, group2, group) %>%
+#   arrange(time) %>%
+#   rename("제출시간" = time, "학번" = id, "랜덤화출석부" = group2, "구글예습퀴즈" = group) %>%
+#   pander(row.names = FALSE)
 
 #> 옛 코드
 # quiz$group2 <- class_roll$group[match(quiz$id, class_roll$id)]
@@ -363,9 +362,9 @@ chisq_test_q1 %>%
 
 Q1의 집계 결과가 Red, Black 간에 통계적으로 유의한 차이가 있는지 알아보기 위하여 카이제곱 테스트를 수행하였습니다. 
 
-그 결과 카이제곱 통계량은 `r chisq_test_q1[1] %>% format(digits = 2, nsmall = 2)`, 자유도는 `r chisq_test_q1[2] %>% format(digits = 2, nsmall = 2)` , p-value 는 `r chisq_test_q1[3] %>% format(digits = 2, nsmall = 4)`이므로 Red, Black 간에 통계적으로 유의한 차이를 보이고 있습니다. 
+그 결과 카이제곱 통계량은 `r chisq_test_q1[1] %>% format(digits = 2, nsmall = 2)`, 자유도는 `r chisq_test_q1[2] %>% format(digits = 2, nsmall = 2)` , p-value 는 `r chisq_test_q1[3] %>% format(digits = 2, nsmall = 4)`이므로 Red, Black 간에 통계적으로 유의한 차이를 보이지 않습니다. 
 
-어디가 문제인가요?
+닮았다고 느껴지나요?
 
 ### %
 
@@ -453,7 +452,7 @@ chisq_test_q3 %>%
 
 Q3의 집계 결과가 Red, Black 간에 통계적으로 유의한 차이가 있는지 알아보기 위하여 카이제곱 테스트를 수행하였습니다. 
 
-그 결과 카이제곱 통계량은 `r chisq_test_q3[1] %>% format(digits = 2, nsmall = 2)`, 자유도는 `r chisq_test_q3[2] %>% format(digits = 2, nsmall = 2)`, p-value 는 `r chisq_test_q3[3] %>% format(digits = 2, nsmall = 4)`이므로 Red, Black 간에 통계적으로 유의한 차이를 보이고(지) 있(않)습니다. 
+그 결과 카이제곱 통계량은 `r chisq_test_q3[1] %>% format(digits = 2, nsmall = 2)`, 자유도는 `r chisq_test_q3[2] %>% format(digits = 2, nsmall = 2)`, p-value 는 `r chisq_test_q3[3] %>% format(digits = 2, nsmall = 4)`이므로 Red, Black 간에 통계적으로 유의한 차이를 보이지 않습니다. 
 
 실제로 닮은 게 느껴집니까?
 

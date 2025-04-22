@@ -91,6 +91,8 @@ fix_wason_response_simple <- function(x) {
   
   # 2. 문자 먼저 온 붙은 입력: 쉼표 추가
   x <- str_replace(x, "^([A-Za-z]+)([0-9]+)$", "\\1,\\2")   # "Beer17" → "Beer,17"
+  x <- str_replace(x, "^Bear,([0-9]+)$", "Beer,\\1")
+  x <- str_replace(x, "^Be{2,}r,([0-9]+)$", "Beer,\\1")  # 추가: Beeer → Beer
   
   # 3. 대소문자 정리 (마지막 단계)
   x <- str_to_title(x)                  # Beer, Coke, A, B 등 대소문자 정리
@@ -244,10 +246,6 @@ quiz <- data.frame(quiz)
 quiz$days <- as.numeric(difftime("2025-04-28 00:00:00", quiz$time, units = 'days'))
 quiz$hours <- as.numeric(difftime("2025-04-28 00:00:00", quiz$time, units = 'hours'))
 str(quiz)
-```
-
-```{r, randomization, echo = FALSE, results = 'hide', eval = FALSE}
-pander(summary(quiz))
 ```
 
 ```{r, cleaning, echo = FALSE, results = 'hide'}
@@ -1208,12 +1206,12 @@ days_tbl %>%
 ```{r, echo = FALSE, warning = FALSE}
 days_tbl %>%
   rbind("계" = colSums(.)) %>%
-  `[`(3, 8:14) %>%
+  `[`(3, 7:14) %>%
   pander
 days_chisq_test <-
   days_tbl %>%
   rbind("계" = colSums(.)) %>%
-  `[`(3, 8:14) %>%
+  `[`(3, 7:14) %>%
   chisq.test(simulate.p.value = FALSE) 
 days_chisq_test %>%
   pander
@@ -1259,11 +1257,11 @@ invisible(dev.off())
 ```{r, echo = FALSE, warning = FALSE}
 days_tbl %>%
   rbind("계" = colSums(.)) %>%
-  `[`(-3, 8:14) %>%
+  `[`(-3, 7:14) %>%
   pander
 days_RnB_chisq_test <-
   days_tbl %>%
-  `[`(-3, 8:14) %>%
+  `[`(-3, 7:14) %>%
   chisq.test(simulate.p.value = FALSE) 
 days_RnB_chisq_test %>%
   pander
