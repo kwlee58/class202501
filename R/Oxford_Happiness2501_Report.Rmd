@@ -119,7 +119,8 @@ wrong_keys <- oxford_wrong_ids %>%
 oxford_wrong_ids <- oxford_wrong_ids %>%
   mutate(
     id = case_when(
-      id == "202227096" ~ "20227096",
+      id == "202225259" ~ "20225259",
+      id == "20221551" ~ "20221541",
     TRUE ~ id
     ),
     name = case_when(
@@ -135,24 +136,6 @@ wrong_id <- setdiff(oxford$id, class_roll$id)
 oxford %>%
   filter(id %in% wrong_id) %>%
   select(dept, id, name)
-#> 옛 코드
-# oxford[oxford$id %in% setdiff(oxford$id, class_roll$id), c("id", "name", "dept")]
-#> id 틀린 사람 찾아서 수정하기
-# 1. 잘못된 id 가진 행 찾기
-literacy_wrong_ids <- oxford %>%
-  anti_join(class_roll, by = "id") 
-# 2. 잘못된 id를 따로 저장하고 수정하기
-wrong_ids <- literacy_wrong_ids$id
-literacy_wrong_ids <- 
-  literacy_wrong_ids %>%
-  mutate(id = case_when(
-    id == "202225259" ~ "20225259",
-    TRUE ~ id
-  ))
-# 3. oxford 에서 id 틀린 행을 제거하고 옳은 id 갖춘 행으로 교체하기
-oxford <- oxford %>%
-  filter(!id %in% wrong_ids) %>%
-  bind_rows(literacy_wrong_ids)
 
 #> 중복 제출자
 oxford %>%
@@ -296,7 +279,7 @@ Scores_t_test %>%
 
 이 때 t-통계량은 `r format(Scores_t_test[1], digits = 2, nsmall = 2)`, 자유도는 `r format(Scores_t_test[2], digits = 2, nsmall = 2)`, p-value 는 `r format(Scores_t_test[3], digits = 2, nsmall = 2)`라고 나옵니다. 
 
-즉, 통계적으로 유의한 차이를 관찰하였습니다. 
+즉, 통계적으로 유의한 차이를 관찰하(지 못하)였습니다. 
 
 국문 행복도 조사지와 영문 행복도 조사지의 행복점수에는 차이가 있고, 국문 행복도의 평균점수가 더 높은 것으로 나왔습니다. 
 
@@ -453,12 +436,12 @@ days_tbl %>%
 ```{r, echo = FALSE, warning = FALSE}
 days_tbl %>%
   rbind("계" = colSums(.)) %>%
-  `[`(3, 13:14) %>%
+  `[`(3, 12:14) %>%
   pander
 days_chisq_test <-
   days_tbl %>%
   rbind("계" = colSums(.)) %>%
-  `[`(3, 13:14) %>%
+  `[`(3, 12:14) %>%
   chisq.test(simulate.p.value = FALSE) 
 days_chisq_test %>%
   pander
@@ -504,11 +487,11 @@ invisible(dev.off())
 ```{r, echo = FALSE, warning = FALSE}
 days_tbl %>%
   rbind("계" = colSums(.)) %>%
-  `[`(-3, 13:14) %>%
+  `[`(-3, 12:14) %>%
   pander
 days_RnB_chisq_test <-
   days_tbl %>%
-  `[`(-3, 13:14) %>%
+  `[`(-3, 12:14) %>%
   chisq.test(simulate.p.value = FALSE) 
 days_RnB_chisq_test %>%
   pander
