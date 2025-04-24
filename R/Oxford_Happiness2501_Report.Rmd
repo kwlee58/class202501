@@ -19,6 +19,14 @@ knitr::opts_chunk$set(echo = TRUE)
 
 옥스포드 행복 설문지 실험결과를 분석합니다. 
 
+옥스포드 행복 설문지(Oxford Happiness Questionnaire)는 긍정심리학(Psychology of Happiness) 분야에소 널리쓰이는 자기보고식 설문도구로 "행복감(subjective well-being) 을 정량적으로 측정하기 위한 목적으로 1989년 Michael Argyle 과 Peter Hill 이 개발하였습니다.
+
+총 29개 문항으로 구성되어 있으며 각 문항은 Likert 척도 (1~6점)로 응답하게 되어 있고, 일부는 역문항이 포함되어 있어서 점수를 환산할 때 주의가 필요합니다.
+
+채점 방식은 문항당 1~6점으로 주어지고 전체 평균 점수를 계산하여 점수가 높을 수록 행복감이 높은 것으로 해석합니다.
+
+평균 점수 4.0이하이면 상대적으로 낮은 행복감, 4.0~4.9이면 보통 수준, 5.0 이상이면 높은 행복감이라고 평가합니다.
+
 이 실험에는 두 가지 목적이 있습니다.
 
 첫째는 있는 그대로 옥스포드 행복 설문지로 측정하는 여러분의 행복 수준은 어느 정도인지,
@@ -121,6 +129,7 @@ oxford_wrong_ids <- oxford_wrong_ids %>%
     id = case_when(
       id == "202225259" ~ "20225259",
       id == "20221551" ~ "20221541",
+      id == "200243608" ~ "20243608",
     TRUE ~ id
     ),
     name = case_when(
@@ -436,12 +445,12 @@ days_tbl %>%
 ```{r, echo = FALSE, warning = FALSE}
 days_tbl %>%
   rbind("계" = colSums(.)) %>%
-  `[`(3, 12:14) %>%
+  `[`(3, 11:14) %>%
   pander
 days_chisq_test <-
   days_tbl %>%
   rbind("계" = colSums(.)) %>%
-  `[`(3, 12:14) %>%
+  `[`(3, 11:14) %>%
   chisq.test(simulate.p.value = FALSE) 
 days_chisq_test %>%
   pander
@@ -487,11 +496,11 @@ invisible(dev.off())
 ```{r, echo = FALSE, warning = FALSE}
 days_tbl %>%
   rbind("계" = colSums(.)) %>%
-  `[`(-3, 12:14) %>%
+  `[`(-3, 11:14) %>%
   pander
 days_RnB_chisq_test <-
   days_tbl %>%
-  `[`(-3, 12:14) %>%
+  `[`(-3, 11:14) %>%
   chisq.test(simulate.p.value = FALSE) 
 days_RnB_chisq_test %>%
   pander
