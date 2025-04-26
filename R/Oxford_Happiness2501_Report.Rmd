@@ -1,6 +1,7 @@
 ---
 title: "Oxford Happiness Questionnaire"
 author: "coop711"
+# date : "2025-04-21"
 date: "`r format(Sys.time(), '%Y-%m-%d %H:%M:%S')`"
 output: html_document
 ---
@@ -130,6 +131,8 @@ oxford_wrong_ids <- oxford_wrong_ids %>%
       id == "202225259" ~ "20225259",
       id == "20221551" ~ "20221541",
       id == "200243608" ~ "20243608",
+      id == "20236381" ~ "20236281",
+      id == "021024" ~ "20211713",
     TRUE ~ id
     ),
     name = case_when(
@@ -214,11 +217,11 @@ wrong_group <- oxford %>%
   filter(group2 != group)
 
 #> 잘못된 그룹 정보 출력
-# wrong_group %>%
-#   select(Time1, id, group2, group) %>%
-#   arrange(Time1) %>%
-#   rename("제출시간" = Time1, "학번" = id, "랜덤화출석부" = group2, "구글예습퀴즈" = group) %>%
-#   pander(row.names = FALSE)
+wrong_group %>%
+  select(Time1, id, group2, group) %>%
+  arrange(Time1) %>%
+  rename("제출시간" = Time1, "학번" = id, "랜덤화출석부" = group2, "구글예습퀴즈" = group) %>%
+  pander(row.names = FALSE)
 
 #> 옛 코드
 # oxford$group2 <- class_roll$group[match(oxford$id, class_roll$id)]
@@ -317,11 +320,11 @@ oxford_tbl %>%
 
 ### `chisq.test()`
 
-```{r, echo = FALSE}
+```{r, echo = FALSE, warning = FALSE}
 oxford_chisq_test <- 
   oxford_tbl %>% 
-  `[`(-3, -c(1:2, 6)) %>% 
-  chisq.test(simulate.p.value = TRUE) 
+  `[`(-3, -6) %>% 
+  chisq.test(simulate.p.value = FALSE) 
 oxford_chisq_test %>%
   pander
 ```
