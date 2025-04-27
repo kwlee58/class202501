@@ -84,6 +84,7 @@ quiz %>%
 fix_wason_response_simple <- function(x) {
   x <- str_remove_all(x, "\\s")         # 공백 제거
   x <- str_replace(x, "^\\.", "")       # 앞 점 제거
+  x <- str_remove_all(x, "[()]")         # (추가) 괄호 제거 (A,2) → A,2
   
   # 1. 숫자 먼저 온 입력은 순서 바꾸기
   x <- str_replace(x, "^([0-9]+),([A-Za-z]+)$", "\\2,\\1")
@@ -94,6 +95,7 @@ fix_wason_response_simple <- function(x) {
   x <- str_replace(x, "^([A-Za-z]+)([0-9]+)$", "\\1,\\2")   # "Beer17" → "Beer,17"
   x <- str_replace(x, "^Bear,([0-9]+)$", "Beer,\\1")
   x <- str_replace(x, "^Be{2,}r,([0-9]+)$", "Beer,\\1")  # 추가: Beeer → Beer
+  x <- str_replace(x, "^([A-Za-z]+)\\.([0-9]+)$", "\\1,\\2")   # 추가: A.2 → A,2
   
   # 3. 대소문자 정리 (마지막 단계)
   x <- str_to_title(x)                  # Beer, Coke, A, B 등 대소문자 정리
@@ -268,19 +270,12 @@ wrong_keys <- quiz_wrong_ids %>%
 quiz_wrong_ids <- quiz_wrong_ids %>%
   mutate(
     id = case_when(
-      id == "202227096" ~ "20227096",
-      id == "02053725" ~ "20253725",
-      id == "20241595" ~ "20241506",
-      id == "202222713" ~ "20222713",
-      id == "202013353" ~ "20213353",
-      id == "2042918" ~ "20242918",
-      id == "202244144" ~ "20244144",
       id == "20241048" ~ "20241049",
       id == "202266628" ~ "20226628",
     TRUE ~ id
     ),
     name = case_when(
-      name == "이소여" ~ "이소연",
+      name == "040924" ~ "김무원",
       TRUE ~ name
       )
     )
@@ -1207,12 +1202,12 @@ days_tbl %>%
 ```{r, echo = FALSE, warning = FALSE}
 days_tbl %>%
   rbind("계" = colSums(.)) %>%
-  `[`(3, 2:14) %>%
+  `[`(3, 1:14) %>%
   pander
 days_chisq_test <-
   days_tbl %>%
   rbind("계" = colSums(.)) %>%
-  `[`(3, 2:14) %>%
+  `[`(3, 1:14) %>%
   chisq.test(simulate.p.value = FALSE) 
 days_chisq_test %>%
   pander
@@ -1258,11 +1253,11 @@ invisible(dev.off())
 ```{r, echo = FALSE, warning = FALSE}
 days_tbl %>%
   rbind("계" = colSums(.)) %>%
-  `[`(-3, 2:14) %>%
+  `[`(-3, 1:14) %>%
   pander
 days_RnB_chisq_test <-
   days_tbl %>%
-  `[`(-3, 2:14) %>%
+  `[`(-3, 1:14) %>%
   chisq.test(simulate.p.value = FALSE) 
 days_RnB_chisq_test %>%
   pander
