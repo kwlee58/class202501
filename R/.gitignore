@@ -1,0 +1,39 @@
+# R / RStudio
+.Rhistory
+.RData
+.Rproj.user/
+.Ruserdata
+.Rapp.history
+
+# R Markdown
+*.utf8.md
+*.knit.md
+*.Rmd~
+*.RDS
+*.rda
+
+# Bookdown output
+_bookdown_files/
+*_cache/
+*_files/
+*.log
+*.aux
+*.out
+*.toc
+*.bbl
+*.blg
+*.lof
+*.lot
+*.fls
+*.fdb_latexmk
+
+# System files
+.DS_Store
+Thumbs.db
+
+# VSCode settings (if any)
+.vscode/
+
+# Temporary files
+*.tmp
+*.swp

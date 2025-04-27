@@ -136,7 +136,7 @@ oxford_wrong_ids <- oxford_wrong_ids %>%
     TRUE ~ id
     ),
     name = case_when(
-      name == "이소여" ~ "이소연",
+      name == "이은ㅇ여" ~ "이은영",
       TRUE ~ name
       )
     )

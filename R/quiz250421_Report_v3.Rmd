@@ -59,6 +59,7 @@ names(quiz) <-
     "group", "Q4_R", "Q5_R", "Q6_R", "Q4_B", "Q5_B", "Q6_B")
 str(quiz)
 class(quiz$id) <- "character"
+class(quiz$dept) <- "character"
 quiz$dept %<>% 
   factor
 quiz$group %<>% 
