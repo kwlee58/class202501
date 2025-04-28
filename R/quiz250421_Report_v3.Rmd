@@ -60,8 +60,6 @@ names(quiz) <-
 str(quiz)
 class(quiz$id) <- "character"
 class(quiz$dept) <- "character"
-quiz$dept %<>% 
-  factor
 quiz$group %<>% 
   factor(levels = c("Red", "Black"))
 quiz[10:15] %<>% 

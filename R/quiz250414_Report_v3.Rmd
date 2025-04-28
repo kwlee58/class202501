@@ -95,6 +95,7 @@ fix_wason_response_simple <- function(x) {
   x <- str_replace(x, "^([A-Za-z]+)([0-9]+)$", "\\1,\\2")   # "Beer17" → "Beer,17"
   x <- str_replace(x, "^Bear,([0-9]+)$", "Beer,\\1")
   x <- str_replace(x, "^Be{2,}r,([0-9]+)$", "Beer,\\1")  # 추가: Beeer → Beer
+  x <- str_replace(x, regex("^B[eE]{2,}r,([0-9]+)$", ignore_case = TRUE), "Beer,\\1") 
   x <- str_replace(x, "^([A-Za-z]+)\\.([0-9]+)$", "\\1,\\2")   # 추가: A.2 → A,2
   
   # 3. 대소문자 정리 (마지막 단계)
@@ -1219,7 +1220,9 @@ days_chisq_test %>%
 
 분포표 만으로도 쉽게 파악할 수 있지만 카이제곱테스트가 명확히 해 줍니다.
 
-카이제곱 통계량은 `r format(days_chisq_test[1], digits = 2, nsmall = 2)`, 자유도는 `r format(days_chisq_test[2], digits = 2, nsmall = 2)`, p-value 는 `r format(days_chisq_test[3], digits = 2, nsmall = 4)` 이므로 아직까지는 날짜별로 고르게 제출하고 있습니다.
+카이제곱 통계량은 `r format(days_chisq_test[1], digits = 2, nsmall = 2)`, 자유도는 `r format(days_chisq_test[2], digits = 2, nsmall = 2)`, p-value 는 `r format(days_chisq_test[3], digits = 2, nsmall = 4)` 이므로 날짜별로 고르게 제출하지  않았습니다. 
+
+그리고 그 차이는 통계적으로 매우, 매우 유의합니다.
 
 막대그래프로 살펴 보겠습니다.
 
@@ -1267,7 +1270,7 @@ days_RnB_chisq_test %>%
 
 이번에는 분포표의 첫번째와 두번째 행, '계'열을 제외한 나머지 열에 대해서 카이제곱테스트를 수행합니다.
 
-카이제곱 통계량은 `r format(days_RnB_chisq_test[1], digits = 2, nsmall = 2)`, 자유도는 `r format(days_RnB_chisq_test[2], digits = 2, nsmall = 2)`, p-value 는 `r format(days_RnB_chisq_test[3], digits = 2, nsmall = 4)` 이므로 제출 시간의 분포는 Red, Black 간에 통계적으로 유의한 차이가 관찰되지 않습니다.
+카이제곱 통계량은 `r format(days_RnB_chisq_test[1], digits = 2, nsmall = 2)`, 자유도는 `r format(days_RnB_chisq_test[2], digits = 2, nsmall = 2)`, p-value 는 `r format(days_RnB_chisq_test[3], digits = 2, nsmall = 4)` 이므로 제출 시간의 분포는 Red, Black 간에 통계적으로 유의한 차이가 관찰되지 않았습니다.
 
 이 사실을 Mosaic Plot 을 이용하여 시각적으로 살펴보겠습니다.
 
