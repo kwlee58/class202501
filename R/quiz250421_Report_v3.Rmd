@@ -475,11 +475,11 @@ chisq_test_q4 %>%
 Q4는 야구 방망이와 공 세트가 1달러10센트이고 방망이는 공보다 1달러가 비싸다는 설명으로부터 얼핏 그 차이인 10센트가 바로 공의 가격이라고 착각하기 쉽습니다. 
 
 3초 안에 답을 해야 하기 때문에 방망이 + 공 = 1달러10센트, 방망이 - 공 = 1달러 를 계산할 시간이 없습니다. 
-Red 와 Black 은 선택지의 순서만 바꾼 것인데 아무런 영향을 주지 않고 있습니다. 
+Red 와 Black 은 선택지의 순서만 바꾸었는데 앞에 놓은 선택지를 고르는 1번효과가 나타나서 통계적으로 유의한 차이를 보여주고 있습니다. (아무런 영향을 주지 않고 있습니다.) 
 
 여기서 수행하고 있는 카이제곱 테스트는 이 순서를 바꾼 것의 효과가 통계적으로 유의한지 알아보기 위한 것입니다. 
 
-그 결과 카이제곱 통계량은 `r chisq_test_q4[1] %>% format(digits = 2, nsmall = 2)`, 자유도는 `r chisq_test_q4[2] %>% format(digits = 2, nsmall = 2)`, p-value 는 `r chisq_test_q4[3] %>% format(digits = 2, nsmall = 2)`이므로 선택지의 순서를 바꾼 것은 통계적으로 유의한 차이를 보이지 않습니다. 
+그 결과 카이제곱 통계량은 `r chisq_test_q4[1] %>% format(digits = 2, nsmall = 2)`, 자유도는 `r chisq_test_q4[2] %>% format(digits = 2, nsmall = 2)`, p-value 는 `r chisq_test_q4[3] %>% format(digits = 2, nsmall = 2)`이므로 선택지의 순서를 바꾼 것이 앞에 배치한 선택지를 고르는 데 있어서 통계적으로 유의한 차이를 보이고(지) 있(않)습니다. 
 
 ### % 비교.  
 
@@ -495,9 +495,9 @@ ptbl_q4_a %>%
   pander
 ```
 
-이를 백분률로 살펴보면 10센트를 먼저 선택지에 올린 Red 에서 정답 5센트를 고른 백분율, `r format(ptbl_q4_a[1, 2], digits = 2, nsmall = 1)`(%)(이)나 5센트를 먼저 선택지에 올린 Black 에서 정답 5센트를 고른 백분율, `r format(ptbl_q4_a[2, 2], digits = 2, nsmall = 1)`(%)(이)나 큰 차이가 없어서 선택지를 바꾸어도 응답에는 아무런 영향을 주지 못한다는 것을 명확히 알 수 있습니다. 
+이를 백분률로 살펴보면 10센트를 먼저 선택지에 올린 Red 에서 정답 5센트를 고른 백분율, `r format(ptbl_q4_a[1, 2], digits = 2, nsmall = 1)`(%)(이)나 5센트를 먼저 선택지에 올린 Black 에서 정답 5센트를 고른 백분율, `r format(ptbl_q4_a[2, 2], digits = 2, nsmall = 1)`(%) 간에 상당히 큰 차이가 있어서 선택지를 바꾸는 것이 응답에 아무런 영향을 주고 있다는 것을 명확히 알 수 있습니다. 
 
-따라서 Red, Black 은 합쳐서 분석하는 것이 타당합니다. 그 결과는 다음과 같습니다.
+Red, Black 간에 통계적으로 유의한 차이가 관찰되었지만 합쳐서 분석한 결과는 다음과 같습니다.
 
 ### 합산(%)
 
@@ -513,7 +513,7 @@ ptbl_q4 %>%
   pander
 ```
 
-정답 5센트를 고른 백분률은 선택지의 순서 바꿈과는 무관하게 `r format(ptbl_q4[2], digits = 2, nsmall = 1)`(%)(으)로 상당히 높은 편이라고 할 수 있습니다. 
+정답 5센트를 고른 백분률은 Red, Black 을 합쳤을 때 `r format(ptbl_q4[2], digits = 2, nsmall = 1)`(%)(으)로 제법 높은 편이라고 할 수 있습니다. 
 
 ### Mosaic Plot
 
@@ -784,12 +784,12 @@ days_tbl %>%
 ```{r, echo = FALSE, warning = FALSE}
 days_tbl %>%
   rbind("계" = colSums(.)) %>%
-  `[`(3, 5:14) %>%
+  `[`(3, 4:14) %>%
   pander
 days_chisq_test <-
   days_tbl %>%
   rbind("계" = colSums(.)) %>%
-  `[`(3, 5:14) %>%
+  `[`(3, 4:14) %>%
   chisq.test(simulate.p.value = FALSE) 
 days_chisq_test %>%
   pander
@@ -835,11 +835,11 @@ invisible(dev.off())
 ```{r, echo = FALSE, warning = FALSE}
 days_tbl %>%
   rbind("계" = colSums(.)) %>%
-  `[`(-3, 5:14) %>%
+  `[`(-3, 4:14) %>%
   pander
 days_RnB_chisq_test <-
   days_tbl %>%
-  `[`(-3, 5:14) %>%
+  `[`(-3, 4:14) %>%
   chisq.test(simulate.p.value = FALSE) 
 days_RnB_chisq_test %>%
   pander

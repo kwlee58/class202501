@@ -293,13 +293,13 @@ Scores_t_test %>%
 
 즉, 통계적으로 유의한 차이를 관찰하(지 못하)였습니다. 
 
-국문 행복도 조사지와 영문 행복도 조사지의 행복점수에는 차이가 있고, 국문 행복도의 평균점수가 더 높은 것으로 나왔습니다. 
+국문 행복도 조사와 영문 행복도 조사의 평균 행복점수 차이는 랜덤화의 효과로 충분히 나올 수 있는 수준이라는 것입니다. 
 
 결과 요약표에는 각 집단의 평균 행복점수도 나와 있습니다. 
 
-국문으로 물어 봤을 때하고 영문으로 물어 봤을 때는 명확히 차이가 있다는 것을 알 수 있습니다. 
+지난 학기의 자료들을 살펴보면 국문으로 물어 봤을 때하고 영문으로 물어 봤을 행복 점수에서 통계적으로 유의한 차이가 있었다는 것을 알 수 있습니다. 
 
-왜 그런 차이가 관찰되는 걸까요?
+지난 자료와 금번 자료에서는 왜 이러한 차이가 관찰되는 걸까요?
 
 ### `table()`
 
@@ -448,12 +448,12 @@ days_tbl %>%
 ```{r, echo = FALSE, warning = FALSE}
 days_tbl %>%
   rbind("계" = colSums(.)) %>%
-  `[`(3, 5:14) %>%
+  `[`(3, 4:14) %>%
   pander
 days_chisq_test <-
   days_tbl %>%
   rbind("계" = colSums(.)) %>%
-  `[`(3, 5:14) %>%
+  `[`(3, 4:14) %>%
   chisq.test(simulate.p.value = FALSE) 
 days_chisq_test %>%
   pander
@@ -499,11 +499,11 @@ invisible(dev.off())
 ```{r, echo = FALSE, warning = FALSE}
 days_tbl %>%
   rbind("계" = colSums(.)) %>%
-  `[`(-3, 5:14) %>%
+  `[`(-3, 4:14) %>%
   pander
 days_RnB_chisq_test <-
   days_tbl %>%
-  `[`(-3, 5:14) %>%
+  `[`(-3, 4:14) %>%
   chisq.test(simulate.p.value = FALSE) 
 days_RnB_chisq_test %>%
   pander
