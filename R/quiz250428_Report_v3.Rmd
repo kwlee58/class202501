@@ -492,9 +492,9 @@ chisq_test_q5 %>%
 
 Q5의 집계 결과가 Red, Black 간에 통계적으로 유의한 차이가 있는지 알아보기 위하여 카이제곱 테스트를 수행하였습니다. 
 
-그 결과 카이제곱 통계량은 `r chisq_test_q5[1] %>% format(digits = 2, nsmall = 3)`, 자유도는 `r chisq_test_q5[2] %>% format(digits = 2, nsmall = 2)`, p-value 는 `r chisq_test_q5[3] %>% format(digits = 2, nsmall = 4)`이므로 Red, Black 간에 통계적으로 유의한 차이를 보이지 않습니다. 
+그 결과 카이제곱 통계량은 `r chisq_test_q5[1] %>% format(digits = 2, nsmall = 3)`, 자유도는 `r chisq_test_q5[2] %>% format(digits = 2, nsmall = 2)`, p-value 는 `r chisq_test_q5[3] %>% format(digits = 2, nsmall = 4)`이므로 Red, Black 간에 통계적으로 유의한 차이를 보이고(지) 있(않)습니다. 
 
-실제로 닮은 게 느껴집니까?
+(실제로 닮은 게 느껴집니까?)
 
 ### %
 
@@ -614,8 +614,6 @@ ptbl_q7_a %>%
 
 이를 백분율로 살펴보면 사후 장기기증 의사가 없으면 표시하라는 Red에서 사후 장기기증 의사가 있다고 응답한 백분율, `r format(ptbl_q7_a[1, 1], digits = 2, nsmall = 1)`(%)(이)나 사후 장기기증 의사가 있으면 표시하라는 Black 에서 사후 장기기증 의사가 있다고 응답한 백분율, `r format(ptbl_q7_a[2, 1], digits = 2, nsmall = 1)`(%)(이)나 큰 차이가 없어서 default의 설정이 응답에는 통계적으로 유의한 영향을 주지 못한다는 것을 명확히 알 수 있습니다. 
 
-오히려 기대와는 반대로 장기기증 의사가 있으면 표시해야 하는 Black 의 사후 장기기증 의사가 있다는 응답 백분율이 더 높습니다. 
-
 어쨌든 통계적으로 유의한 차이를 관찰하지 못했으므로  Red, Black 은 합쳐서 분석하는 것이 타당합니다. 그 결과는 다음과 같습니다.
 
 ### 합산(%)
@@ -733,12 +731,12 @@ days_tbl %>%
 ```{r, echo = FALSE, warning = FALSE}
 days_tbl %>%
   rbind("계" = colSums(.)) %>%
-  `[`(3, 11:14) %>%
+  `[`(3, 10:14) %>%
   pander
 days_chisq_test <-
   days_tbl %>%
   rbind("계" = colSums(.)) %>%
-  `[`(3, 11:14) %>%
+  `[`(3, 10:14) %>%
   chisq.test(simulate.p.value = FALSE) 
 days_chisq_test %>%
   pander
@@ -784,11 +782,11 @@ invisible(dev.off())
 ```{r, echo = FALSE, warning = FALSE}
 days_tbl %>%
   rbind("계" = colSums(.)) %>%
-  `[`(-3, 11:14) %>%
+  `[`(-3, 10:14) %>%
   pander
 days_RnB_chisq_test <-
   days_tbl %>%
-  `[`(-3, 11:14) %>%
+  `[`(-3, 10:14) %>%
   chisq.test(simulate.p.value = FALSE) 
 days_RnB_chisq_test %>%
   pander
