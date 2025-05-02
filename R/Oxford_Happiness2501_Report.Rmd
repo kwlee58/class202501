@@ -133,6 +133,7 @@ oxford_wrong_ids <- oxford_wrong_ids %>%
       id == "200243608" ~ "20243608",
       id == "20236381" ~ "20236281",
       id == "021024" ~ "20211713",
+      id == "02246605" ~ "20246605",
     TRUE ~ id
     ),
     name = case_when(
@@ -257,9 +258,9 @@ Red(국문) 로 응답한 인원은 `r colSums(wrong_tbl)[1]`명, Black(영문) 
 
 먼저 기초통계입니다. 
 
-행복점수 단계별로 비교했을 때나 기초통계로 비교했을 때나 국문 설문지로 작성한 그룹 (Red)의 행복점수가 높게 나옵니다. 
+행복점수 단계별로 비교했을 때나 기초통계로 비교했을 때 국문 설문지로 작성한 그룹 (Red)의 행복점수가 다소 높게 나오지만, 그 차이가 통계적으로 유의한 수준은 아닙니다.  
 
-그 차이는 통계적으로 유의한 수준입니다. 
+(그 차이는 통계적으로 유의한 수준입니다. )
 
 ### `summary()`
 
@@ -314,7 +315,7 @@ oxford_tbl %>%
 
 이번에는 국문 행복도 조사 결과와 영문 행복도 조사 결과를 등급별로 나누어 교차표를 계산해 보았습니다. 
 
-총 `r oxford_tbl[3, 6]` 명 응답한 가운데 `r sum(oxford_tbl[3, 5:6])`명이 그저 그렇다 이상으로 행복하다고 응답하였고 그저 그렇다고 응답 한 사람들이 `r oxford_tbl[3, 3]` 명이었습니다. 
+총 `r oxford_tbl[3, 6]` 명 응답한 가운데 `r sum(oxford_tbl[3, 4:5])`명이 꽤 행복하다 이상으로 행복하다고 응답하였고 그저 그렇다고 응답 한 사람들이 `r oxford_tbl[3, 3]` 명이었습니다. 
 
 국문, 영문의 차이는 어떤가요?
 
@@ -331,7 +332,7 @@ oxford_chisq_test %>%
 
 국문, 영문 행복도 조사 결과의 등급별 차이를 파악하기 위하여 카이제곱 테스트를 수행하였습니다. 
 
-그 결과 카이제곱 통계량은 `r format(oxford_chisq_test[1], digits = 2, nsmall = 2)`, 반복수 2,0000의 붓스트랩 근사를 사용하였기 때문에 자유도는 알 수 없고, p-value 는 `r format(oxford_chisq_test[3], digits = 2, nsmall = 2)`이므로 통계적으로 유의한 차이를 보입니다.
+그 결과 카이제곱 통계량은 `r format(oxford_chisq_test[1], digits = 2, nsmall = 2)`, (반복수 2,0000의 붓스트랩 근사를 사용하였기 때문에) 자유도는 `r format(oxford_chisq_test[2], digits = 2, nsmall = 2)`, p-value 는 `r format(oxford_chisq_test[3], digits = 2, nsmall = 4)`이므로 통계적으로 유의한 차이를 보이지(고) 않(있)습니다.
 
 ### 백분율(%)
 
@@ -448,12 +449,12 @@ days_tbl %>%
 ```{r, echo = FALSE, warning = FALSE}
 days_tbl %>%
   rbind("계" = colSums(.)) %>%
-  `[`(3, 3:14) %>%
+  `[`(3, 2:14) %>%
   pander
 days_chisq_test <-
   days_tbl %>%
   rbind("계" = colSums(.)) %>%
-  `[`(3, 3:14) %>%
+  `[`(3, 2:14) %>%
   chisq.test(simulate.p.value = FALSE) 
 days_chisq_test %>%
   pander
@@ -499,11 +500,11 @@ invisible(dev.off())
 ```{r, echo = FALSE, warning = FALSE}
 days_tbl %>%
   rbind("계" = colSums(.)) %>%
-  `[`(-3, 3:14) %>%
+  `[`(-3, 2:14) %>%
   pander
 days_RnB_chisq_test <-
   days_tbl %>%
-  `[`(-3, 3:14) %>%
+  `[`(-3, 2:14) %>%
   chisq.test(simulate.p.value = FALSE) 
 days_RnB_chisq_test %>%
   pander
