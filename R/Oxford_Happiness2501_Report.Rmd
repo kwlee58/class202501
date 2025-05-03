@@ -134,10 +134,12 @@ oxford_wrong_ids <- oxford_wrong_ids %>%
       id == "20236381" ~ "20236281",
       id == "021024" ~ "20211713",
       id == "02246605" ~ "20246605",
+      id == "20243521" ~ "20243532",
     TRUE ~ id
     ),
     name = case_when(
       name == "이은ㅇ여" ~ "이은영",
+      name == "정해윰" ~ "정해윤",
       TRUE ~ name
       )
     )
@@ -449,12 +451,12 @@ days_tbl %>%
 ```{r, echo = FALSE, warning = FALSE}
 days_tbl %>%
   rbind("계" = colSums(.)) %>%
-  `[`(3, 2:14) %>%
+  `[`(3, 1:14) %>%
   pander
 days_chisq_test <-
   days_tbl %>%
   rbind("계" = colSums(.)) %>%
-  `[`(3, 2:14) %>%
+  `[`(3, 1:14) %>%
   chisq.test(simulate.p.value = FALSE) 
 days_chisq_test %>%
   pander
@@ -500,11 +502,11 @@ invisible(dev.off())
 ```{r, echo = FALSE, warning = FALSE}
 days_tbl %>%
   rbind("계" = colSums(.)) %>%
-  `[`(-3, 2:14) %>%
+  `[`(-3, 1:14) %>%
   pander
 days_RnB_chisq_test <-
   days_tbl %>%
-  `[`(-3, 2:14) %>%
+  `[`(-3, 1:14) %>%
   chisq.test(simulate.p.value = FALSE) 
 days_RnB_chisq_test %>%
   pander
