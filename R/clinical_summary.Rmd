@@ -1,0 +1,46 @@
+---
+title: "임상시험결과 요약"
+output:
+  pdf_document:
+    latex_engine: xelatex
+    keep_tex: true
+  html_document:
+    df_print: paged
+mainfont: AppleGothic
+header-includes:
+- \usepackage{booktabs}
+- \usepackage{kotex}
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+library(knitr)
+library(kableExtra)
+```
+
+## 임상시험결과 요약
+
+```{r}
+df <- data.frame(
+  시험_대상 = c(
+    "전체",
+    "플라시보 컨트롤 설계:", "  백신 접종", "  생리식염수 접종", "  부모동의 안함", "  불완전 접종",
+    "NFIP 설계:", "  백신 접종", "  대조군", "  부모동의 안함", "  불완전 접종"
+  ),
+  수효 = c(
+    "1,829,916", "749,236", "200,745", "201,229", "338,778", "8,484",
+    "1,080,680", "221,998", "725,173", "123,605", "9,904"
+  ),
+  케이스_수 = c(
+    "863", "358", "57", "142", "157", "2",
+    "505", "56", "391", "54", "4"
+  ),
+  발생률 = c(
+    "47", "48", "28", "71", "46", "24",
+    "47", "25", "54", "44", "40"
+  )
+)
+
+kbl(df, booktabs = TRUE, align = "lrrr", caption = "임상시험 결과 요약") %>%
+  kable_styling(latex_options = c("hold_position"))
+```

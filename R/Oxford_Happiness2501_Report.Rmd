@@ -160,15 +160,15 @@ oxford %>%
 # which(duplicated(oxford$id)) %>%
 #   oxford[., c("id", "name")]
 oxford %>%
-  filter(name %in% c("허다운"))
-# oxford[oxford$name %in% c("최재혁", "박지연"), ] #> 최재혁, 박지연이 중복 제출
+  filter(id %in% c("20243211"))
+# oxford[oxford$id %in% c("20243211"), ] #> 20243211이 중복 제출
 oxford <- oxford %>% 
   arrange(id, desc(Time1)) %>%
   distinct(id, .keep_all = TRUE)
 #> 옛 코드
 # oxford[which(duplicated(oxford$id)), c("id", "name")]
 #> 옥스포드 행복도 조사 참여자 vs Quiz 참여자
-quiz <- readRDS("./quiz241021.RDS")
+quiz <- readRDS("./quiz250421.RDS")
 #> 행복도조사 O, 퀴즈 X
 class_roll %>%
   filter(id %in% setdiff(oxford$id, quiz$id)) %>%
