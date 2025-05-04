@@ -1,8 +1,8 @@
 ---
 title: "Oxford Happiness Questionnaire"
 author: "coop711"
-# date : "2025-04-21"
-date: "`r format(Sys.time(), '%Y-%m-%d %H:%M:%S')`"
+date : "2025-04-21"
+# date: "`r format(Sys.time(), '%Y-%m-%d %H:%M:%S')`"
 output: html_document
 ---
 
@@ -26,7 +26,7 @@ knitr::opts_chunk$set(echo = TRUE)
 
 채점 방식은 문항당 1 ~ 6점으로 주어지고 전체 평균 점수를 계산하여 점수가 높을 수록 행복감이 높은 것으로 해석합니다.
 
-평균 점수 4.0이하이면 상대적으로 낮은 행복감, 4.0~4.9이면 보통 수준, 5.0 이상이면 높은 행복감이라고 평가합니다.
+평균 점수 1점 이상 2점 미만이면 "행복하지 않다", 2점 이상 3점 미만이면 "다소 행복하지 않다", 3점 이상 4점 미만이면 "그저 그렇다", 4점 이상 5점 미만이면 "꽤 행복하다", 5점 이상이면 "매우 행복하다"로 분류합니다. 
 
 이 실험에는 두 가지 목적이 있습니다.
 
@@ -39,7 +39,7 @@ library(readxl)
 library(magrittr)
 library(googlesheets4)
 options(width = 180)
-class_roll <- readRDS("./class_roll_250414.RDS")
+class_roll <- readRDS("./class_roll_250428.RDS")
 #> googlesheets4 패키지 시험
 oxford_url <-"https://docs.google.com/spreadsheets/d/1hrQFWBz4RUJiIZcZ270SIFuCKqvIYBbdShFbKCPwhZU"
 # gs4_deauth()
@@ -51,6 +51,7 @@ names(oxford) <-
   c("Time1", "email", "dept", "id", "name", "Time2", "group", paste0("Q", 1:29, "_R"), paste0("Q", 1:29, "_B"))
 oxford <- oxford[-2]
 class(oxford$id) <- "character"
+class(oxford$dept) <- "character"
 b <- format(as.POSIXct(oxford$Time2, format = "%Y-%m-%d %H:%M:%S"), format = "%H:%M:%S")
 a <- format(as.POSIXct(oxford$Time1, format = "%Y-%m-%d %H:%M:%S"), format = "%H:%M:%S")
 oxford$Duration <- difftime(as.POSIXct(a, format = "%H:%M:%S"), as.POSIXct(b, format = "%H:%M:%S"))
@@ -135,14 +136,19 @@ oxford_wrong_ids <- oxford_wrong_ids %>%
       id == "021024" ~ "20211713",
       id == "02246605" ~ "20246605",
       id == "20243521" ~ "20243532",
+      id == "2024347" ~ "20243047",
     TRUE ~ id
     ),
     name = case_when(
       name == "이은ㅇ여" ~ "이은영",
       name == "정해윰" ~ "정해윤",
       TRUE ~ name
-      )
+    ),
+    dept = case_when(
+      dept == "20242917" ~ "경영학과",
+      TRUE ~ dept
     )
+  )
 # 3. oxford 에서 id 또는 name 틀린 행을 제거하고 옳은 id 또는 name 갖춘 행으로 교체하기
 oxford <- oxford %>%
   anti_join(wrong_keys %>% select(id, name), by = c("id", "name")) %>%
@@ -220,11 +226,11 @@ wrong_group <- oxford %>%
   filter(group2 != group)
 
 #> 잘못된 그룹 정보 출력
-wrong_group %>%
-  select(Time1, id, group2, group) %>%
-  arrange(Time1) %>%
-  rename("제출시간" = Time1, "학번" = id, "랜덤화출석부" = group2, "구글예습퀴즈" = group) %>%
-  pander(row.names = FALSE)
+# wrong_group %>%
+#   select(Time1, id, group2, group) %>%
+#   arrange(Time1) %>%
+#   rename("제출시간" = Time1, "학번" = id, "랜덤화출석부" = group2, "구글예습퀴즈" = group) %>%
+#   pander(row.names = FALSE)
 
 #> 옛 코드
 # oxford$group2 <- class_roll$group[match(oxford$id, class_roll$id)]
@@ -262,8 +268,6 @@ Red(국문) 로 응답한 인원은 `r colSums(wrong_tbl)[1]`명, Black(영문) 
 
 행복점수 단계별로 비교했을 때나 기초통계로 비교했을 때 국문 설문지로 작성한 그룹 (Red)의 행복점수가 다소 높게 나오지만, 그 차이가 통계적으로 유의한 수준은 아닙니다.  
 
-(그 차이는 통계적으로 유의한 수준입니다. )
-
 ### `summary()`
 
 ```{r, echo = FALSE}
@@ -292,15 +296,15 @@ Scores_t_test %>%
 
 양 집단의 표준편차를 알 수 없기 때문에 Welch 의 근사식을 활용합니다. 
 
-이 때 t-통계량은 `r format(Scores_t_test[1], digits = 2, nsmall = 2)`, 자유도는 `r format(Scores_t_test[2], digits = 2, nsmall = 2)`, p-value 는 `r format(Scores_t_test[3], digits = 2, nsmall = 2)`라고 나옵니다. 
+이 때 t-통계량은 `r format(Scores_t_test[1], digits = 2, nsmall = 2)`, 자유도는 `r format(Scores_t_test[2], digits = 2, nsmall = 2)`, p-value 는 `r format(Scores_t_test[3], digits = 2, nsmall = 4)`라고 나옵니다. 
 
-즉, 통계적으로 유의한 차이를 관찰하(지 못하)였습니다. 
+즉, 통계적으로 유의한 차이를 관찰하지 못하였습니다. 
 
 국문 행복도 조사와 영문 행복도 조사의 평균 행복점수 차이는 랜덤화의 효과로 충분히 나올 수 있는 수준이라는 것입니다. 
 
 결과 요약표에는 각 집단의 평균 행복점수도 나와 있습니다. 
 
-지난 학기의 자료들을 살펴보면 국문으로 물어 봤을 때하고 영문으로 물어 봤을 행복 점수에서 통계적으로 유의한 차이가 있었다는 것을 알 수 있습니다. 
+지난 학기의 자료들을 살펴보면 국문으로 물어 봤을 때하고 영문으로 물어 봤을 때의 행복 점수에서 통계적으로 유의한 차이가 있었다는 것을 알 수 있습니다. 
 
 지난 자료와 금번 자료에서는 왜 이러한 차이가 관찰되는 걸까요?
 
@@ -334,7 +338,7 @@ oxford_chisq_test %>%
 
 국문, 영문 행복도 조사 결과의 등급별 차이를 파악하기 위하여 카이제곱 테스트를 수행하였습니다. 
 
-그 결과 카이제곱 통계량은 `r format(oxford_chisq_test[1], digits = 2, nsmall = 2)`, (반복수 2,0000의 붓스트랩 근사를 사용하였기 때문에) 자유도는 `r format(oxford_chisq_test[2], digits = 2, nsmall = 2)`, p-value 는 `r format(oxford_chisq_test[3], digits = 2, nsmall = 4)`이므로 통계적으로 유의한 차이를 보이지(고) 않(있)습니다.
+그 결과 카이제곱 통계량은 `r format(oxford_chisq_test[1], digits = 2, nsmall = 2)`,  자유도는 `r format(oxford_chisq_test[2], digits = 2, nsmall = 2)`, p-value 는 `r format(oxford_chisq_test[3], digits = 2, nsmall = 4)`이므로 통계적으로 유의한 차이를 보이고 있습니다.
 
 ### 백분율(%)
 
@@ -349,7 +353,7 @@ oxford_ptbl %>%
   pander
 ```
 
-행복점수의 등급별 백분율을 파악해 보면 꽤 행복하다 이상이 `r format(sum(oxford_ptbl[4:5]), digits = 2, nsmall = 2)`%이고, 그저 그렇다가 `r format(sum(oxford_ptbl[3]), digits = 2, nsmall = 2)`%, 다소 행복하지 않다 이하가 `r format(sum(oxford_ptbl[1:2]), digits = 2, nsmall = 2)` 입니다. 
+행복점수의 등급별 백분율을 파악해 보면 꽤 행복하다 이상이 `r format(sum(oxford_ptbl[4:5]), digits = 2, nsmall = 2)`%이고, 그저 그렇다가 `r format(sum(oxford_ptbl[3]), digits = 2, nsmall = 2)`%, 다소 행복하지 않다 이하가 `r format(sum(oxford_ptbl[1:2]), digits = 2, nsmall = 2)`% 입니다. 
 
 다행히도 대부분 행복합니다.
 
@@ -369,7 +373,7 @@ ggplot(data = oxford,
 
 국문, 영문 행복도 조사 결과를 시각적으로 비교하기 위하여 Boxplot 을 그려 보았습니다. 
 
-국문 행복도 조사의 중위수가 영문 행복도 조사의 중위수보다 높다는 게 눈에 띕니다. 
+국문 행복도 조사의 중위수가 영문 행복도 조사의 중위수보다 높다는 게 눈에 들어 옵니다. 
 
 그 밖에 기초 통계에 나오는 통계값들을 시각적으로 비교할 수 있습니다.
 
@@ -420,7 +424,7 @@ Duration_t_test %>%
   pander
 ```
 
-국문, 영문 행복도 조사의 소요 시간에 대해서도 t-test 를 수행하였는데 t-통계량은 `r format(Duration_t_test[1], digits = 2, nsmall = 2)`, 자유도는 `r format(Duration_t_test[2], digits = 2, nsmall = 2)`, p-value 는 `r format(Duration_t_test[3], digits = 2, nsmall = 2)`이어서 통계적으로 유의한 차이가 관찰되(지 않)고 있습니다.
+국문, 영문 행복도 조사의 소요 시간에 대해서도 t-test 를 수행하였는데 t-통계량은 `r format(Duration_t_test[1], digits = 2, nsmall = 2)`, 자유도는 `r format(Duration_t_test[2], digits = 2, nsmall = 2)`, p-value 는 `r format(Duration_t_test[3], digits = 2, nsmall = 2)`이어서 통계적으로 유의한 차이가 관찰되고 있습니다.
 
 ## 마감 시간으로부터 제출 시간의 분포
 

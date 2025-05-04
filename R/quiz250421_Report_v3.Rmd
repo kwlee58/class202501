@@ -1,8 +1,8 @@
 ---
 title: "Quiz 250421 (Cognitive Reponse Test)"
 author: "coop711"
-# date : "2025-04-21"
-date: "`r format(Sys.time(), '%Y-%m-%d %H:%M:%S')`"
+date : "2025-04-21"
+# date: "`r format(Sys.time(), '%Y-%m-%d %H:%M:%S')`"
 output: html_document
 ---
 
@@ -128,10 +128,6 @@ quiz$hours <- as.numeric(difftime("2025-05-05 00:00:00", quiz$time, units = 'hou
 str(quiz)
 ```
 
-```{r, randomization, echo = FALSE, results = 'hide'}
-pander(summary(quiz))
-```
-
 ```{r, cleaning, echo = FALSE, results = 'hide'}
 # 1. 잘못된 id 또는 name 가진 행 찾기
 quiz_wrong_ids <- quiz %>%
@@ -145,17 +141,15 @@ wrong_keys <- quiz_wrong_ids %>%
 quiz_wrong_ids <- quiz_wrong_ids %>%
   mutate(
     id = case_when(
-      id == "20214009" ~ "20214109",
-      id == "202432226" ~ "20243226",
-      id == "200225108" ~ "20225108",
-      id == "20040813" ~ "20242715",
       id == "20223822" ~ "20223821",
+      id == "20243437" ~ "20243427",
+      id == "2022116" ~ "20222116",
+      id == "20242966" ~ "20242967",
+      id == "2021451" ~ "20214151",
       TRUE ~ id
       ),
     name = case_when(
-      name == "이소여" ~ "이소연",
-      name == "안효빔" ~ "안효빈",
-      TRUE ~ name
+      name == "김민연" ~ "김민영",
       )
     )
 # 3. quiz 에서 id 또는 name 틀린 행을 제거하고 옳은 id 또는 name 갖춘 행으로 교체하기
@@ -184,7 +178,7 @@ quiz %>%
 # which(duplicated(quiz$id)) %>%
 #   quiz[., c("id", "name")]
 quiz %>%
-  filter(id %in% c("20243648"))
+  filter(id %in% c("20242581"))
 #> 전유빈이  정소은 id 를 갖다 쓴 상황 발생
 # quiz[quiz$name == "전유빈", "id"] <- class_roll[class_roll$name == "전유빈", "id"]
 # quiz <- quiz %>%
@@ -223,11 +217,11 @@ wrong_group <- quiz %>%
   filter(group2 != group)
 
 #> 잘못된 그룹 정보 출력
-wrong_group %>%
-  select(time, id, group2, group) %>%
-  arrange(time) %>%
-  rename("제출시간" = time, "학번" = id, "랜덤화출석부" = group2, "구글예습퀴즈" = group) %>%
-  pander(row.names = FALSE)
+# wrong_group %>%
+#   select(time, id, group2, group) %>%
+#   arrange(time) %>%
+#   rename("제출시간" = time, "학번" = id, "랜덤화출석부" = group2, "구글예습퀴즈" = group) %>%
+#  pander(row.names = FALSE)
 
 #> 옛 코드
 # quiz$group2 <- class_roll$group[match(quiz$id, class_roll$id)]
@@ -480,7 +474,7 @@ Red 와 Black 은 선택지의 순서만 바꾸었는데 앞에 놓은 선택지
 
 여기서 수행하고 있는 카이제곱 테스트는 이 순서를 바꾼 것의 효과가 통계적으로 유의한지 알아보기 위한 것입니다.
 
-그 결과 카이제곱 통계량은 `r chisq_test_q4[1] %>% format(digits = 2, nsmall = 2)`, 자유도는 `r chisq_test_q4[2] %>% format(digits = 2, nsmall = 2)`, p-value 는 `r chisq_test_q4[3] %>% format(digits = 2, nsmall = 4)`이므로 선택지의 순서를 바꾼 것이 앞에 배치한 선택지를 고르는 데 있어서 통계적으로 유의한 차이를 보이(고)지 (있)않습니다.
+그 결과 카이제곱 통계량은 `r chisq_test_q4[1] %>% format(digits = 2, nsmall = 2)`, 자유도는 `r chisq_test_q4[2] %>% format(digits = 2, nsmall = 2)`, p-value 는 `r chisq_test_q4[3] %>% format(digits = 2, nsmall = 4)`이므로 선택지의 순서를 바꾼 것이 앞에 배치한 선택지를 고르는 데 있어서 통계적으로 유의한 차이를 보이지 않습니다.
 
 ### % 비교.
 
@@ -496,7 +490,7 @@ ptbl_q4_a %>%
   pander
 ```
 
-이를 백분률로 살펴보면 10센트를 먼저 선택지에 올린 Red 에서 정답 5센트를 고른 백분율, `r format(ptbl_q4_a[1, 2], digits = 2, nsmall = 1)`(%)(이)나 5센트를 먼저 선택지에 올린 Black 에서 정답 5센트를 고른 백분율, `r format(ptbl_q4_a[2, 2], digits = 2, nsmall = 1)`(%) 간에 차이가 관찰되었지만 선택지를 바꾸는 것이 응답에 아무런 영향을 주지 않고 있다는 것을 알 수 있습니다.
+이를 백분률로 살펴보면 10센트를 먼저 선택지에 올린 Red 에서 정답 5센트를 고른 백분율, `r format(ptbl_q4_a[1, 2], digits = 2, nsmall = 1)`(%)(이)나 5센트를 먼저 선택지에 올린 Black 에서 정답 5센트를 고른 백분율, `r format(ptbl_q4_a[2, 2], digits = 2, nsmall = 1)`(%) 간에 차이가 관찰되었지만 선택지를 바꾸는 것이 응답에 큰 영향을 주지 않고 있다는 것을 알 수 있습니다.
 
 Red, Black 간에 통계적으로 유의한 차이가 관찰되지 않았기에 합쳐서 분석한 결과는 다음과 같습니다.
 
@@ -580,7 +574,7 @@ Red 와 Black 은 선택지의 순서만 바꾼 것인데 응답에 영향을 �
 
 여기서 수행하고 있는 카이제곱 테스트는 이 순서를 바꾼 것의 효과가 통계적으로 유의한지 알아보기 위한 것입니다.
 
-그 결과 카이제곱 통계량은 `r chisq_test_q5[1] %>% format(digits = 2, nsmall = 2)`, 자유도는 `r chisq_test_q5[2] %>% format(digits = 2, nsmall = 2)`, p-value 는 `r chisq_test_q5[3] %>% format(digits = 2, nsmall = 2)`이므로 선택지의 순서를 바꾼 것은 통계적으로 유의한 차이를 보이고(지 않)있습니다.
+그 결과 카이제곱 통계량은 `r chisq_test_q5[1] %>% format(digits = 2, nsmall = 2)`, 자유도는 `r chisq_test_q5[2] %>% format(digits = 2, nsmall = 2)`, p-value 는 `r chisq_test_q5[3] %>% format(digits = 2, nsmall = 2)`이므로 선택지의 순서를 바꾼 것은 통계적으로 유의한 차이를 보이지 않습니다.
 
 ### % 비교.
 
