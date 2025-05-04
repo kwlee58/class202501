@@ -576,11 +576,11 @@ chisq_test_q5 %>%
 
 다만, 다섯 대, 5분, 다섯 개가 함께 나오니까 저도 모르게 즉각적으로 100대, 100분, 100개로 반응하게 됩니다.
 
-Red 와 Black 은 선택지의 순서만 바꾼 것인데 아무런 영향을 주지 않고 있습니다.
+Red 와 Black 은 선택지의 순서만 바꾼 것인데 응답에 영향을 미치는지 알아 봅니다. 
 
 여기서 수행하고 있는 카이제곱 테스트는 이 순서를 바꾼 것의 효과가 통계적으로 유의한지 알아보기 위한 것입니다.
 
-그 결과 카이제곱 통계량은 `r chisq_test_q5[1] %>% format(digits = 2, nsmall = 2)`, 자유도는 `r chisq_test_q5[2] %>% format(digits = 2, nsmall = 2)`, p-value 는 `r chisq_test_q5[3] %>% format(digits = 2, nsmall = 2)`이므로 선택지의 순서를 바꾼 것은 통계적으로 유의한 차이를 보이지 않습니다.
+그 결과 카이제곱 통계량은 `r chisq_test_q5[1] %>% format(digits = 2, nsmall = 2)`, 자유도는 `r chisq_test_q5[2] %>% format(digits = 2, nsmall = 2)`, p-value 는 `r chisq_test_q5[3] %>% format(digits = 2, nsmall = 2)`이므로 선택지의 순서를 바꾼 것은 통계적으로 유의한 차이를 보이고(지 않)있습니다.
 
 ### % 비교.
 
@@ -596,9 +596,9 @@ ptbl_q5_a %>%
   pander
 ```
 
-이를 백분률로 살펴보면 100분을 먼저 선택지에 올린 Red에서 정답 5분을 고른 백분율, `r format(ptbl_q5_a[1, 2], digits = 2, nsmall = 1)`(%)(이)나 5분을 먼저 선택지에 올린 Black 에서 정답 5분을 고른 백분율, `r format(ptbl_q5_a[2, 2], digits = 2, nsmall = 1)`(%)(이)나 큰 차이가 없어서 선택지를 바꾸어도 응답에는 아무런 영향을 주지 못한다는 것을 명확히 알 수 있습니다.
+이를 백분률로 살펴보면 100분을 먼저 선택지에 올린 Red에서 정답 5분을 고른 백분율, `r format(ptbl_q5_a[1, 2], digits = 2, nsmall = 1)`(%)(이)나 5분을 먼저 선택지에 올린 Black 에서 정답 5분을 고른 백분율, `r format(ptbl_q5_a[2, 2], digits = 2, nsmall = 1)`(%)(이)나 큰 차이가 없어서 선택지를 바꾸는 것이 응답에 영향을 준다는 것을 명확히 알 수 있습니다.
 
-따라서 Red, Black 은 합쳐서 분석하는 것이 타당합니다.
+Red, Black 을 합쳐서 분석합니다.
 
 그 결과는 다음과 같습니다.
 
