@@ -1,0 +1,206 @@
+---
+title: "Food Habits Plan 250505"
+author: "coop711"
+date: "2025-05-05"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(readxl)
+library(pander)
+library(knitr)
+library(magrittr)
+library(dplyr)
+library(googlesheets4)
+panderOptions('table.split.table', Inf)
+panderOptions('table.alignment.rownames', 'left')
+panderOptions('table.alignment.default', 'right')
+options(width = 180)
+options(gargle_quiet = TRUE)
+# gs4_auth(email = "kwlee58@gmail.com", use_oob = TRUE)
+```
+
+```{r, data, echo = FALSE, results = 'hide'}
+class_roll <- 
+  readRDS("./class_roll_250428.RDS")
+#> googlesheets4 패키지 시험
+food_url <-"https://docs.google.com/spreadsheets/d/1OfStOJOroK6DAhmalhyAVpBx38GoblMQmNI8Bfrk8Is"
+# gs4_deauth()
+food <- read_sheet(food_url)
+# food <-
+#   read_excel("./data/food_survey_250505.xlsx",
+#              range = "C1:Y729")
+food %<>%
+  data.frame
+str(food)
+food <- food[, -c(1:2)]
+names(food) <- c("dept", "id", "name", paste0("Q", 1:20))
+class(food$id) <- "character"
+# food <-
+#   read_excel("./data/food_plan_250505.xlsx",
+#              range = "C1:Y726")
+str(food)
+names(food) <- c("dept", "id", "name", paste0("Q", 1:20))
+class(food$id) <- "character"
+food %<>% 
+  data.frame
+
+#> 학번 잘못 써서 고생시키는 녀석들 찾아내는 코드
+#> #> 학번을 잘못 쓰면 Red, Black 에서 누락되기 때문에 이 위치에서 수정해 줘야 함.
+wrong_id <- setdiff(food$id, class_roll$id)
+food %>%
+  filter(id %in% wrong_id) %>%
+  select(id, name, dept)
+# 1. 잘못된 id 가진 행 찾기
+food_wrong_ids <- food %>%
+  anti_join(class_roll, by = "id") 
+# 2. 잘못된 id를 따로 저장하고 수정하기
+wrong_ids <- food_wrong_ids$id
+food_wrong_ids <- food_wrong_ids %>%
+  mutate(id = case_when(
+    id == "20236239" ~ "20246239",
+    id == "20227156" ~ "20227155",
+    id == "20242851" ~ "20242751",
+    id == "202243801" ~ "20243801",
+    id == "20022994" ~ "20202994",
+    id == "202322216" ~ "20232216",
+    id == "202155115" ~ "20215115",
+    id == "2023" & name == "황이준" ~ "20231733",
+    id == "24" & name == "김윤아" ~ "20246224",
+    id == "20215369" & name == "한충서" ~ "20215269",
+    TRUE ~ id
+  ))
+# 3. quiz 에서 id 틀린 행을 제거하고 옳은 id 갖춘 행으로 교체하기
+food <- food %>%
+  filter(!id %in% wrong_ids) %>%
+  bind_rows(food_wrong_ids)
+#> 옛 코드
+#> 학번 잘못 써서 고생시키는 녀석들 찾아내는 코드
+# food[food$id %in% setdiff(food$id, class_roll$id), c("id", "name", "dept")]
+
+#> id 와 맷칭하는 Red, Black 부여
+food$group <- class_roll$group[match(food$id, class_roll$id)]
+#> factor 변환, 응답값의 숫자 변환
+food$dept %<>% 
+  factor
+food$group %<>%
+  factor(levels = c("Red", "Black"))
+food[paste0("Q", 1:20)] %<>%
+  sapply(FUN = {. %>% strsplit(split = "[.]") %>% sapply(`[`, 1)}) %>%
+  as.numeric
+food %>%
+  str
+food$score <- apply(food[paste("Q", 1:20, sep = "")], 1, sum)
+food$grade <- 
+  ifelse(food$score <= 59, "식생활을 고치세요", 
+         ifelse(food$score <= 79, "식생활이 보통입니다", 
+                ifelse(food$score <= 100, "식생활이 대체로 좋아요", NA)))
+food$grade <- 
+  factor(food$grade, 
+         levels = c("식생활을 고치세요", "식생활이 보통입니다", "식생활이 대체로 좋아요"), 
+         ordered = TRUE)
+str(food)
+#> 중복 제출자
+food %>%
+  filter(duplicated(id)) %>%
+  select(id, name) %>%
+  arrange(id)
+# which(duplicated(quiz$id)) %>%
+#   quiz[., c("id", "name")]
+food %>%
+  filter(name %in% c("송승민"))
+food <- food %>% 
+  arrange(id, desc(name)) %>%
+  distinct(id, .keep_all = TRUE)
+#> 식생활 계획 조사 미제출자
+absentee <- 
+  class_roll[class_roll$id %in% setdiff(class_roll$id, food$id), 
+             c("id", "name", "group")] %>%
+  `[`(order(.$id), ) 
+absentee %>%
+  pander(row.names = FALSE) 
+str(food)
+```
+
+# Descriptive Statistics
+
+## Grades
+
+```{r, grades, echo = FALSE}
+# pander(food[c("id", "name", "score", "grade")])
+pander(food[c("id", "score", "grade")])
+```
+
+## Cross Tables
+
+```{r, cross table, echo = FALSE}
+food %$%
+  table(.$group, .$grade, useNA = "ifany") %>%
+  cbind("계" = rowSums(.)) %>%
+  rbind("계" = colSums(.)) %>%
+  pander
+```
+
+## Percentages
+
+```{r, echo = FALSE}
+food %$%
+  table(.$group, .$grade) %>%
+  cbind("계" = rowSums(.)) %>%
+  rbind("계" = colSums(.)) %>%
+  `[`(3, -4) %>%
+    prop.table %>% 
+  c("계" = sum(.)) %>%
+  `*`(100) %>%
+  format(digits = 2, nsmall = 1) %>%
+  pander
+```
+
+## Summary Statistics
+
+```{r, summary, echo = FALSE}
+pander(tapply(food$score, food$group, summary))
+```
+
+## Standard Deviation
+
+```{r, SD, echo = FALSE}
+pander(tapply(food$score, food$group, sd, na.rm = TRUE), caption = "Standard Deviation")
+```
+
+## t test (Welch's)
+
+```{r, t test, echo = FALSE}
+pander(t.test(score ~ group, data = food))
+```
+
+# Plots
+
+## Stem and Leaf
+
+```{r, stem and leaf, echo = FALSE}
+tapply(food$score, food$group, stem)
+```
+
+## Box plot
+
+```{r, Box plot, echo = FALSE, fig.width = 7, fig.height = 7}
+plot(score~group, data = food)
+```
+
+## QQplot
+
+```{r, qqplot, echo = FALSE, fig.width = 7, fig.height = 7}
+Black <- food$group == "Black"
+Red <- food$group == "Red"
+qqplot(food$score[Black], food$score[Red], xlab = "Black", ylab = "Red")
+```
+
+<!--
+# save
+-->
+
+```{r, echo = FALSE}
+saveRDS(food, "./food_after2501.RDS")
+```
