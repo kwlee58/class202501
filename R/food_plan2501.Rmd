@@ -21,7 +21,7 @@ options(gargle_quiet = TRUE)
 # gs4_auth(email = "kwlee58@gmail.com", use_oob = TRUE)
 ```
 
-```{r, data, echo = FALSE, results = 'hide'}
+```{r, data, echo = FALSE, message = FALSE, results = 'hide'}
 class_roll <- 
   readRDS("./class_roll_250428.RDS")
 #> googlesheets4 패키지 시험
@@ -47,7 +47,7 @@ food %<>%
   data.frame
 
 #> 학번 잘못 써서 고생시키는 녀석들 찾아내는 코드
-#> #> 학번을 잘못 쓰면 Red, Black 에서 누락되기 때문에 이 위치에서 수정해 줘야 함.
+#> 학번을 잘못 쓰면 Red, Black 에서 누락되기 때문에 이 위치에서 수정해 줘야 함.
 wrong_id <- setdiff(food$id, class_roll$id)
 food %>%
   filter(id %in% wrong_id) %>%
