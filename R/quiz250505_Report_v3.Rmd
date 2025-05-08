@@ -148,12 +148,11 @@ wrong_keys <- quiz_wrong_ids %>%
 quiz_wrong_ids <- quiz_wrong_ids %>%
   mutate(
     id = case_when(
-      id == "20241048" ~ "20241049",
-      id == "202266628" ~ "20226628",
+      id == "20221223" ~ "20212223",
     TRUE ~ id
     ),
     name = case_when(
-      name == "040924" ~ "김무원",
+      name == "최유" ~ "최유환",
       TRUE ~ name
       )
     )
@@ -675,12 +674,12 @@ days_tbl %>%
 ```{r, echo = FALSE, warning = FALSE}
 days_tbl %>%
   rbind("계" = colSums(.)) %>%
-  `[`(3, 11:14) %>%
+  `[`(3, 10:14) %>%
   pander
 days_chisq_test <-
   days_tbl %>%
   rbind("계" = colSums(.)) %>%
-  `[`(3, 11:14) %>%
+  `[`(3, 10:14) %>%
   chisq.test(simulate.p.value = FALSE) 
 days_chisq_test %>%
   pander
@@ -726,11 +725,11 @@ invisible(dev.off())
 ```{r, echo = FALSE, warning = FALSE}
 days_tbl %>%
   rbind("계" = colSums(.)) %>%
-  `[`(-3, 11:14) %>%
+  `[`(-3, 10:14) %>%
   pander
 days_RnB_chisq_test <-
   days_tbl %>%
-  `[`(-3, 11:14) %>%
+  `[`(-3, 10:14) %>%
   chisq.test(simulate.p.value = FALSE) 
 days_RnB_chisq_test %>%
   pander
