@@ -159,6 +159,7 @@ quiz_wrong_ids <- quiz_wrong_ids %>%
     id = case_when(
       id == "20241048" ~ "20241049",
       id == "202266628" ~ "20226628",
+      id == "20170154" ~ "20171054",
     TRUE ~ id
     ),
     name = case_when(
