@@ -78,6 +78,7 @@ m <-
                 y = label_height), 
             label = format(ifelse(tbl_df[, 3] == 0, "", tbl_df[, 3]), 
                            big.mark = ","), 
+ #           size = 5,
             position = position_identity(),
             na.rm = TRUE) +
   scale_x_continuous(breaks = x_breaks, 
