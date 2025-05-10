@@ -64,7 +64,7 @@ setdiff(b_id, quiz$id) %>%
   `%in%`(class_roll$id, .) %>%
   `[`(class_roll, ., c("id", "name"))
 # class_roll[class_roll$id %in% setdiff(a_id, b_id), c("id", "name")]
-#> 불찹자들
+#> 불참자들
 setdiff(class_roll$id, b_id) %>%
   `%in%`(class_roll$id, .) %>%
   `[`(class_roll, ., c("id", "name"))
