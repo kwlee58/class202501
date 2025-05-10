@@ -26,7 +26,7 @@ options(width = 180)
 
 10주차 구글 예습 설문지 집계결과를 분석합니다. 
 
-Q1~Q6에서는 랜덤화의 효과로 Red, Black 이 얼마나 닮았는지 알아봅니다.
+Q1 ~ Q6에서는 랜덤화의 효과로 Red, Black 이 얼마나 닮았는지 알아봅니다.
 
 Q7에서는 Prospect Theory 에서 이득은 확고히 하고 손실은 회피하려는 심리에 대해서 살펴봅니다.
 
@@ -37,7 +37,7 @@ class_roll0428 <-
   readRDS("./class_roll_250428.RDS")
 class_roll0428 %<>% 
   data.frame
-#> 5월 5일 출석부로 업데이트할 부분 9변화 없어서 생략)
+#> 5월 5일 출석부로 업데이트할 부분, 변화 없어서 생략)
 # class_roll <- 
 #   read_excel("./data/class_roll_250505.xlsx", 
 #              range = "B1:H599")
@@ -68,9 +68,10 @@ quiz$Q7 %<>%
   strsplit(split = " : ") %>% 
   sapply(`[`, 1)
 quiz[c("group", "Q7_R", "Q7_B", "Q7")]
-quiz$dept <- factor(quiz$dept)
-quiz$group <- factor(quiz$group, 
-                         levels = c("Red", "Black"))
+quiz$dept <- 
+  factor(quiz$dept)
+quiz$group <- 
+  factor(quiz$group, levels = c("Red", "Black"))
 quiz$Q1 %<>% 
   factor(levels = c("소득불평등이 심한 나라에서 건강 및 사회문제지수가 나쁘게 나온다.", 
                     "소득이 많은 나라에서 건강 및 사회문제지수가 나쁘게 나온다.", 

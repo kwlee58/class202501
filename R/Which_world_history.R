@@ -35,7 +35,11 @@ y_max <- sort(unique(p_df$y_breaks[p_df$y_breaks < 0.99]), decreasing = TRUE)[1]
 m_list$m +
   geom_text(aes(x = center, y = 1.05),
             family = "KoPubWorldDotum Medium",
-            label = p_df[, 2]) + 
+            size = 6,
+  #          label = p_df[, 2]) +
+            label = ifelse(as.character(p_df[, 2]) %in% c("16/2", "17/1", "18/2", "19/1", "20/1"), 
+                           "", 
+                           as.character(p_df[, 2]))) + 
   theme_bw() +
   scale_y_continuous(breaks = c(0, y_min, y_max, 1),
                      labels = format(c(0, y_min, y_max, 1) * 100, digits = 2, nsmall = 1)) +
@@ -46,8 +50,8 @@ m_list$m +
                     type = "qual", 
                     palette = "Set2", 
                     direction = 1) +
-  theme(axis.title.x = element_text(family = "KoPubWorldDotum Light"),
-        axis.title.y = element_text(family = "KoPubWorldDotum Light"),
-        legend.text = element_text(family = "KoPubWorldDotum Light"),
+  theme(axis.title.x = element_text(size = 14, family = "KoPubWorldDotum Medium"),
+        axis.title.y = element_text(size = 14, family = "KoPubWorldDotum Medium"),
+        legend.text = element_text(size = 12, family = "KoPubWorldDotum Medium"),
         plot.title = element_text(size = 20, hjust = 0.5, family = "KoPubWorldDotum Bold"))
-ggsave("./R/pics/Which_world_mosaic_ggplot.png", width = 16, height = 8, dpi = 72)
+ggsave("./R/pics/Which_world_mosaic_ggplot.png", width = 16, height = 8, dpi = 300)
