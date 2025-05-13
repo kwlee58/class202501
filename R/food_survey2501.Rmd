@@ -48,6 +48,7 @@ wrong_ids <- food_wrong_ids$id
 food_wrong_ids <- food_wrong_ids %>%
   mutate(id = case_when(
     id == "01036108385" ~ "20246916",
+    id == "2024383" ~ "20243831",
     TRUE ~ id
   ))
 # 3. quiz 에서 id 틀린 행을 제거하고 옳은 id 갖춘 행으로 교체하기
