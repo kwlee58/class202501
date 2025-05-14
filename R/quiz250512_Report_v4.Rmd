@@ -514,7 +514,7 @@ tbl_q6_a %>%
   pander
 chisq_test_q6 <- 
   tbl_q6_a %>%
-  `[`(-3, -5) %>%
+  `[`(-3, -c(4, 5)) %>%
   chisq.test(simulate.p.value = FALSE) 
 chisq_test_q6 %>%
   pander
@@ -573,7 +573,7 @@ tbl_q7_a %>%
 #> 카이제곱 테스트
 chisq_test_q7 <- 
   tbl_q7_a %>%
-  `[`(-3, -c(5, 6)) %>%
+  `[`(-3, -6) %>%
   chisq.test(simulate.p.value = FALSE) 
 chisq_test_q7 %>%
   pander
@@ -703,12 +703,12 @@ days_tbl %>%
 ```{r, echo = FALSE, warning = FALSE}
 days_tbl %>%
   rbind("계" = colSums(.)) %>%
-  `[`(3, 12:14) %>%
+  `[`(3, 11:14) %>%
   pander
 days_chisq_test <-
   days_tbl %>%
   rbind("계" = colSums(.)) %>%
-  `[`(3, 12:14) %>%
+  `[`(3, 11:14) %>%
   chisq.test(simulate.p.value = FALSE) 
 days_chisq_test %>%
   pander
@@ -754,11 +754,11 @@ invisible(dev.off())
 ```{r, echo = FALSE, warning = FALSE}
 days_tbl %>%
   rbind("계" = colSums(.)) %>%
-  `[`(-3, 12:14) %>%
+  `[`(-3, 11:14) %>%
   pander
 days_RnB_chisq_test <-
   days_tbl %>%
-  `[`(-3, 12:14) %>%
+  `[`(-3, 11:14) %>%
   chisq.test(simulate.p.value = FALSE) 
 days_RnB_chisq_test %>%
   pander
