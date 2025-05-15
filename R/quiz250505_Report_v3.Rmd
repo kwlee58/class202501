@@ -1,8 +1,8 @@
 ---
 title: "Quiz 250505 (Prospect Theory)"
 author: "coop711"
-date : "2025-05-05"
-# date: "`r format(Sys.time(), '%Y-%m-%d %H:%M:%S')`"
+# date : "2025-05-05"
+date: "`r format(Sys.time(), '%Y-%m-%d %H:%M:%S')`"
 output: html_document
 ---
 
@@ -676,12 +676,12 @@ days_tbl %>%
 ```{r, echo = FALSE, warning = FALSE}
 days_tbl %>%
   rbind("계" = colSums(.)) %>%
-  `[`(3, 5:14) %>%
+  `[`(3, 4:14) %>%
   pander
 days_chisq_test <-
   days_tbl %>%
   rbind("계" = colSums(.)) %>%
-  `[`(3, 5:14) %>%
+  `[`(3, 4:14) %>%
   chisq.test(simulate.p.value = FALSE) 
 days_chisq_test %>%
   pander
@@ -727,11 +727,11 @@ invisible(dev.off())
 ```{r, echo = FALSE, warning = FALSE}
 days_tbl %>%
   rbind("계" = colSums(.)) %>%
-  `[`(-3, 5:14) %>%
+  `[`(-3, 4:14) %>%
   pander
 days_RnB_chisq_test <-
   days_tbl %>%
-  `[`(-3, 5:14) %>%
+  `[`(-3, 4:14) %>%
   chisq.test(simulate.p.value = FALSE) 
 days_RnB_chisq_test %>%
   pander
