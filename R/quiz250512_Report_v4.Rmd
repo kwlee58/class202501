@@ -561,6 +561,7 @@ include_graphics("./pics/Quiz240510_Q7_Black.png")
 ### 국공립대 등록금의 적정 수준 (집계)
 
 ```{r, college tuition, echo = FALSE, warning = FALSE}
+library(DescTools)
 tbl_q7_a <- quiz %$%
   table(.$group, .$Q7, useNA = "ifany") %>%
 # tbl_q4_a <- quiz$Q7 %>%
@@ -570,6 +571,9 @@ tbl_q7_a <- quiz %$%
 rownames(tbl_q7_a) <- c("Red(등록금무상국가 소개)", "Black(등록금고액국가 소개)", "계")
 tbl_q7_a %>% 
   pander
+#> CochranArmitageTest
+CochranArmitageTest(tbl_q7_a[-3, -6])
+
 #> 카이제곱 테스트
 chisq_test_q7 <- 
   tbl_q7_a %>%
