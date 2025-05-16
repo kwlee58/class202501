@@ -39,7 +39,7 @@ str(class_roll)
 
 ## BFI
 
-```{r}
+```{r, message = FALSE}
 BFI_url <-"https://docs.google.com/spreadsheets/d/1AzqsbP3NmtrSpPEjl7C49q7SzpQSRv96Is36fPYRmOw"
 BFI <- read_sheet(BFI_url)
 # BFI <- "./data/BFI250512.xlsx" %>% 
@@ -71,7 +71,7 @@ duplicated(BFI$ID) %>%
   BFI[., c("ID", "Name")]
 BFI[BFI$ID == "20242702", c("ID", "Name")]
 BFI[BFI$ID == "20243020", c("ID", "Name")]
-BFI <- BFI[-c(117, 598), ]
+# BFI <- BFI[-c(117, 598), ]
 # BFI <- unique(BFI)
 str(BFI)
 
@@ -167,8 +167,9 @@ duplicated(MI$ID) %>%
   which %>%
   MI[., c("ID", "Name")]
 MI[MI$ID == "20242702", c("ID", "Name")]
-MI <- MI[-109, ]
+# MI <- MI[-109, ]
 # MI <- unique(MI)
+str(MI)
 MI[5:60] %<>%
   sapply(FUN = {. %>% strsplit(split = "[.]") %>% sapply(`[`, 1)}) %>%
   as.numeric
