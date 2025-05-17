@@ -25,7 +25,7 @@ library(googlesheets4)
 options(width = 180)
 class_roll <- 
   read_excel("./data/class_roll_250428.xlsx",
-             range = "D1:E599",
+             range = "D1:E597",
              col_names = TRUE,
              col_types = "text")
 class_roll %<>%
@@ -211,7 +211,6 @@ MI_wrong_ids <- MI_wrong_ids %>%
   mutate(
     ID = case_when(
       ID == "20221223" ~ "20212223",
-      ID == "29242345" ~ "20242345",
     TRUE ~ ID
     ),
     Name = case_when(
@@ -234,12 +233,7 @@ MI_wrong_ids <- MI %>%
 wrong_ids <- MI_wrong_ids$ID
 MI_wrong_ids <- MI_wrong_ids %>%
   mutate(ID = case_when(
-    ID == "바이오메디컬" ~ "20243615",
-    ID == "20233903" ~ "20243903",
-    ID == "2024618" ~ "20246218",
-    ID == "2024242220" ~ "20242420",
-    ID == "2023390" ~ "20233930",
-    ID == "20182929" ~ "20182919",
+    ID == "20227070" ~ "20227080",
     TRUE ~ ID
   ))
 # 3. MI 에서 id 틀린 행을 제거하고 옳은 id 갖춘 행으로 교체하기

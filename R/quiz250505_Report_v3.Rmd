@@ -37,17 +37,16 @@ class_roll0428 <-
   readRDS("./class_roll_250428.RDS")
 class_roll0428 %<>% 
   data.frame
-#> 5월 5일 출석부로 업데이트할 부분, 변화 없어서 생략)
-# class_roll <- 
-#   read_excel("./data/class_roll_250505.xlsx", 
-#              range = "B1:H599")
-# class_roll %<>% 
-#   data.frame
-# str(class_roll)
-# names(class_roll) <- c("dept", "colleges", "id", "name", "status", "email", "cell_no")
-# class_roll$group <- class_roll0428$group[match(class_roll$id, class_roll0428$id)]
-# saveRDS(class_roll, file = "./class_roll_250505.RDS")
-class_roll <- class_roll0428
+#> 5월 16일 출석부로 업데이트
+class_roll <- 
+  read_excel("./data/class_roll_250516.xlsx", 
+             range = "B1:H597")
+class_roll %<>% 
+  data.frame
+str(class_roll)
+names(class_roll) <- c("dept", "colleges", "id", "name", "status", "email", "cell_no")
+class_roll$group <- class_roll0428$group[match(class_roll$id, class_roll0428$id)]
+saveRDS(class_roll, file = "./class_roll_250516.RDS")
 #> googlesheets4 패키지 시험
 quiz_url <-"https://docs.google.com/spreadsheets/d/1P5TY_yBaGGLhqOrBufssS6xxVFD73z2RKLw3rokPeKw"
 # gs4_deauth()
