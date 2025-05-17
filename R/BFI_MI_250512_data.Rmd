@@ -169,7 +169,7 @@ duplicated(MI$ID) %>%
 MI[MI$ID == "20242702", c("ID", "Name")]
 # MI <- MI[-109, ]
 # MI <- unique(MI)
-str(MI)
+# str(MI)
 MI[5:60] %<>%
   sapply(FUN = {. %>% strsplit(split = "[.]") %>% sapply(`[`, 1)}) %>%
   as.numeric
@@ -184,7 +184,7 @@ result_M <- identify_uniform_responses(MI[, 5:60], "3")
 # 결과 확인
 print(result_M)   # 일관된 응답을 입력한 행 번호
 print(MI[result_M, c("ID", "Name")])    # 일관된 응답을 입력한 데이터
-str(MI)
+# str(MI)
 # 부적절한 응답 삭제
 MI <- MI[-result_M, ]
 ```

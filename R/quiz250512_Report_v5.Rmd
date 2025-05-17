@@ -39,17 +39,16 @@ class_roll0428 <-
   readRDS("./class_roll_250428.RDS")
 class_roll0428 %<>% 
   data.frame
-#> 5월12일 출석부에 변동 없으므로
-# class_roll <- 
-#   read_excel("./data/class_roll_250512.xlsx", 
-#             range = "B1:G801")
-# class_roll %<>% 
-#   data.frame
-# str(class_roll)
-# names(class_roll) <- c("dept", "id", "name", "status", "email", "cell_no")
-# class_roll$group <- class_roll1108$group[match(class_roll$id, class_roll1108$id)]
-# saveRDS(class_roll, file = "./class_roll_241115.RDS")
-class_roll <- class_roll0428
+#> 5월16일 출석부로 업데이트
+class_roll <- 
+  read_excel("./data/class_roll_250516.xlsx", 
+             range = "B1:H597")
+class_roll %<>% 
+  data.frame
+str(class_roll)
+names(class_roll) <- c("dept", "colleges", "id", "name", "status", "email", "cell_no")
+class_roll$group <- class_roll0428$group[match(class_roll$id, class_roll0428$id)]
+# saveRDS(class_roll, file = "./class_roll_250516.RDS")
 #> 
 quiz_url <-"https://docs.google.com/spreadsheets/d/1bz-eMj0-kSHnkX2NqY0wa5rXlIS9ihmM7Xdd2NghU9A"
 # gs4_deauth()
@@ -135,7 +134,7 @@ wrong_keys <- quiz_wrong_ids %>%
 quiz_wrong_ids <- quiz_wrong_ids %>%
   mutate(
     id = case_when(
-      id == "20221223" ~ "20212223",
+      id == "2022276" ~ "20222761",
       id == "29242345" ~ "20242345",
     TRUE ~ id
     ),
@@ -748,12 +747,12 @@ days_tbl %>%
 ```{r, echo = FALSE, warning = FALSE}
 days_tbl %>%
   rbind("계" = colSums(.)) %>%
-  `[`(3, 9:14) %>%
+  `[`(3, 8:14) %>%
   pander
 days_chisq_test <-
   days_tbl %>%
   rbind("계" = colSums(.)) %>%
-  `[`(3, 9:14) %>%
+  `[`(3, 8:14) %>%
   chisq.test(simulate.p.value = FALSE) 
 days_chisq_test %>%
   pander
@@ -799,11 +798,11 @@ invisible(dev.off())
 ```{r, echo = FALSE, warning = FALSE}
 days_tbl %>%
   rbind("계" = colSums(.)) %>%
-  `[`(-3, 9:14) %>%
+  `[`(-3, 8:14) %>%
   pander
 days_RnB_chisq_test <-
   days_tbl %>%
-  `[`(-3, 9:14) %>%
+  `[`(-3, 8:14) %>%
   chisq.test(simulate.p.value = FALSE) 
 days_RnB_chisq_test %>%
   pander
