@@ -20,7 +20,7 @@ options(width = 180)
 ```
 
 ```{r, data, echo = FALSE, message = FALSE, results = 'hide'}
-class_roll <- readRDS("./class_roll_250428.RDS")
+class_roll <- readRDS("./class_roll_250516.RDS")
 #> googlesheets4 패키지 시험
 food_url <-"https://docs.google.com/spreadsheets/d/11FoeZAPVOiJbL9SDiVqbWDapqZOgXoHdRDPhskO4Vlo"
 # gs4_deauth()
@@ -49,6 +49,9 @@ food_wrong_ids <- food_wrong_ids %>%
   mutate(id = case_when(
     id == "01036108385" ~ "20246916",
     id == "2024383" ~ "20243831",
+    id == "251066" ~ "20251066",
+    id == "20318005" ~ "20218005",
+    id == "24" & name == "김지웅" ~ "20246226",
     TRUE ~ id
   ))
 # 3. quiz 에서 id 틀린 행을 제거하고 옳은 id 갖춘 행으로 교체하기
@@ -60,14 +63,25 @@ food <- food %>%
 #> id 와 맷칭하는 Red, Black 부여
 food$group <- class_roll$group[match(food$id, class_roll$id)]
 #> factor 변환, 응답값의 숫자 변환
-food$dept %<>% 
-  factor
 food$group %<>%
   factor(levels = c("Red", "Black"))
 food[paste0("Q", 1:20)] %<>%
   sapply(FUN = {. %>% strsplit(split = "[.]") %>% sapply(`[`, 1)}) %>%
   as.numeric
-
+#> 학과 이름에 학번 쓴 사람 처리
+food[food$dept == "20243841", "dept"] <- "식품영양학과"
+#> 중복 제출자
+food %>%
+  filter(duplicated(id)) %>%
+  select(id, name) %>%
+  arrange(id)
+# which(duplicated(quiz$id)) %>%
+#   quiz[., c("id", "name")]
+food %>%
+  filter(id %in% c("20243211", "20245205", "20246620"))
+food <- food %>% 
+  arrange(id, desc(name)) %>%
+  distinct(id, .keep_all = TRUE)
 #> 식생활 현황 조사 미제출자
 absentee <- 
   class_roll[class_roll$id %in% setdiff(class_roll$id, food$id), 

@@ -74,6 +74,18 @@ BFI[BFI$ID == "20243020", c("ID", "Name")]
 # BFI <- BFI[-c(117, 598), ]
 # BFI <- unique(BFI)
 str(BFI)
+#> 중복 제출자
+BFI %>%
+  filter(duplicated(ID)) %>%
+  select(Time, ID, Name) %>%
+  arrange(Time)
+# which(duplicated(BFI$ID)) %>%
+#   BFI[., c("ID", "Name")]
+BFI %>%
+  filter(ID %in% c("20226424"))
+BFI <- BFI %>% 
+  arrange(ID, desc(Time)) %>%
+  distinct(ID, .keep_all = TRUE)
 
 #> 학번 잘못 써서 고생시키는 녀석들 찾아내는 코드
 #> 
@@ -87,8 +99,8 @@ wrong_keys <- BFI_wrong_ids %>%
 BFI_wrong_ids <- BFI_wrong_ids %>%
   mutate(
     ID = case_when(
-      ID == "20221223" ~ "20212223",
-      ID == "29242345" ~ "20242345",
+      ID == "2022712" ~ "20227120",
+      ID == "24" & Name == "최성준" ~ "20242137",
     TRUE ~ ID
     ),
     Name = case_when(
@@ -210,7 +222,9 @@ wrong_keys <- MI_wrong_ids %>%
 MI_wrong_ids <- MI_wrong_ids %>%
   mutate(
     ID = case_when(
-      ID == "20221223" ~ "20212223",
+      ID == "20227070" ~ "20227080",
+      ID == "24" & Name == "최성준" ~ "20242137",
+      ID == "202041726" ~ "20241726",
     TRUE ~ ID
     ),
     Name = case_when(
@@ -245,10 +259,12 @@ MI[MI$ID %in% setdiff(MI$ID, class_roll$ID), c("ID", "Name")]
 #> 각 조사 불참자 
 # setdiff(class_roll$Name, BFI$Name)
 # setdiff(class_roll$Name, MI$Name)
+#> BFI 는 참여, MI 는 불참
 setdiff(BFI$ID, MI$ID) %>%
   `%in%`(BFI$ID, .) %>%
   `[`(BFI, ., c("ID", "Name")) %>%
   .[order(.$ID),]
+#> MI 는 참여, BFI 는 불참
 setdiff(MI$ID, BFI$ID) %>%
   sort %>%
   `%in%`(MI$ID, .) %>%
@@ -256,7 +272,7 @@ setdiff(MI$ID, BFI$ID) %>%
   .[order(.$ID),]
 # MI$Name
 # class_roll$Name
-str(MI)
+# str(MI)
 
 #> 마감일로부터 제출시점의 기간
 MI$Time <- format(MI$Time, format = "%Y-%m-%d %H:%M:%S")

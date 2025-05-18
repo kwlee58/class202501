@@ -1,0 +1,60 @@
+---
+title: "Google Forms Attendance"
+# author: "coop711"
+# date: "`r Sys.Date()`"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(pander)
+library(knitr)
+library(dplyr)
+library(magrittr)
+panderOptions('table.split.table', Inf)
+options(width = 180, digits = 3)
+```
+
+<!--
+# Data and Score
+-->
+
+```{r, echo = FALSE, message = FALSE}
+options(digits = 3)
+class_roll <- readRDS("./class_roll_250516.RDS")
+att <- class_roll[c("id", "name")]
+att$q01 <- ifelse(att$id %in% readRDS("./quiz250303.RDS")$id, 1, 0)
+att$q02 <- ifelse(att$id %in% readRDS("./quiz250310.RDS")$id, 1, 0)
+att$q03 <- ifelse(att$id %in% readRDS("./quiz250317.RDS")$id, 1, 0)
+att$q04 <- ifelse(att$id %in% readRDS("./quiz250324.RDS")$id, 1, 0)
+att$q05 <- ifelse(att$id %in% readRDS("./quiz250331.RDS")$id, 1, 0)
+att$q06 <- ifelse(att$id %in% readRDS("./quiz250407.RDS")$id, 1, 0)
+att$q07 <- ifelse(att$id %in% readRDS("./quiz250414.RDS")$id, 1, 0)
+att$q08 <- ifelse(att$id %in% readRDS("./quiz250421.RDS")$id, 1, 0)
+att$q09 <- ifelse(att$id %in% readRDS("./quiz250428.RDS")$id, 1, 0)
+att$q10 <- ifelse(att$id %in% readRDS("./quiz250505.RDS")$id, 1, 0)
+att$q11 <- ifelse(att$id %in% readRDS("./quiz250512.RDS")$id, 1, 0)
+# att$q12 <- ifelse(att$id %in% readRDS("./quiz250519.RDS")$id, 1, 0)
+# att$q13 <- ifelse(att$id %in% readRDS("./quiz250526.RDS")$id, 1, 0)
+att$BFI <- ifelse(att$id %in% readRDS("./BFI250512.RDS")$ID, 1, 0)
+att$MI <- ifelse(att$id %in% readRDS("./MI250512.RDS")$ID, 1, 0)
+# att$CRT <- ifelse(att$id %in% readRDS("./crt191104.RDS")$id, 1, 0)
+att$food_b <- ifelse(att$id %in% readRDS("./food_before2501.RDS")$id, 1, 0)
+att$food_a <- ifelse(att$id %in% readRDS("./food_after2501.RDS")$id, 1, 0)
+# att$gorilla <- ifelse(att$id %in% readRDS("./gorilla2101.RDS")$id, 1, 0)
+att$literacy <- ifelse(att$id %in% readRDS("./literacy_roll_250331.RDS")$id, 1, 0)
+#att$matching <- ifelse(att$id %in% readRDS("./matching191125.RDS")$id, 1, 0)
+att$oxford <- ifelse(att$id %in% readRDS("./oxford_250421.RDS")$id, 1, 0)
+# att$reading <- ifelse(att$id %in% readRDS("./reading190925.RDS")$id, 1, 0)
+# att$world <- ifelse(att$id %in% readRDS("./which_world200430.RDS")$id, 1, 0)
+# att$MW <- ifelse(att$id %in% readRDS("./MW241118.RDS")$id, 1, 0)
+att$total <- apply(att[, -(1:2)], MARGIN = 1, sum, na.rm = TRUE)
+# str(att)                  
+pander(att[order(att$id, att$name), -2], row.names = FALSE)
+# pander(att[order(att$name, att$id), c("id", "name", "total")], row.names = FALSE)
+```
+
+```{r, echo = FALSE}
+write.csv(att, file = "./data/google_att2402.csv", fileEncoding = "UTF-8")
+saveRDS(att, file = "./google_att2402.RDS")
+```

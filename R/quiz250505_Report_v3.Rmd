@@ -1,8 +1,8 @@
 ---
 title: "Quiz 250505 (Prospect Theory)"
 author: "coop711"
-# date : "2025-05-05"
-date: "`r format(Sys.time(), '%Y-%m-%d %H:%M:%S')`"
+date : "2025-05-05"
+# date: "`r format(Sys.time(), '%Y-%m-%d %H:%M:%S')`"
 output: html_document
 ---
 
@@ -67,8 +67,6 @@ quiz$Q7 %<>%
   strsplit(split = " : ") %>% 
   sapply(`[`, 1)
 quiz[c("group", "Q7_R", "Q7_B", "Q7")]
-quiz$dept <- 
-  factor(quiz$dept)
 quiz$group <- 
   factor(quiz$group, levels = c("Red", "Black"))
 quiz$Q1 %<>% 
@@ -151,6 +149,9 @@ quiz_wrong_ids <- quiz_wrong_ids %>%
       id == "20221223" ~ "20212223",
       id == "29242345" ~ "20242345",
       id == "20241505" ~ "20241506",
+      id == "2019716" ~ "20193716",
+      id == "20272744" ~ "20242744",
+      id == "20243437" ~ "20243427",
     TRUE ~ id
     ),
     name = case_when(
@@ -163,6 +164,10 @@ quiz <- quiz %>%
   anti_join(wrong_keys %>% select(id, name), by = c("id", "name")) %>%
   bind_rows(quiz_wrong_ids)
 
+#> 학과 이름에 학번 쓴 사람 처리
+quiz[quiz$dept == "20213353", "dept"] <- "디스플레이전공"
+quiz[quiz$dept == "20226424", "dept"] <- "글로벌비즈니스전공"
+quiz[quiz$dept == "20246627", "dept"] <- "디지털인문예술전공"
 #> 중복 제출자
 quiz %>%
   filter(duplicated(id)) %>%
@@ -171,7 +176,7 @@ quiz %>%
 # which(duplicated(quiz$id)) %>%
 #   quiz[., c("id", "name")]
 quiz %>%
-  filter(name %in% c("최정환"))
+  filter(id %in% c("20243211"))
 quiz <- quiz %>% 
   arrange(id, desc(time)) %>%
   distinct(id, .keep_all = TRUE)
@@ -205,11 +210,11 @@ wrong_group <- quiz %>%
   filter(group2 != group)
 
 #> 잘못된 그룹 정보 출력
-wrong_group %>%
-  select(time, id, group2, group) %>%
-  arrange(time) %>%
-  rename("제출시간" = time, "학번" = id, "랜덤화출석부" = group2, "구글예습퀴즈" = group) %>%
-  pander(row.names = FALSE)
+# wrong_group %>%
+#   select(time, id, group2, group) %>%
+#   arrange(time) %>%
+#   rename("제출시간" = time, "학번" = id, "랜덤화출석부" = group2, "구글예습퀴즈" = group) %>%
+#   pander(row.names = FALSE)
 
 #> 옛 코드
 # quiz$group2 <- class_roll$group[match(quiz$id, class_roll$id)]
@@ -482,7 +487,7 @@ chisq_test_q5 %>%
 
 Q5의 집계 결과가 Red, Black 간에 통계적으로 유의한 차이가 있는지 알아보기 위하여 카이제곱 테스트를 수행하였습니다. 
 
-그 결과 카이제곱 통계량은 `r chisq_test_q5[1] %>% format(digits = 2, nsmall = 3)`, 자유도는 `r chisq_test_q5[2] %>% format(digits = 2, nsmall = 2)`, p-value 는 `r chisq_test_q5[3] %>% format(digits = 2, nsmall = 4)`이므로 Red, Black 간에 통계적으로 유의한 차이를 보이고 있습니다. 
+그 결과 카이제곱 통계량은 `r chisq_test_q5[1] %>% format(digits = 2, nsmall = 3)`, 자유도는 `r chisq_test_q5[2] %>% format(digits = 2, nsmall = 2)`, p-value 는 `r chisq_test_q5[3] %>% format(digits = 2, nsmall = 4)`이므로 Red, Black 간에 통계적으로 유의한 차이를 보이지 않습니다. 
 
 실제로 닮은 게 느껴집니까?
 
