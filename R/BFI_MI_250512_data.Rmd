@@ -69,8 +69,7 @@ BFI %>%
 duplicated(BFI$ID) %>% 
   which %>%
   BFI[., c("ID", "Name")]
-BFI[BFI$ID == "20242702", c("ID", "Name")]
-BFI[BFI$ID == "20243020", c("ID", "Name")]
+BFI[BFI$ID == "20226424", c("ID", "Name")]
 # BFI <- BFI[-c(117, 598), ]
 # BFI <- unique(BFI)
 str(BFI)
@@ -86,6 +85,10 @@ BFI %>%
 BFI <- BFI %>% 
   arrange(ID, desc(Time)) %>%
   distinct(ID, .keep_all = TRUE)
+#> 중복 입력 삭제 확인
+duplicated(BFI$ID) %>% 
+  which %>%
+  BFI[., c("ID", "Name")]
 
 #> 학번 잘못 써서 고생시키는 녀석들 찾아내는 코드
 #> 
@@ -116,6 +119,8 @@ BFI <- BFI %>%
 
 #> ID 잘못 적은 친구 수정사항 확인
 BFI[BFI$ID %in% setdiff(BFI$ID, class_roll$ID), c("ID", "Name")]
+
+str(BFI)
 ```
 
 ```{r, eval = FALSE}
