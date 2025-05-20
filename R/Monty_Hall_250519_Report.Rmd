@@ -101,21 +101,31 @@ MH[c("Q3", "Q4")] %<>%
 
 ```{r, cleaning, echo = FALSE, results = 'hide'}
 #> 학번 잘못 써서 고생시키는 녀석들 찾아내는 코드
-# 1. 잘못된 id 가진 행 찾기
+#> # 1. 잘못된 id 또는 name 가진 행 찾기
 MH_wrong_ids <- MH %>%
-  anti_join(class_roll, by = "id") 
-# 2. 잘못된 id를 따로 저장하고 수정하기
-wrong_ids <- MH_wrong_ids$id
+  anti_join(class_roll, by = c("id", "name")) 
+
+# 2. 수정 전 원래의 id와 name 쌍을 저장
+wrong_keys <- MH_wrong_ids %>% 
+  select(id, name)
+
+# 3. 잘못된 id 또는 name 수정
 MH_wrong_ids <- MH_wrong_ids %>%
-  mutate(id = case_when(
-    id == "2019257" ~ "20192957",
-    id == "데이터사이언스학부" & name == "정민재" ~ "20253246",
-    id == "20226049" ~ "20226409",
+  mutate(
+    id = case_when(
+      id == "2019257" ~ "20192957",
+      id == "데이터사이언스학부" & name == "정민재" ~ "20253246",
+      id == "20226049" ~ "20226409",
     TRUE ~ id
-  ))
-# 3. MH 에서 id 틀린 행을 제거하고 옳은 id 갖춘 행으로 교체하기
+    ),
+    name = case_when(
+      name == "최유" ~ "최유환",
+      TRUE ~ name
+      )
+    )
+# 3. MH 에서 id 또는 name 틀린 행을 제거하고 옳은 id 또는 name 갖춘 행으로 교체하기
 MH <- MH %>%
-  filter(!id %in% wrong_ids) %>%
+  anti_join(wrong_keys %>% select(id, name), by = c("id", "name")) %>%
   bind_rows(MH_wrong_ids)
 #> 수정 여부 확인
 MH[MH$id %in% setdiff(MH$id, class_roll$id), c("id", "name", "dept", "group")]
