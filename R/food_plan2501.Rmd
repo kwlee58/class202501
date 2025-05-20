@@ -23,7 +23,7 @@ options(gargle_quiet = TRUE)
 
 ```{r, data, echo = FALSE, message = FALSE, results = 'hide'}
 class_roll <- 
-  readRDS("./class_roll_250516.RDS")
+  readRDS("./class_roll_250428.RDS")
 #> googlesheets4 패키지 시험
 food_url <-"https://docs.google.com/spreadsheets/d/1OfStOJOroK6DAhmalhyAVpBx38GoblMQmNI8Bfrk8Is"
 # gs4_deauth()

@@ -69,7 +69,7 @@ BFI %>%
 duplicated(BFI$ID) %>% 
   which %>%
   BFI[., c("ID", "Name")]
-BFI[BFI$ID == "20226424", c("ID", "Name")]
+BFI[BFI$ID %in% c("20226424", "20246620"), c("ID", "Name")]
 # BFI <- BFI[-c(117, 598), ]
 # BFI <- unique(BFI)
 str(BFI)
@@ -81,7 +81,7 @@ BFI %>%
 # which(duplicated(BFI$ID)) %>%
 #   BFI[., c("ID", "Name")]
 BFI %>%
-  filter(ID %in% c("20226424"))
+  filter(ID %in% c("20226424", "20246620"))
 BFI <- BFI %>% 
   arrange(ID, desc(Time)) %>%
   distinct(ID, .keep_all = TRUE)
@@ -230,6 +230,7 @@ MI_wrong_ids <- MI_wrong_ids %>%
       ID == "20227070" ~ "20227080",
       ID == "24" & Name == "최성준" ~ "20242137",
       ID == "202041726" ~ "20241726",
+      ID == "2024383" ~ "20243831",
     TRUE ~ ID
     ),
     Name = case_when(

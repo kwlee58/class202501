@@ -20,7 +20,7 @@ options(width = 180)
 ```
 
 ```{r, data, echo = FALSE, message = FALSE, results = 'hide'}
-class_roll <- readRDS("./class_roll_250516.RDS")
+class_roll <- readRDS("./class_roll_250428.RDS")
 #> googlesheets4 패키지 시험
 food_url <-"https://docs.google.com/spreadsheets/d/11FoeZAPVOiJbL9SDiVqbWDapqZOgXoHdRDPhskO4Vlo"
 # gs4_deauth()
