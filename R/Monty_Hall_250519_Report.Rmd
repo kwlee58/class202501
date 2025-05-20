@@ -72,12 +72,12 @@ MH <- read_sheet(MH_url)
 # MH <- "./data/MH250519.xlsx" %>% 
 #   read_excel(range = "A1:N725",
 #              col_types = c("date", rep("text", 13)))
-MH %>% 
-  str
 names(MH) <- 
   c("time", "email", "dept", "id", "name", "Q1", paste("Q2", 1:4, sep = "_"), "Q3", "group", "Q4_R", "Q4_B")
 class(MH$id) <- "character"
 class(MH$dept) <- "character"
+class(MH$Q1) <- "character"
+str(MH)
 MH[paste("Q2", 1:4, sep = "_")] %<>% 
   sapply(FUN = . %>% {substr(., 1, 1)})
 MH$Q2 <- 
@@ -101,10 +101,6 @@ MH[c("Q3", "Q4")] %<>%
 
 ```{r, cleaning, echo = FALSE, results = 'hide'}
 #> 학번 잘못 써서 고생시키는 녀석들 찾아내는 코드
-wrong_id <- setdiff(MH$id, class_roll$id)
-MH %>%
-  filter(id %in% wrong_id) %>%
-  select(id, name, dept, email)
 # 1. 잘못된 id 가진 행 찾기
 MH_wrong_ids <- MH %>%
   anti_join(class_roll, by = "id") 
@@ -114,6 +110,7 @@ MH_wrong_ids <- MH_wrong_ids %>%
   mutate(id = case_when(
     id == "2019257" ~ "20192957",
     id == "데이터사이언스학부" & name == "정민재" ~ "20253246",
+    id == "20226049" ~ "20226409",
     TRUE ~ id
   ))
 # 3. MH 에서 id 틀린 행을 제거하고 옳은 id 갖춘 행으로 교체하기
@@ -122,7 +119,7 @@ MH <- MH %>%
   bind_rows(MH_wrong_ids)
 #> 수정 여부 확인
 MH[MH$id %in% setdiff(MH$id, class_roll$id), c("id", "name", "dept", "group")]
-
+MH$Q1
 #> 틀린 학번 수정하여 되돌리기 (작동하지 않음. 참고로만)
 # MH <- MH %>%
 #   #> `left_join`으로 `name`과 `dept`를 기준으로 교정 정보를 추가
@@ -142,7 +139,7 @@ MH %>%
 # which(duplicated(MH$id)) %>%
 #   MH[., c("id", "name")]
 MH %>%
-  filter(name %in% c("박성빈", "김민교", "박두환", "고현아", "최승아"))
+  filter(id %in% c(""))
 MH <- MH %>% 
   arrange(id, desc(time)) %>%
   distinct(id, .keep_all = TRUE)
@@ -161,6 +158,7 @@ absentee %>%
   print()
 # absentee$group %>%
 #   table
+MH$Q1
 ```
 
 ```{r, data manipulation, echo = FALSE, results = 'hide', message = FALSE}
@@ -171,6 +169,11 @@ clean_birth_format <- function(x) {
   x <- stringr::str_replace_all(x, "/+", "/")                # 슬래시 여러 개 → 하나로
   x <- stringr::str_remove_all(x, "^/|/$")                   # 앞뒤 슬래시 제거
 
+  # 예외 처리: 4자리 숫자 (예: "1020") → "10/20"
+  x <- ifelse(grepl("^[0-9]{4}$", x),
+              paste0(substr(x, 1, 2), "/", substr(x, 3, 4)),
+              x)
+  
   parts <- stringr::str_split_fixed(x, "/", 2)               # 월/일 나누기
   month <- stringr::str_pad(parts[, 1], 2, pad = "0")         # 1자리 → 2자리로
   day   <- stringr::str_pad(parts[, 2], 2, pad = "0")
