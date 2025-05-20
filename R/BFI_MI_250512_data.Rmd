@@ -123,7 +123,7 @@ BFI[BFI$ID %in% setdiff(BFI$ID, class_roll$ID), c("ID", "Name")]
 str(BFI)
 ```
 
-```{r, eval = TRUE}
+```{r, eval = FALSE}
 #> "중간이다"를 도배한 친구 기록 삭제
 # 동일한 값으로 일관된 응답을 입력한 사용자를 적발하는 함수
 identify_uniform_responses <- function(data, uniform_value = "중간이다") {
