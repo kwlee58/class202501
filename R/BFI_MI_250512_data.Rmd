@@ -192,9 +192,15 @@ MI[5:60] %<>%
   as.numeric
 ```
 
-```{r, eval = FALSE}
-# 동일한 값으로 일관된 응답을 입력한 사용자를 적발
-
+```{r, eval = TRUE}
+# 동일한 값으로 일관된 응답을 입력한 사용자를 적발하는 함수
+identify_uniform_responses <- function(data, uniform_value = "중간이다") {
+  # 각 행이 특정 값으로만 일관되는지 확인
+  uniform_rows <- apply(data, 1, function(row) all(row == uniform_value))
+  
+  # 일관된 응답을 입력한 행 번호 또는 ID 출력
+  offenders <- which(uniform_rows) # 행 번호 
+}
 # 예시 데이터에 적용 (ID 열이 있다고 가정)
 result_M <- identify_uniform_responses(MI[, 5:60], "3")
 
