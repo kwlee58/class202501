@@ -192,7 +192,7 @@ MI[5:60] %<>%
   as.numeric
 ```
 
-```{r, eval = TRUE}
+```{r, eval = FALSE}
 # 동일한 값으로 일관된 응답을 입력한 사용자를 적발하는 함수
 identify_uniform_responses <- function(data, uniform_value = "중간이다") {
   # 각 행이 특정 값으로만 일관되는지 확인
