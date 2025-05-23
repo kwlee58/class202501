@@ -51,9 +51,9 @@ BFI %<>%
   `names<-`(c("Time", "Email", "Dept", "ID", "Name", 
               "E1", "A1", "O1", "C1", "N1", "E2", "A2", "O2", "C2", "N2", "O3", "A3",
               "E", "N", "C", "A", "O", "E_Score", "N_Score", "C_Score", "A_Score", "O_Score"))
+class(BFI$ID) <- "character"
+class(BFI$Dept) <- "character"
 str(BFI)
-BFI$ID %<>%
-  as.character
 #> Likert Scale 값만 추출하여 숫자로 변환
 BFI[6:17] %<>%
   sapply(FUN = {. %>% strsplit(split = "[.]") %>% sapply(`[`, 1)}) %>%
@@ -104,6 +104,7 @@ BFI_wrong_ids <- BFI_wrong_ids %>%
     ID = case_when(
       ID == "2022712" ~ "20227120",
       ID == "24" & Name == "최성준" ~ "20242137",
+      ID == "영어영문학과" & Name == "권유진" ~ "20221204",
     TRUE ~ ID
     ),
     Name = case_when(
