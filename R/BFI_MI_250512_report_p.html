@@ -370,34 +370,34 @@ panderOptions(&quot;table.split.table&quot;, Inf)</code></pre>
 <h2>필수 자료 읽어들이기</h2>
 <pre class="r"><code>load(&quot;./BFI_MI_250512.RData&quot;)
 str(BFI)</code></pre>
-<pre><code>## &#39;data.frame&#39;:    277 obs. of  25 variables:
+<pre><code>## &#39;data.frame&#39;:    283 obs. of  25 variables:
 ##  $ Time   : chr  &quot;2025-05-19 20:23:47&quot; &quot;2025-05-18 19:40:30&quot; &quot;2025-05-19 00:18:06&quot; &quot;2025-05-13 13:40:37&quot; ...
 ##  $ Email  : chr  &quot;shin19980527@gmail.com&quot; &quot;qusdnwls12@gmail.com&quot; &quot;minpyo0525@gmail.com&quot; &quot;leedahoon12@naver.com&quot; ...
 ##  $ ID     : chr  &quot;20171054&quot; &quot;20172727&quot; &quot;20181117&quot; &quot;20182936&quot; ...
-##  $ E1     : num  2 3 4 1 4 2 3 2 1 2 ...
-##  $ A1     : num  3 4 4 4 4 4 4 4 4 2 ...
-##  $ O1     : num  5 2 4 2 2 1 4 1 1 1 ...
-##  $ C1     : num  3 2 4 4 4 2 2 4 3 4 ...
-##  $ N1     : num  1 2 2 4 1 2 4 3 1 3 ...
-##  $ E2     : num  2 3 4 2 5 2 2 2 1 1 ...
-##  $ A2     : num  5 4 4 4 5 5 4 4 5 4 ...
-##  $ O2     : num  3 4 4 4 2 1 4 4 2 2 ...
-##  $ C2     : num  4 2 4 1 5 2 3 3 3 2 ...
-##  $ N2     : num  1 4 2 5 2 3 5 4 4 5 ...
-##  $ O3     : num  3 4 4 2 3 1 3 2 1 4 ...
-##  $ A3     : num  4 4 4 4 5 2 4 4 5 3 ...
-##  $ E      : num  4 6 8 3 9 4 5 4 2 3 ...
-##  $ N      : num  2 6 4 9 3 6 9 7 5 8 ...
-##  $ C      : num  7 6 6 5 9 6 5 7 6 6 ...
-##  $ A      : num  12 6 12 12 14 7 12 12 10 9 ...
-##  $ O      : num  11 6 12 6 9 3 11 5 4 9 ...
+##  $ E1     : num  2 3 4 1 4 4 2 3 2 1 ...
+##  $ A1     : num  3 4 4 4 4 4 4 4 4 4 ...
+##  $ O1     : num  5 2 4 2 2 2 1 4 1 1 ...
+##  $ C1     : num  3 2 4 4 4 2 2 2 4 3 ...
+##  $ N1     : num  1 2 2 4 1 3 2 4 3 1 ...
+##  $ E2     : num  2 3 4 2 5 3 2 2 2 1 ...
+##  $ A2     : num  5 4 4 4 5 2 5 4 4 5 ...
+##  $ O2     : num  3 4 4 4 2 3 1 4 4 2 ...
+##  $ C2     : num  4 2 4 1 5 4 2 3 3 3 ...
+##  $ N2     : num  1 4 2 5 2 4 3 5 4 4 ...
+##  $ O3     : num  3 4 4 2 3 1 1 3 2 1 ...
+##  $ A3     : num  4 4 4 4 5 4 2 4 4 5 ...
+##  $ E      : num  4 6 8 3 9 7 4 5 4 2 ...
+##  $ N      : num  2 6 4 9 3 9 6 9 7 5 ...
+##  $ C      : num  7 6 6 5 9 4 6 5 7 6 ...
+##  $ A      : num  12 6 12 12 14 12 7 12 12 10 ...
+##  $ O      : num  11 6 12 6 9 6 3 11 5 4 ...
 ##  $ E_Score: chr  &quot;낮음&quot; &quot;중하&quot; &quot;중상&quot; &quot;낮음&quot; ...
 ##  $ N_Score: chr  &quot;낮음&quot; &quot;중하&quot; &quot;낮음&quot; &quot;중상&quot; ...
 ##  $ C_Score: chr  &quot;중상&quot; &quot;중하&quot; &quot;중하&quot; &quot;중하&quot; ...
 ##  $ A_Score: chr  &quot;중상&quot; &quot;중하&quot; &quot;중상&quot; &quot;중상&quot; ...
 ##  $ O_Score: chr  &quot;중상&quot; &quot;중하&quot; &quot;중상&quot; &quot;낮음&quot; ...</code></pre>
 <pre class="r"><code>str(MI)</code></pre>
-<pre><code>## &#39;data.frame&#39;:    269 obs. of  66 variables:
+<pre><code>## &#39;data.frame&#39;:    275 obs. of  66 variables:
 ##  $ Time   : chr  &quot;2025-05-12 00:59:37&quot; &quot;2025-05-12 01:57:42&quot; &quot;2025-05-12 09:29:55&quot; &quot;2025-05-12 10:03:29&quot; ...
 ##  $ ID     : chr  &quot;20221541&quot; &quot;20241073&quot; &quot;20195148&quot; &quot;20212703&quot; ...
 ##  $ A1     : num  5 5 4 4 4 2 1 4 4 5 ...
@@ -556,12 +556,12 @@ kable(head(BFI_score_kr))</code></pre>
 <td align="right">7</td>
 </tr>
 <tr class="even">
-<td align="left">20191702</td>
-<td align="right">4</td>
-<td align="right">5</td>
-<td align="right">4</td>
-<td align="right">11</td>
-<td align="right">3</td>
+<td align="left">20191615</td>
+<td align="right">7</td>
+<td align="right">7</td>
+<td align="right">6</td>
+<td align="right">10</td>
+<td align="right">6</td>
 </tr>
 </tbody>
 </table>
@@ -669,15 +669,15 @@ BFI_score_kr %&gt;%
 <td align="left">중하</td>
 </tr>
 <tr class="even">
-<td align="left">20191702</td>
-<td align="right">4</td>
-<td align="right">5</td>
-<td align="right">4</td>
-<td align="right">11</td>
-<td align="right">3</td>
+<td align="left">20191615</td>
+<td align="right">7</td>
+<td align="right">7</td>
+<td align="right">6</td>
+<td align="right">10</td>
+<td align="right">6</td>
+<td align="left">중상</td>
+<td align="left">높음</td>
 <td align="left">낮음</td>
-<td align="left">중하</td>
-<td align="left">중하</td>
 <td align="left">중상</td>
 <td align="left">낮음</td>
 </tr>
@@ -761,11 +761,11 @@ kable(head(BFI_level_kr))</code></pre>
 <td align="left">낮음</td>
 </tr>
 <tr class="even">
-<td align="left">20191702</td>
-<td align="left">낮음</td>
+<td align="left">20191615</td>
+<td align="left">중상</td>
+<td align="left">중상</td>
 <td align="left">중하</td>
 <td align="left">낮음</td>
-<td align="left">중하</td>
 <td align="left">낮음</td>
 </tr>
 </tbody>
@@ -845,11 +845,11 @@ BFI_level_kr %&gt;%
 <td align="left">낮음</td>
 </tr>
 <tr class="even">
-<td align="left">20191702</td>
-<td align="left">낮음</td>
+<td align="left">20191615</td>
+<td align="left">중상</td>
+<td align="left">중상</td>
 <td align="left">중하</td>
 <td align="left">낮음</td>
-<td align="left">중하</td>
 <td align="left">낮음</td>
 </tr>
 </tbody>
@@ -959,17 +959,17 @@ BFI_level_kr %&gt;%
 <td align="center">9</td>
 </tr>
 <tr class="even">
-<td align="left">20191702</td>
-<td align="center">낮음</td>
+<td align="left">20191615</td>
+<td align="center">중상</td>
+<td align="center">중상</td>
 <td align="center">중하</td>
 <td align="center">낮음</td>
-<td align="center">중하</td>
 <td align="center">낮음</td>
-<td align="center">4</td>
-<td align="center">6</td>
-<td align="center">6</td>
 <td align="center">7</td>
-<td align="center">3</td>
+<td align="center">9</td>
+<td align="center">4</td>
+<td align="center">12</td>
+<td align="center">6</td>
 </tr>
 </tbody>
 </table>
@@ -1002,27 +1002,27 @@ BFI_level_kr %&gt;%
 </tr>
 <tr class="even">
 <td align="left">중상</td>
-<td align="right">61</td>
-<td align="right">95</td>
+<td align="right">63</td>
 <td align="right">98</td>
+<td align="right">100</td>
 <td align="right">64</td>
-<td align="right">34</td>
+<td align="right">35</td>
 </tr>
 <tr class="odd">
 <td align="left">중하</td>
-<td align="right">86</td>
-<td align="right">92</td>
-<td align="right">74</td>
-<td align="right">83</td>
-<td align="right">57</td>
+<td align="right">88</td>
+<td align="right">95</td>
+<td align="right">77</td>
+<td align="right">85</td>
+<td align="right">59</td>
 </tr>
 <tr class="even">
 <td align="left">낮음</td>
-<td align="right">117</td>
+<td align="right">119</td>
 <td align="right">49</td>
-<td align="right">47</td>
-<td align="right">84</td>
-<td align="right">174</td>
+<td align="right">48</td>
+<td align="right">88</td>
+<td align="right">177</td>
 </tr>
 </tbody>
 </table>
@@ -1094,11 +1094,11 @@ BFI_level_kr_df %&gt;%
 <td align="left">낮음</td>
 </tr>
 <tr class="even">
-<td align="left">20191702</td>
-<td align="left">낮음</td>
+<td align="left">20191615</td>
+<td align="left">중상</td>
+<td align="left">중상</td>
 <td align="left">중하</td>
 <td align="left">낮음</td>
-<td align="left">중하</td>
 <td align="left">낮음</td>
 </tr>
 </tbody>
