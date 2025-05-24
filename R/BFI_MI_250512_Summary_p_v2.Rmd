@@ -78,7 +78,7 @@ y_breaks_m <-
 library(ggplot2)
 source("./barplot_gg.R")
 b_fill01 <-
-  BFI_level_kr[1:94, ] %>%
+  BFI_level_kr[1:79, ] %>%
   sapply(FUN = table) %>%
   `[`(4:1, ) %>% 
   as.table %>%
@@ -97,7 +97,7 @@ b_fill01 +
                                   size = 18, 
                                   family = "KoPubWorldDotum Bold"))
 b_fill02 <-
-  BFI_level_kr[1:214, ] %>%
+  BFI_level_kr[1:187, ] %>%
   sapply(FUN = table) %>%
   `[`(4:1, ) %>% 
   as.table %>%
@@ -116,7 +116,7 @@ b_fill02 +
                                   size = 18, 
                                   family = "KoPubWorldDotum Bold"))
 b_fill03 <-
-  BFI_level_kr[1:320, ] %>%
+  BFI_level_kr[1:294, ] %>%
   sapply(FUN = table) %>%
   `[`(4:1, ) %>% 
   as.table %>%

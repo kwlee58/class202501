@@ -72,7 +72,7 @@ duplicated(BFI$ID) %>%
 BFI[BFI$ID %in% c("20226424", "20246620"), c("ID", "Name")]
 # BFI <- BFI[-c(117, 598), ]
 # BFI <- unique(BFI)
-str(BFI)
+# str(BFI)
 #> 중복 제출자
 BFI %>%
   filter(duplicated(ID)) %>%
@@ -161,7 +161,7 @@ BFI_hours <- as.numeric(difftime("2025-05-26 00:00:00", BFI$Time,
 
 ## MI
 
-```{r}
+```{r, message = FALSE}
 MI_url <-"https://docs.google.com/spreadsheets/d/1wqDrGdGyqA9jqAMwLXQnNTnIdDGF0cWc6CEJmJQNJQk"
 MI <- read_sheet(MI_url)
 # MI <- "./data/MI250512.xlsx" %>% 

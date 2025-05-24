@@ -159,7 +159,7 @@ ggsave("./pics/BFP_strengths2302.png", dpi = 120, width = 10, height = 7.5, unit
 
 성실성 "중상" 이상인 사람들이 마감일 이전에 제출하는 비중이 높다는 것을 알 수 있습니다. 
 
-```{r, echo = FALSE, results = 'hide', eval = FALSE}
+```{r, echo = FALSE, results = 'hide', eval = TRUE}
 source("./mosaic_gg.R")
 mosaic_gg(t(table(BFI_level_kr$"외향성", BFI_days <= 1)))$m +
   theme_bw(base_family = "KoPubWorldDotum Medium") +
