@@ -1,8 +1,8 @@
 ---
 title: "Quiz 250512 (Anchor Effects)"
 author: "coop711"
-# date : "2025-05-12"
-date: "`r format(Sys.time(), '%Y-%m-%d %H:%M:%S')`"
+date : "2025-05-12"
+# date: "`r format(Sys.time(), '%Y-%m-%d %H:%M:%S')`"
 output: html_document
 ---
 
@@ -137,6 +137,10 @@ quiz_wrong_ids <- quiz_wrong_ids %>%
       id == "2022276" ~ "20222761",
       id == "202430353" ~ "20243035",
       id == "20242650" ~ "20242605",
+      id == "2023176" ~ "20231716",
+      id == "20242556" ~ "20242553",
+      id == "2022704" ~ "20227042",
+      id == "20221116" ~ "20222116",
     TRUE ~ id
     ),
     name = case_when(
@@ -149,6 +153,10 @@ quiz <- quiz %>%
   anti_join(wrong_keys %>% select(id, name), by = c("id", "name")) %>%
   bind_rows(quiz_wrong_ids)
 
+# 4. 수정여부 확인
+quiz %>%
+  anti_join(class_roll, by = c("id", "name")) 
+
 #> 중복 제출자
 quiz %>%
   filter(duplicated(id)) %>%
@@ -157,7 +165,7 @@ quiz %>%
 # which(duplicated(quiz$id)) %>%
 #   quiz[., c("id", "name")]
 quiz %>%
-  filter(id %in% c("20226424"))
+  filter(id %in% c("20226424", "20242615"))
 quiz <- quiz %>% 
   arrange(id, desc(time)) %>%
   distinct(id, .keep_all = TRUE)

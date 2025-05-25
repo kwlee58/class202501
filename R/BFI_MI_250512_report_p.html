@@ -370,100 +370,100 @@ panderOptions(&quot;table.split.table&quot;, Inf)</code></pre>
 <h2>필수 자료 읽어들이기</h2>
 <pre class="r"><code>load(&quot;./BFI_MI_250512.RData&quot;)
 str(BFI)</code></pre>
-<pre><code>## &#39;data.frame&#39;:    349 obs. of  25 variables:
+<pre><code>## &#39;data.frame&#39;:    562 obs. of  25 variables:
 ##  $ Time   : chr  &quot;2025-05-19 20:23:47&quot; &quot;2025-05-18 19:40:30&quot; &quot;2025-05-19 00:18:06&quot; &quot;2025-05-13 13:40:37&quot; ...
 ##  $ Email  : chr  &quot;shin19980527@gmail.com&quot; &quot;qusdnwls12@gmail.com&quot; &quot;minpyo0525@gmail.com&quot; &quot;leedahoon12@naver.com&quot; ...
 ##  $ ID     : chr  &quot;20171054&quot; &quot;20172727&quot; &quot;20181117&quot; &quot;20182936&quot; ...
-##  $ E1     : num  2 3 4 1 4 2 2 4 2 3 ...
-##  $ A1     : num  3 4 4 4 4 2 4 4 4 5 ...
-##  $ O1     : num  5 2 4 2 2 2 2 2 1 2 ...
+##  $ E1     : num  2 3 4 1 4 2 2 2 4 2 ...
+##  $ A1     : num  3 4 4 4 4 2 4 1 4 4 ...
+##  $ O1     : num  5 2 4 2 2 2 2 2 2 1 ...
 ##  $ C1     : num  3 2 4 4 4 3 2 2 2 2 ...
-##  $ N1     : num  1 2 2 4 1 1 3 3 2 4 ...
-##  $ E2     : num  2 3 4 2 5 2 2 3 2 4 ...
-##  $ A2     : num  5 4 4 4 5 4 2 2 5 5 ...
-##  $ O2     : num  3 4 4 4 2 2 2 3 1 1 ...
-##  $ C2     : num  4 2 4 1 5 4 4 4 2 2 ...
-##  $ N2     : num  1 4 2 5 2 2 2 4 3 3 ...
-##  $ O3     : num  3 4 4 2 3 2 3 1 1 3 ...
-##  $ A3     : num  4 4 4 4 5 3 4 4 2 4 ...
-##  $ E      : num  4 6 8 3 9 3 5 7 4 5 ...
-##  $ N      : num  2 6 4 9 3 4 9 9 6 2 ...
-##  $ C      : num  7 6 6 5 9 4 6 4 6 5 ...
-##  $ A      : num  12 6 12 12 14 4 3 12 7 8 ...
-##  $ O      : num  11 6 12 6 9 4 4 6 3 8 ...
+##  $ N1     : num  1 2 2 4 1 1 3 1 3 2 ...
+##  $ E2     : num  2 3 4 2 5 2 2 3 3 2 ...
+##  $ A2     : num  5 4 4 4 5 4 2 4 2 5 ...
+##  $ O2     : num  3 4 4 4 2 2 2 2 3 1 ...
+##  $ C2     : num  4 2 4 1 5 4 4 5 4 2 ...
+##  $ N2     : num  1 4 2 5 2 2 2 2 4 3 ...
+##  $ O3     : num  3 4 4 2 3 2 3 1 1 1 ...
+##  $ A3     : num  4 4 4 4 5 3 4 2 4 2 ...
+##  $ E      : num  4 6 8 3 9 3 5 6 7 4 ...
+##  $ N      : num  2 6 4 9 3 4 9 2 9 6 ...
+##  $ C      : num  7 6 6 5 9 4 6 6 4 6 ...
+##  $ A      : num  12 6 12 12 14 4 3 9 12 7 ...
+##  $ O      : num  11 6 12 6 9 4 4 10 6 3 ...
 ##  $ E_Score: chr  &quot;낮음&quot; &quot;중하&quot; &quot;중상&quot; &quot;낮음&quot; ...
 ##  $ N_Score: chr  &quot;낮음&quot; &quot;중하&quot; &quot;낮음&quot; &quot;중상&quot; ...
 ##  $ C_Score: chr  &quot;중상&quot; &quot;중하&quot; &quot;중하&quot; &quot;중하&quot; ...
 ##  $ A_Score: chr  &quot;중상&quot; &quot;중하&quot; &quot;중상&quot; &quot;중상&quot; ...
 ##  $ O_Score: chr  &quot;중상&quot; &quot;중하&quot; &quot;중상&quot; &quot;낮음&quot; ...</code></pre>
 <pre class="r"><code>str(MI)</code></pre>
-<pre><code>## &#39;data.frame&#39;:    337 obs. of  66 variables:
-##  $ Time   : chr  &quot;2025-05-12 00:59:37&quot; &quot;2025-05-12 01:57:42&quot; &quot;2025-05-12 09:29:55&quot; &quot;2025-05-12 10:03:29&quot; ...
-##  $ ID     : chr  &quot;20221541&quot; &quot;20241073&quot; &quot;20195148&quot; &quot;20212703&quot; ...
-##  $ A1     : num  5 5 4 4 4 2 1 4 4 5 ...
-##  $ B2     : num  5 2 2 5 4 1 1 1 4 4 ...
-##  $ C3     : num  4 2 3 3 2 5 3 1 4 4 ...
-##  $ D4     : num  3 1 1 4 4 4 1 4 2 4 ...
-##  $ E5     : num  4 2 3 3 5 4 3 2 2 3 ...
-##  $ F6     : num  4 2 1 2 4 5 2 4 4 4 ...
-##  $ G7     : num  5 2 1 2 4 5 3 5 4 4 ...
-##  $ H8     : num  1 1 1 2 5 1 1 1 1 5 ...
-##  $ A9     : num  5 2 1 1 1 3 1 1 3 2 ...
-##  $ B10    : num  4 5 2 5 4 5 1 1 4 5 ...
-##  $ C11    : num  1 1 1 3 1 4 2 1 4 4 ...
-##  $ D12    : num  4 2 4 3 4 2 1 1 2 5 ...
-##  $ E13    : num  4 4 1 4 3 5 4 4 4 2 ...
-##  $ F14    : num  5 4 1 4 2 4 1 2 2 4 ...
-##  $ G15    : num  5 2 4 4 5 4 2 5 4 2 ...
-##  $ H16    : num  2 2 1 2 5 4 1 1 2 5 ...
-##  $ A17    : num  5 1 4 2 3 4 1 1 2 4 ...
-##  $ B18    : num  5 2 2 5 4 4 1 1 5 5 ...
-##  $ C19    : num  5 2 4 4 4 5 4 4 2 2 ...
-##  $ D20    : num  2 2 1 3 4 4 3 2 1 2 ...
-##  $ E21    : num  1 4 1 2 1 5 1 5 1 1 ...
-##  $ F22    : num  2 4 1 3 5 2 1 2 4 5 ...
-##  $ G23    : num  3 2 1 4 4 4 3 5 2 4 ...
-##  $ H24    : num  4 2 1 2 1 1 1 1 1 4 ...
-##  $ A25    : num  2 2 1 2 1 1 1 1 1 2 ...
-##  $ B26    : num  5 4 1 5 4 3 1 1 5 5 ...
-##  $ C27    : num  5 2 1 4 4 4 2 4 1 4 ...
-##  $ D28    : num  4 4 1 4 5 4 1 5 1 4 ...
-##  $ E29    : num  4 4 1 4 3 5 3 2 1 2 ...
-##  $ F30    : num  4 4 1 4 5 4 3 5 2 2 ...
-##  $ G31    : num  2 4 5 4 5 5 1 2 2 2 ...
-##  $ H32    : num  5 5 3 3 1 4 1 4 5 4 ...
-##  $ A33    : num  5 2 2 2 2 4 1 1 2 2 ...
-##  $ B34    : num  1 2 1 4 1 5 1 4 4 5 ...
-##  $ C35    : num  2 4 4 2 3 4 2 4 1 4 ...
-##  $ D36    : num  1 2 1 3 2 5 1 4 1 4 ...
-##  $ E37    : num  4 2 1 4 3 5 3 2 1 4 ...
-##  $ F38    : num  3 2 1 4 5 5 1 2 4 4 ...
-##  $ G39    : num  5 2 1 4 2 5 1 5 5 1 ...
-##  $ H40    : num  1 4 1 2 1 2 1 1 2 1 ...
-##  $ A41    : num  5 1 1 2 2 4 1 1 2 4 ...
-##  $ B42    : num  5 2 1 2 4 5 1 1 1 5 ...
-##  $ C43    : num  4 4 4 4 4 5 4 1 5 2 ...
-##  $ D44    : num  2 2 4 4 5 4 3 4 1 1 ...
-##  $ E45    : num  5 3 1 2 1 4 1 1 1 1 ...
-##  $ F46    : num  5 4 4 4 5 5 2 5 4 4 ...
-##  $ G47    : num  5 4 4 5 4 5 4 5 4 5 ...
-##  $ H48    : num  4 4 1 3 3 3 4 1 1 4 ...
-##  $ A49    : num  2 4 1 2 3 2 1 4 1 4 ...
-##  $ B50    : num  2 1 1 2 1 5 1 2 1 2 ...
-##  $ C51    : num  5 4 4 4 3 5 5 5 5 4 ...
-##  $ D52    : num  1 2 3 4 3 2 1 1 4 5 ...
-##  $ E53    : num  4 2 2 4 5 5 4 4 2 4 ...
-##  $ F54    : num  2 1 3 2 5 5 2 1 1 1 ...
-##  $ G55    : num  3 2 2 3 5 4 5 1 1 4 ...
-##  $ H56    : num  5 2 4 4 1 3 1 2 4 4 ...
-##  $ A_Score: num  29 17 17 15 16 20 7 12 15 23 ...
-##  $ B_Score: num  22 18 14 28 22 28 7 11 24 31 ...
-##  $ C_Score: num  21 19 26 24 21 19 7 20 22 24 ...
-##  $ D_Score: num  17 15 23 25 27 21 7 21 12 25 ...
-##  $ E_Score: num  26 21 10 23 21 33 7 20 12 17 ...
-##  $ F_Score: num  25 21 11 23 32 30 7 21 21 24 ...
-##  $ G_Score: num  23 18 21 26 29 32 7 28 22 22 ...
-##  $ H_Score: num  22 20 10 18 17 17 7 11 16 27 ...</code></pre>
+<pre><code>## &#39;data.frame&#39;:    556 obs. of  66 variables:
+##  $ Time   : chr  &quot;2025-05-19 20:31:42&quot; &quot;2025-05-18 19:48:38&quot; &quot;2025-05-19 00:25:34&quot; &quot;2025-05-13 15:03:59&quot; ...
+##  $ ID     : chr  &quot;20171054&quot; &quot;20172727&quot; &quot;20181117&quot; &quot;20182936&quot; ...
+##  $ A1     : num  5 4 4 2 4 3 4 4 4 3 ...
+##  $ B2     : num  4 2 2 2 4 5 2 2 2 3 ...
+##  $ C3     : num  4 3 2 2 2 2 2 4 1 2 ...
+##  $ D4     : num  2 1 2 3 4 2 4 2 3 2 ...
+##  $ E5     : num  4 4 4 3 5 4 3 2 2 2 ...
+##  $ F6     : num  2 4 4 2 4 1 3 1 3 2 ...
+##  $ G7     : num  3 2 2 2 4 2 2 2 3 4 ...
+##  $ H8     : num  1 2 2 1 5 1 4 4 2 3 ...
+##  $ A9     : num  5 3 5 1 1 3 2 2 2 1 ...
+##  $ B10    : num  4 2 4 2 4 3 2 2 3 4 ...
+##  $ C11    : num  1 1 2 1 1 3 1 1 3 1 ...
+##  $ D12    : num  2 2 2 1 4 3 4 4 2 3 ...
+##  $ E13    : num  4 4 4 5 3 3 4 4 2 2 ...
+##  $ F14    : num  3 3 3 2 2 3 4 2 2 3 ...
+##  $ G15    : num  4 3 4 4 5 3 5 4 3 5 ...
+##  $ H16    : num  1 1 2 1 5 3 2 4 3 2 ...
+##  $ A17    : num  4 1 4 4 3 3 4 4 3 1 ...
+##  $ B18    : num  3 2 3 1 4 3 2 2 3 4 ...
+##  $ C19    : num  3 3 4 4 4 3 2 4 3 2 ...
+##  $ D20    : num  2 2 2 1 4 1 2 2 3 1 ...
+##  $ E21    : num  1 1 2 4 1 1 1 2 3 1 ...
+##  $ F22    : num  4 4 4 3 5 3 3 2 4 2 ...
+##  $ G23    : num  5 3 4 2 4 1 5 4 5 4 ...
+##  $ H24    : num  1 1 2 1 1 1 2 2 3 2 ...
+##  $ A25    : num  2 3 4 1 1 3 3 2 3 2 ...
+##  $ B26    : num  4 2 2 1 4 3 1 3 2 3 ...
+##  $ C27    : num  2 2 2 2 4 2 4 2 2 3 ...
+##  $ D28    : num  2 1 2 1 5 1 4 2 3 2 ...
+##  $ E29    : num  4 2 4 1 3 2 3 4 2 1 ...
+##  $ F30    : num  4 4 4 3 5 3 3 2 3 4 ...
+##  $ G31    : num  5 2 4 1 5 3 2 2 4 3 ...
+##  $ H32    : num  1 2 2 3 1 1 3 2 3 2 ...
+##  $ A33    : num  5 3 4 1 2 3 4 2 2 1 ...
+##  $ B34    : num  2 1 2 2 1 1 3 4 2 1 ...
+##  $ C35    : num  4 2 2 1 3 3 2 2 2 2 ...
+##  $ D36    : num  2 3 2 1 2 1 3 2 3 1 ...
+##  $ E37    : num  3 4 4 4 3 2 3 4 2 1 ...
+##  $ F38    : num  3 4 4 2 5 3 2 3 4 3 ...
+##  $ G39    : num  2 1 2 3 2 1 3 1 3 2 ...
+##  $ H40    : num  1 1 2 1 1 1 2 4 3 1 ...
+##  $ A41    : num  4 3 4 1 2 1 2 2 2 1 ...
+##  $ B42    : num  1 1 4 2 4 3 2 2 3 3 ...
+##  $ C43    : num  5 4 2 3 4 1 2 2 4 3 ...
+##  $ D44    : num  1 4 2 1 5 1 2 2 3 3 ...
+##  $ E45    : num  1 4 2 3 1 1 2 2 3 1 ...
+##  $ F46    : num  3 3 4 3 5 1 2 1 3 3 ...
+##  $ G47    : num  4 3 4 3 4 3 2 2 3 3 ...
+##  $ H48    : num  1 1 2 1 3 1 4 3 3 2 ...
+##  $ A49    : num  5 2 4 3 3 1 2 3 2 3 ...
+##  $ B50    : num  1 2 2 1 1 2 2 2 4 2 ...
+##  $ C51    : num  5 2 4 3 3 2 4 3 4 3 ...
+##  $ D52    : num  2 3 4 1 3 1 4 2 3 3 ...
+##  $ E53    : num  4 4 4 3 5 3 4 3 4 3 ...
+##  $ F54    : num  3 2 4 1 5 2 2 2 3 2 ...
+##  $ G55    : num  3 2 2 1 5 3 3 2 3 3 ...
+##  $ H56    : num  1 2 2 1 1 3 4 3 3 2 ...
+##  $ A_Score: num  30 19 29 13 16 21 25 21 21 12 ...
+##  $ B_Score: num  19 12 19 11 22 28 26 19 25 20 ...
+##  $ C_Score: num  24 17 18 16 21 24 23 25 23 16 ...
+##  $ D_Score: num  13 16 16 9 27 14 30 28 24 15 ...
+##  $ E_Score: num  21 22 24 23 21 21 25 22 23 11 ...
+##  $ F_Score: num  22 24 27 16 32 28 15 17 29 19 ...
+##  $ G_Score: num  26 16 22 16 29 21 28 24 27 19 ...
+##  $ H_Score: num  7 10 12 9 17 19 21 20 26 13 ...</code></pre>
 <pre class="r"><code>str(class_roll)</code></pre>
 <pre><code>## &#39;data.frame&#39;:    598 obs. of  2 variables:
 ##  $ ID  : chr  &quot;20171054&quot; &quot;20172727&quot; &quot;20181117&quot; &quot;20182101&quot; ...
@@ -994,35 +994,35 @@ BFI_level_kr %&gt;%
 <tbody>
 <tr class="odd">
 <td align="left">높음</td>
-<td align="right">18</td>
-<td align="right">55</td>
-<td align="right">65</td>
-<td align="right">58</td>
-<td align="right">14</td>
+<td align="right">34</td>
+<td align="right">88</td>
+<td align="right">83</td>
+<td align="right">91</td>
+<td align="right">23</td>
 </tr>
 <tr class="even">
 <td align="left">중상</td>
+<td align="right">139</td>
+<td align="right">202</td>
+<td align="right">200</td>
+<td align="right">115</td>
 <td align="right">79</td>
-<td align="right">125</td>
-<td align="right">126</td>
-<td align="right">77</td>
-<td align="right">44</td>
 </tr>
 <tr class="odd">
 <td align="left">중하</td>
-<td align="right">102</td>
-<td align="right">109</td>
-<td align="right">101</td>
-<td align="right">105</td>
-<td align="right">76</td>
+<td align="right">170</td>
+<td align="right">170</td>
+<td align="right">183</td>
+<td align="right">177</td>
+<td align="right">119</td>
 </tr>
 <tr class="even">
 <td align="left">낮음</td>
-<td align="right">150</td>
-<td align="right">60</td>
-<td align="right">57</td>
-<td align="right">109</td>
-<td align="right">215</td>
+<td align="right">219</td>
+<td align="right">102</td>
+<td align="right">96</td>
+<td align="right">179</td>
+<td align="right">341</td>
 </tr>
 </tbody>
 </table>
@@ -1234,48 +1234,48 @@ MI_score_kr %&gt;%
 </thead>
 <tbody>
 <tr class="odd">
-<td align="left">20221541</td>
-<td align="right">29</td>
-<td align="right">27</td>
-<td align="right">26</td>
-<td align="right">17</td>
-<td align="right">26</td>
-<td align="right">25</td>
-<td align="right">28</td>
+<td align="left">20171054</td>
+<td align="right">30</td>
+<td align="right">19</td>
+<td align="right">24</td>
+<td align="right">13</td>
+<td align="right">21</td>
 <td align="right">22</td>
+<td align="right">26</td>
+<td align="right">7</td>
 </tr>
 <tr class="even">
-<td align="left">20241073</td>
-<td align="right">17</td>
-<td align="right">18</td>
+<td align="left">20172727</td>
 <td align="right">19</td>
-<td align="right">15</td>
-<td align="right">21</td>
-<td align="right">21</td>
-<td align="right">18</td>
-<td align="right">20</td>
+<td align="right">12</td>
+<td align="right">17</td>
+<td align="right">16</td>
+<td align="right">23</td>
+<td align="right">24</td>
+<td align="right">16</td>
+<td align="right">10</td>
 </tr>
 <tr class="odd">
-<td align="left">20195148</td>
-<td align="right">14</td>
-<td align="right">10</td>
-<td align="right">21</td>
-<td align="right">15</td>
-<td align="right">10</td>
-<td align="right">12</td>
+<td align="left">20181117</td>
+<td align="right">29</td>
+<td align="right">19</td>
 <td align="right">18</td>
-<td align="right">12</td>
+<td align="right">16</td>
+<td align="right">24</td>
+<td align="right">27</td>
+<td align="right">22</td>
+<td align="right">14</td>
 </tr>
 <tr class="even">
-<td align="left">20212703</td>
-<td align="right">15</td>
-<td align="right">28</td>
-<td align="right">24</td>
-<td align="right">25</td>
+<td align="left">20182936</td>
+<td align="right">13</td>
+<td align="right">11</td>
+<td align="right">16</td>
+<td align="right">9</td>
 <td align="right">23</td>
-<td align="right">23</td>
-<td align="right">26</td>
-<td align="right">18</td>
+<td align="right">16</td>
+<td align="right">16</td>
+<td align="right">9</td>
 </tr>
 <tr class="odd">
 <td align="left">20182982</td>
@@ -1289,15 +1289,15 @@ MI_score_kr %&gt;%
 <td align="right">17</td>
 </tr>
 <tr class="even">
-<td align="left">20232710</td>
+<td align="left">20183016</td>
+<td align="right">17</td>
 <td align="right">20</td>
-<td align="right">28</td>
-<td align="right">32</td>
-<td align="right">25</td>
-<td align="right">33</td>
-<td align="right">30</td>
-<td align="right">32</td>
-<td align="right">18</td>
+<td align="right">16</td>
+<td align="right">10</td>
+<td align="right">16</td>
+<td align="right">16</td>
+<td align="right">16</td>
+<td align="right">11</td>
 </tr>
 </tbody>
 </table>
@@ -1348,80 +1348,80 @@ MI_score_kr %&gt;%
 </thead>
 <tbody>
 <tr class="odd">
-<td align="left">20221541</td>
-<td align="right">29</td>
-<td align="right">27</td>
-<td align="right">26</td>
-<td align="right">17</td>
-<td align="right">26</td>
-<td align="right">25</td>
-<td align="right">28</td>
-<td align="right">22</td>
-<td align="right">29</td>
-<td align="right">22</td>
+<td align="left">20171054</td>
+<td align="right">30</td>
+<td align="right">19</td>
+<td align="right">24</td>
+<td align="right">13</td>
 <td align="right">21</td>
-<td align="right">17</td>
-<td align="right">26</td>
-<td align="right">25</td>
-<td align="right">23</td>
 <td align="right">22</td>
+<td align="right">26</td>
+<td align="right">7</td>
+<td align="right">30</td>
+<td align="right">19</td>
+<td align="right">24</td>
+<td align="right">13</td>
+<td align="right">21</td>
+<td align="right">22</td>
+<td align="right">26</td>
+<td align="right">7</td>
 </tr>
 <tr class="even">
-<td align="left">20241073</td>
-<td align="right">17</td>
-<td align="right">18</td>
+<td align="left">20172727</td>
 <td align="right">19</td>
-<td align="right">15</td>
-<td align="right">21</td>
-<td align="right">21</td>
-<td align="right">18</td>
-<td align="right">20</td>
+<td align="right">12</td>
 <td align="right">17</td>
-<td align="right">18</td>
+<td align="right">16</td>
+<td align="right">23</td>
+<td align="right">24</td>
+<td align="right">16</td>
+<td align="right">10</td>
 <td align="right">19</td>
-<td align="right">15</td>
-<td align="right">21</td>
-<td align="right">21</td>
-<td align="right">18</td>
-<td align="right">20</td>
+<td align="right">12</td>
+<td align="right">17</td>
+<td align="right">16</td>
+<td align="right">22</td>
+<td align="right">24</td>
+<td align="right">16</td>
+<td align="right">10</td>
 </tr>
 <tr class="odd">
-<td align="left">20195148</td>
-<td align="right">14</td>
-<td align="right">10</td>
-<td align="right">21</td>
-<td align="right">15</td>
-<td align="right">10</td>
-<td align="right">12</td>
+<td align="left">20181117</td>
+<td align="right">29</td>
+<td align="right">19</td>
 <td align="right">18</td>
-<td align="right">12</td>
-<td align="right">17</td>
+<td align="right">16</td>
+<td align="right">24</td>
+<td align="right">27</td>
+<td align="right">22</td>
 <td align="right">14</td>
-<td align="right">26</td>
-<td align="right">23</td>
-<td align="right">10</td>
-<td align="right">11</td>
-<td align="right">21</td>
-<td align="right">10</td>
+<td align="right">29</td>
+<td align="right">19</td>
+<td align="right">18</td>
+<td align="right">16</td>
+<td align="right">24</td>
+<td align="right">27</td>
+<td align="right">22</td>
+<td align="right">12</td>
 </tr>
 <tr class="even">
-<td align="left">20212703</td>
-<td align="right">15</td>
-<td align="right">28</td>
-<td align="right">24</td>
-<td align="right">25</td>
+<td align="left">20182936</td>
+<td align="right">13</td>
+<td align="right">11</td>
+<td align="right">16</td>
+<td align="right">9</td>
 <td align="right">23</td>
+<td align="right">16</td>
+<td align="right">16</td>
+<td align="right">9</td>
+<td align="right">13</td>
+<td align="right">11</td>
+<td align="right">16</td>
+<td align="right">9</td>
 <td align="right">23</td>
-<td align="right">26</td>
-<td align="right">18</td>
-<td align="right">15</td>
-<td align="right">28</td>
-<td align="right">24</td>
-<td align="right">25</td>
-<td align="right">23</td>
-<td align="right">23</td>
-<td align="right">26</td>
-<td align="right">18</td>
+<td align="right">16</td>
+<td align="right">16</td>
+<td align="right">9</td>
 </tr>
 <tr class="odd">
 <td align="left">20182982</td>
@@ -1443,23 +1443,23 @@ MI_score_kr %&gt;%
 <td align="right">17</td>
 </tr>
 <tr class="even">
-<td align="left">20232710</td>
-<td align="right">20</td>
-<td align="right">28</td>
-<td align="right">32</td>
-<td align="right">25</td>
-<td align="right">33</td>
-<td align="right">30</td>
-<td align="right">32</td>
-<td align="right">18</td>
-<td align="right">20</td>
-<td align="right">28</td>
-<td align="right">19</td>
-<td align="right">21</td>
-<td align="right">33</td>
-<td align="right">30</td>
-<td align="right">32</td>
+<td align="left">20183016</td>
 <td align="right">17</td>
+<td align="right">20</td>
+<td align="right">16</td>
+<td align="right">10</td>
+<td align="right">16</td>
+<td align="right">16</td>
+<td align="right">16</td>
+<td align="right">11</td>
+<td align="right">21</td>
+<td align="right">28</td>
+<td align="right">24</td>
+<td align="right">14</td>
+<td align="right">21</td>
+<td align="right">28</td>
+<td align="right">21</td>
+<td align="right">19</td>
 </tr>
 </tbody>
 </table>
@@ -1503,48 +1503,48 @@ MI_score %&gt;%
 </thead>
 <tbody>
 <tr class="odd">
-<td align="left">20221541</td>
-<td align="right">29</td>
-<td align="right">27</td>
-<td align="right">26</td>
-<td align="right">17</td>
-<td align="right">26</td>
-<td align="right">25</td>
-<td align="right">28</td>
+<td align="left">20171054</td>
+<td align="right">30</td>
+<td align="right">19</td>
+<td align="right">24</td>
+<td align="right">13</td>
+<td align="right">21</td>
 <td align="right">22</td>
+<td align="right">26</td>
+<td align="right">7</td>
 </tr>
 <tr class="even">
-<td align="left">20241073</td>
-<td align="right">17</td>
-<td align="right">18</td>
+<td align="left">20172727</td>
 <td align="right">19</td>
-<td align="right">15</td>
-<td align="right">21</td>
-<td align="right">21</td>
-<td align="right">18</td>
-<td align="right">20</td>
+<td align="right">12</td>
+<td align="right">17</td>
+<td align="right">16</td>
+<td align="right">23</td>
+<td align="right">24</td>
+<td align="right">16</td>
+<td align="right">10</td>
 </tr>
 <tr class="odd">
-<td align="left">20195148</td>
-<td align="right">14</td>
-<td align="right">10</td>
-<td align="right">21</td>
-<td align="right">15</td>
-<td align="right">10</td>
-<td align="right">12</td>
+<td align="left">20181117</td>
+<td align="right">29</td>
+<td align="right">19</td>
 <td align="right">18</td>
-<td align="right">12</td>
+<td align="right">16</td>
+<td align="right">24</td>
+<td align="right">27</td>
+<td align="right">22</td>
+<td align="right">14</td>
 </tr>
 <tr class="even">
-<td align="left">20212703</td>
-<td align="right">15</td>
-<td align="right">28</td>
-<td align="right">24</td>
-<td align="right">25</td>
+<td align="left">20182936</td>
+<td align="right">13</td>
+<td align="right">11</td>
+<td align="right">16</td>
+<td align="right">9</td>
 <td align="right">23</td>
-<td align="right">23</td>
-<td align="right">26</td>
-<td align="right">18</td>
+<td align="right">16</td>
+<td align="right">16</td>
+<td align="right">9</td>
 </tr>
 <tr class="odd">
 <td align="left">20182982</td>
@@ -1558,15 +1558,15 @@ MI_score %&gt;%
 <td align="right">17</td>
 </tr>
 <tr class="even">
-<td align="left">20232710</td>
+<td align="left">20183016</td>
+<td align="right">17</td>
 <td align="right">20</td>
-<td align="right">28</td>
-<td align="right">32</td>
-<td align="right">25</td>
-<td align="right">33</td>
-<td align="right">30</td>
-<td align="right">32</td>
-<td align="right">18</td>
+<td align="right">16</td>
+<td align="right">10</td>
+<td align="right">16</td>
+<td align="right">16</td>
+<td align="right">16</td>
+<td align="right">11</td>
 </tr>
 </tbody>
 </table>
@@ -1596,48 +1596,48 @@ MI_order_kr %&gt;%
 </colgroup>
 <tbody>
 <tr class="odd">
-<td align="center"><strong>20221541</strong></td>
+<td align="center"><strong>20171054</strong></td>
 <td align="center">1</td>
 <td align="center">7</td>
-<td align="center">2</td>
 <td align="center">3</td>
-<td align="center">5</td>
 <td align="center">6</td>
-<td align="center">8</td>
+<td align="center">5</td>
+<td align="center">2</td>
 <td align="center">4</td>
+<td align="center">8</td>
 </tr>
 <tr class="even">
-<td align="center"><strong>20241073</strong></td>
-<td align="center">5</td>
+<td align="center"><strong>20172727</strong></td>
 <td align="center">6</td>
-<td align="center">8</td>
-<td align="center">3</td>
-<td align="center">2</td>
-<td align="center">7</td>
+<td align="center">5</td>
 <td align="center">1</td>
+<td align="center">3</td>
 <td align="center">4</td>
+<td align="center">7</td>
+<td align="center">2</td>
+<td align="center">8</td>
 </tr>
 <tr class="odd">
-<td align="center"><strong>20195148</strong></td>
-<td align="center">3</td>
-<td align="center">7</td>
-<td align="center">4</td>
+<td align="center"><strong>20181117</strong></td>
 <td align="center">1</td>
 <td align="center">6</td>
-<td align="center">8</td>
-<td align="center">2</td>
 <td align="center">5</td>
+<td align="center">7</td>
+<td align="center">2</td>
+<td align="center">3</td>
+<td align="center">4</td>
+<td align="center">8</td>
 </tr>
 <tr class="even">
-<td align="center"><strong>20212703</strong></td>
-<td align="center">2</td>
-<td align="center">7</td>
-<td align="center">4</td>
-<td align="center">3</td>
+<td align="center"><strong>20182936</strong></td>
 <td align="center">5</td>
+<td align="center">3</td>
 <td align="center">6</td>
-<td align="center">8</td>
+<td align="center">7</td>
 <td align="center">1</td>
+<td align="center">2</td>
+<td align="center">4</td>
+<td align="center">8</td>
 </tr>
 <tr class="odd">
 <td align="center"><strong>20182982</strong></td>
@@ -1651,15 +1651,15 @@ MI_order_kr %&gt;%
 <td align="center">1</td>
 </tr>
 <tr class="even">
-<td align="center"><strong>20232710</strong></td>
-<td align="center">5</td>
-<td align="center">3</td>
-<td align="center">7</td>
-<td align="center">6</td>
+<td align="center"><strong>20183016</strong></td>
 <td align="center">2</td>
-<td align="center">4</td>
 <td align="center">1</td>
+<td align="center">3</td>
+<td align="center">5</td>
+<td align="center">6</td>
+<td align="center">7</td>
 <td align="center">8</td>
+<td align="center">4</td>
 </tr>
 </tbody>
 </table>
@@ -1698,48 +1698,48 @@ MI_sort_kr %&gt;%
 </thead>
 <tbody>
 <tr class="odd">
-<td align="left">20221541</td>
+<td align="left">20171054</td>
 <td align="center">음악</td>
 <td align="center">자기성찰</td>
-<td align="center">신체운동</td>
 <td align="center">논리수학</td>
-<td align="center">언어</td>
 <td align="center">인간친화</td>
-<td align="center">자연친화</td>
+<td align="center">언어</td>
+<td align="center">신체운동</td>
 <td align="center">공간</td>
+<td align="center">자연친화</td>
 </tr>
 <tr class="even">
-<td align="left">20241073</td>
-<td align="center">언어</td>
+<td align="left">20172727</td>
 <td align="center">인간친화</td>
-<td align="center">자연친화</td>
-<td align="center">논리수학</td>
-<td align="center">신체운동</td>
-<td align="center">자기성찰</td>
+<td align="center">언어</td>
 <td align="center">음악</td>
+<td align="center">논리수학</td>
 <td align="center">공간</td>
+<td align="center">자기성찰</td>
+<td align="center">신체운동</td>
+<td align="center">자연친화</td>
 </tr>
 <tr class="odd">
-<td align="left">20195148</td>
-<td align="center">논리수학</td>
-<td align="center">자기성찰</td>
-<td align="center">공간</td>
+<td align="left">20181117</td>
 <td align="center">음악</td>
 <td align="center">인간친화</td>
-<td align="center">자연친화</td>
-<td align="center">신체운동</td>
 <td align="center">언어</td>
+<td align="center">자기성찰</td>
+<td align="center">신체운동</td>
+<td align="center">논리수학</td>
+<td align="center">공간</td>
+<td align="center">자연친화</td>
 </tr>
 <tr class="even">
-<td align="left">20212703</td>
-<td align="center">신체운동</td>
-<td align="center">자기성찰</td>
-<td align="center">공간</td>
-<td align="center">논리수학</td>
+<td align="left">20182936</td>
 <td align="center">언어</td>
+<td align="center">논리수학</td>
 <td align="center">인간친화</td>
-<td align="center">자연친화</td>
+<td align="center">자기성찰</td>
 <td align="center">음악</td>
+<td align="center">신체운동</td>
+<td align="center">공간</td>
+<td align="center">자연친화</td>
 </tr>
 <tr class="odd">
 <td align="left">20182982</td>
@@ -1753,15 +1753,15 @@ MI_sort_kr %&gt;%
 <td align="center">음악</td>
 </tr>
 <tr class="even">
-<td align="left">20232710</td>
-<td align="center">언어</td>
-<td align="center">논리수학</td>
-<td align="center">자기성찰</td>
-<td align="center">인간친화</td>
+<td align="left">20183016</td>
 <td align="center">신체운동</td>
-<td align="center">공간</td>
 <td align="center">음악</td>
+<td align="center">논리수학</td>
+<td align="center">언어</td>
+<td align="center">인간친화</td>
+<td align="center">자기성찰</td>
 <td align="center">자연친화</td>
+<td align="center">공간</td>
 </tr>
 </tbody>
 </table>
@@ -1802,48 +1802,48 @@ MI_sort_kr_df %&gt;%
 </thead>
 <tbody>
 <tr class="odd">
-<td align="center">20221541</td>
+<td align="center">20171054</td>
 <td align="center">음악</td>
 <td align="center">자기성찰</td>
-<td align="center">신체운동</td>
 <td align="center">논리수학</td>
-<td align="center">언어</td>
 <td align="center">인간친화</td>
-<td align="center">자연친화</td>
+<td align="center">언어</td>
+<td align="center">신체운동</td>
 <td align="center">공간</td>
+<td align="center">자연친화</td>
 </tr>
 <tr class="even">
-<td align="center">20241073</td>
-<td align="center">언어</td>
+<td align="center">20172727</td>
 <td align="center">인간친화</td>
-<td align="center">자연친화</td>
-<td align="center">논리수학</td>
-<td align="center">신체운동</td>
-<td align="center">자기성찰</td>
+<td align="center">언어</td>
 <td align="center">음악</td>
+<td align="center">논리수학</td>
 <td align="center">공간</td>
+<td align="center">자기성찰</td>
+<td align="center">신체운동</td>
+<td align="center">자연친화</td>
 </tr>
 <tr class="odd">
-<td align="center">20195148</td>
-<td align="center">논리수학</td>
-<td align="center">자기성찰</td>
-<td align="center">공간</td>
+<td align="center">20181117</td>
 <td align="center">음악</td>
 <td align="center">인간친화</td>
-<td align="center">자연친화</td>
-<td align="center">신체운동</td>
 <td align="center">언어</td>
+<td align="center">자기성찰</td>
+<td align="center">신체운동</td>
+<td align="center">논리수학</td>
+<td align="center">공간</td>
+<td align="center">자연친화</td>
 </tr>
 <tr class="even">
-<td align="center">20212703</td>
-<td align="center">신체운동</td>
-<td align="center">자기성찰</td>
-<td align="center">공간</td>
-<td align="center">논리수학</td>
+<td align="center">20182936</td>
 <td align="center">언어</td>
+<td align="center">논리수학</td>
 <td align="center">인간친화</td>
-<td align="center">자연친화</td>
+<td align="center">자기성찰</td>
 <td align="center">음악</td>
+<td align="center">신체운동</td>
+<td align="center">공간</td>
+<td align="center">자연친화</td>
 </tr>
 <tr class="odd">
 <td align="center">20182982</td>
@@ -1857,15 +1857,15 @@ MI_sort_kr_df %&gt;%
 <td align="center">음악</td>
 </tr>
 <tr class="even">
-<td align="center">20232710</td>
-<td align="center">언어</td>
-<td align="center">논리수학</td>
-<td align="center">자기성찰</td>
-<td align="center">인간친화</td>
+<td align="center">20183016</td>
 <td align="center">신체운동</td>
-<td align="center">공간</td>
 <td align="center">음악</td>
+<td align="center">논리수학</td>
+<td align="center">언어</td>
+<td align="center">인간친화</td>
+<td align="center">자기성찰</td>
 <td align="center">자연친화</td>
+<td align="center">공간</td>
 </tr>
 </tbody>
 </table>

@@ -1,12 +1,12 @@
 ---
 title: "Monty Hall 250519"
 author: "coop711"
-date : "2025-05-19"
-# date: "`r format(Sys.time(), '%Y-%m-%d %H:%M:%S')`"
+# date : "2025-05-19"
+date: "`r format(Sys.time(), '%Y-%m-%d %H:%M:%S')`"
 output: html_document
 ---
 
-# 13주차 데이터 실험 집계
+# 직관의 한계 데이터 실험 집계
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
@@ -117,6 +117,7 @@ MH_wrong_ids <- MH_wrong_ids %>%
       id == "데이터사이언스학부" & name == "정민재" ~ "20253246",
       id == "20226049" ~ "20226409",
       id == "202429090" ~ "20242909",
+      id == "202223716" ~ "20223716",
     TRUE ~ id
     ),
     name = case_when(
@@ -185,11 +186,25 @@ clean_birth_format <- function(x) {
               paste0(substr(x, 1, 2), "/", substr(x, 3, 4)),
               x)
   
-  parts <- stringr::str_split_fixed(x, "/", 2)               # 월/일 나누기
-  month <- stringr::str_pad(parts[, 1], 2, pad = "0")         # 1자리 → 2자리로
-  day   <- stringr::str_pad(parts[, 2], 2, pad = "0")
+  # 각 항목별로 월/일 추출 "05/06/07" 처리하기 위한 코드
+  result <- sapply(x, function(str) {
+    parts <- unlist(strsplit(str, "/"))
+    if (length(parts) >= 2) {
+      month <- stringr::str_pad(parts[length(parts) - 1], 2, pad = "0")
+      day   <- stringr::str_pad(parts[length(parts)],     2, pad = "0")
+      paste0(month, "/", day)
+    } else {
+      NA
+    }
+  })
+  
+  return(unname(result))
+  
+#   parts <- stringr::str_split_fixed(x, "/", 2)               # 월/일 나누기
+#   month <- stringr::str_pad(parts[, 1], 2, pad = "0")         # 1자리 → 2자리로
+#   day   <- stringr::str_pad(parts[, 2], 2, pad = "0")
 
-  ifelse(month == "" | day == "", NA, paste0(month, "/", day))
+#   ifelse(month == "" | day == "", NA, paste0(month, "/", day))
 }
 
 MH$Q1 <- clean_birth_format(MH$Q1)

@@ -24,8 +24,8 @@ library(dplyr)
 library(googlesheets4)
 options(width = 180)
 class_roll <- 
-  read_excel("./data/class_roll_250428.xlsx",
-             range = "D1:E599",
+  read_excel("./data/class_roll_250516.xlsx",
+             range = "D1:E597",
              col_names = TRUE,
              col_types = "text")
 class_roll %<>%
@@ -69,7 +69,7 @@ BFI %>%
 duplicated(BFI$ID) %>% 
   which %>%
   BFI[., c("ID", "Name")]
-BFI[BFI$ID %in% c("20226424", "20246620"), c("ID", "Name")]
+BFI[BFI$ID %in% c("20226424", "20246620", "20242615"), c("ID", "Name")]
 # BFI <- BFI[-c(117, 598), ]
 # BFI <- unique(BFI)
 # str(BFI)
@@ -81,7 +81,7 @@ BFI %>%
 # which(duplicated(BFI$ID)) %>%
 #   BFI[., c("ID", "Name")]
 BFI %>%
-  filter(ID %in% c("20226424", "20246620"))
+  filter(ID %in% c("20226424", "20246620", "20242615"))
 BFI <- BFI %>% 
   arrange(ID, desc(Time)) %>%
   distinct(ID, .keep_all = TRUE)
@@ -105,6 +105,7 @@ BFI_wrong_ids <- BFI_wrong_ids %>%
       ID == "2022712" ~ "20227120",
       ID == "24" & Name == "최성준" ~ "20242137",
       ID == "영어영문학과" & Name == "권유진" ~ "20221204",
+      ID == "AI로봇융합" & Name == "양조은" ~ "20246745",
     TRUE ~ ID
     ),
     Name = case_when(
@@ -124,7 +125,7 @@ BFI[BFI$ID %in% setdiff(BFI$ID, class_roll$ID), c("ID", "Name")]
 str(BFI)
 ```
 
-```{r, eval = FALSE}
+```{r, eval = TRUE}
 #> "중간이다"를 도배한 친구 기록 삭제
 # 동일한 값으로 일관된 응답을 입력한 사용자를 적발하는 함수
 identify_uniform_responses <- function(data, uniform_value = "중간이다") {
@@ -141,7 +142,6 @@ result <- identify_uniform_responses(BFI[, 6:17], "3")
 # 결과 확인
 print(result)   # 일관된 응답을 입력한 행 번호
 print(BFI[result, c("ID", "Name")])    # 일관된 응답을 입력한 데이터
-str(BFI)
 BFI <- BFI[-result, ]
 str(BFI)
 ```
@@ -180,20 +180,33 @@ MI %<>%
 #               paste(LETTERS[1:8], "Score", sep = "_")))
 MI$ID %<>% 
   as.character
-str(MI)
+
+#> 중복 제출자
+MI %>%
+  filter(duplicated(ID)) %>%
+  select(Time, ID, Name) %>%
+  arrange(Time)
+# which(duplicated(MI$ID)) %>%
+#   MI[., c("ID", "Name")]
+MI %>%
+  filter(ID %in% c("20242615")) %>%
+  select(Time, ID, Name)
+MI <- MI %>% 
+  arrange(ID, desc(Time)) %>%
+  distinct(ID, .keep_all = TRUE)
+#> 중복 입력 삭제 확인
 duplicated(MI$ID) %>% 
   which %>%
   MI[., c("ID", "Name")]
-MI[MI$ID == "20242702", c("ID", "Name")]
-# MI <- MI[-109, ]
 # MI <- unique(MI)
 # str(MI)
 MI[5:60] %<>%
   sapply(FUN = {. %>% strsplit(split = "[.]") %>% sapply(`[`, 1)}) %>%
   as.numeric
+str(MI)
 ```
 
-```{r, eval = FALSE}
+```{r, eval = TRUE}
 # 동일한 값으로 일관된 응답을 입력한 사용자를 적발하는 함수
 identify_uniform_responses <- function(data, uniform_value = "중간이다") {
   # 각 행이 특정 값으로만 일관되는지 확인
@@ -211,6 +224,7 @@ print(MI[result_M, c("ID", "Name")])    # 일관된 응답을 입력한 데이�
 # str(MI)
 # 부적절한 응답 삭제
 MI <- MI[-result_M, ]
+str(MI)
 ```
 
 ```{r, eval = FALSE}
@@ -238,6 +252,10 @@ MI_wrong_ids <- MI_wrong_ids %>%
       ID == "24" & Name == "최성준" ~ "20242137",
       ID == "202041726" ~ "20241726",
       ID == "2024383" ~ "20243831",
+      ID == "20242556" ~ "20242553",
+      ID == "영어영문학과" & Name == "원예진" ~ "20241217",
+      ID == "서예림" & Name == "20243817" ~ "20243817",
+      ID == "20242675" ~ "20246275",
     TRUE ~ ID
     ),
     Name = case_when(
@@ -253,25 +271,14 @@ MI <- MI %>%
 
 #> ID 잘못 적은 친구 수정사항 확인
 MI[MI$ID %in% setdiff(MI$ID, class_roll$ID), c("ID", "Name")]
-# 1. 잘못된 id 가진 행 찾기
-MI_wrong_ids <- MI %>%
-  anti_join(class_roll, by = "ID") 
-# 2. 잘못된 id를 따로 저장하고 수정하기
-wrong_ids <- MI_wrong_ids$ID
-MI_wrong_ids <- MI_wrong_ids %>%
-  mutate(ID = case_when(
-    ID == "20227070" ~ "20227080",
-    TRUE ~ ID
-  ))
-# 3. MI 에서 id 틀린 행을 제거하고 옳은 id 갖춘 행으로 교체하기
-MI <- MI %>%
-  filter(!ID %in% wrong_ids) %>%
-  bind_rows(MI_wrong_ids)
-#> ID 잘못 적은 친구 수정사항 확인
-MI[MI$ID %in% setdiff(MI$ID, class_roll$ID), c("ID", "Name")]
+
 #> 각 조사 불참자 
-# setdiff(class_roll$Name, BFI$Name)
-# setdiff(class_roll$Name, MI$Name)
+# setdiff(class_roll$ID, BFI$ID)
+class_roll %>%
+  anti_join(BFI, by = "ID")
+# setdiff(class_roll$ID, MI$ID)
+class_roll %>%
+  anti_join(MI, by = "ID")
 #> BFI 는 참여, MI 는 불참
 setdiff(BFI$ID, MI$ID) %>%
   `%in%`(BFI$ID, .) %>%
@@ -298,6 +305,7 @@ MI_days <-
 MI_hours <- 
   as.numeric(difftime("2025-05-26 00:00:00", MI$Time, 
                       tz = "Asia/Seoul", units = 'hours'))
+str(MI)
 ```
 
 ## Time
