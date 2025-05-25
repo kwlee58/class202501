@@ -271,11 +271,14 @@ MI <- MI %>%
 
 #> ID 잘못 적은 친구 수정사항 확인
 MI[MI$ID %in% setdiff(MI$ID, class_roll$ID), c("ID", "Name")]
-
+MI %>%
+  anti_join(class_roll, by = "ID") 
 #> 각 조사 불참자 
+#> BFI 불참자
 # setdiff(class_roll$ID, BFI$ID)
 class_roll %>%
   anti_join(BFI, by = "ID")
+#> MI 불참자
 # setdiff(class_roll$ID, MI$ID)
 class_roll %>%
   anti_join(MI, by = "ID")

@@ -351,7 +351,7 @@ display: none;
 
 <h1 class="title toc-ignore">BFI MI data : 250512</h1>
 <h4 class="author">coop711</h4>
-<h4 class="date">2025-05-26 00:44:21</h4>
+<h4 class="date">2025-05-26 01:16:17</h4>
 
 </div>
 
@@ -1106,7 +1106,15 @@ MI &lt;- MI %&gt;%
 MI[MI$ID %in% setdiff(MI$ID, class_roll$ID), c(&quot;ID&quot;, &quot;Name&quot;)]</code></pre>
 <pre><code>## [1] ID   Name
 ## &lt;0 rows&gt; (or 0-length row.names)</code></pre>
+<pre class="r"><code>MI %&gt;%
+  anti_join(class_roll, by = &quot;ID&quot;) </code></pre>
+<pre><code>##  [1] Time    Dept    ID      Name    A1      B2      C3      D4      E5      F6      G7      H8      A9      B10     C11     D12     E13     F14     G15     H16     A17     B18    
+## [23] C19     D20     E21     F22     G23     H24     A25     B26     C27     D28     E29     F30     G31     H32     A33     B34     C35     D36     E37     F38     G39     H40    
+## [45] A41     B42     C43     D44     E45     F46     G47     H48     A49     B50     C51     D52     E53     F54     G55     H56     A_Score B_Score C_Score D_Score E_Score F_Score
+## [67] G_Score H_Score
+## &lt;0 rows&gt; (or 0-length row.names)</code></pre>
 <pre class="r"><code>#&gt; 각 조사 불참자 
+#&gt; BFI 불참자
 # setdiff(class_roll$ID, BFI$ID)
 class_roll %&gt;%
   anti_join(BFI, by = &quot;ID&quot;)</code></pre>
@@ -1145,7 +1153,8 @@ class_roll %&gt;%
 ## 32 20246923 서민지
 ## 33 20252916 김래현
 ## 34 20253244 정다은</code></pre>
-<pre class="r"><code># setdiff(class_roll$ID, MI$ID)
+<pre class="r"><code>#&gt; MI 불참자
+# setdiff(class_roll$ID, MI$ID)
 class_roll %&gt;%
   anti_join(MI, by = &quot;ID&quot;)</code></pre>
 <pre><code>##          ID   Name
