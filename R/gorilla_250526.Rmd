@@ -1,7 +1,7 @@
 ---
-title: "Invisible Gorilla 202401"
+title: "Invisible Gorilla 202501"
 author: "coop711"
-date: "2024-11-18"
+date: "2025-05-26"
 output: html_document
 ---
 
@@ -15,6 +15,7 @@ library(magrittr)
 library(readxl)
 library(pander)
 library(ggplot2)
+library(googlesheets4)
 panderOptions("table.split.table", Inf)
 options(digits=3)
 ```
@@ -24,11 +25,13 @@ options(digits=3)
 -->
 
 ```{r, echo = FALSE, message = FALSE, results='hide'}
-class_roll <- readRDS("./class_roll_241115.RDS")
-gorilla <- "./data/gorilla241118.xlsx" %>%
-  read_excel(range = "C1:Z723")
-gorilla %<>% 
-  data.frame
+class_roll <- readRDS("./class_roll_250516.RDS")
+gorilla_url <- "https://docs.google.com/spreadsheets/d/1YmoTyLYsf_4ZVTNPuhQoo4EIFaTbNAsL0IyOWArgFlc"
+gorilla <- read_sheet(gorilla_url)
+# gorilla <- "./data/gorilla241118.xlsx" %>%
+#   read_excel(range = "C1:Z723")
+gorilla <- data.frame(gorilla)
+gorilla <- gorilla[, -c(1, 2)]
 gorilla %>%
   str
 gorilla[c(4:7, 9:14, 16, 18:21, 23:24)] %<>%
@@ -38,11 +41,10 @@ names(gorilla) <- c("dept", "id", "name", "Q1", "Q2_1", "Q2_2", "Q2_3", "Q3", "Q
 gorilla$group <- class_roll$group[match(gorilla$id, class_roll$id)]
 gorilla$group <- factor(gorilla$group, levels = c("Red", "Black"))
 class(gorilla$id) <- "character"
-# class(gorilla$Q9_1) <- "numeric"
+class(gorilla$Q9_1) <- "character"
 str(gorilla)
 table(gorilla$Q9_1)
 # class(gorilla$Q9_1) <- "integer"
-saveRDS(gorilla, file = "./gorilla2402_RDS")
 gorilla$Q1 %<>%
   factor(levels = c("가", "나"), 
          labels = c("틀리다", "다르다"))
@@ -99,8 +101,8 @@ gorilla$Q6_4 %<>%
 gorilla$Q8 %<>%
   factor(levels = c("가", "나"), labels = c("무시한다", "팻말에 따른다"))
 gorilla$Q9_1 %<>%
-  factor(levels = c("0.0", "1.0", "2.0", "3.0", "4.0", "5.0", "6개 이상"),
-         labels = c(0:5, "6개 이상"))
+#   ifelse(gorilla$Q9_1 <= 5, ., "6개 이상" ) %>%
+  factor(levels = c("0", "1", "2", "3", "4", "5", "6개 이상"))
 gorilla$Q9_2 %<>%
   factor(levels = c("가", "나"), labels = c("더", "덜"))
 gorilla$Q9_3 %<>%
@@ -769,7 +771,6 @@ gorilla$Q9_3 %>%
 ### 자료 갈무리
 
 ```{r, save.image, echo = FALSE}
-saveRDS(gorilla, file = "gorilla_241118.RDS")
-save.image("gorilla_241118.RData")
+saveRDS(gorilla, file = "gorilla_250526.RDS")
 ```
 -->
