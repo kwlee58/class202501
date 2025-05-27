@@ -1,7 +1,8 @@
 ---
 title: "Invisible Gorilla 202501"
 author: "coop711"
-date: "2025-05-26"
+# date: "2025-05-26"
+date: "`r format(Sys.time(), '%Y-%m-%d %H:%M:%S')`"
 output: html_document
 ---
 
