@@ -169,7 +169,7 @@ quiz %>%
 # which(duplicated(quiz$id)) %>%
 #   quiz[., c("id", "name")]
 quiz %>%
-  filter(name %in% c("이두현"))
+  filter(id %in% c("20242615"))
 quiz <- quiz %>% 
   arrange(id, desc(time)) %>%
   distinct(id, .keep_all = TRUE)
