@@ -17,6 +17,7 @@ library(readxl)
 library(pander)
 library(ggplot2)
 library(googlesheets4)
+library(dplyr)
 panderOptions("table.split.table", Inf)
 options(digits=3)
 ```
@@ -32,13 +33,12 @@ gorilla <- read_sheet(gorilla_url)
 # gorilla <- "./data/gorilla241118.xlsx" %>%
 #   read_excel(range = "C1:Z723")
 gorilla <- data.frame(gorilla)
-gorilla <- gorilla[, -c(1, 2)]
-gorilla %>%
-  str
-gorilla[c(4:7, 9:14, 16, 18:21, 23:24)] %<>%
+# gorilla <- gorilla[, -c(1, 2)]
+# gorilla[c(4:7, 9:14, 16, 18:21, 23:24)] %<>%
+gorilla[c(6:9, 11:16, 18, 20:23, 25:26)] %<>%
   sapply(FUN = . %>% {strsplit(., split = "[.]") %>% 
   sapply(`[`, 1)})
-names(gorilla) <- c("dept", "id", "name", "Q1", "Q2_1", "Q2_2", "Q2_3", "Q3", "Q4_1", "Q4_3", "Q4_5", "Q4_6", "Q4_7", "Q4_8", "Q5_1", "Q5_2", "Q6_1", "Q6_2", "Q6_3", "Q6_4", "Q8", "Q9_1", "Q9_2", "Q9_3")
+names(gorilla) <- c("time", "email", "dept", "id", "name", "Q1", "Q2_1", "Q2_2", "Q2_3", "Q3", "Q4_1", "Q4_3", "Q4_5", "Q4_6", "Q4_7", "Q4_8", "Q5_1", "Q5_2", "Q6_1", "Q6_2", "Q6_3", "Q6_4", "Q8", "Q9_1", "Q9_2", "Q9_3")
 gorilla$group <- class_roll$group[match(gorilla$id, class_roll$id)]
 gorilla$group <- factor(gorilla$group, levels = c("Red", "Black"))
 class(gorilla$id) <- "character"
@@ -109,8 +109,73 @@ gorilla$Q9_2 %<>%
 gorilla$Q9_3 %<>%
   factor(levels = c("가", "나"), labels = c("더", "덜"))
 #> 학번 잘못 써서 고생시키는 녀석들 찾아내는 코드
-gorilla[gorilla$id %in% setdiff(gorilla$id, class_roll$id), c("id", "name", "dept")]
-ls()
+# gorilla[gorilla$id %in% setdiff(gorilla$id, class_roll$id), c("id", "name", "dept")]
+# ls()
+```
+
+```{r, cleaning, echo = FALSE, results = 'hide'}
+#> 학번 잘못 써서 고생시키는 녀석들 찾아내는 코드
+wrong_id <- setdiff(gorilla$id, class_roll$id)
+gorilla %>%
+  filter(id %in% wrong_id) %>%
+  select(id, name, dept, email)
+# 1. 잘못된 id 가진 행 찾기
+gorilla_wrong_ids <- gorilla %>%
+  anti_join(class_roll, by = "id") 
+# 2. 잘못된 id를 따로 저장하고 수정하기
+wrong_ids <- gorilla_wrong_ids$id
+gorilla_wrong_ids <- gorilla_wrong_ids %>%
+  mutate(id = case_when(
+    id == "20212167" ~ "20212617",
+    id == "20246205" ~ "20246295",
+    id == "사회학과" & name == "박시현" ~ "20212214",
+    TRUE ~ id
+  ))
+# 3. gorilla 에서 id 틀린 행을 제거하고 옳은 id 갖춘 행으로 교체하기
+gorilla <- gorilla %>%
+  filter(!id %in% wrong_ids) %>%
+  bind_rows(gorilla_wrong_ids)
+# 4. 수정 사항 확인
+gorilla[gorilla$id %in% setdiff(gorilla$id, class_roll$id), c("id", "name", "dept", "group")]
+
+#> 틀린 학번 수정하여 되돌리기 (작동하지 않음. 참고로만)
+# gorilla <- gorilla %>%
+#   #> `left_join`으로 `name`과 `dept`를 기준으로 교정 정보를 추가
+#   left_join(class_roll %>% select(id, name, dept), 
+#             by = "name", 
+#             suffix = c("", "_correct")) %>%
+#   #> `id_correct`가 있는 경우 이를 사용하여 `id`를 교정하고, 그렇지 않으면 기존의 `id`를 유지
+#   mutate(id = if_else(!is.na(id_correct) & id != id_correct, id_correct, id)) %>%
+#   #> 임시로 추가된 `id_correct` 열 제거
+#   select(-id_correct)
+
+#> 중복 제출자
+gorilla %>%
+  filter(duplicated(id)) %>%
+  select(time, id, name) %>%
+  arrange(time)
+# which(duplicated(gorilla$id)) %>%
+#   gorilla[., c("id", "name")]
+gorilla %>%
+  filter(id %in% c("20242615"))
+gorilla <- gorilla %>% 
+  arrange(id, desc(time)) %>%
+  distinct(id, .keep_all = TRUE)
+#> 불참자들
+absentee <- class_roll %>%
+  anti_join(gorilla, by = "id") %>%
+  select(id, name, group) %>%
+  arrange(id)
+# absentee <- 
+#   class_roll[class_roll$id %in% setdiff(class_roll$id, gorilla$id), c("id", "name", "group")] %>%
+#   `[`(order(.$name), ) 
+absentee %>%
+  pander(row.names = FALSE) 
+absentee %>%
+  count(group) %>%
+  print()
+# absentee$group %>%
+#   table
 ```
 
 ```{r,echo = FALSE}
