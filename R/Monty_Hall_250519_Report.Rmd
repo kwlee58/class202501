@@ -1364,7 +1364,7 @@ text(x = b[14, 1], y = sum(days_tbl[, 1]) / 2,
      labels = paste0(format(sum(days_tbl[, 1]) / N * 100, digits = 1, nsmall = 0), "%"))
 title(main = paste0("MH250519 (", N, "명 제출)"))
 # title(main = "일 단위 퀴즈 제출 인원", sub = paste0("MH230925 (", N, "명 제출)"))
-dev.copy(png, file = "./pics/2402/MH_submission_13.png", width = 640, height = 480)
+dev.copy(png, file = "./pics/2501/quiz_submission_13.png", width = 640, height = 480)
 invisible(dev.off())
 })
 ```
@@ -1423,9 +1423,9 @@ ggsave("./pics/MH250519_submission_13.png", dpi = 120, width = 960, height = 840
 
 ## 제출 시간 분포의 변화
 
-```{r, echo = FALSE, message = FALSE, eval = FALSE}
+```{r, echo = FALSE, message = FALSE, eval = TRUE}
 library(magick)
-file_names <- paste0("./pics/2402/MH_submission_", 1:13, ".png")
+file_names <- paste0("./pics/2501/quiz_submission_", 1:13, ".png")
 img <- sapply(file_names, image_read)
 img <- image_join(img)
 # img <- image_read(file_names[1])
@@ -1437,5 +1437,4 @@ image_animate(img, fps = 1, loop = 0)
 
 ```{r, save, echo = FALSE}
 saveRDS(MH, file = "./MH250519.RDS")
-save.image("./MH250519.RData")
 ```

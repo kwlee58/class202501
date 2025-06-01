@@ -46,11 +46,12 @@ saveRDS(class_roll0331, file = "./class_roll_250331.RDS")
 class_roll <- class_roll0331
 str(class_roll)
 quiz <- 
-  read_excel("./data/quiz_250331.xlsx",
-             range = "A2:N26",
+  read_excel("./data/quiz_250331_v2.xlsx",
+             range = "A2:N560",
              col_names = FALSE)
 names(quiz) <- c("time", "email", "dept", "id", "name", "Q1", "Q2", "Q3", "Q4", "Q5", "Q6", "group", "Q7_R", "Q7_B")
 str(quiz)
+class(quiz$id) <- "character"
 quiz <- data.frame(quiz)
 class(quiz$id) <- "character"
 # quiz$Q7_R[quiz$Q7_R == "대기업의 비리와 독단 경영을 견제하고, 투명성을 높일 수 있으므로 찬 성한다."] <- "찬성한다."
@@ -118,42 +119,38 @@ str(quiz)
 ```
 
 ```{r, cleaning, echo = FALSE, results = 'hide'}
-#> 학번 잘못 써서 고생시키는 녀석들 찾아내는 코드
-wrong_id <- setdiff(quiz$id, class_roll$id)
-quiz %>%
-  filter(id %in% wrong_id) %>%
-  select(id, name, dept, email)
-# 1. 잘못된 id 가진 행 찾기
+# 1. 잘못된 id 또는 name 가진 행 찾기
 quiz_wrong_ids <- quiz %>%
-  anti_join(class_roll, by = "id") 
-# 2. 잘못된 id를 따로 저장하고 수정하기
-wrong_ids <- quiz_wrong_ids$id
-quiz_wrong_ids <- quiz_wrong_ids %>%
-  mutate(id = case_when(
-    id == "20247109" ~ "20241709",
-    id == "20246278" ~ "20246279",
-    id == "20243491" ~ "20243941",
-    id == "2021209" ~ "20221209",
-    id == "20241529" ~ "20241520",
-    id == "20142513" ~ "20242513",
-    TRUE ~ id
-  ))
-# 3. quiz 에서 id 틀린 행을 제거하고 옳은 id 갖춘 행으로 교체하기
-quiz <- quiz %>%
-  filter(!id %in% wrong_ids) %>%
-  bind_rows(quiz_wrong_ids)
-# quiz[quiz$id %in% setdiff(quiz$id, class_roll$id), c("id", "name", "dept", "group")]
+  anti_join(class_roll, by = c("id", "name")) 
 
-#> 틀린 학번 수정하여 되돌리기 (작동하지 않음. 참고로만)
-# quiz <- quiz %>%
-#   #> `left_join`으로 `name`과 `dept`를 기준으로 교정 정보를 추가
-#   left_join(class_roll %>% select(id, name, dept), 
-#             by = "name", 
-#             suffix = c("", "_correct")) %>%
-#   #> `id_correct`가 있는 경우 이를 사용하여 `id`를 교정하고, 그렇지 않으면 기존의 `id`를 유지
-#   mutate(id = if_else(!is.na(id_correct) & id != id_correct, id_correct, id)) %>%
-#   #> 임시로 추가된 `id_correct` 열 제거
-#   select(-id_correct)
+# 2. 수정 전 원래의 id와 name 쌍을 저장
+wrong_keys <- quiz_wrong_ids %>% 
+  select(id, name)
+
+# 3. 잘못된 id 또는 name 수정
+quiz_wrong_ids <- quiz_wrong_ids %>%
+  mutate(
+    id = case_when(
+      id == "202227096" ~ "20227096",
+      id == "02053725" ~ "20253725",
+      id == "20241595" ~ "20241506",
+      id == "202222713" ~ "20222713",
+      id == "202013353" ~ "20213353",
+      id == "2042918" ~ "20242918",
+      id == "202244144" ~ "20244144",
+      TRUE ~ id
+      ),
+    name = case_when(
+      name == "이소여" ~ "이소연",
+      name == "안효빔" ~ "안효빈",
+      TRUE ~ name
+      )
+    )
+# 3. quiz 에서 id 또는 name 틀린 행을 제거하고 옳은 id 또는 name 갖춘 행으로 교체하기
+quiz <- quiz %>%
+  anti_join(wrong_keys %>% select(id, name), by = c("id", "name")) %>%
+  bind_rows(quiz_wrong_ids)
+
 
 #> 중복 제출자
 quiz %>%
@@ -163,8 +160,7 @@ quiz %>%
 # which(duplicated(quiz$id)) %>%
 #   quiz[., c("id", "name")]
 quiz %>%
-  filter(name %in% c("손연수", "김유진", "김세은"))
-# quiz[quiz$name %in% c("최재혁", "박지연"), ] #> 최재혁, 박지연이 중복 제출
+  filter(id %in% c("20202913"))
 quiz <- quiz %>% 
   arrange(id, desc(time)) %>%
   distinct(id, .keep_all = TRUE)
@@ -722,12 +718,12 @@ days_tbl %>%
 ```{r, echo = FALSE, warning = FALSE}
 days_tbl %>%
   rbind("계" = colSums(.)) %>%
-  `[`(3, 13:14) %>%
+  `[`(3, 1:14) %>%
   pander
 days_chisq_test <-
   days_tbl %>%
   rbind("계" = colSums(.)) %>%
-  `[`(3, 13:14) %>%
+  `[`(3, 1:14) %>%
   chisq.test(simulate.p.value = FALSE) 
 days_chisq_test %>%
   pander
@@ -761,7 +757,7 @@ text(x = b[14, 1], y = sum(days_tbl[, 1]) / 2,
      labels = paste0(format(sum(days_tbl[, 1]) / N * 100, digits = 1, nsmall = 0), "%"))
 title(main = paste0("Quiz250331 (", N, "명 제출)"))
 # title(main = "일 단위 퀴즈 제출 인원", sub = paste0("Quiz230925 (", N, "명 제출)"))
-dev.copy(png, file = "./pics/2402/quiz_submission_5.png", width = 640, height = 480)
+dev.copy(png, file = "./pics/2501/quiz_submission_5.png", width = 640, height = 480)
 invisible(dev.off())
 })
 ```
@@ -773,11 +769,11 @@ invisible(dev.off())
 ```{r, echo = FALSE, warning = FALSE}
 days_tbl %>%
   rbind("계" = colSums(.)) %>%
-  `[`(-3, 13:14) %>%
+  `[`(-3, 1:14) %>%
   pander
 days_RnB_chisq_test <-
   days_tbl %>%
-  `[`(-3, 13:14) %>%
+  `[`(-3, 1:14) %>%
   chisq.test(simulate.p.value = FALSE) 
 days_RnB_chisq_test %>%
   pander
