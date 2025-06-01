@@ -1,8 +1,8 @@
 ---
 title: "Monty Hall 250519"
 author: "coop711"
-# date : "2025-05-19"
-date: "`r format(Sys.time(), '%Y-%m-%d %H:%M:%S')`"
+date : "2025-05-19"
+# date: "`r format(Sys.time(), '%Y-%m-%d %H:%M:%S')`"
 output: html_document
 ---
 
@@ -120,10 +120,12 @@ MH_wrong_ids <- MH_wrong_ids %>%
       id == "202223716" ~ "20223716",
       id == "2024136" ~ "20242136",
       id == "러시아학과" & name == "최시온" ~ "20231730",
+      id == "융합과학수사학과" & name == "박한성" ~ "20216409",
+      id == "20246725" ~ "20246275",
     TRUE ~ id
     ),
     name = case_when(
-      name == "최유" ~ "최유환",
+      name == "ZOUYUANYUAN" ~ "ZOU YUANYUAN",
       TRUE ~ name
       )
     )
@@ -132,7 +134,9 @@ MH <- MH %>%
   anti_join(wrong_keys %>% select(id, name), by = c("id", "name")) %>%
   bind_rows(MH_wrong_ids)
 #> 수정 여부 확인
-MH[MH$id %in% setdiff(MH$id, class_roll$id), c("id", "name", "dept", "group")]
+MH %>%
+  anti_join(class_roll, by = c("id", "name"))
+# MH[MH$id %in% setdiff(MH$id, class_roll$id), c("id", "name", "dept", "group")]
 MH$Q1
 #> 틀린 학번 수정하여 되돌리기 (작동하지 않음. 참고로만)
 # MH <- MH %>%
@@ -153,7 +157,7 @@ MH %>%
 # which(duplicated(MH$id)) %>%
 #   MH[., c("id", "name")]
 MH %>%
-  filter(id %in% c(""))
+  filter(id %in% c("20242615"))
 MH <- MH %>% 
   arrange(id, desc(time)) %>%
   distinct(id, .keep_all = TRUE)
@@ -405,6 +409,7 @@ wrong_tbl %>%
 
 Red를 Black 이라고 한 사람이 `r wrong_tbl[1, 2]`명, Black 을 Red 라고 한 사람이 `r wrong_tbl[2, 1]`명입니다. 
 
+<!--
 두 가지 방법으로 분석합니다.
 
 우선 Red, Black 을 잘못 선택한 `r nrow(wrong_group)`명을 랜덤하게 둘로 나누면 어느 한 쪽 집단에 들어갈 기대인원은 `r nrow(wrong_group)`명을 둘로 나눈 `r nrow(wrong_group) / 2`(명)이고, 표준오차는 `r nrow(wrong_group)`의 제곱근에 1/2을 곱해 준 `r round(sqrt(nrow(wrong_group)) / 2, digits  = 1)`명이 됩니다. 
@@ -434,6 +439,7 @@ Red, Black 을 잘못 선택한 `r nrow(wrong_group)`명을 랜덤하게 둘로 
 그런데 Red, Black 을 잘못 표시한 사람들의 분포에서 관찰된 p-value 는 0.05와는 비교도 안될 정도로 큰 값입니다.
 
 따라서 두 집단이 랜덤화 효과가 작동하여 **통계적으로 유의한 차이를 보이지 않는다**고 할 수 있습니다. 
+-->
 
 ### 응답인원의 Red, Black
 

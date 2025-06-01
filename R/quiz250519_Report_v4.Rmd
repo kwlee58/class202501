@@ -1,8 +1,8 @@
 ---
 title: "Quiz 250519 (Framing Effects)"
 author: "coop711"
-# date : "2025-05-19"
-date: "`r format(Sys.time(), '%Y-%m-%d %H:%M:%S')`"
+date : "2025-05-19"
+# date: "`r format(Sys.time(), '%Y-%m-%d %H:%M:%S')`"
 output: html_document
 ---
 
@@ -134,13 +134,15 @@ quiz %>%
   select(id, name, dept, email)
 # 1. 잘못된 id 가진 행 찾기
 quiz_wrong_ids <- quiz %>%
-  anti_join(class_roll, by = "id") 
+  anti_join(class_roll, by = c("id", "name")) 
 # 2. 잘못된 id를 따로 저장하고 수정하기
 wrong_ids <- quiz_wrong_ids$id
 quiz_wrong_ids <- quiz_wrong_ids %>%
   mutate(id = case_when(
     id == "2019336" ~ "20193836",
     id == "2023263" ~ "20232613",
+    id == "20202115" ~ "20202215",
+    id == "2246607" ~ "20246607",
     TRUE ~ id
   ))
 # 3. quiz 에서 id 틀린 행을 제거하고 옳은 id 갖춘 행으로 교체하기

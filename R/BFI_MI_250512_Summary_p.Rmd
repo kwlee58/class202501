@@ -341,11 +341,10 @@ m_fill +
 ggsave("./pics/MI_strengths2302.png", dpi = 120, width = 10, height = 7.5, units = "in")
 ```
 
-<!--
+
 ## 개별 BFP와 3대 강점지능
 
 ```{r, one data frame, echo = FALSE}
 BFI_MI_full %>%
   kable(align = "c")
 ```
--->
