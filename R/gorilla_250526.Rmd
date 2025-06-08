@@ -111,10 +111,6 @@ gorilla$Q9_3 %<>%
 
 ```{r, cleaning, echo = FALSE, results = 'hide'}
 #> 학번 잘못 써서 고생시키는 녀석들 찾아내는 코드
-wrong_id <- setdiff(gorilla$id, class_roll$id)
-gorilla %>%
-  filter(id %in% wrong_id) %>%
-  select(id, name, dept, email)
 # 1. 잘못된 id 가진 행 찾기
 gorilla_wrong_ids <- gorilla %>%
   anti_join(class_roll, by = c("id", "name")) 
@@ -143,7 +139,7 @@ gorilla <- gorilla %>%
 # 4. 수정 사항 확인
 # gorilla[gorilla$id %in% setdiff(gorilla$id, class_roll$id), c("id", "name", "dept", "group")]
 gorilla %>%
-  anti_join(class_roll, by = "id") %>%
+  anti_join(class_roll, by = c("id")) %>%
   select(id, name, dept, group)
 
 #> 틀린 학번 수정하여 되돌리기 (작동하지 않음. 참고로만)
