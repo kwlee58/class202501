@@ -49,15 +49,17 @@
 \makesavenoteenv{longtable}
 \usepackage{graphicx}
 \makeatletter
-\def\maxwidth{\ifdim\Gin@nat@width>\linewidth\linewidth\else\Gin@nat@width\fi}
-\def\maxheight{\ifdim\Gin@nat@height>\textheight\textheight\else\Gin@nat@height\fi}
-\makeatother
-% Scale images if necessary, so that they will not overflow the page
-% margins by default, and it is still possible to overwrite the defaults
-% using explicit options in \includegraphics[width, height, ...]{}
-\setkeys{Gin}{width=\maxwidth,height=\maxheight,keepaspectratio}
+\newsavebox\pandoc@box
+\newcommand*\pandocbounded[1]{% scales image to fit in text height/width
+  \sbox\pandoc@box{#1}%
+  \Gscale@div\@tempa{\textheight}{\dimexpr\ht\pandoc@box+\dp\pandoc@box\relax}%
+  \Gscale@div\@tempb{\linewidth}{\wd\pandoc@box}%
+  \ifdim\@tempb\p@<\@tempa\p@\let\@tempa\@tempb\fi% select the smaller of both
+  \ifdim\@tempa\p@<\p@\scalebox{\@tempa}{\usebox\pandoc@box}%
+  \else\usebox{\pandoc@box}%
+  \fi%
+}
 % Set default figure placement to htbp
-\makeatletter
 \def\fps@figure{htbp}
 \makeatother
 \setlength{\emergencystretch}{3em} % prevent overfull lines
@@ -66,9 +68,6 @@
 \setcounter{secnumdepth}{-\maxdimen} % remove section numbering
 \usepackage{fontspec}
 \setmainfont{NanumGothic}
-\ifLuaTeX
-  \usepackage{selnolig}  % disable illegal ligatures
-\fi
 \usepackage{bookmark}
 \IfFileExists{xurl.sty}{\usepackage{xurl}}{} % add URL line breaks if available
 \urlstyle{same}
@@ -80,7 +79,7 @@
 
 \title{Quiz 250310}
 \author{coop711}
-\date{2025-04-26 07:45:05}
+\date{2025-06-06 14:31:12}
 
 \begin{document}
 \maketitle
@@ -106,10 +105,10 @@ Q7에서는 같은 눈속임 그래프인데 원형그래프의 각도를 속일
 사람들}\label{red-blackuxc744-uxc798uxbabb-uxd45cuxc2dcuxd55c-uxc0acuxb78cuxb4e4}
 
 \begin{longtable}[]{@{}
-  >{\centering\arraybackslash}p{(\columnwidth - 6\tabcolsep) * \real{0.3056}}
-  >{\centering\arraybackslash}p{(\columnwidth - 6\tabcolsep) * \real{0.1528}}
-  >{\centering\arraybackslash}p{(\columnwidth - 6\tabcolsep) * \real{0.2083}}
-  >{\centering\arraybackslash}p{(\columnwidth - 6\tabcolsep) * \real{0.2083}}@{}}
+  >{\centering\arraybackslash}p{(\linewidth - 6\tabcolsep) * \real{0.3056}}
+  >{\centering\arraybackslash}p{(\linewidth - 6\tabcolsep) * \real{0.1528}}
+  >{\centering\arraybackslash}p{(\linewidth - 6\tabcolsep) * \real{0.2083}}
+  >{\centering\arraybackslash}p{(\linewidth - 6\tabcolsep) * \real{0.2083}}@{}}
 \toprule\noalign{}
 \begin{minipage}[b]{\linewidth}\centering
 제출시간
@@ -148,12 +147,13 @@ Q7에서는 같은 눈속임 그래프인데 원형그래프의 각도를 속일
 2025-03-23 11:51:35 & 20242585 & Red & Black \\
 2025-03-23 14:27:48 & 20243513 & Black & Red \\
 2025-03-23 19:53:42 & 20227107 & Red & Black \\
+2025-03-23 20:12:51 & 20241713 & Black & Red \\
 \end{longtable}
 
 \begin{longtable}[]{@{}
-  >{\raggedright\arraybackslash}p{(\columnwidth - 4\tabcolsep) * \real{0.3611}}
-  >{\centering\arraybackslash}p{(\columnwidth - 4\tabcolsep) * \real{0.2778}}
-  >{\centering\arraybackslash}p{(\columnwidth - 4\tabcolsep) * \real{0.3056}}@{}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.3611}}
+  >{\centering\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.2778}}
+  >{\centering\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.3056}}@{}}
 \toprule\noalign{}
 \begin{minipage}[b]{\linewidth}\raggedright
 ~
@@ -167,38 +167,38 @@ Black(구글예습퀴즈)
 \bottomrule\noalign{}
 \endlastfoot
 \textbf{Red(랜덤화출석부)} & 268 & 12 \\
-\textbf{Black(랜덤화출석부)} & 12 & 269 \\
-\textbf{계} & 280 & 281 \\
+\textbf{Black(랜덤화출석부)} & 13 & 269 \\
+\textbf{계} & 281 & 281 \\
 \end{longtable}
 
 랜덤화출석부에 있는 Red, Black 과 실제 구글설문에 올린 Red, Black 이
-다른 사람들의 수효는 24명입니다.
+다른 사람들의 수효는 25명입니다.
 
 Red를 Black 이라고 한 사람이 12명, Black 을 Red 라고 한 사람이
-12명입니다.
+13명입니다.
 
 두 가지 방법으로 분석합니다.
 
-우선 Red, Black 을 잘못 선택한 24명을 랜덤하게 둘로 나누면 어느 한 쪽
-집단에 들어갈 기대인원은 24명을 둘로 나눈 12(명)이고, 표준오차는 24의
-제곱근에 1/2을 곱해 준 2.4명이 됩니다.
+우선 Red, Black 을 잘못 선택한 25명을 랜덤하게 둘로 나누면 어느 한 쪽
+집단에 들어갈 기대인원은 25명을 둘로 나눈 12.5(명)이고, 표준오차는 25의
+제곱근에 1/2을 곱해 준 2.5명이 됩니다.
 
 실제로 Red를 Black 이라고 한 사람수, 12명이나 Black 을 Red 라고 한
-사람수, 12명은 기대인원으로부터 표준오차 범위 안에 아주 잘 들어갑니다.
+사람수, 13명은 기대인원으로부터 표준오차 범위 안에 아주 잘 들어갑니다.
 
 두 번째 분석 방법은 확률을 계산해 보는 것입니다.
 
-Red, Black 을 잘못 선택한 24명을 랜덤하게 둘로 나눌 때, 실제로 관찰된
-12명 이상이나 12명이하로 잘못 선택한 사람수가 나올 가능성은 얼마나
+Red, Black 을 잘못 선택한 25명을 랜덤하게 둘로 나눌 때, 실제로 관찰된
+13명 이상이나 12명이하로 잘못 선택한 사람수가 나올 가능성은 얼마나
 되는가 입니다.
 
 이 경우 공평한 동전던지기를 확률 법칙으로 표현한 이항분포로부터 계산할
 수 있습니다.
 
-시행횟수가 24이고 한 번 시행에서 성공확률이 1/2 인 이항분포에서
-성공횟수가 12이하이거나 12이상을 관찰할 확률은 1.161입니다.
+시행횟수가 25이고 한 번 시행에서 성공확률이 1/2 인 이항분포에서
+성공횟수가 12이하이거나 13이상을 관찰할 확률은 1입니다.
 
-공평한 동전 던지기에서 앞면이 12개 이하 나오는 확률은 12개 이상 나오는
+공평한 동전 던지기에서 앞면이 12개 이하 나오는 확률은 13개 이상 나오는
 확률과 같기 때문에 사실상 한쪽만 계산해서 2배 해 주면 됩니다.
 
 이 값을 p-value 라고 하는데, p-value가 0.05보다 작을 때
@@ -221,11 +221,11 @@ Red, Black 을 잘못 선택한 24명을 랜덤하게 둘로 나눌 때, 실제�
 \subsubsection{응답인원의 Red,
 Black}\label{uxc751uxb2f5uxc778uxc6d0uxc758-red-black}
 
-Red 로 응답한 인원은 280명, Black 에 응답한 인원은 281명입니다.
+Red 로 응답한 인원은 281명, Black 에 응답한 인원은 281명입니다.
 
-전체 응답인원 561 명을 랜덤하게 둘로 나눌 때 어느 한 쪽의 기대인원은
-전체 응답인원의 절반인 280.5명이고, 표준오차는 전체 응답인원의 제곱근에
-1/2을 곱해 준 11.8 명입니다.
+전체 응답인원 562 명을 랜덤하게 둘로 나눌 때 어느 한 쪽의 기대인원은
+전체 응답인원의 절반인 281명이고, 표준오차는 전체 응답인원의 제곱근에
+1/2을 곱해 준 11.9 명입니다.
 
 따라서 Red, Black 각 그룹에 관찰된 인원은 기대인원으로부터 표준오차
 범위, 혹은 두배의 표준오차 범위 안에 들어갑니다.
@@ -238,13 +238,13 @@ Red 로 응답한 인원은 280명, Black 에 응답한 인원은 281명입니�
 \subsubsection{관자(집계표)}\label{uxad00uxc790uxc9d1uxacc4uxd45c}
 
 \begin{longtable}[]{@{}
-  >{\raggedright\arraybackslash}p{(\columnwidth - 12\tabcolsep) * \real{0.1667}}
-  >{\centering\arraybackslash}p{(\columnwidth - 12\tabcolsep) * \real{0.0972}}
-  >{\centering\arraybackslash}p{(\columnwidth - 12\tabcolsep) * \real{0.0972}}
-  >{\centering\arraybackslash}p{(\columnwidth - 12\tabcolsep) * \real{0.0972}}
-  >{\centering\arraybackslash}p{(\columnwidth - 12\tabcolsep) * \real{0.0972}}
-  >{\centering\arraybackslash}p{(\columnwidth - 12\tabcolsep) * \real{0.0972}}
-  >{\centering\arraybackslash}p{(\columnwidth - 12\tabcolsep) * \real{0.0972}}@{}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 12\tabcolsep) * \real{0.1667}}
+  >{\centering\arraybackslash}p{(\linewidth - 12\tabcolsep) * \real{0.0972}}
+  >{\centering\arraybackslash}p{(\linewidth - 12\tabcolsep) * \real{0.0972}}
+  >{\centering\arraybackslash}p{(\linewidth - 12\tabcolsep) * \real{0.0972}}
+  >{\centering\arraybackslash}p{(\linewidth - 12\tabcolsep) * \real{0.0972}}
+  >{\centering\arraybackslash}p{(\linewidth - 12\tabcolsep) * \real{0.0972}}
+  >{\centering\arraybackslash}p{(\linewidth - 12\tabcolsep) * \real{0.0972}}@{}}
 \toprule\noalign{}
 \begin{minipage}[b]{\linewidth}\raggedright
 ~
@@ -271,9 +271,9 @@ Red 로 응답한 인원은 280명, Black 에 응답한 인원은 281명입니�
 \end{longtable}
 
 \begin{longtable}[]{@{}
-  >{\raggedleft\arraybackslash}p{(\columnwidth - 4\tabcolsep) * \real{0.2361}}
-  >{\raggedleft\arraybackslash}p{(\columnwidth - 4\tabcolsep) * \real{0.0694}}
-  >{\raggedleft\arraybackslash}p{(\columnwidth - 4\tabcolsep) * \real{0.1389}}@{}}
+  >{\raggedleft\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.2361}}
+  >{\raggedleft\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.0694}}
+  >{\raggedleft\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.1389}}@{}}
 \caption{Pearson's Chi-squared test with simulated p-value (based on
 2000 replicates): \texttt{.}}\tabularnewline
 \toprule\noalign{}
@@ -298,13 +298,13 @@ P value
 \endhead
 \bottomrule\noalign{}
 \endlastfoot
-9.064 & NA & 0.05097 \\
+9.064 & NA & 0.05847 \\
 \end{longtable}
 
 Q1의 집계 결과가 Red, Black 간에 통계적으로 유의한 차이가 있는지
 알아보기 위하여 카이제곱 테스트를 수행하였습니다.
 
-그 결과 카이제곱 통계량은 9.06, 자유도는 NA , p-value 는 0.0510이므로
+그 결과 카이제곱 통계량은 9.06, 자유도는 NA , p-value 는 0.0585이므로
 Red, Black 간에 통계적으로 유의한 차이를 보이지 않습니다.
 
 실제로 닮은 게 느껴집니까?
@@ -312,12 +312,12 @@ Red, Black 간에 통계적으로 유의한 차이를 보이지 않습니다.
 \subsubsection{관자(\%)}\label{uxad00uxc790}
 
 \begin{longtable}[]{@{}
-  >{\centering\arraybackslash}p{(\columnwidth - 10\tabcolsep) * \real{0.0972}}
-  >{\centering\arraybackslash}p{(\columnwidth - 10\tabcolsep) * \real{0.0972}}
-  >{\centering\arraybackslash}p{(\columnwidth - 10\tabcolsep) * \real{0.0972}}
-  >{\centering\arraybackslash}p{(\columnwidth - 10\tabcolsep) * \real{0.0972}}
-  >{\centering\arraybackslash}p{(\columnwidth - 10\tabcolsep) * \real{0.0972}}
-  >{\centering\arraybackslash}p{(\columnwidth - 10\tabcolsep) * \real{0.1111}}@{}}
+  >{\centering\arraybackslash}p{(\linewidth - 10\tabcolsep) * \real{0.0972}}
+  >{\centering\arraybackslash}p{(\linewidth - 10\tabcolsep) * \real{0.0972}}
+  >{\centering\arraybackslash}p{(\linewidth - 10\tabcolsep) * \real{0.0972}}
+  >{\centering\arraybackslash}p{(\linewidth - 10\tabcolsep) * \real{0.0972}}
+  >{\centering\arraybackslash}p{(\linewidth - 10\tabcolsep) * \real{0.0972}}
+  >{\centering\arraybackslash}p{(\linewidth - 10\tabcolsep) * \real{0.1111}}@{}}
 \toprule\noalign{}
 \begin{minipage}[b]{\linewidth}\centering
 공자
@@ -350,13 +350,13 @@ Red, Black 간에 통계적으로 유의한 차이를 보이지 않습니다.
 중요성(집계표)}\label{uxd1b5uxacc4uxc758-uxc911uxc694uxc131uxc9d1uxacc4uxd45c}
 
 \begin{longtable}[]{@{}
-  >{\raggedright\arraybackslash}p{(\columnwidth - 12\tabcolsep) * \real{0.1062}}
-  >{\centering\arraybackslash}p{(\columnwidth - 12\tabcolsep) * \real{0.2035}}
-  >{\centering\arraybackslash}p{(\columnwidth - 12\tabcolsep) * \real{0.1858}}
-  >{\centering\arraybackslash}p{(\columnwidth - 12\tabcolsep) * \real{0.0973}}
-  >{\centering\arraybackslash}p{(\columnwidth - 12\tabcolsep) * \real{0.1593}}
-  >{\centering\arraybackslash}p{(\columnwidth - 12\tabcolsep) * \real{0.1947}}
-  >{\centering\arraybackslash}p{(\columnwidth - 12\tabcolsep) * \real{0.0531}}@{}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 12\tabcolsep) * \real{0.1062}}
+  >{\centering\arraybackslash}p{(\linewidth - 12\tabcolsep) * \real{0.2035}}
+  >{\centering\arraybackslash}p{(\linewidth - 12\tabcolsep) * \real{0.1858}}
+  >{\centering\arraybackslash}p{(\linewidth - 12\tabcolsep) * \real{0.0973}}
+  >{\centering\arraybackslash}p{(\linewidth - 12\tabcolsep) * \real{0.1593}}
+  >{\centering\arraybackslash}p{(\linewidth - 12\tabcolsep) * \real{0.1947}}
+  >{\centering\arraybackslash}p{(\linewidth - 12\tabcolsep) * \real{0.0531}}@{}}
 \toprule\noalign{}
 \begin{minipage}[b]{\linewidth}\raggedright
 ~
@@ -383,9 +383,9 @@ Red, Black 간에 통계적으로 유의한 차이를 보이지 않습니다.
 \end{longtable}
 
 \begin{longtable}[]{@{}
-  >{\raggedleft\arraybackslash}p{(\columnwidth - 4\tabcolsep) * \real{0.2361}}
-  >{\raggedleft\arraybackslash}p{(\columnwidth - 4\tabcolsep) * \real{0.0694}}
-  >{\raggedleft\arraybackslash}p{(\columnwidth - 4\tabcolsep) * \real{0.1389}}@{}}
+  >{\raggedleft\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.2361}}
+  >{\raggedleft\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.0694}}
+  >{\raggedleft\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.1389}}@{}}
 \caption{Pearson's Chi-squared test with simulated p-value (based on
 2000 replicates): \texttt{.}}\tabularnewline
 \toprule\noalign{}
@@ -410,13 +410,13 @@ P value
 \endhead
 \bottomrule\noalign{}
 \endlastfoot
-2.056 & NA & 0.6827 \\
+2.056 & NA & 0.6747 \\
 \end{longtable}
 
 Q2의 집계 결과가 Red, Black 간에 통계적으로 유의한 차이가 있는지
 알아보기 위하여 카이제곱 테스트를 수행하였습니다.
 
-그 결과 카이제곱 통계량은 2.056, 자유도는 NA, p-value 는 0.6827이므로
+그 결과 카이제곱 통계량은 2.056, 자유도는 NA, p-value 는 0.6747이므로
 Red, Black 간에 통계적으로 유의한 차이를 보이지 않습니다.
 
 실제로 닮은 게 느껴집니까?
@@ -425,12 +425,12 @@ Red, Black 간에 통계적으로 유의한 차이를 보이지 않습니다.
 중요성(\%)}\label{uxd1b5uxacc4uxc758-uxc911uxc694uxc131}
 
 \begin{longtable}[]{@{}
-  >{\centering\arraybackslash}p{(\columnwidth - 10\tabcolsep) * \real{0.2212}}
-  >{\centering\arraybackslash}p{(\columnwidth - 10\tabcolsep) * \real{0.2019}}
-  >{\centering\arraybackslash}p{(\columnwidth - 10\tabcolsep) * \real{0.1058}}
-  >{\centering\arraybackslash}p{(\columnwidth - 10\tabcolsep) * \real{0.1731}}
-  >{\centering\arraybackslash}p{(\columnwidth - 10\tabcolsep) * \real{0.2115}}
-  >{\centering\arraybackslash}p{(\columnwidth - 10\tabcolsep) * \real{0.0865}}@{}}
+  >{\centering\arraybackslash}p{(\linewidth - 10\tabcolsep) * \real{0.2212}}
+  >{\centering\arraybackslash}p{(\linewidth - 10\tabcolsep) * \real{0.2019}}
+  >{\centering\arraybackslash}p{(\linewidth - 10\tabcolsep) * \real{0.1058}}
+  >{\centering\arraybackslash}p{(\linewidth - 10\tabcolsep) * \real{0.1731}}
+  >{\centering\arraybackslash}p{(\linewidth - 10\tabcolsep) * \real{0.2115}}
+  >{\centering\arraybackslash}p{(\linewidth - 10\tabcolsep) * \real{0.0865}}@{}}
 \toprule\noalign{}
 \begin{minipage}[b]{\linewidth}\centering
 절대로 중요하지 않다
@@ -463,12 +463,12 @@ Red, Black 간에 통계적으로 유의한 차이를 보이지 않습니다.
 시기(집계표)}\label{uxc0dduxc0b0uxac00uxb2a5uxc778uxad6c-uxac10uxc18c-uxc2dcuxae30uxc9d1uxacc4uxd45c}
 
 \begin{longtable}[]{@{}
-  >{\raggedright\arraybackslash}p{(\columnwidth - 10\tabcolsep) * \real{0.1667}}
-  >{\raggedleft\arraybackslash}p{(\columnwidth - 10\tabcolsep) * \real{0.0972}}
-  >{\raggedleft\arraybackslash}p{(\columnwidth - 10\tabcolsep) * \real{0.0972}}
-  >{\raggedleft\arraybackslash}p{(\columnwidth - 10\tabcolsep) * \real{0.0972}}
-  >{\raggedleft\arraybackslash}p{(\columnwidth - 10\tabcolsep) * \real{0.0972}}
-  >{\centering\arraybackslash}p{(\columnwidth - 10\tabcolsep) * \real{0.0972}}@{}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 10\tabcolsep) * \real{0.1667}}
+  >{\raggedleft\arraybackslash}p{(\linewidth - 10\tabcolsep) * \real{0.0972}}
+  >{\raggedleft\arraybackslash}p{(\linewidth - 10\tabcolsep) * \real{0.0972}}
+  >{\raggedleft\arraybackslash}p{(\linewidth - 10\tabcolsep) * \real{0.0972}}
+  >{\raggedleft\arraybackslash}p{(\linewidth - 10\tabcolsep) * \real{0.0972}}
+  >{\centering\arraybackslash}p{(\linewidth - 10\tabcolsep) * \real{0.0972}}@{}}
 \toprule\noalign{}
 \begin{minipage}[b]{\linewidth}\raggedright
 ~
@@ -493,9 +493,9 @@ Red, Black 간에 통계적으로 유의한 차이를 보이지 않습니다.
 \end{longtable}
 
 \begin{longtable}[]{@{}
-  >{\raggedleft\arraybackslash}p{(\columnwidth - 4\tabcolsep) * \real{0.2361}}
-  >{\raggedleft\arraybackslash}p{(\columnwidth - 4\tabcolsep) * \real{0.0694}}
-  >{\raggedleft\arraybackslash}p{(\columnwidth - 4\tabcolsep) * \real{0.1389}}@{}}
+  >{\raggedleft\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.2361}}
+  >{\raggedleft\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.0694}}
+  >{\raggedleft\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.1389}}@{}}
 \caption{Pearson's Chi-squared test: \texttt{.}}\tabularnewline
 \toprule\noalign{}
 \begin{minipage}[b]{\linewidth}\raggedleft
@@ -534,11 +534,11 @@ Red, Black 간에 통계적으로 유의한 차이를 보이지 않습니다.
 시기(\%)}\label{uxc0dduxc0b0uxac00uxb2a5uxc778uxad6c-uxac10uxc18c-uxc2dcuxae30}
 
 \begin{longtable}[]{@{}
-  >{\raggedleft\arraybackslash}p{(\columnwidth - 8\tabcolsep) * \real{0.0972}}
-  >{\raggedleft\arraybackslash}p{(\columnwidth - 8\tabcolsep) * \real{0.0972}}
-  >{\raggedleft\arraybackslash}p{(\columnwidth - 8\tabcolsep) * \real{0.0972}}
-  >{\raggedleft\arraybackslash}p{(\columnwidth - 8\tabcolsep) * \real{0.0972}}
-  >{\centering\arraybackslash}p{(\columnwidth - 8\tabcolsep) * \real{0.1111}}@{}}
+  >{\raggedleft\arraybackslash}p{(\linewidth - 8\tabcolsep) * \real{0.0972}}
+  >{\raggedleft\arraybackslash}p{(\linewidth - 8\tabcolsep) * \real{0.0972}}
+  >{\raggedleft\arraybackslash}p{(\linewidth - 8\tabcolsep) * \real{0.0972}}
+  >{\raggedleft\arraybackslash}p{(\linewidth - 8\tabcolsep) * \real{0.0972}}
+  >{\centering\arraybackslash}p{(\linewidth - 8\tabcolsep) * \real{0.1111}}@{}}
 \toprule\noalign{}
 \begin{minipage}[b]{\linewidth}\raggedleft
 2012
@@ -569,12 +569,12 @@ Red, Black 간에 통계적으로 유의한 차이를 보이지 않습니다.
 시기(집계표)}\label{uxcd1duxc778uxad6c-uxcd5cuxb300-uxc2dcuxae30uxc9d1uxacc4uxd45c}
 
 \begin{longtable}[]{@{}
-  >{\raggedright\arraybackslash}p{(\columnwidth - 10\tabcolsep) * \real{0.1667}}
-  >{\raggedleft\arraybackslash}p{(\columnwidth - 10\tabcolsep) * \real{0.0972}}
-  >{\raggedleft\arraybackslash}p{(\columnwidth - 10\tabcolsep) * \real{0.0972}}
-  >{\raggedleft\arraybackslash}p{(\columnwidth - 10\tabcolsep) * \real{0.0972}}
-  >{\raggedleft\arraybackslash}p{(\columnwidth - 10\tabcolsep) * \real{0.0972}}
-  >{\centering\arraybackslash}p{(\columnwidth - 10\tabcolsep) * \real{0.0972}}@{}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 10\tabcolsep) * \real{0.1667}}
+  >{\raggedleft\arraybackslash}p{(\linewidth - 10\tabcolsep) * \real{0.0972}}
+  >{\raggedleft\arraybackslash}p{(\linewidth - 10\tabcolsep) * \real{0.0972}}
+  >{\raggedleft\arraybackslash}p{(\linewidth - 10\tabcolsep) * \real{0.0972}}
+  >{\raggedleft\arraybackslash}p{(\linewidth - 10\tabcolsep) * \real{0.0972}}
+  >{\centering\arraybackslash}p{(\linewidth - 10\tabcolsep) * \real{0.0972}}@{}}
 \toprule\noalign{}
 \begin{minipage}[b]{\linewidth}\raggedright
 ~
@@ -599,9 +599,9 @@ Red, Black 간에 통계적으로 유의한 차이를 보이지 않습니다.
 \end{longtable}
 
 \begin{longtable}[]{@{}
-  >{\raggedleft\arraybackslash}p{(\columnwidth - 4\tabcolsep) * \real{0.2361}}
-  >{\raggedleft\arraybackslash}p{(\columnwidth - 4\tabcolsep) * \real{0.0694}}
-  >{\raggedleft\arraybackslash}p{(\columnwidth - 4\tabcolsep) * \real{0.1667}}@{}}
+  >{\raggedleft\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.2361}}
+  >{\raggedleft\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.0694}}
+  >{\raggedleft\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.1667}}@{}}
 \caption{Pearson's Chi-squared test with simulated p-value (based on
 2000 replicates): \texttt{.}}\tabularnewline
 \toprule\noalign{}
@@ -626,24 +626,24 @@ P value
 \endhead
 \bottomrule\noalign{}
 \endlastfoot
-8.269 & NA & 0.03698 * \\
+8.269 & NA & 0.03148 * \\
 \end{longtable}
 
 Q4의 집계 결과가 Red, Black 간에 통계적으로 유의한 차이가 있는지
 알아보기 위하여 카이제곱 테스트를 수행하였습니다.
 
-그 결과 카이제곱 통계량은 8.269, 자유도는 NA, p-value 는 0.0370이므로
+그 결과 카이제곱 통계량은 8.269, 자유도는 NA, p-value 는 0.0315이므로
 Red, Black 간에 통계적으로 유의한 차이를 보이고 있습니다.
 
 \subsubsection{총인구 최대
 시기(\%)}\label{uxcd1duxc778uxad6c-uxcd5cuxb300-uxc2dcuxae30}
 
 \begin{longtable}[]{@{}
-  >{\raggedleft\arraybackslash}p{(\columnwidth - 8\tabcolsep) * \real{0.0972}}
-  >{\raggedleft\arraybackslash}p{(\columnwidth - 8\tabcolsep) * \real{0.0972}}
-  >{\raggedleft\arraybackslash}p{(\columnwidth - 8\tabcolsep) * \real{0.0972}}
-  >{\raggedleft\arraybackslash}p{(\columnwidth - 8\tabcolsep) * \real{0.0972}}
-  >{\centering\arraybackslash}p{(\columnwidth - 8\tabcolsep) * \real{0.1111}}@{}}
+  >{\raggedleft\arraybackslash}p{(\linewidth - 8\tabcolsep) * \real{0.0972}}
+  >{\raggedleft\arraybackslash}p{(\linewidth - 8\tabcolsep) * \real{0.0972}}
+  >{\raggedleft\arraybackslash}p{(\linewidth - 8\tabcolsep) * \real{0.0972}}
+  >{\raggedleft\arraybackslash}p{(\linewidth - 8\tabcolsep) * \real{0.0972}}
+  >{\centering\arraybackslash}p{(\linewidth - 8\tabcolsep) * \real{0.1111}}@{}}
 \toprule\noalign{}
 \begin{minipage}[b]{\linewidth}\raggedleft
 2018
@@ -674,12 +674,12 @@ Red, Black 간에 통계적으로 유의한 차이를 보이고 있습니다.
 지역(집계표)}\label{uxc18cuxba78uxc704uxd5d8-uxb2e8uxacc4-uxac1cuxc120-uxc9c0uxc5eduxc9d1uxacc4uxd45c}
 
 \begin{longtable}[]{@{}
-  >{\raggedright\arraybackslash}p{(\columnwidth - 10\tabcolsep) * \real{0.1667}}
-  >{\centering\arraybackslash}p{(\columnwidth - 10\tabcolsep) * \real{0.0972}}
-  >{\centering\arraybackslash}p{(\columnwidth - 10\tabcolsep) * \real{0.0972}}
-  >{\centering\arraybackslash}p{(\columnwidth - 10\tabcolsep) * \real{0.0972}}
-  >{\centering\arraybackslash}p{(\columnwidth - 10\tabcolsep) * \real{0.0972}}
-  >{\centering\arraybackslash}p{(\columnwidth - 10\tabcolsep) * \real{0.0972}}@{}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 10\tabcolsep) * \real{0.1667}}
+  >{\centering\arraybackslash}p{(\linewidth - 10\tabcolsep) * \real{0.0972}}
+  >{\centering\arraybackslash}p{(\linewidth - 10\tabcolsep) * \real{0.0972}}
+  >{\centering\arraybackslash}p{(\linewidth - 10\tabcolsep) * \real{0.0972}}
+  >{\centering\arraybackslash}p{(\linewidth - 10\tabcolsep) * \real{0.0972}}
+  >{\centering\arraybackslash}p{(\linewidth - 10\tabcolsep) * \real{0.0972}}@{}}
 \toprule\noalign{}
 \begin{minipage}[b]{\linewidth}\raggedright
 ~
@@ -704,9 +704,9 @@ Red, Black 간에 통계적으로 유의한 차이를 보이고 있습니다.
 \end{longtable}
 
 \begin{longtable}[]{@{}
-  >{\raggedleft\arraybackslash}p{(\columnwidth - 4\tabcolsep) * \real{0.2361}}
-  >{\raggedleft\arraybackslash}p{(\columnwidth - 4\tabcolsep) * \real{0.0694}}
-  >{\raggedleft\arraybackslash}p{(\columnwidth - 4\tabcolsep) * \real{0.1389}}@{}}
+  >{\raggedleft\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.2361}}
+  >{\raggedleft\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.0694}}
+  >{\raggedleft\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.1389}}@{}}
 \caption{Pearson's Chi-squared test with simulated p-value (based on
 2000 replicates): \texttt{.}}\tabularnewline
 \toprule\noalign{}
@@ -746,11 +746,11 @@ Red, Black 간에 통계적으로 유의한 차이를 보이지 않습니다.
 지역(\%)}\label{uxc18cuxba78uxc704uxd5d8-uxb2e8uxacc4-uxac1cuxc120-uxc9c0uxc5ed}
 
 \begin{longtable}[]{@{}
-  >{\centering\arraybackslash}p{(\columnwidth - 8\tabcolsep) * \real{0.0972}}
-  >{\centering\arraybackslash}p{(\columnwidth - 8\tabcolsep) * \real{0.0972}}
-  >{\centering\arraybackslash}p{(\columnwidth - 8\tabcolsep) * \real{0.0972}}
-  >{\centering\arraybackslash}p{(\columnwidth - 8\tabcolsep) * \real{0.0972}}
-  >{\centering\arraybackslash}p{(\columnwidth - 8\tabcolsep) * \real{0.1111}}@{}}
+  >{\centering\arraybackslash}p{(\linewidth - 8\tabcolsep) * \real{0.0972}}
+  >{\centering\arraybackslash}p{(\linewidth - 8\tabcolsep) * \real{0.0972}}
+  >{\centering\arraybackslash}p{(\linewidth - 8\tabcolsep) * \real{0.0972}}
+  >{\centering\arraybackslash}p{(\linewidth - 8\tabcolsep) * \real{0.0972}}
+  >{\centering\arraybackslash}p{(\linewidth - 8\tabcolsep) * \real{0.1111}}@{}}
 \toprule\noalign{}
 \begin{minipage}[b]{\linewidth}\centering
 서울
@@ -781,12 +781,12 @@ Red, Black 간에 통계적으로 유의한 차이를 보이지 않습니다.
 합계출산율(집계표)}\label{uxc870uxcd9cuxc0dduxb960uxacfc-uxd569uxacc4uxcd9cuxc0b0uxc728uxc9d1uxacc4uxd45c}
 
 \begin{longtable}[]{@{}
-  >{\raggedright\arraybackslash}p{(\columnwidth - 10\tabcolsep) * \real{0.0839}}
-  >{\centering\arraybackslash}p{(\columnwidth - 10\tabcolsep) * \real{0.2308}}
-  >{\centering\arraybackslash}p{(\columnwidth - 10\tabcolsep) * \real{0.1888}}
-  >{\centering\arraybackslash}p{(\columnwidth - 10\tabcolsep) * \real{0.2308}}
-  >{\centering\arraybackslash}p{(\columnwidth - 10\tabcolsep) * \real{0.2238}}
-  >{\centering\arraybackslash}p{(\columnwidth - 10\tabcolsep) * \real{0.0420}}@{}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 10\tabcolsep) * \real{0.0839}}
+  >{\centering\arraybackslash}p{(\linewidth - 10\tabcolsep) * \real{0.2308}}
+  >{\centering\arraybackslash}p{(\linewidth - 10\tabcolsep) * \real{0.1888}}
+  >{\centering\arraybackslash}p{(\linewidth - 10\tabcolsep) * \real{0.2308}}
+  >{\centering\arraybackslash}p{(\linewidth - 10\tabcolsep) * \real{0.2238}}
+  >{\centering\arraybackslash}p{(\linewidth - 10\tabcolsep) * \real{0.0420}}@{}}
 \toprule\noalign{}
 \begin{minipage}[b]{\linewidth}\raggedright
 ~
@@ -811,9 +811,9 @@ Red, Black 간에 통계적으로 유의한 차이를 보이지 않습니다.
 \end{longtable}
 
 \begin{longtable}[]{@{}
-  >{\raggedleft\arraybackslash}p{(\columnwidth - 4\tabcolsep) * \real{0.2361}}
-  >{\raggedleft\arraybackslash}p{(\columnwidth - 4\tabcolsep) * \real{0.0694}}
-  >{\raggedleft\arraybackslash}p{(\columnwidth - 4\tabcolsep) * \real{0.1667}}@{}}
+  >{\raggedleft\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.2361}}
+  >{\raggedleft\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.0694}}
+  >{\raggedleft\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.1667}}@{}}
 \caption{Pearson's Chi-squared test: \texttt{.}}\tabularnewline
 \toprule\noalign{}
 \begin{minipage}[b]{\linewidth}\raggedleft
@@ -850,11 +850,11 @@ Red, Black 간에 통계적으로 유의한 차이를 보이고 있습니다.
 합계출산율(\%)}\label{uxc870uxcd9cuxc0dduxb960uxacfc-uxd569uxacc4uxcd9cuxc0b0uxc728}
 
 \begin{longtable}[]{@{}
-  >{\centering\arraybackslash}p{(\columnwidth - 8\tabcolsep) * \real{0.2481}}
-  >{\centering\arraybackslash}p{(\columnwidth - 8\tabcolsep) * \real{0.2030}}
-  >{\centering\arraybackslash}p{(\columnwidth - 8\tabcolsep) * \real{0.2481}}
-  >{\centering\arraybackslash}p{(\columnwidth - 8\tabcolsep) * \real{0.2406}}
-  >{\centering\arraybackslash}p{(\columnwidth - 8\tabcolsep) * \real{0.0602}}@{}}
+  >{\centering\arraybackslash}p{(\linewidth - 8\tabcolsep) * \real{0.2481}}
+  >{\centering\arraybackslash}p{(\linewidth - 8\tabcolsep) * \real{0.2030}}
+  >{\centering\arraybackslash}p{(\linewidth - 8\tabcolsep) * \real{0.2481}}
+  >{\centering\arraybackslash}p{(\linewidth - 8\tabcolsep) * \real{0.2406}}
+  >{\centering\arraybackslash}p{(\linewidth - 8\tabcolsep) * \real{0.0602}}@{}}
 \toprule\noalign{}
 \begin{minipage}[b]{\linewidth}\centering
 합계출산율 A : 0.5, B : 0.125, C : 0.25
@@ -902,11 +902,11 @@ Red에는 원형그래프의 각도를 속이고, Black 에는 막대그래프�
 \subsubsection{집계표}\label{uxc9d1uxacc4uxd45c}
 
 \begin{longtable}[]{@{}
-  >{\raggedright\arraybackslash}p{(\columnwidth - 8\tabcolsep) * \real{0.3048}}
-  >{\centering\arraybackslash}p{(\columnwidth - 8\tabcolsep) * \real{0.2190}}
-  >{\centering\arraybackslash}p{(\columnwidth - 8\tabcolsep) * \real{0.2667}}
-  >{\centering\arraybackslash}p{(\columnwidth - 8\tabcolsep) * \real{0.1524}}
-  >{\centering\arraybackslash}p{(\columnwidth - 8\tabcolsep) * \real{0.0571}}@{}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 8\tabcolsep) * \real{0.3048}}
+  >{\centering\arraybackslash}p{(\linewidth - 8\tabcolsep) * \real{0.2190}}
+  >{\centering\arraybackslash}p{(\linewidth - 8\tabcolsep) * \real{0.2667}}
+  >{\centering\arraybackslash}p{(\linewidth - 8\tabcolsep) * \real{0.1524}}
+  >{\centering\arraybackslash}p{(\linewidth - 8\tabcolsep) * \real{0.0571}}@{}}
 \toprule\noalign{}
 \begin{minipage}[b]{\linewidth}\raggedright
 ~
@@ -929,9 +929,9 @@ Red에는 원형그래프의 각도를 속이고, Black 에는 막대그래프�
 \end{longtable}
 
 \begin{longtable}[]{@{}
-  >{\raggedleft\arraybackslash}p{(\columnwidth - 4\tabcolsep) * \real{0.2361}}
-  >{\raggedleft\arraybackslash}p{(\columnwidth - 4\tabcolsep) * \real{0.0694}}
-  >{\raggedleft\arraybackslash}p{(\columnwidth - 4\tabcolsep) * \real{0.2500}}@{}}
+  >{\raggedleft\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.2361}}
+  >{\raggedleft\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.0694}}
+  >{\raggedleft\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.2500}}@{}}
 \caption{Pearson's Chi-squared test: \texttt{.}}\tabularnewline
 \toprule\noalign{}
 \begin{minipage}[b]{\linewidth}\raggedleft
@@ -1002,11 +1002,11 @@ Black은 2017년 대선의 대선주자 여론조사에서 33\%의 지지율을 
 \subsubsection{\% 비교}\label{uxbe44uxad50}
 
 \begin{longtable}[]{@{}
-  >{\raggedright\arraybackslash}p{(\columnwidth - 8\tabcolsep) * \real{0.2991}}
-  >{\centering\arraybackslash}p{(\columnwidth - 8\tabcolsep) * \real{0.2150}}
-  >{\centering\arraybackslash}p{(\columnwidth - 8\tabcolsep) * \real{0.2617}}
-  >{\centering\arraybackslash}p{(\columnwidth - 8\tabcolsep) * \real{0.1495}}
-  >{\centering\arraybackslash}p{(\columnwidth - 8\tabcolsep) * \real{0.0748}}@{}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 8\tabcolsep) * \real{0.2991}}
+  >{\centering\arraybackslash}p{(\linewidth - 8\tabcolsep) * \real{0.2150}}
+  >{\centering\arraybackslash}p{(\linewidth - 8\tabcolsep) * \real{0.2617}}
+  >{\centering\arraybackslash}p{(\linewidth - 8\tabcolsep) * \real{0.1495}}
+  >{\centering\arraybackslash}p{(\linewidth - 8\tabcolsep) * \real{0.0748}}@{}}
 \toprule\noalign{}
 \begin{minipage}[b]{\linewidth}\raggedright
 ~
@@ -1044,7 +1044,7 @@ Black은 2017년 대선의 대선주자 여론조사에서 33\%의 지지율을 
 
 \subsubsection{Mosaic Plot}\label{mosaic-plot}
 
-\includegraphics{quiz250310_Report_v6_files/figure-latex/mosaic plot-1.pdf}
+\pandocbounded{\includegraphics[keepaspectratio]{quiz250310_Report_v6_files/figure-latex/mosaic plot-1.pdf}}
 
 Mosaic Plot 은 이 집계결과를 시각적으로 잘 보여줍니다.
 
@@ -1059,54 +1059,54 @@ Mosaic Plot 은 이 집계결과를 시각적으로 잘 보여줍니다.
 \subsubsection{분포표}\label{uxbd84uxd3ecuxd45c}
 
 \begin{longtable}[]{@{}
-  >{\raggedright\arraybackslash}p{(\columnwidth - 30\tabcolsep) * \real{0.0863}}
-  >{\raggedleft\arraybackslash}p{(\columnwidth - 30\tabcolsep) * \real{0.0576}}
-  >{\raggedleft\arraybackslash}p{(\columnwidth - 30\tabcolsep) * \real{0.0576}}
-  >{\raggedleft\arraybackslash}p{(\columnwidth - 30\tabcolsep) * \real{0.0576}}
-  >{\raggedleft\arraybackslash}p{(\columnwidth - 30\tabcolsep) * \real{0.0576}}
-  >{\raggedleft\arraybackslash}p{(\columnwidth - 30\tabcolsep) * \real{0.0576}}
-  >{\raggedleft\arraybackslash}p{(\columnwidth - 30\tabcolsep) * \real{0.0576}}
-  >{\raggedleft\arraybackslash}p{(\columnwidth - 30\tabcolsep) * \real{0.0576}}
-  >{\raggedleft\arraybackslash}p{(\columnwidth - 30\tabcolsep) * \real{0.0576}}
-  >{\raggedleft\arraybackslash}p{(\columnwidth - 30\tabcolsep) * \real{0.0576}}
-  >{\raggedleft\arraybackslash}p{(\columnwidth - 30\tabcolsep) * \real{0.0647}}
-  >{\raggedleft\arraybackslash}p{(\columnwidth - 30\tabcolsep) * \real{0.0719}}
-  >{\raggedleft\arraybackslash}p{(\columnwidth - 30\tabcolsep) * \real{0.0719}}
-  >{\raggedleft\arraybackslash}p{(\columnwidth - 30\tabcolsep) * \real{0.0719}}
-  >{\raggedleft\arraybackslash}p{(\columnwidth - 30\tabcolsep) * \real{0.0719}}
-  >{\centering\arraybackslash}p{(\columnwidth - 30\tabcolsep) * \real{0.0432}}@{}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 30\tabcolsep) * \real{0.1121}}
+  >{\centering\arraybackslash}p{(\linewidth - 30\tabcolsep) * \real{0.0654}}
+  >{\centering\arraybackslash}p{(\linewidth - 30\tabcolsep) * \real{0.0654}}
+  >{\centering\arraybackslash}p{(\linewidth - 30\tabcolsep) * \real{0.0654}}
+  >{\centering\arraybackslash}p{(\linewidth - 30\tabcolsep) * \real{0.0654}}
+  >{\centering\arraybackslash}p{(\linewidth - 30\tabcolsep) * \real{0.0654}}
+  >{\centering\arraybackslash}p{(\linewidth - 30\tabcolsep) * \real{0.0561}}
+  >{\centering\arraybackslash}p{(\linewidth - 30\tabcolsep) * \real{0.0561}}
+  >{\centering\arraybackslash}p{(\linewidth - 30\tabcolsep) * \real{0.0561}}
+  >{\centering\arraybackslash}p{(\linewidth - 30\tabcolsep) * \real{0.0561}}
+  >{\centering\arraybackslash}p{(\linewidth - 30\tabcolsep) * \real{0.0561}}
+  >{\centering\arraybackslash}p{(\linewidth - 30\tabcolsep) * \real{0.0561}}
+  >{\centering\arraybackslash}p{(\linewidth - 30\tabcolsep) * \real{0.0561}}
+  >{\centering\arraybackslash}p{(\linewidth - 30\tabcolsep) * \real{0.0561}}
+  >{\centering\arraybackslash}p{(\linewidth - 30\tabcolsep) * \real{0.0561}}
+  >{\centering\arraybackslash}p{(\linewidth - 30\tabcolsep) * \real{0.0561}}@{}}
 \caption{일 단위}\tabularnewline
 \toprule\noalign{}
 \begin{minipage}[b]{\linewidth}\raggedright
 ~
-\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedleft
-{[}0,1{]}
-\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedleft
-(1,2{]}
-\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedleft
-(2,3{]}
-\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedleft
-(3,4{]}
-\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedleft
-(4,5{]}
-\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedleft
-(5,6{]}
-\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedleft
-(6,7{]}
-\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedleft
-(7,8{]}
-\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedleft
-(8,9{]}
-\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedleft
-(9,10{]}
-\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedleft
-(10,11{]}
-\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedleft
-(11,12{]}
-\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedleft
-(12,13{]}
-\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedleft
-(13,14{]}
+\end{minipage} & \begin{minipage}[b]{\linewidth}\centering
+14일
+\end{minipage} & \begin{minipage}[b]{\linewidth}\centering
+13일
+\end{minipage} & \begin{minipage}[b]{\linewidth}\centering
+12일
+\end{minipage} & \begin{minipage}[b]{\linewidth}\centering
+11일
+\end{minipage} & \begin{minipage}[b]{\linewidth}\centering
+10일
+\end{minipage} & \begin{minipage}[b]{\linewidth}\centering
+9일
+\end{minipage} & \begin{minipage}[b]{\linewidth}\centering
+8일
+\end{minipage} & \begin{minipage}[b]{\linewidth}\centering
+7일
+\end{minipage} & \begin{minipage}[b]{\linewidth}\centering
+6일
+\end{minipage} & \begin{minipage}[b]{\linewidth}\centering
+5일
+\end{minipage} & \begin{minipage}[b]{\linewidth}\centering
+4일
+\end{minipage} & \begin{minipage}[b]{\linewidth}\centering
+3일
+\end{minipage} & \begin{minipage}[b]{\linewidth}\centering
+2일
+\end{minipage} & \begin{minipage}[b]{\linewidth}\centering
+1일
 \end{minipage} & \begin{minipage}[b]{\linewidth}\centering
 계
 \end{minipage} \\
@@ -1115,34 +1115,34 @@ Mosaic Plot 은 이 집계결과를 시각적으로 잘 보여줍니다.
 \toprule\noalign{}
 \begin{minipage}[b]{\linewidth}\raggedright
 ~
-\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedleft
-{[}0,1{]}
-\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedleft
-(1,2{]}
-\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedleft
-(2,3{]}
-\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedleft
-(3,4{]}
-\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedleft
-(4,5{]}
-\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedleft
-(5,6{]}
-\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedleft
-(6,7{]}
-\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedleft
-(7,8{]}
-\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedleft
-(8,9{]}
-\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedleft
-(9,10{]}
-\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedleft
-(10,11{]}
-\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedleft
-(11,12{]}
-\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedleft
-(12,13{]}
-\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedleft
-(13,14{]}
+\end{minipage} & \begin{minipage}[b]{\linewidth}\centering
+14일
+\end{minipage} & \begin{minipage}[b]{\linewidth}\centering
+13일
+\end{minipage} & \begin{minipage}[b]{\linewidth}\centering
+12일
+\end{minipage} & \begin{minipage}[b]{\linewidth}\centering
+11일
+\end{minipage} & \begin{minipage}[b]{\linewidth}\centering
+10일
+\end{minipage} & \begin{minipage}[b]{\linewidth}\centering
+9일
+\end{minipage} & \begin{minipage}[b]{\linewidth}\centering
+8일
+\end{minipage} & \begin{minipage}[b]{\linewidth}\centering
+7일
+\end{minipage} & \begin{minipage}[b]{\linewidth}\centering
+6일
+\end{minipage} & \begin{minipage}[b]{\linewidth}\centering
+5일
+\end{minipage} & \begin{minipage}[b]{\linewidth}\centering
+4일
+\end{minipage} & \begin{minipage}[b]{\linewidth}\centering
+3일
+\end{minipage} & \begin{minipage}[b]{\linewidth}\centering
+2일
+\end{minipage} & \begin{minipage}[b]{\linewidth}\centering
+1일
 \end{minipage} & \begin{minipage}[b]{\linewidth}\centering
 계
 \end{minipage} \\
@@ -1162,7 +1162,7 @@ Mosaic Plot 은 이 집계결과를 시각적으로 잘 보여줍니다.
 
 첫째, 날마다 고르게 제출하는가?
 
-둘쨰, Red, Black 간에 통계적으로 유의한 차이가 있는가?
+둘째, Red, Black 간에 통계적으로 유의한 차이가 있는가?
 
 각 문제를 살펴보기 위해서는 분포표의 일부분을 대상으로 카이제곱 테스트를
 수행합니다.
@@ -1171,58 +1171,61 @@ Mosaic Plot 은 이 집계결과를 시각적으로 잘 보여줍니다.
 제출하는가?}\label{uxb0a0uxb9c8uxb2e4-uxace0uxb974uxac8c-uxc81cuxcd9cuxd558uxb294uxac00}
 
 \begin{longtable}[]{@{}
-  >{\raggedleft\arraybackslash}p{(\columnwidth - 24\tabcolsep) * \real{0.0708}}
-  >{\raggedleft\arraybackslash}p{(\columnwidth - 24\tabcolsep) * \real{0.0708}}
-  >{\raggedleft\arraybackslash}p{(\columnwidth - 24\tabcolsep) * \real{0.0708}}
-  >{\raggedleft\arraybackslash}p{(\columnwidth - 24\tabcolsep) * \real{0.0708}}
-  >{\raggedleft\arraybackslash}p{(\columnwidth - 24\tabcolsep) * \real{0.0708}}
-  >{\raggedleft\arraybackslash}p{(\columnwidth - 24\tabcolsep) * \real{0.0708}}
-  >{\raggedleft\arraybackslash}p{(\columnwidth - 24\tabcolsep) * \real{0.0708}}
-  >{\raggedleft\arraybackslash}p{(\columnwidth - 24\tabcolsep) * \real{0.0708}}
-  >{\raggedleft\arraybackslash}p{(\columnwidth - 24\tabcolsep) * \real{0.0796}}
-  >{\raggedleft\arraybackslash}p{(\columnwidth - 24\tabcolsep) * \real{0.0885}}
-  >{\raggedleft\arraybackslash}p{(\columnwidth - 24\tabcolsep) * \real{0.0885}}
-  >{\raggedleft\arraybackslash}p{(\columnwidth - 24\tabcolsep) * \real{0.0885}}
-  >{\raggedleft\arraybackslash}p{(\columnwidth - 24\tabcolsep) * \real{0.0885}}@{}}
+  >{\centering\arraybackslash}p{(\linewidth - 26\tabcolsep) * \real{0.0787}}
+  >{\centering\arraybackslash}p{(\linewidth - 26\tabcolsep) * \real{0.0787}}
+  >{\centering\arraybackslash}p{(\linewidth - 26\tabcolsep) * \real{0.0787}}
+  >{\centering\arraybackslash}p{(\linewidth - 26\tabcolsep) * \real{0.0787}}
+  >{\centering\arraybackslash}p{(\linewidth - 26\tabcolsep) * \real{0.0787}}
+  >{\centering\arraybackslash}p{(\linewidth - 26\tabcolsep) * \real{0.0674}}
+  >{\centering\arraybackslash}p{(\linewidth - 26\tabcolsep) * \real{0.0674}}
+  >{\centering\arraybackslash}p{(\linewidth - 26\tabcolsep) * \real{0.0674}}
+  >{\centering\arraybackslash}p{(\linewidth - 26\tabcolsep) * \real{0.0674}}
+  >{\centering\arraybackslash}p{(\linewidth - 26\tabcolsep) * \real{0.0674}}
+  >{\centering\arraybackslash}p{(\linewidth - 26\tabcolsep) * \real{0.0674}}
+  >{\centering\arraybackslash}p{(\linewidth - 26\tabcolsep) * \real{0.0674}}
+  >{\centering\arraybackslash}p{(\linewidth - 26\tabcolsep) * \real{0.0674}}
+  >{\centering\arraybackslash}p{(\linewidth - 26\tabcolsep) * \real{0.0674}}@{}}
 \toprule\noalign{}
-\begin{minipage}[b]{\linewidth}\raggedleft
-(1,2{]}
-\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedleft
-(2,3{]}
-\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedleft
-(3,4{]}
-\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedleft
-(4,5{]}
-\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedleft
-(5,6{]}
-\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedleft
-(6,7{]}
-\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedleft
-(7,8{]}
-\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedleft
-(8,9{]}
-\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedleft
-(9,10{]}
-\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedleft
-(10,11{]}
-\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedleft
-(11,12{]}
-\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedleft
-(12,13{]}
-\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedleft
-(13,14{]}
+\begin{minipage}[b]{\linewidth}\centering
+14일
+\end{minipage} & \begin{minipage}[b]{\linewidth}\centering
+13일
+\end{minipage} & \begin{minipage}[b]{\linewidth}\centering
+12일
+\end{minipage} & \begin{minipage}[b]{\linewidth}\centering
+11일
+\end{minipage} & \begin{minipage}[b]{\linewidth}\centering
+10일
+\end{minipage} & \begin{minipage}[b]{\linewidth}\centering
+9일
+\end{minipage} & \begin{minipage}[b]{\linewidth}\centering
+8일
+\end{minipage} & \begin{minipage}[b]{\linewidth}\centering
+7일
+\end{minipage} & \begin{minipage}[b]{\linewidth}\centering
+6일
+\end{minipage} & \begin{minipage}[b]{\linewidth}\centering
+5일
+\end{minipage} & \begin{minipage}[b]{\linewidth}\centering
+4일
+\end{minipage} & \begin{minipage}[b]{\linewidth}\centering
+3일
+\end{minipage} & \begin{minipage}[b]{\linewidth}\centering
+2일
+\end{minipage} & \begin{minipage}[b]{\linewidth}\centering
+1일
 \end{minipage} \\
 \midrule\noalign{}
 \endhead
 \bottomrule\noalign{}
 \endlastfoot
-28 & 20 & 9 & 18 & 15 & 21 & 94 & 39 & 31 & 41 & 34 & 47 & 55 \\
+111 & 28 & 20 & 9 & 18 & 15 & 21 & 94 & 39 & 31 & 41 & 34 & 47 & 55 \\
 \end{longtable}
 
 \begin{longtable}[]{@{}
-  >{\raggedleft\arraybackslash}p{(\columnwidth - 4\tabcolsep) * \real{0.2361}}
-  >{\raggedleft\arraybackslash}p{(\columnwidth - 4\tabcolsep) * \real{0.0694}}
-  >{\raggedleft\arraybackslash}p{(\columnwidth - 4\tabcolsep) * \real{0.2500}}@{}}
+  >{\raggedleft\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.2361}}
+  >{\raggedleft\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.0694}}
+  >{\raggedleft\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.2500}}@{}}
 \caption{Chi-squared test for given probabilities:
 \texttt{.}}\tabularnewline
 \toprule\noalign{}
@@ -1247,7 +1250,7 @@ P value
 \endhead
 \bottomrule\noalign{}
 \endlastfoot
-170.5 & 12 & 3.764e-30 * * * \\
+281.6 & 13 & 1.685e-52 * * * \\
 \end{longtable}
 
 날마다 고르게 제출하는지 알아 보았습니다.
@@ -1256,14 +1259,14 @@ P value
 
 분포표 만으로도 쉽게 파악할 수 있지만 카이제곱테스트가 명확히 해 줍니다.
 
-카이제곱 통계량은 170.50, 자유도는 12.00, p-value 는 3.8e-30 이므로 결코
+카이제곱 통계량은 281.60, 자유도는 13.00, p-value 는 1.7e-52 이므로 결코
 고르게 제출한다고 말할 수 없겠습니다.
 
 막대그래프로 살펴 보겠습니다.
 
 \subsubsection{막대그래프}\label{uxb9c9uxb300uxadf8uxb798uxd504}
 
-\includegraphics{quiz250310_Report_v6_files/figure-latex/unnamed-chunk-15-1.pdf}
+\pandocbounded{\includegraphics[keepaspectratio]{quiz250310_Report_v6_files/figure-latex/unnamed-chunk-15-1.pdf}}
 
 막대그래프는 총 제출인원 563(명) 중에 111(명), 20(\%)가 마감일에 몰리는
 것을 명확히 보여주고 있습니다.
@@ -1272,64 +1275,67 @@ P value
 닮았는가?}\label{red-black-uxac04uxc5d0-uxb2eeuxc558uxb294uxac00}
 
 \begin{longtable}[]{@{}
-  >{\raggedright\arraybackslash}p{(\columnwidth - 26\tabcolsep) * \real{0.0960}}
-  >{\raggedleft\arraybackslash}p{(\columnwidth - 26\tabcolsep) * \real{0.0640}}
-  >{\raggedleft\arraybackslash}p{(\columnwidth - 26\tabcolsep) * \real{0.0640}}
-  >{\raggedleft\arraybackslash}p{(\columnwidth - 26\tabcolsep) * \real{0.0640}}
-  >{\raggedleft\arraybackslash}p{(\columnwidth - 26\tabcolsep) * \real{0.0640}}
-  >{\raggedleft\arraybackslash}p{(\columnwidth - 26\tabcolsep) * \real{0.0640}}
-  >{\raggedleft\arraybackslash}p{(\columnwidth - 26\tabcolsep) * \real{0.0640}}
-  >{\raggedleft\arraybackslash}p{(\columnwidth - 26\tabcolsep) * \real{0.0640}}
-  >{\raggedleft\arraybackslash}p{(\columnwidth - 26\tabcolsep) * \real{0.0640}}
-  >{\raggedleft\arraybackslash}p{(\columnwidth - 26\tabcolsep) * \real{0.0720}}
-  >{\raggedleft\arraybackslash}p{(\columnwidth - 26\tabcolsep) * \real{0.0800}}
-  >{\raggedleft\arraybackslash}p{(\columnwidth - 26\tabcolsep) * \real{0.0800}}
-  >{\raggedleft\arraybackslash}p{(\columnwidth - 26\tabcolsep) * \real{0.0800}}
-  >{\raggedleft\arraybackslash}p{(\columnwidth - 26\tabcolsep) * \real{0.0800}}@{}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 28\tabcolsep) * \real{0.1188}}
+  >{\centering\arraybackslash}p{(\linewidth - 28\tabcolsep) * \real{0.0693}}
+  >{\centering\arraybackslash}p{(\linewidth - 28\tabcolsep) * \real{0.0693}}
+  >{\centering\arraybackslash}p{(\linewidth - 28\tabcolsep) * \real{0.0693}}
+  >{\centering\arraybackslash}p{(\linewidth - 28\tabcolsep) * \real{0.0693}}
+  >{\centering\arraybackslash}p{(\linewidth - 28\tabcolsep) * \real{0.0693}}
+  >{\centering\arraybackslash}p{(\linewidth - 28\tabcolsep) * \real{0.0594}}
+  >{\centering\arraybackslash}p{(\linewidth - 28\tabcolsep) * \real{0.0594}}
+  >{\centering\arraybackslash}p{(\linewidth - 28\tabcolsep) * \real{0.0594}}
+  >{\centering\arraybackslash}p{(\linewidth - 28\tabcolsep) * \real{0.0594}}
+  >{\centering\arraybackslash}p{(\linewidth - 28\tabcolsep) * \real{0.0594}}
+  >{\centering\arraybackslash}p{(\linewidth - 28\tabcolsep) * \real{0.0594}}
+  >{\centering\arraybackslash}p{(\linewidth - 28\tabcolsep) * \real{0.0594}}
+  >{\centering\arraybackslash}p{(\linewidth - 28\tabcolsep) * \real{0.0594}}
+  >{\centering\arraybackslash}p{(\linewidth - 28\tabcolsep) * \real{0.0594}}@{}}
 \toprule\noalign{}
 \begin{minipage}[b]{\linewidth}\raggedright
 ~
-\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedleft
-(1,2{]}
-\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedleft
-(2,3{]}
-\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedleft
-(3,4{]}
-\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedleft
-(4,5{]}
-\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedleft
-(5,6{]}
-\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedleft
-(6,7{]}
-\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedleft
-(7,8{]}
-\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedleft
-(8,9{]}
-\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedleft
-(9,10{]}
-\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedleft
-(10,11{]}
-\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedleft
-(11,12{]}
-\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedleft
-(12,13{]}
-\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedleft
-(13,14{]}
+\end{minipage} & \begin{minipage}[b]{\linewidth}\centering
+14일
+\end{minipage} & \begin{minipage}[b]{\linewidth}\centering
+13일
+\end{minipage} & \begin{minipage}[b]{\linewidth}\centering
+12일
+\end{minipage} & \begin{minipage}[b]{\linewidth}\centering
+11일
+\end{minipage} & \begin{minipage}[b]{\linewidth}\centering
+10일
+\end{minipage} & \begin{minipage}[b]{\linewidth}\centering
+9일
+\end{minipage} & \begin{minipage}[b]{\linewidth}\centering
+8일
+\end{minipage} & \begin{minipage}[b]{\linewidth}\centering
+7일
+\end{minipage} & \begin{minipage}[b]{\linewidth}\centering
+6일
+\end{minipage} & \begin{minipage}[b]{\linewidth}\centering
+5일
+\end{minipage} & \begin{minipage}[b]{\linewidth}\centering
+4일
+\end{minipage} & \begin{minipage}[b]{\linewidth}\centering
+3일
+\end{minipage} & \begin{minipage}[b]{\linewidth}\centering
+2일
+\end{minipage} & \begin{minipage}[b]{\linewidth}\centering
+1일
 \end{minipage} \\
 \midrule\noalign{}
 \endhead
 \bottomrule\noalign{}
 \endlastfoot
-\textbf{Red} & 17 & 9 & 6 & 12 & 8 & 12 & 51 & 20 & 13 & 21 & 13 & 21 &
-27 \\
-\textbf{Black} & 11 & 11 & 3 & 6 & 7 & 9 & 43 & 19 & 18 & 20 & 21 & 26 &
-28 \\
+\textbf{Red} & 52 & 17 & 9 & 6 & 12 & 8 & 12 & 51 & 20 & 13 & 21 & 13 &
+21 & 27 \\
+\textbf{Black} & 59 & 11 & 11 & 3 & 6 & 7 & 9 & 43 & 19 & 18 & 20 & 21 &
+26 & 28 \\
 \end{longtable}
 
 \begin{longtable}[]{@{}
-  >{\raggedleft\arraybackslash}p{(\columnwidth - 4\tabcolsep) * \real{0.2361}}
-  >{\raggedleft\arraybackslash}p{(\columnwidth - 4\tabcolsep) * \real{0.0694}}
-  >{\raggedleft\arraybackslash}p{(\columnwidth - 4\tabcolsep) * \real{0.1389}}@{}}
+  >{\raggedleft\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.2361}}
+  >{\raggedleft\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.0694}}
+  >{\raggedleft\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.1389}}@{}}
 \caption{Pearson's Chi-squared test: \texttt{.}}\tabularnewline
 \toprule\noalign{}
 \begin{minipage}[b]{\linewidth}\raggedleft
@@ -1353,7 +1359,7 @@ P value
 \endhead
 \bottomrule\noalign{}
 \endlastfoot
-8.812 & 12 & 0.7189 \\
+9.39 & 13 & 0.7429 \\
 \end{longtable}
 
 제출시간의 분포가 Red, Black 간에 닮았는지 알아 보았습니다.
@@ -1361,7 +1367,7 @@ P value
 이번에는 분포표의 첫번째와 두번째 행, '계'열을 제외한 나머지 열에 대해서
 카이제곱테스트를 수행합니다.
 
-카이제곱 통계량은 8.812, 자유도는 12, p-value 는 0.7189 이므로 제출
+카이제곱 통계량은 9.390, 자유도는 13, p-value 는 0.7429 이므로 제출
 시간의 분포는 Red, Black 간에 통계적으로 유의한 차이가 관찰되지
 않습니다.
 
@@ -1371,6 +1377,6 @@ P value
 
 \subsubsection{Mosaic Plot}\label{mosaic-plot-1}
 
-\includegraphics{quiz250310_Report_v6_files/figure-latex/unnamed-chunk-17-1.pdf}
+\pandocbounded{\includegraphics[keepaspectratio]{quiz250310_Report_v6_files/figure-latex/unnamed-chunk-17-1.pdf}}
 
 \end{document}

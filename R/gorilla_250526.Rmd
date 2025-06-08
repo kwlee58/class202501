@@ -22,10 +22,6 @@ panderOptions("table.split.table", Inf)
 options(digits=3)
 ```
 
-<!--
-# Data
--->
-
 ```{r, echo = FALSE, message = FALSE, results='hide'}
 class_roll <- readRDS("./class_roll_250516.RDS")
 gorilla_url <- "https://docs.google.com/spreadsheets/d/1YmoTyLYsf_4ZVTNPuhQoo4EIFaTbNAsL0IyOWArgFlc"
@@ -131,6 +127,8 @@ gorilla_wrong_ids <- gorilla_wrong_ids %>%
     id == "20246205" ~ "20246295",
     id == "2242432" ~ "20242432",
     id == "2024414" ~ "20244144",
+    id == "20242687" ~ "20242587",
+    id == "2019405" ~ "20196405",
     id == "사회학과" & name == "박시현" ~ "20212214",
     TRUE ~ id
     ),
@@ -167,7 +165,7 @@ gorilla %>%
 # which(duplicated(gorilla$id)) %>%
 #   gorilla[., c("id", "name")]
 gorilla %>%
-  filter(id %in% c("20242615"))
+  filter(id %in% c("20226424"))
 gorilla <- gorilla %>% 
   arrange(id, desc(time)) %>%
   distinct(id, .keep_all = TRUE)

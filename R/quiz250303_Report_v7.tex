@@ -49,15 +49,17 @@
 \makesavenoteenv{longtable}
 \usepackage{graphicx}
 \makeatletter
-\def\maxwidth{\ifdim\Gin@nat@width>\linewidth\linewidth\else\Gin@nat@width\fi}
-\def\maxheight{\ifdim\Gin@nat@height>\textheight\textheight\else\Gin@nat@height\fi}
-\makeatother
-% Scale images if necessary, so that they will not overflow the page
-% margins by default, and it is still possible to overwrite the defaults
-% using explicit options in \includegraphics[width, height, ...]{}
-\setkeys{Gin}{width=\maxwidth,height=\maxheight,keepaspectratio}
+\newsavebox\pandoc@box
+\newcommand*\pandocbounded[1]{% scales image to fit in text height/width
+  \sbox\pandoc@box{#1}%
+  \Gscale@div\@tempa{\textheight}{\dimexpr\ht\pandoc@box+\dp\pandoc@box\relax}%
+  \Gscale@div\@tempb{\linewidth}{\wd\pandoc@box}%
+  \ifdim\@tempb\p@<\@tempa\p@\let\@tempa\@tempb\fi% select the smaller of both
+  \ifdim\@tempa\p@<\p@\scalebox{\@tempa}{\usebox\pandoc@box}%
+  \else\usebox{\pandoc@box}%
+  \fi%
+}
 % Set default figure placement to htbp
-\makeatletter
 \def\fps@figure{htbp}
 \makeatother
 \setlength{\emergencystretch}{3em} % prevent overfull lines
@@ -66,9 +68,6 @@
 \setcounter{secnumdepth}{-\maxdimen} % remove section numbering
 \usepackage{fontspec}
 \setmainfont{NanumGothic}
-\ifLuaTeX
-  \usepackage{selnolig}  % disable illegal ligatures
-\fi
 \usepackage{bookmark}
 \IfFileExists{xurl.sty}{\usepackage{xurl}}{} % add URL line breaks if available
 \urlstyle{same}
@@ -109,9 +108,9 @@ Q4에서는 같은 내용의 질문지인데 ``바람직한 논의이다''라는
 올린 Red, Black 이 다른 사람들의 분포를 파악해 보았습니다.
 
 \begin{longtable}[]{@{}
-  >{\raggedright\arraybackslash}p{(\columnwidth - 4\tabcolsep) * \real{0.3611}}
-  >{\centering\arraybackslash}p{(\columnwidth - 4\tabcolsep) * \real{0.2778}}
-  >{\centering\arraybackslash}p{(\columnwidth - 4\tabcolsep) * \real{0.3056}}@{}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.3611}}
+  >{\centering\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.2778}}
+  >{\centering\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.3056}}@{}}
 \toprule\noalign{}
 \begin{minipage}[b]{\linewidth}\raggedright
 ~
@@ -198,13 +197,13 @@ Roper}\label{q1.-dewey-as-good-as-elected-statistics-convince-roper}
 \subsubsection{Roper(Counts)}\label{ropercounts}
 
 \begin{longtable}[]{@{}
-  >{\raggedright\arraybackslash}p{(\columnwidth - 12\tabcolsep) * \real{0.1667}}
-  >{\centering\arraybackslash}p{(\columnwidth - 12\tabcolsep) * \real{0.1250}}
-  >{\centering\arraybackslash}p{(\columnwidth - 12\tabcolsep) * \real{0.0972}}
-  >{\centering\arraybackslash}p{(\columnwidth - 12\tabcolsep) * \real{0.0972}}
-  >{\centering\arraybackslash}p{(\columnwidth - 12\tabcolsep) * \real{0.1250}}
-  >{\centering\arraybackslash}p{(\columnwidth - 12\tabcolsep) * \real{0.0972}}
-  >{\centering\arraybackslash}p{(\columnwidth - 12\tabcolsep) * \real{0.0972}}@{}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 12\tabcolsep) * \real{0.1667}}
+  >{\centering\arraybackslash}p{(\linewidth - 12\tabcolsep) * \real{0.1250}}
+  >{\centering\arraybackslash}p{(\linewidth - 12\tabcolsep) * \real{0.0972}}
+  >{\centering\arraybackslash}p{(\linewidth - 12\tabcolsep) * \real{0.0972}}
+  >{\centering\arraybackslash}p{(\linewidth - 12\tabcolsep) * \real{0.1250}}
+  >{\centering\arraybackslash}p{(\linewidth - 12\tabcolsep) * \real{0.0972}}
+  >{\centering\arraybackslash}p{(\linewidth - 12\tabcolsep) * \real{0.0972}}@{}}
 \toprule\noalign{}
 \begin{minipage}[b]{\linewidth}\raggedright
 ~
@@ -231,9 +230,9 @@ Roper}\label{q1.-dewey-as-good-as-elected-statistics-convince-roper}
 \end{longtable}
 
 \begin{longtable}[]{@{}
-  >{\raggedleft\arraybackslash}p{(\columnwidth - 4\tabcolsep) * \real{0.2361}}
-  >{\raggedleft\arraybackslash}p{(\columnwidth - 4\tabcolsep) * \real{0.0694}}
-  >{\raggedleft\arraybackslash}p{(\columnwidth - 4\tabcolsep) * \real{0.1389}}@{}}
+  >{\raggedleft\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.2361}}
+  >{\raggedleft\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.0694}}
+  >{\raggedleft\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.1389}}@{}}
 \caption{Pearson's Chi-squared test: \texttt{.}}\tabularnewline
 \toprule\noalign{}
 \begin{minipage}[b]{\linewidth}\raggedleft
@@ -271,12 +270,12 @@ Black 간에 통계적으로 유의한 차이를 보이지 않습니다.
 \subsubsection{Roper(\%)}\label{roper}
 
 \begin{longtable}[]{@{}
-  >{\centering\arraybackslash}p{(\columnwidth - 10\tabcolsep) * \real{0.1250}}
-  >{\centering\arraybackslash}p{(\columnwidth - 10\tabcolsep) * \real{0.0972}}
-  >{\centering\arraybackslash}p{(\columnwidth - 10\tabcolsep) * \real{0.0972}}
-  >{\centering\arraybackslash}p{(\columnwidth - 10\tabcolsep) * \real{0.1250}}
-  >{\centering\arraybackslash}p{(\columnwidth - 10\tabcolsep) * \real{0.0972}}
-  >{\centering\arraybackslash}p{(\columnwidth - 10\tabcolsep) * \real{0.1111}}@{}}
+  >{\centering\arraybackslash}p{(\linewidth - 10\tabcolsep) * \real{0.1250}}
+  >{\centering\arraybackslash}p{(\linewidth - 10\tabcolsep) * \real{0.0972}}
+  >{\centering\arraybackslash}p{(\linewidth - 10\tabcolsep) * \real{0.0972}}
+  >{\centering\arraybackslash}p{(\linewidth - 10\tabcolsep) * \real{0.1250}}
+  >{\centering\arraybackslash}p{(\linewidth - 10\tabcolsep) * \real{0.0972}}
+  >{\centering\arraybackslash}p{(\linewidth - 10\tabcolsep) * \real{0.1111}}@{}}
 \toprule\noalign{}
 \begin{minipage}[b]{\linewidth}\centering
 통계학
@@ -308,13 +307,13 @@ Black 간에 통계적으로 유의한 차이를 보이지 않습니다.
 \subsubsection{ASA(Counts)}\label{asacounts}
 
 \begin{longtable}[]{@{}
-  >{\raggedright\arraybackslash}p{(\columnwidth - 12\tabcolsep) * \real{0.1667}}
-  >{\centering\arraybackslash}p{(\columnwidth - 12\tabcolsep) * \real{0.1250}}
-  >{\centering\arraybackslash}p{(\columnwidth - 12\tabcolsep) * \real{0.0972}}
-  >{\centering\arraybackslash}p{(\columnwidth - 12\tabcolsep) * \real{0.0972}}
-  >{\centering\arraybackslash}p{(\columnwidth - 12\tabcolsep) * \real{0.1250}}
-  >{\centering\arraybackslash}p{(\columnwidth - 12\tabcolsep) * \real{0.0972}}
-  >{\centering\arraybackslash}p{(\columnwidth - 12\tabcolsep) * \real{0.0972}}@{}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 12\tabcolsep) * \real{0.1667}}
+  >{\centering\arraybackslash}p{(\linewidth - 12\tabcolsep) * \real{0.1250}}
+  >{\centering\arraybackslash}p{(\linewidth - 12\tabcolsep) * \real{0.0972}}
+  >{\centering\arraybackslash}p{(\linewidth - 12\tabcolsep) * \real{0.0972}}
+  >{\centering\arraybackslash}p{(\linewidth - 12\tabcolsep) * \real{0.1250}}
+  >{\centering\arraybackslash}p{(\linewidth - 12\tabcolsep) * \real{0.0972}}
+  >{\centering\arraybackslash}p{(\linewidth - 12\tabcolsep) * \real{0.0972}}@{}}
 \toprule\noalign{}
 \begin{minipage}[b]{\linewidth}\raggedright
 ~
@@ -341,9 +340,9 @@ Black 간에 통계적으로 유의한 차이를 보이지 않습니다.
 \end{longtable}
 
 \begin{longtable}[]{@{}
-  >{\raggedleft\arraybackslash}p{(\columnwidth - 4\tabcolsep) * \real{0.2361}}
-  >{\raggedleft\arraybackslash}p{(\columnwidth - 4\tabcolsep) * \real{0.0694}}
-  >{\raggedleft\arraybackslash}p{(\columnwidth - 4\tabcolsep) * \real{0.1389}}@{}}
+  >{\raggedleft\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.2361}}
+  >{\raggedleft\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.0694}}
+  >{\raggedleft\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.1389}}@{}}
 \caption{Pearson's Chi-squared test: \texttt{.}}\tabularnewline
 \toprule\noalign{}
 \begin{minipage}[b]{\linewidth}\raggedleft
@@ -381,12 +380,12 @@ Red, Black 간에 통계적으로 유의한 차이를 보이지 않습니다.
 \subsubsection{ASA(\%)}\label{asa}
 
 \begin{longtable}[]{@{}
-  >{\centering\arraybackslash}p{(\columnwidth - 10\tabcolsep) * \real{0.1250}}
-  >{\centering\arraybackslash}p{(\columnwidth - 10\tabcolsep) * \real{0.0972}}
-  >{\centering\arraybackslash}p{(\columnwidth - 10\tabcolsep) * \real{0.0972}}
-  >{\centering\arraybackslash}p{(\columnwidth - 10\tabcolsep) * \real{0.1250}}
-  >{\centering\arraybackslash}p{(\columnwidth - 10\tabcolsep) * \real{0.0972}}
-  >{\centering\arraybackslash}p{(\columnwidth - 10\tabcolsep) * \real{0.1250}}@{}}
+  >{\centering\arraybackslash}p{(\linewidth - 10\tabcolsep) * \real{0.1250}}
+  >{\centering\arraybackslash}p{(\linewidth - 10\tabcolsep) * \real{0.0972}}
+  >{\centering\arraybackslash}p{(\linewidth - 10\tabcolsep) * \real{0.0972}}
+  >{\centering\arraybackslash}p{(\linewidth - 10\tabcolsep) * \real{0.1250}}
+  >{\centering\arraybackslash}p{(\linewidth - 10\tabcolsep) * \real{0.0972}}
+  >{\centering\arraybackslash}p{(\linewidth - 10\tabcolsep) * \real{0.1250}}@{}}
 \toprule\noalign{}
 \begin{minipage}[b]{\linewidth}\centering
 통계학
@@ -418,13 +417,13 @@ statistics}\label{q3.-how-to-lie-with-statistics}
 \subsubsection{D.Huff(Counts)}\label{d.huffcounts}
 
 \begin{longtable}[]{@{}
-  >{\raggedright\arraybackslash}p{(\columnwidth - 12\tabcolsep) * \real{0.1667}}
-  >{\centering\arraybackslash}p{(\columnwidth - 12\tabcolsep) * \real{0.1250}}
-  >{\centering\arraybackslash}p{(\columnwidth - 12\tabcolsep) * \real{0.0972}}
-  >{\centering\arraybackslash}p{(\columnwidth - 12\tabcolsep) * \real{0.0972}}
-  >{\centering\arraybackslash}p{(\columnwidth - 12\tabcolsep) * \real{0.1250}}
-  >{\centering\arraybackslash}p{(\columnwidth - 12\tabcolsep) * \real{0.0972}}
-  >{\centering\arraybackslash}p{(\columnwidth - 12\tabcolsep) * \real{0.0972}}@{}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 12\tabcolsep) * \real{0.1667}}
+  >{\centering\arraybackslash}p{(\linewidth - 12\tabcolsep) * \real{0.1250}}
+  >{\centering\arraybackslash}p{(\linewidth - 12\tabcolsep) * \real{0.0972}}
+  >{\centering\arraybackslash}p{(\linewidth - 12\tabcolsep) * \real{0.0972}}
+  >{\centering\arraybackslash}p{(\linewidth - 12\tabcolsep) * \real{0.1250}}
+  >{\centering\arraybackslash}p{(\linewidth - 12\tabcolsep) * \real{0.0972}}
+  >{\centering\arraybackslash}p{(\linewidth - 12\tabcolsep) * \real{0.0972}}@{}}
 \toprule\noalign{}
 \begin{minipage}[b]{\linewidth}\raggedright
 ~
@@ -451,9 +450,9 @@ statistics}\label{q3.-how-to-lie-with-statistics}
 \end{longtable}
 
 \begin{longtable}[]{@{}
-  >{\raggedleft\arraybackslash}p{(\columnwidth - 4\tabcolsep) * \real{0.2361}}
-  >{\raggedleft\arraybackslash}p{(\columnwidth - 4\tabcolsep) * \real{0.0694}}
-  >{\raggedleft\arraybackslash}p{(\columnwidth - 4\tabcolsep) * \real{0.1389}}@{}}
+  >{\raggedleft\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.2361}}
+  >{\raggedleft\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.0694}}
+  >{\raggedleft\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.1389}}@{}}
 \caption{Pearson's Chi-squared test: \texttt{.}}\tabularnewline
 \toprule\noalign{}
 \begin{minipage}[b]{\linewidth}\raggedleft
@@ -491,12 +490,12 @@ Red, Black 간에 통계적으로 유의한 차이를 보이지 않습니다.
 \subsubsection{D.Huff(\%)}\label{d.huff}
 
 \begin{longtable}[]{@{}
-  >{\centering\arraybackslash}p{(\columnwidth - 10\tabcolsep) * \real{0.1250}}
-  >{\centering\arraybackslash}p{(\columnwidth - 10\tabcolsep) * \real{0.0972}}
-  >{\centering\arraybackslash}p{(\columnwidth - 10\tabcolsep) * \real{0.0972}}
-  >{\centering\arraybackslash}p{(\columnwidth - 10\tabcolsep) * \real{0.1250}}
-  >{\centering\arraybackslash}p{(\columnwidth - 10\tabcolsep) * \real{0.0972}}
-  >{\centering\arraybackslash}p{(\columnwidth - 10\tabcolsep) * \real{0.1111}}@{}}
+  >{\centering\arraybackslash}p{(\linewidth - 10\tabcolsep) * \real{0.1250}}
+  >{\centering\arraybackslash}p{(\linewidth - 10\tabcolsep) * \real{0.0972}}
+  >{\centering\arraybackslash}p{(\linewidth - 10\tabcolsep) * \real{0.0972}}
+  >{\centering\arraybackslash}p{(\linewidth - 10\tabcolsep) * \real{0.1250}}
+  >{\centering\arraybackslash}p{(\linewidth - 10\tabcolsep) * \real{0.0972}}
+  >{\centering\arraybackslash}p{(\linewidth - 10\tabcolsep) * \real{0.1111}}@{}}
 \toprule\noalign{}
 \begin{minipage}[b]{\linewidth}\centering
 통계학
@@ -545,11 +544,11 @@ Red, Black 간에 통계적으로 유의한 차이를 보이지 않습니다.
 \subsubsection{집계}\label{uxc9d1uxacc4}
 
 \begin{longtable}[]{@{}
-  >{\raggedright\arraybackslash}p{(\columnwidth - 8\tabcolsep) * \real{0.3023}}
-  >{\centering\arraybackslash}p{(\columnwidth - 8\tabcolsep) * \real{0.2326}}
-  >{\centering\arraybackslash}p{(\columnwidth - 8\tabcolsep) * \real{0.2326}}
-  >{\centering\arraybackslash}p{(\columnwidth - 8\tabcolsep) * \real{0.1628}}
-  >{\centering\arraybackslash}p{(\columnwidth - 8\tabcolsep) * \real{0.0698}}@{}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 8\tabcolsep) * \real{0.3023}}
+  >{\centering\arraybackslash}p{(\linewidth - 8\tabcolsep) * \real{0.2326}}
+  >{\centering\arraybackslash}p{(\linewidth - 8\tabcolsep) * \real{0.2326}}
+  >{\centering\arraybackslash}p{(\linewidth - 8\tabcolsep) * \real{0.1628}}
+  >{\centering\arraybackslash}p{(\linewidth - 8\tabcolsep) * \real{0.0698}}@{}}
 \toprule\noalign{}
 \begin{minipage}[b]{\linewidth}\raggedright
 ~
@@ -572,9 +571,9 @@ Red, Black 간에 통계적으로 유의한 차이를 보이지 않습니다.
 \end{longtable}
 
 \begin{longtable}[]{@{}
-  >{\raggedleft\arraybackslash}p{(\columnwidth - 4\tabcolsep) * \real{0.2361}}
-  >{\raggedleft\arraybackslash}p{(\columnwidth - 4\tabcolsep) * \real{0.0694}}
-  >{\raggedleft\arraybackslash}p{(\columnwidth - 4\tabcolsep) * \real{0.1389}}@{}}
+  >{\raggedleft\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.2361}}
+  >{\raggedleft\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.0694}}
+  >{\raggedleft\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.1389}}@{}}
 \caption{Pearson's Chi-squared test: \texttt{.}}\tabularnewline
 \toprule\noalign{}
 \begin{minipage}[b]{\linewidth}\raggedleft
@@ -641,11 +640,11 @@ Black에는 같은 주장에 대하여 부적절한 논의라는 쪽에 부정�
 \subsubsection{\% 비교.}\label{uxbe44uxad50.}
 
 \begin{longtable}[]{@{}
-  >{\raggedright\arraybackslash}p{(\columnwidth - 8\tabcolsep) * \real{0.2955}}
-  >{\centering\arraybackslash}p{(\columnwidth - 8\tabcolsep) * \real{0.2273}}
-  >{\centering\arraybackslash}p{(\columnwidth - 8\tabcolsep) * \real{0.2273}}
-  >{\centering\arraybackslash}p{(\columnwidth - 8\tabcolsep) * \real{0.1591}}
-  >{\centering\arraybackslash}p{(\columnwidth - 8\tabcolsep) * \real{0.0909}}@{}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 8\tabcolsep) * \real{0.2955}}
+  >{\centering\arraybackslash}p{(\linewidth - 8\tabcolsep) * \real{0.2273}}
+  >{\centering\arraybackslash}p{(\linewidth - 8\tabcolsep) * \real{0.2273}}
+  >{\centering\arraybackslash}p{(\linewidth - 8\tabcolsep) * \real{0.1591}}
+  >{\centering\arraybackslash}p{(\linewidth - 8\tabcolsep) * \real{0.0909}}@{}}
 \toprule\noalign{}
 \begin{minipage}[b]{\linewidth}\raggedright
 ~
@@ -681,7 +680,7 @@ p-value 가 보여주듯이 \textbf{그 차이가 통계적으로 유의한 수�
 
 \subsubsection{Mosaic Plot}\label{mosaic-plot}
 
-\includegraphics{quiz250303_Report_v7_files/figure-latex/mosaic plot-1.pdf}
+\pandocbounded{\includegraphics[keepaspectratio]{quiz250303_Report_v7_files/figure-latex/mosaic plot-1.pdf}}
 
 Mosaic Plot 은 이 집계결과를 시각적으로 잘 보여줍니다.
 
@@ -697,22 +696,22 @@ Black 에서 ``바람직한 논의이다''라고 응답한 백분율보다 높�
 \subsubsection{분포표}\label{uxbd84uxd3ecuxd45c}
 
 \begin{longtable}[]{@{}
-  >{\raggedright\arraybackslash}p{(\columnwidth - 30\tabcolsep) * \real{0.0863}}
-  >{\raggedleft\arraybackslash}p{(\columnwidth - 30\tabcolsep) * \real{0.0576}}
-  >{\raggedleft\arraybackslash}p{(\columnwidth - 30\tabcolsep) * \real{0.0576}}
-  >{\raggedleft\arraybackslash}p{(\columnwidth - 30\tabcolsep) * \real{0.0576}}
-  >{\raggedleft\arraybackslash}p{(\columnwidth - 30\tabcolsep) * \real{0.0576}}
-  >{\raggedleft\arraybackslash}p{(\columnwidth - 30\tabcolsep) * \real{0.0576}}
-  >{\raggedleft\arraybackslash}p{(\columnwidth - 30\tabcolsep) * \real{0.0576}}
-  >{\raggedleft\arraybackslash}p{(\columnwidth - 30\tabcolsep) * \real{0.0576}}
-  >{\raggedleft\arraybackslash}p{(\columnwidth - 30\tabcolsep) * \real{0.0576}}
-  >{\raggedleft\arraybackslash}p{(\columnwidth - 30\tabcolsep) * \real{0.0576}}
-  >{\raggedleft\arraybackslash}p{(\columnwidth - 30\tabcolsep) * \real{0.0647}}
-  >{\raggedleft\arraybackslash}p{(\columnwidth - 30\tabcolsep) * \real{0.0719}}
-  >{\raggedleft\arraybackslash}p{(\columnwidth - 30\tabcolsep) * \real{0.0719}}
-  >{\raggedleft\arraybackslash}p{(\columnwidth - 30\tabcolsep) * \real{0.0719}}
-  >{\raggedleft\arraybackslash}p{(\columnwidth - 30\tabcolsep) * \real{0.0719}}
-  >{\centering\arraybackslash}p{(\columnwidth - 30\tabcolsep) * \real{0.0432}}@{}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 30\tabcolsep) * \real{0.0863}}
+  >{\raggedleft\arraybackslash}p{(\linewidth - 30\tabcolsep) * \real{0.0576}}
+  >{\raggedleft\arraybackslash}p{(\linewidth - 30\tabcolsep) * \real{0.0576}}
+  >{\raggedleft\arraybackslash}p{(\linewidth - 30\tabcolsep) * \real{0.0576}}
+  >{\raggedleft\arraybackslash}p{(\linewidth - 30\tabcolsep) * \real{0.0576}}
+  >{\raggedleft\arraybackslash}p{(\linewidth - 30\tabcolsep) * \real{0.0576}}
+  >{\raggedleft\arraybackslash}p{(\linewidth - 30\tabcolsep) * \real{0.0576}}
+  >{\raggedleft\arraybackslash}p{(\linewidth - 30\tabcolsep) * \real{0.0576}}
+  >{\raggedleft\arraybackslash}p{(\linewidth - 30\tabcolsep) * \real{0.0576}}
+  >{\raggedleft\arraybackslash}p{(\linewidth - 30\tabcolsep) * \real{0.0576}}
+  >{\raggedleft\arraybackslash}p{(\linewidth - 30\tabcolsep) * \real{0.0647}}
+  >{\raggedleft\arraybackslash}p{(\linewidth - 30\tabcolsep) * \real{0.0719}}
+  >{\raggedleft\arraybackslash}p{(\linewidth - 30\tabcolsep) * \real{0.0719}}
+  >{\raggedleft\arraybackslash}p{(\linewidth - 30\tabcolsep) * \real{0.0719}}
+  >{\raggedleft\arraybackslash}p{(\linewidth - 30\tabcolsep) * \real{0.0719}}
+  >{\centering\arraybackslash}p{(\linewidth - 30\tabcolsep) * \real{0.0432}}@{}}
 \caption{일 단위}\tabularnewline
 \toprule\noalign{}
 \begin{minipage}[b]{\linewidth}\raggedright
@@ -809,20 +808,20 @@ Black 에서 ``바람직한 논의이다''라고 응답한 백분율보다 높�
 제출하는가?}\label{uxb0a0uxb9c8uxb2e4-uxace0uxb974uxac8c-uxc81cuxcd9cuxd558uxb294uxac00}
 
 \begin{longtable}[]{@{}
-  >{\raggedleft\arraybackslash}p{(\columnwidth - 26\tabcolsep) * \real{0.0661}}
-  >{\raggedleft\arraybackslash}p{(\columnwidth - 26\tabcolsep) * \real{0.0661}}
-  >{\raggedleft\arraybackslash}p{(\columnwidth - 26\tabcolsep) * \real{0.0661}}
-  >{\raggedleft\arraybackslash}p{(\columnwidth - 26\tabcolsep) * \real{0.0661}}
-  >{\raggedleft\arraybackslash}p{(\columnwidth - 26\tabcolsep) * \real{0.0661}}
-  >{\raggedleft\arraybackslash}p{(\columnwidth - 26\tabcolsep) * \real{0.0661}}
-  >{\raggedleft\arraybackslash}p{(\columnwidth - 26\tabcolsep) * \real{0.0661}}
-  >{\raggedleft\arraybackslash}p{(\columnwidth - 26\tabcolsep) * \real{0.0661}}
-  >{\raggedleft\arraybackslash}p{(\columnwidth - 26\tabcolsep) * \real{0.0661}}
-  >{\raggedleft\arraybackslash}p{(\columnwidth - 26\tabcolsep) * \real{0.0744}}
-  >{\raggedleft\arraybackslash}p{(\columnwidth - 26\tabcolsep) * \real{0.0826}}
-  >{\raggedleft\arraybackslash}p{(\columnwidth - 26\tabcolsep) * \real{0.0826}}
-  >{\raggedleft\arraybackslash}p{(\columnwidth - 26\tabcolsep) * \real{0.0826}}
-  >{\raggedleft\arraybackslash}p{(\columnwidth - 26\tabcolsep) * \real{0.0826}}@{}}
+  >{\raggedleft\arraybackslash}p{(\linewidth - 26\tabcolsep) * \real{0.0661}}
+  >{\raggedleft\arraybackslash}p{(\linewidth - 26\tabcolsep) * \real{0.0661}}
+  >{\raggedleft\arraybackslash}p{(\linewidth - 26\tabcolsep) * \real{0.0661}}
+  >{\raggedleft\arraybackslash}p{(\linewidth - 26\tabcolsep) * \real{0.0661}}
+  >{\raggedleft\arraybackslash}p{(\linewidth - 26\tabcolsep) * \real{0.0661}}
+  >{\raggedleft\arraybackslash}p{(\linewidth - 26\tabcolsep) * \real{0.0661}}
+  >{\raggedleft\arraybackslash}p{(\linewidth - 26\tabcolsep) * \real{0.0661}}
+  >{\raggedleft\arraybackslash}p{(\linewidth - 26\tabcolsep) * \real{0.0661}}
+  >{\raggedleft\arraybackslash}p{(\linewidth - 26\tabcolsep) * \real{0.0661}}
+  >{\raggedleft\arraybackslash}p{(\linewidth - 26\tabcolsep) * \real{0.0744}}
+  >{\raggedleft\arraybackslash}p{(\linewidth - 26\tabcolsep) * \real{0.0826}}
+  >{\raggedleft\arraybackslash}p{(\linewidth - 26\tabcolsep) * \real{0.0826}}
+  >{\raggedleft\arraybackslash}p{(\linewidth - 26\tabcolsep) * \real{0.0826}}
+  >{\raggedleft\arraybackslash}p{(\linewidth - 26\tabcolsep) * \real{0.0826}}@{}}
 \toprule\noalign{}
 \begin{minipage}[b]{\linewidth}\raggedleft
 {[}0,1{]}
@@ -861,9 +860,9 @@ Black 에서 ``바람직한 논의이다''라고 응답한 백분율보다 높�
 \end{longtable}
 
 \begin{longtable}[]{@{}
-  >{\raggedleft\arraybackslash}p{(\columnwidth - 4\tabcolsep) * \real{0.2361}}
-  >{\raggedleft\arraybackslash}p{(\columnwidth - 4\tabcolsep) * \real{0.0694}}
-  >{\raggedleft\arraybackslash}p{(\columnwidth - 4\tabcolsep) * \real{0.2500}}@{}}
+  >{\raggedleft\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.2361}}
+  >{\raggedleft\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.0694}}
+  >{\raggedleft\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.2500}}@{}}
 \caption{Chi-squared test for given probabilities:
 \texttt{.}}\tabularnewline
 \toprule\noalign{}
@@ -904,7 +903,7 @@ P value
 
 \subsubsection{막대그래프}\label{uxb9c9uxb300uxadf8uxb798uxd504}
 
-\includegraphics{quiz250303_Report_v7_files/figure-latex/unnamed-chunk-8-1.pdf}
+\pandocbounded{\includegraphics[keepaspectratio]{quiz250303_Report_v7_files/figure-latex/unnamed-chunk-8-1.pdf}}
 
 막대그래프는 총 제출인원 576(명) 중에 81(명), 14(\%)가 마감일에 몰리는
 것을 보여주고 있습니다.
@@ -913,21 +912,21 @@ P value
 닮았는가?}\label{red-black-uxac04uxc5d0-uxb2eeuxc558uxb294uxac00}
 
 \begin{longtable}[]{@{}
-  >{\raggedright\arraybackslash}p{(\columnwidth - 28\tabcolsep) * \real{0.0902}}
-  >{\raggedleft\arraybackslash}p{(\columnwidth - 28\tabcolsep) * \real{0.0602}}
-  >{\raggedleft\arraybackslash}p{(\columnwidth - 28\tabcolsep) * \real{0.0602}}
-  >{\raggedleft\arraybackslash}p{(\columnwidth - 28\tabcolsep) * \real{0.0602}}
-  >{\raggedleft\arraybackslash}p{(\columnwidth - 28\tabcolsep) * \real{0.0602}}
-  >{\raggedleft\arraybackslash}p{(\columnwidth - 28\tabcolsep) * \real{0.0602}}
-  >{\raggedleft\arraybackslash}p{(\columnwidth - 28\tabcolsep) * \real{0.0602}}
-  >{\raggedleft\arraybackslash}p{(\columnwidth - 28\tabcolsep) * \real{0.0602}}
-  >{\raggedleft\arraybackslash}p{(\columnwidth - 28\tabcolsep) * \real{0.0602}}
-  >{\raggedleft\arraybackslash}p{(\columnwidth - 28\tabcolsep) * \real{0.0602}}
-  >{\raggedleft\arraybackslash}p{(\columnwidth - 28\tabcolsep) * \real{0.0677}}
-  >{\raggedleft\arraybackslash}p{(\columnwidth - 28\tabcolsep) * \real{0.0752}}
-  >{\raggedleft\arraybackslash}p{(\columnwidth - 28\tabcolsep) * \real{0.0752}}
-  >{\raggedleft\arraybackslash}p{(\columnwidth - 28\tabcolsep) * \real{0.0752}}
-  >{\raggedleft\arraybackslash}p{(\columnwidth - 28\tabcolsep) * \real{0.0752}}@{}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 28\tabcolsep) * \real{0.0902}}
+  >{\raggedleft\arraybackslash}p{(\linewidth - 28\tabcolsep) * \real{0.0602}}
+  >{\raggedleft\arraybackslash}p{(\linewidth - 28\tabcolsep) * \real{0.0602}}
+  >{\raggedleft\arraybackslash}p{(\linewidth - 28\tabcolsep) * \real{0.0602}}
+  >{\raggedleft\arraybackslash}p{(\linewidth - 28\tabcolsep) * \real{0.0602}}
+  >{\raggedleft\arraybackslash}p{(\linewidth - 28\tabcolsep) * \real{0.0602}}
+  >{\raggedleft\arraybackslash}p{(\linewidth - 28\tabcolsep) * \real{0.0602}}
+  >{\raggedleft\arraybackslash}p{(\linewidth - 28\tabcolsep) * \real{0.0602}}
+  >{\raggedleft\arraybackslash}p{(\linewidth - 28\tabcolsep) * \real{0.0602}}
+  >{\raggedleft\arraybackslash}p{(\linewidth - 28\tabcolsep) * \real{0.0602}}
+  >{\raggedleft\arraybackslash}p{(\linewidth - 28\tabcolsep) * \real{0.0677}}
+  >{\raggedleft\arraybackslash}p{(\linewidth - 28\tabcolsep) * \real{0.0752}}
+  >{\raggedleft\arraybackslash}p{(\linewidth - 28\tabcolsep) * \real{0.0752}}
+  >{\raggedleft\arraybackslash}p{(\linewidth - 28\tabcolsep) * \real{0.0752}}
+  >{\raggedleft\arraybackslash}p{(\linewidth - 28\tabcolsep) * \real{0.0752}}@{}}
 \toprule\noalign{}
 \begin{minipage}[b]{\linewidth}\raggedright
 ~
@@ -971,9 +970,9 @@ P value
 \end{longtable}
 
 \begin{longtable}[]{@{}
-  >{\raggedleft\arraybackslash}p{(\columnwidth - 4\tabcolsep) * \real{0.2361}}
-  >{\raggedleft\arraybackslash}p{(\columnwidth - 4\tabcolsep) * \real{0.0694}}
-  >{\raggedleft\arraybackslash}p{(\columnwidth - 4\tabcolsep) * \real{0.1389}}@{}}
+  >{\raggedleft\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.2361}}
+  >{\raggedleft\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.0694}}
+  >{\raggedleft\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.1389}}@{}}
 \caption{Pearson's Chi-squared test: \texttt{.}}\tabularnewline
 \toprule\noalign{}
 \begin{minipage}[b]{\linewidth}\raggedleft
@@ -1015,6 +1014,6 @@ P value
 
 \subsubsection{Mosaic Plot}\label{mosaic-plot-1}
 
-\includegraphics{quiz250303_Report_v7_files/figure-latex/unnamed-chunk-10-1.pdf}
+\pandocbounded{\includegraphics[keepaspectratio]{quiz250303_Report_v7_files/figure-latex/unnamed-chunk-10-1.pdf}}
 
 \end{document}

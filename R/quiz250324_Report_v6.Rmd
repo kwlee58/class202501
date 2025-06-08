@@ -1,3 +1,8 @@
+---
+output:
+  html_document: default
+  pdf_document: default
+---
 # 4주차 데이터 실험 집계
 
 ```{r setup_quiz04, include=FALSE}
@@ -152,7 +157,7 @@ quiz_wrong_ids <- quiz_wrong_ids %>%
       TRUE ~ name
       )
     )
-# 3. quiz 에서 id 또는 name 틀린 행을 제거하고 옳은 id 또는 name 갖춘 행으로 교체하기
+# 4. quiz 에서 id 또는 name 틀린 행을 제거하고 옳은 id 또는 name 갖춘 행으로 교체하기
 quiz <- quiz %>%
   anti_join(wrong_keys %>% select(id, name), by = c("id", "name")) %>%
   bind_rows(quiz_wrong_ids)

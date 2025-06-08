@@ -9,7 +9,7 @@ output:
     dev: cairo_pdf
 header-includes:
   - \usepackage{fontspec}
-#   - \setmainfont{nanum Sans KR}
+#  - \setmainfont{nanum Sans KR}
   - \setmainfont{NanumGothic}
 ---
 
@@ -23,12 +23,12 @@ library(knitr)
 library(magrittr)
 library(dplyr)
 library(stringdist)
+library(googlesheets4)
 library(showtext)
-# font_add(family = "nanum", regular = "/Users/kwlee/Library/Fonts/nanumSansKR-VariableFont_wght.ttf")
-# font_add(family = "nanum", 
-#          regular = "/Users/kwlee/Library/Fonts/NanumGothic-Regular.ttf",
-#          bold    = "/Users/kwlee/Library/Fonts/NanumGothic-Bold.ttf",
-#          italic  = "/Users/kwlee/Library/Fonts/NanumGothic-ExtraBold.ttf")
+font_add(family = "nanum", 
+         regular = "/Users/kwlee/Library/Fonts/NanumGothic-Regular.ttf",
+         bold    = "/Users/kwlee/Library/Fonts/NanumGothic-Bold.ttf",
+         italic  = "/Users/kwlee/Library/Fonts/NanumGothic-ExtraBold.ttf")
 font_add(family = "kopub", 
          regular = "/Users/kwlee/Library/Fonts/KoPubWorld Dotum Medium.ttf",
          bold = "/Users/kwlee/Library/Fonts/KoPubWorld Dotum Bold.ttf",
@@ -78,10 +78,13 @@ class_roll0317 <- class_roll0314 %>%
 saveRDS(class_roll0317, file = "./class_roll_250317.RDS")
 class_roll <- class_roll0317
 #> quiz reading
-quiz <- 
-  read_excel("./data/quiz_250310.xlsx",
-             range = "A2:N565",
-             col_names = FALSE)
+#> #> quiz reading
+sheet_url <- "https://docs.google.com/spreadsheets/d/1GXwsrUiJF4fNhVEDMaslUVah8G8CwgjVAQPz-ESFOoE"
+quiz <- read_sheet(sheet_url)
+# quiz <- 
+#   read_excel("./data/quiz_250310.xlsx",
+#              range = "A2:N565",
+#              col_names = FALSE)
 names(quiz) <- 
   c("time", "email", "dept", "id", "name", 
     "Q1", "Q2", "Q3", "Q4", "Q5", "Q6", "group", "Q7_R", "Q7_B")
@@ -140,26 +143,35 @@ pander(summary(quiz))
 ```
 
 ```{r, cleaning, echo = FALSE, results = 'hide'}
-#> 학번 잘못 써서 고생시키는 녀석들 찾아내는 코드
-wrong_id <- setdiff(quiz$id, class_roll$id)
-quiz %>%
-  filter(id %in% wrong_id) %>%
-  select(id, name, dept, email)
-# 1. 잘못된 id 가진 행 찾기
+# 1. 잘못된 id 또는 name 가진 행 찾기
 quiz_wrong_ids <- quiz %>%
-  anti_join(class_roll, by = "id") 
-# 2. 잘못된 id를 따로 저장하고 수정하기
-wrong_ids <- quiz_wrong_ids$id
+  anti_join(class_roll, by = c("id", "name")) 
+
+# 2. 수정 전 원래의 id와 name 쌍을 저장
+wrong_keys <- quiz_wrong_ids %>% 
+  select(id, name)
+
+# 3. 잘못된 id 또는 name 수정
 quiz_wrong_ids <- quiz_wrong_ids %>%
-  mutate(id = case_when(
-    id == "20223051" ~ "20223501",
-    id == "20246475" ~ "20246745",
-    TRUE ~ id
-  ))
-# 3. quiz 에서 id 틀린 행을 제거하고 옳은 id 갖춘 행으로 교체하기
+  mutate(
+    id = case_when(
+      id == "20223051" ~ "20223501",
+      id == "20246475" ~ "20246745",
+      id == "20241714" ~ "20241713",
+      TRUE ~ id),
+    name = case_when(
+      name == "ZOU YUANYUAN" ~ "ZOUYUANYUAN",
+      TRUE ~ name
+      )
+    )
+
+# 4. quiz 에서 id 또는 name 틀린 행을 제거하고 옳은 id 또는 name 갖춘 행으로 교체하기
 quiz <- quiz %>%
-  filter(!id %in% wrong_ids) %>%
+  anti_join(wrong_keys %>% select(id, name), by = c("id", "name")) %>%
   bind_rows(quiz_wrong_ids)
+# 5. 수정 여부 확인
+quiz %>%
+  anti_join(class_roll, by = c("id", "name")) 
 # quiz[quiz$id %in% setdiff(quiz$id, class_roll$id), c("id", "name", "dept", "group")]
 
 #> 틀린 학번 수정하여 되돌리기 (작동하지 않음. 참고로만)
@@ -732,6 +744,7 @@ days_tbl <-
 days_tbl %>%
   cbind("계" = rowSums(.)) %>%
   rbind("계" = colSums(.)) %>%
+  `colnames<-`(., c(paste0(14:1, "일"), "계")) %>%
   pander(caption = "일 단위")
 ```
 
@@ -739,7 +752,7 @@ days_tbl %>%
 
 첫째, 날마다 고르게 제출하는가? 
 
-둘쨰, Red, Black 간에 통계적으로 유의한 차이가 있는가?
+둘째, Red, Black 간에 통계적으로 유의한 차이가 있는가?
 
 각 문제를 살펴보기 위해서는 분포표의 일부분을 대상으로 카이제곱 테스트를 수행합니다.
 
@@ -748,12 +761,13 @@ days_tbl %>%
 ```{r, echo = FALSE, warning = FALSE}
 days_tbl %>%
   rbind("계" = colSums(.)) %>%
-  `[`(3, 2:14) %>%
+  `[`(3, 1:14) %>%
+  `names<-`(., paste0(14:1, "일")) %>%
   pander
 days_chisq_test <-
   days_tbl %>%
   rbind("계" = colSums(.)) %>%
-  `[`(3, 2:14) %>%
+  `[`(3, 1:14) %>%
   chisq.test(simulate.p.value = FALSE) 
 days_chisq_test %>%
   pander
@@ -789,7 +803,7 @@ text(x = b[14, 1], y = sum(days_tbl[, 1]) / 2,
      labels = paste0(format(sum(days_tbl[, 1]) / N * 100, digits = 1, nsmall = 0), "%"))
 title(main = paste0("Quiz250310 (", N, "명 제출)"), font.main = 2)
 # title(main = "일 단위 퀴즈 제출 인원", sub = paste0("Quiz230925 (", N, "명 제출)"))
-dev.copy(png, file = "./pics/2402/quiz_submission_2.png", width = 640, height = 480)
+dev.copy(png, file = "./pics/2501/quiz_submission_2.png", width = 640, height = 480)
 invisible(dev.off())
 })
 ```
@@ -801,11 +815,12 @@ invisible(dev.off())
 ```{r, echo = FALSE, warning = FALSE}
 days_tbl %>%
   rbind("계" = colSums(.)) %>%
-  `[`(-3, 2:14) %>%
+  `[`(-3, 1:14) %>%
+  `colnames<-`(., paste0(14:1, "일")) %>%
   pander
 days_RnB_chisq_test <-
   days_tbl %>%
-  `[`(-3, 2:14) %>%
+  `[`(-3, 1:14) %>%
   chisq.test(simulate.p.value = FALSE) 
 days_RnB_chisq_test %>%
   pander
@@ -833,7 +848,7 @@ df2 <- m2_list$df
 p_df2 <- m2_list$p_df
 names(df2[, 2]) <- "Days"
 m2 + geom_text(aes(x = center, y = 1.05), 
-              family = "kopub",
+              family = "Spoqa",
               label = rep(rep(c("월", "화", "수", "목", "금", "토", "일"), each = 2), times = 2)) +
   theme_bw(base_family = "Spoqa") +
   labs(title = "마감일로부터 제출시간의 분포", x = "마감일로부터 일수(누적 %)", y = "인원 백분율(%)") +
@@ -853,5 +868,4 @@ ggsave("./pics/Quiz250310_submission_2.png", dpi = 120, width = 960, height = 84
 
 ```{r, save, echo = FALSE}
 saveRDS(quiz, file = "./quiz250310.RDS")
-# save.image("./quiz250310.RData")
 ```
