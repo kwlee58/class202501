@@ -1,8 +1,8 @@
 ---
 title: "Invisible Gorilla 202501"
 author: "coop711"
-# date: "2025-05-26"
-date: "`r format(Sys.time(), '%Y-%m-%d %H:%M:%S')`"
+date: "2025-05-26"
+# date: "`r format(Sys.time(), '%Y-%m-%d %H:%M:%S')`"
 output: html_document
 ---
 
@@ -111,12 +111,14 @@ gorilla$Q9_3 %<>%
 
 ```{r, cleaning, echo = FALSE, results = 'hide'}
 #> 학번 잘못 써서 고생시키는 녀석들 찾아내는 코드
-# 1. 잘못된 id 가진 행 찾기
+# 1. 잘못된 id 또는 이름 가진 행 찾기
 gorilla_wrong_ids <- gorilla %>%
   anti_join(class_roll, by = c("id", "name")) 
 # 2. 잘못된 id를 따로 저장하고 수정하기
+# 2.1 잘못된 id 와 이름 따로 저장
 wrong_keys <- gorilla_wrong_ids %>% 
   select(id, name)
+# 2.2 수정하기
 gorilla_wrong_ids <- gorilla_wrong_ids %>%
   mutate(id = case_when(
     id == "20212167" ~ "20212617",
@@ -125,11 +127,14 @@ gorilla_wrong_ids <- gorilla_wrong_ids %>%
     id == "2024414" ~ "20244144",
     id == "20242687" ~ "20242587",
     id == "2019405" ~ "20196405",
+    id == "2021353" ~ "20213353",
+    id == "202051660" ~ "20205160",
     id == "사회학과" & name == "박시현" ~ "20212214",
     TRUE ~ id
     ),
     name = case_when(
       name == "초원" ~ "윤초원",
+      TRUE ~ name
       )
     )
 # 3. gorilla 에서 id 틀린 행을 제거하고 옳은 id 갖춘 행으로 교체하기
@@ -137,21 +142,9 @@ gorilla <- gorilla %>%
   anti_join(wrong_keys %>% select(id, name), by = c("id", "name")) %>%
   bind_rows(gorilla_wrong_ids)
 # 4. 수정 사항 확인
-# gorilla[gorilla$id %in% setdiff(gorilla$id, class_roll$id), c("id", "name", "dept", "group")]
 gorilla %>%
-  anti_join(class_roll, by = c("id")) %>%
+  anti_join(class_roll, by = c("id", "name")) %>%
   select(id, name, dept, group)
-
-#> 틀린 학번 수정하여 되돌리기 (작동하지 않음. 참고로만)
-# gorilla <- gorilla %>%
-#   #> `left_join`으로 `name`과 `dept`를 기준으로 교정 정보를 추가
-#   left_join(class_roll %>% select(id, name, dept), 
-#             by = "name", 
-#             suffix = c("", "_correct")) %>%
-#   #> `id_correct`가 있는 경우 이를 사용하여 `id`를 교정하고, 그렇지 않으면 기존의 `id`를 유지
-#   mutate(id = if_else(!is.na(id_correct) & id != id_correct, id_correct, id)) %>%
-#   #> 임시로 추가된 `id_correct` 열 제거
-#   select(-id_correct)
 
 #> 중복 제출자
 gorilla %>%
