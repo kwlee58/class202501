@@ -1,7 +1,8 @@
 ---
 title: "생활 속의 통계학 최종"
 author: "데이터사이언스학부 이기원교수"
-date: "`r Sys.Date()`"
+date: "2025-06-13"
+# date: "`r format(Sys.time(), '%Y-%m-%d %H:%M:%S')`"
 output: html_document
 ---
 
@@ -22,7 +23,7 @@ panderOptions("table.split.table", Inf)
 ```{r, Total Scores, message = FALSE, echo = FALSE, warning = FALSE}
 class_roll <- readRDS("./class_roll_250516.RDS")
 total <-
-  read_excel(path = "./data/Final_Records_2501_0612.xlsx",
+  read_excel(path = "./data/Final_Records_2501_0613.xlsx",
              range = "A1:L597",
              col_types = c(rep("text", 6), rep("numeric", 6)))
 total <- data.frame(total)
