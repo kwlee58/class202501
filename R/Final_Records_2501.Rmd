@@ -1,7 +1,7 @@
 ---
 title: "생활 속의 통계학 최종"
 author: "데이터사이언스학부 이기원교수"
-date: "2025-06-13"
+date: "2025-06-15"
 # date: "`r format(Sys.time(), '%Y-%m-%d %H:%M:%S')`"
 output: html_document
 ---
@@ -23,7 +23,7 @@ panderOptions("table.split.table", Inf)
 ```{r, Total Scores, message = FALSE, echo = FALSE, warning = FALSE}
 class_roll <- readRDS("./class_roll_250516.RDS")
 total <-
-  read_excel(path = "./data/Final_Records_2501_0613.xlsx",
+  read_excel(path = "./data/Final_Records_2501_0615.xlsx",
              range = "A1:L597",
              col_types = c(rep("text", 6), rep("numeric", 6)))
 total <- data.frame(total)
@@ -112,15 +112,15 @@ axis(side = 2, at = h$counts, labels = h$counts, las = 2)
 
 ```{r, echo = FALSE}
 Counts_tbl <- total$Total %>% 
-  cut(breaks = c(0, 20, 40, 60, 70, 83, 85, 91, 95, 100),
+  cut(breaks = c(0, 20, 40, 60, 70, 84, 85, 92, 95, 100),
       labels = c("[0 ~ 20)", 
                  "[20 ~ 40)",
                  "[40 ~ 60)",
                  "[60 ~ 70)", 
-                 "[70 ~ 83)", 
-                 "[83 ~ 85)", 
-                 "[85 ~ 91)",
-                 "[91 ~ 95)", 
+                 "[70 ~ 84)", 
+                 "[84 ~ 85)", 
+                 "[85 ~ 92)",
+                 "[92 ~ 95)", 
                  "[95 ~ 100]"), 
       include.lowest = TRUE, 
       right = FALSE) %>%
@@ -133,14 +133,14 @@ Counts_tbl <- total$Total %>%
   cbind("계" = rowSums(.)) %>%
   t
 Prop_tbl <- total$Total %>% 
-  cut(breaks = c(0, 20, 40, 60, 70, 83, 85, 91, 95, 100),
+  cut(breaks = c(0, 20, 40, 60, 70, 84, 85, 92, 95, 100),
       labels = c("[0 ~ 20)", 
                  "[20 ~ 40)",
                  "[40 ~ 60)",
                  "[60 ~ 70)", 
-                 "[70 ~ 83)", 
-                 "[83 ~ 85)", 
-                 "[85 ~ 91)",
+                 "[70 ~ 84)", 
+                 "[84 ~ 85)", 
+                 "[85 ~ 92)",
                  "[91 ~ 95)", 
                  "[95 ~ 100]"), 
       include.lowest = TRUE, 
@@ -170,14 +170,14 @@ cbind("Counts(명)" = Counts_tbl,
 ```{r, message = FALSE, echo = FALSE}
 # str(total)
 total$Grades <- total$Total %>% 
-  cut(breaks = c(0, 20, 40, 60, 70, 83, 85, 91, 95, 100), 
+  cut(breaks = c(0, 20, 40, 60, 70, 84, 85, 92, 95, 100), 
       include.lowest = TRUE, 
       right = FALSE) %>%
   factor(levels = c("[95,100]", 
-                    "[91,95)",
-                    "[85,91)", 
-                    "[83,85)",
-                    "[70,83)", 
+                    "[92,95)",
+                    "[85,92)", 
+                    "[84,85)",
+                    "[70,84)", 
                     "[60,70)",
                     "[40,60)",
                     "[20,40)", 
