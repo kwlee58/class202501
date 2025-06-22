@@ -3,12 +3,28 @@ title: "생활 속의 통계학 최종"
 author: "데이터사이언스학부 이기원교수"
 date: "2025-06-21"
 # date: "`r format(Sys.time(), '%Y-%m-%d %H:%M:%S')`"
-output: html_document
+# output: html_document
+output:
+  pdf_document:
+    latex_engine: xelatex
+    dev: cairo_pdf
+    keep_tex: true
+header-includes:
+  - \usepackage{fontspec}
+  - \setmainfont{NanumGothic}
+  - \setsansfont{NanumGothic}
+  - \setmonofont{NanumGothic}
 ---
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 options(width=180)
+library(showtext)
+font_add(family = "nanum", 
+         regular = "~/Library/Fonts/NanumGothic-Regular.ttf",
+         bold    = "~/Library/Fonts/NanumGothic-Bold.ttf",
+         italic  = "~/Library/Fonts/NanumGothic-ExtraBold.ttf")
+showtext_auto()
 ```
 
 ```{r, presets, , message = FALSE, echo = FALSE}
@@ -24,7 +40,7 @@ panderOptions("table.split.table", Inf)
 ```{r, Total Scores, message = FALSE, echo = FALSE, warning = FALSE}
 class_roll <- readRDS("./class_roll_250516.RDS")
 total <-
-  read_excel(path = "./data/Final_Records_2501_0621_v3.xlsx",
+  read_excel(path = "./data/Final_Records_2501_0621_v2.xlsx",
              range = "A1:L597",
              col_types = c(rep("text", 6), rep("numeric", 6)))
 total <- data.frame(total)
@@ -66,49 +82,29 @@ pander(army_records[order(army_records$ID), ], row.names = FALSE)
 ## FA 명단
  
 ```{r, FA_list, eval = TRUE, message = FALSE, echo = FALSE}
-FA_ids <- 
+FA_id <- 
   c("20182101", "20213302", "20215266", "20223517", "20226409",
     "20227056", "20232941", "20241090", "20241216", "20242508", 
     "20242969", "20243029", "20243403", "20243831", "20243841", 
     "20246627", "20246923", "20252916", "20253244")
-FA <- total$ID %in% FA_ids
-total %>%
-  filter(ID %in% FA_ids) %>%
-  select(ID, Name) %>%
+FA <- total$ID %in% FA_id
+total[FA, c("ID", "Name")] %>%
   arrange(Name) %>%
   pander
-# total[FA, c("ID", "Name")] %>%
-#   arrange(Name) %>%
-#   pander
 ```
 
-## 대체/재이수 명단
+<!--## 대체/재이수 명단
 
 ```{r, eval = TRUE, message = FALSE, echo = FALSE}
-Repl_ids <- 
-   c("20182101", "20292844", "20192957", "20201731", "20202133",
-     "20203308", "20203537", "20203735", "20212744", "20212976",
-     "20213228", "20213302", "20215136", "20215266", "20221021",
-     "22022237", "20222999", "20223232", "20223253", "20225119",
-     "20226409", "20227107", "20231212", "20232128", "20232517",
-     "20232813", "20232941", "20233350", "20233901", "20236637",
-     "20241229", "20242508", "20242524", "20242929", "20242944",
-     "20242960", "20243029", "20243326", "20243403", "20243406",
-     "20243935", "20244150", "20245268")
-# Repl <- total$ID %in% Repl_ids 
-total %>%
-  filter(ID %in% Repl_ids) %>%
-  select(ID, Name) %>%
-  arrange(Name) %>%
-  pander
-# total[Repl, c("ID", "Name")] %>%
-#   arrange(Name) %>%
-#   pander
+(Repl_names <- c("김범수", "김세원", "김용규", "김은지", "김정민", "김준모", "노흥승", "맹소진", "박준영", "심무중", "윤성민", "이명규", "이연희", "이예진", "이학무", "정영광", "주소원", "한예지", "홍예은", "황푸름"))
+Repl <- total$Name %in% Repl_names
 ```
+-->
 
 ## 재학생 점수 히스토그램
 
 ```{r, message = FALSE, echo = FALSE}
+par(family = "nanum")
 if(sum(FA) > 0) {
     total <- total[!FA, ]
     }
@@ -130,9 +126,45 @@ h <-
        yaxt = "n",
        prob = FALSE, 
        col = "white",
-       main = "Histogram")
+       main = "총점 히스토그램")
 axis(side = 1, at = seq(0, 100,  by = 10), labels = seq(0, 100, by = 10))
 axis(side = 2, at = h$counts, labels = h$counts, las = 2)
+```
+
+```{r, message = FALSE, echo = FALSE}
+library(ggplot2)
+if(sum(FA) > 0) {
+    total <- total[!FA, ]
+    }
+
+#> 점수분포표
+total$Total %>%  
+  cut(breaks = seq(0, 100, by = 10), 
+      include.lowest = TRUE, 
+      right = FALSE) %>%
+  table %>%
+  as.matrix %>%
+  t %>%
+  pander
+
+ggplot(total, aes(x = Total)) +
+  geom_histogram(
+    breaks = seq(0, 100, by = 5), 
+    color = "black", fill = "white", 
+    boundary = 0, closed = "left", na.rm = TRUE) +
+  scale_x_continuous(
+    breaks = seq(0, 100, by = 10), 
+    limits = c(0, 100)) +
+  scale_y_continuous(
+    breaks = h$counts,  # y축 눈금을 실제 count 값에 맞춤
+    labels = h$count,
+    expand = expansion(mult = c(0, 0.05))  # y축 여백 약간
+  ) +
+  labs(
+    title = "총점 히스토그램", x = "총점", y = "빈도수"
+  ) +
+  theme_minimal(base_family = "nanum") + # showtext 폰트 설정 시 유용
+  theme(axis.text.y = element_text(hjust = 0.5))  
 ```
 
 ## 재학생 점수 분포표
