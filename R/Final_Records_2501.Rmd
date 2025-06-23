@@ -24,7 +24,7 @@ panderOptions("table.split.table", Inf)
 ```{r, Total Scores, message = FALSE, echo = FALSE, warning = FALSE}
 class_roll <- readRDS("./class_roll_250516.RDS")
 total <-
-  read_excel(path = "./data/Final_Records_2501_0621_v3.xlsx",
+  read_excel(path = "./data/Final_Records_2501_0622.xlsx",
              range = "A1:L597",
              col_types = c(rep("text", 6), rep("numeric", 6)))
 total <- data.frame(total)
@@ -139,15 +139,15 @@ axis(side = 2, at = h$counts, labels = h$counts, las = 2)
 
 ```{r, echo = FALSE}
 Counts_tbl <- total$Total %>% 
-  cut(breaks = c(0, 20, 40, 60, 70, 86, 90, 94, 95, 100),
+  cut(breaks = c(0, 20, 40, 60, 70, 86, 90, 93.5, 95, 100),
       labels = c("[0 ~ 20)", 
                  "[20 ~ 40)",
                  "[40 ~ 60)",
                  "[60 ~ 70)", 
                  "[70 ~ 86)", 
                  "[86 ~ 90)", 
-                 "[90 ~ 94)",
-                 "[94 ~ 95)", 
+                 "[90 ~ 93.5)",
+                 "[93.5 ~ 95)", 
                  "[95 ~ 100]"), 
       include.lowest = TRUE, 
       right = FALSE) %>%
@@ -160,15 +160,15 @@ Counts_tbl <- total$Total %>%
   cbind("계" = rowSums(.)) %>%
   t
 Prop_tbl <- total$Total %>% 
-  cut(breaks = c(0, 20, 40, 60, 70, 86, 90, 94, 95, 100),
+  cut(breaks = c(0, 20, 40, 60, 70, 86, 90, 93.5, 95, 100),
       labels = c("[0 ~ 20)", 
                  "[20 ~ 40)",
                  "[40 ~ 60)",
                  "[60 ~ 70)", 
                  "[70 ~ 86)", 
                  "[86 ~ 90)", 
-                 "[90 ~ 94)",
-                 "[94 ~ 95)", 
+                 "[90 ~ 93.5)",
+                 "[93.5 ~ 95)", 
                  "[95 ~ 100]"), 
       include.lowest = TRUE, 
       right = FALSE) %>%
@@ -197,12 +197,12 @@ cbind("Counts(명)" = Counts_tbl,
 ```{r, message = FALSE, echo = FALSE}
 # str(total)
 total$Grades <- total$Total %>% 
-  cut(breaks = c(0, 20, 40, 60, 70, 86, 90, 94, 95, 100), 
+  cut(breaks = c(0, 20, 40, 60, 70, 86, 90, 93.5, 95, 100), 
       include.lowest = TRUE, 
       right = FALSE) %>%
   factor(levels = c("[95,100]", 
-                    "[94,95)",
-                    "[90,94)", 
+                    "[93.5,95)",
+                    "[90,93.5)", 
                     "[86,90)",
                     "[70,86)", 
                     "[60,70)",
@@ -296,7 +296,6 @@ nrow(total[total$Grades %in% c("A+", "A0"), ])
 
 
 <P style = "page-break-before:always">
-<!--
 
 ```{r, individual scores, eval = TRUE, echo = FALSE}
 v_names_kr <- c("학번", "이름", "온라인출석", "복습퀴즈", "TED 퀴즈", "데이터실험퀴즈", "구글설문지 참여", "총점", "등급")
@@ -325,7 +324,7 @@ my_grade_print <-
       c("", "/20", "/30", "/20", "/20", "/10", "/100", ""),
       collapse = "\t")
   }
-my_grade_print("20214151") %>%
+my_grade_print("20218005") %>%
   data.frame(Grade_Report = .) %>%
   kable
 #> x at the top remove
