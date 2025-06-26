@@ -112,7 +112,10 @@ total %>%
 if(sum(FA) > 0) {
     total <- total[!FA, ]
     }
-
+#> 중국인 유학생 배려
+# total[total$ID == "20218005", "Total"] <- 86
+total <- total %>%
+  mutate(Total = if_else(ID == "20218005", Total + 1.29, Total))
 #> 점수분포표
 total$Total %>%  
   cut(breaks = seq(0, 100, by = 10), 
@@ -328,7 +331,7 @@ my_grade_print("20218005") %>%
   data.frame(Grade_Report = .) %>%
   kable
 #> x at the top remove
-sapply(c("20171054", "20256785"), 
+sapply(c("20171054", "20256785", "20241232"), 
        FUN = my_grade_print) %>%
 data.frame(Grade_Report = ., stringsAsFactors = FALSE) %>%
 kable(escape = TRUE, row.names = FALSE, col.names = NA)
