@@ -57,11 +57,14 @@ army_ID <-
 army_records <- total[total$ID %in% army_ID, ] 
 total <- total[total$ID %in% setdiff(total$ID, army_ID), ]
 ```
+
+<!--
 ## 군휴학생 성적부
 
 ```{r, echo = FALSE}
 pander(army_records[order(army_records$ID), ], row.names = FALSE)
 ```
+-->
 
 ## FA 명단
  
@@ -297,7 +300,7 @@ nrow(total[total$Grades %in% c("A+", "A0"), ])
 ```
 -->
 
-
+<!--
 <P style = "page-break-before:always">
 
 ```{r, individual scores, eval = TRUE, echo = FALSE}
@@ -336,6 +339,7 @@ sapply(c("20171054", "20256785", "20241232"),
 data.frame(Grade_Report = ., stringsAsFactors = FALSE) %>%
 kable(escape = TRUE, row.names = FALSE, col.names = NA)
 ```
+-->
 
 <!--
 ## Non-PASS
