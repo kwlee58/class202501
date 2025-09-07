@@ -1,0 +1,86 @@
+---
+title: "랜덤화 출석부(250905)"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(readxl)
+library(pander)
+library(knitr)
+library(magrittr)
+library(dplyr)
+panderOptions('table.split.table', Inf)
+```
+
+
+<!--
+### Data
+
+```{r, data, echo = FALSE}
+class_roll_250905 <- readRDS("./class_roll_250905.RDS")
+class_roll_250906 <- read_excel("./data/class_roll_250906.xlsx", 
+                        range = "B1:H616")
+str(class_roll_250906)
+names(class_roll_250906) <- c("dept", "college", "id", "name", "status", "email", "cell_no")
+str(class_roll_250906)
+str(class_roll_250905)
+class_roll_250906$group <- 
+  class_roll_250905$group[match(class_roll_250906$id, class_roll_250905$id)]
+id_new <- setdiff(class_roll_250906$id, class_roll_250905$id)
+id_out <- setdiff(class_roll_250905$id, class_roll_250906$id)
+class_roll_250905 %>%
+  filter(id %in% id_out) %>%
+  select(id, name, group)
+class_roll_250906 %>%
+  filter(id %in% id_new) %>%
+  select(id, name, group)
+# class_roll_250906[class_roll_250906$id %in% id_new, "group"] <- c("Black", "Red")
+class_roll_250906 <- class_roll_250906 %>%
+  mutate(group = case_when(
+    id == id_new[1] ~ "Black",
+    id == id_new[2] ~ "Red",
+    TRUE ~ group
+  ))
+class_roll_250906 %>%
+  filter(id %in% id_new) %>%
+  select(id, name, group)
+class_roll <- class_roll_250906
+```
+-->
+
+### 전체 출석부
+
+```{r, echo = FALSE}
+# class_roll %$%
+#   order(.$name) %>%
+#   class_roll[., c("id", "name", "group")] %>%
+#   pander(caption = "가나다순", row.names = FALSE)
+class_roll %>%
+  arrange(name) %>%                # 이름 기준 오름차순(가나다순)
+  select(id, name, group) %>%
+  pander(caption = "가나다순", row.names = FALSE)
+```
+
+<P style="page-break-before:always">
+
+```{r, echo = FALSE}
+class_roll %$%
+  order(.$group, .$name) %>%
+  class_roll[., c("group", "id", "name")] %>%
+  subset(.$group == "Red", select = c("id", "name")) %>%
+  pander(caption = "Red", row.names = FALSE)
+```
+
+<P style="page-break-before:always">
+
+```{r, echo = FALSE}
+class_roll %$%
+  order(.$group, .$name) %>%
+  class_roll[., c("group", "id", "name")] %>%
+  subset(.$group == "Black", select = c("id", "name")) %>%
+  pander(caption = "Black", row.names = FALSE)
+```
+
+<P style="page-break-before:always">
+

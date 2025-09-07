@@ -5,7 +5,7 @@ title: "Red and Black : Search for the Best"
 output: html_document
 ---
 
-## 5변수, 3,000,001 ~ 4,000,000
+## 5변수, 7,000,001 ~ 8,000,000
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
@@ -17,7 +17,7 @@ library(dplyr)
 panderOptions('table.split.table', Inf)
 ```
 
-## Data
+<!--## Data
 
 ```{r, data, echo = TRUE, results = 'show', warning = TRUE}
 class_roll <- read_excel("./data/class_roll_250905.xlsx", 
@@ -156,8 +156,8 @@ Xmin
 ```{r, for Mac, echo = TRUE, eval = TRUE}
 #> Mac or Linux Version
 library(parallel)
-M1 <- 1000001
-M2 <- 2000000
+M1 <- 7000001
+M2 <- 8000000
 
 # Number of cores on your machine
 num_cores <- detectCores() - 1
@@ -203,18 +203,17 @@ data.frame("Xmin" = Xmin) %>%
   pander
 ```
 
-
-### 0.1보다 작은 카이제곱 값
+<!--### 9보다 작은 카이제곱 값
 
 ```{r, freq, echo = FALSE}
-pchisq(0.1, df = 6) %>%
+pchisq(9, df = 32) %>%
   as.data.frame() %>%
-  setNames("Pr(X <= 0.1)") %>%
-  mutate(`Pr(X <= 0.1)` = formatC(`Pr(X <= 0.1)`, format = "e", digits = 2)) %>%
+  setNames("Pr(X <= 9)") %>%
+  mutate(`Pr(X <= 9)` = formatC(`Pr(X <= 9)`, format = "e", digits = 2)) %>%
   pander()
 
 Xsum %>%
-  `<=`(0.1) %>%
+  `<=`(9) %>%
   which %>%
   `[`(Xsum, .) %>%
   round(2) %>%
@@ -232,7 +231,7 @@ X5_min <- best_config$X5
 ## Plot
 
 ```{r, echo = FALSE}
-hist(Xsum, prob = TRUE, nclass = 30, xlim = c(0, 80), ylim = c(0, 0.06))
+hist(Xsum, prob = TRUE, nclass = 50, xlim = c(0, 80), ylim = c(0, 0.06))
 x <- seq(0, 80, by = 0.1)
 lines(x, dchisq(x, df = 32), col = "red")
 legend("topright", inset = 0.05, legend = c("Xsum", "Chi-square(32)"), col = c("black", "red"), lty = 1)
