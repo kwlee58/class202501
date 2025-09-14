@@ -131,10 +131,8 @@ quiz_wrong_ids <- quiz %>%
 wrong_ids <- quiz_wrong_ids$id
 quiz_wrong_ids <- quiz_wrong_ids %>%
   mutate(id = case_when(
-    id == "20223051" ~ "20223501",
-    id == "20246475" ~ "20246745",
-    id == "20318005" ~ "20218005",
-    id == "20241714" ~ "20241713",
+    id == "220253223" ~ "20253223",
+    id == "２０２５３２５３" ~ "20253253",
     TRUE ~ id
   ))
 # 3. quiz 에서 id 틀린 행을 제거하고 옳은 id 갖춘 행으로 교체하기
@@ -196,11 +194,11 @@ wrong_group <- quiz %>%
   filter(group2 != group)
 
 #> 잘못된 그룹 정보 출력
-# wrong_group %>%
-#   select(time, id, group2, group) %>%
-#   arrange(time) %>%
-#   rename(제출시간 = time, 학번 = id, 랜덤화출석부 = group2, 구글예습퀴즈 = group) %>%
-#   pander(row.names = FALSE)
+wrong_group %>%
+  select(time, id, group2, group) %>%
+  arrange(time) %>%
+  rename(제출시간 = time, 학번 = id, 랜덤화출석부 = group2, 구글예습퀴즈 = group) %>%
+  pander(row.names = FALSE)
 
 #> 옛 코드
 # quiz$group2 <- class_roll$group[match(quiz$id, class_roll$id)]
@@ -334,7 +332,7 @@ tbl_q2_a %>%
   pander 
 chisq_test_q2 <- 
   tbl_q2_a %>%
-  `[`(-3, -c(2, 6)) %>%
+  `[`(-3, -c(2, 3, 6)) %>%
   chisq.test(simulate.p.value = FALSE) 
 chisq_test_q2 %>%
   pander
@@ -381,7 +379,7 @@ tbl_q3_a %>%
   pander 
 chisq_test_q3 <- 
   tbl_q3_a %>%
-  `[`(-3, -5) %>%
+  `[`(-3, -c(4, 5)) %>%
   chisq.test(simulate.p.value = FALSE) 
 chisq_test_q3 %>%
   pander
@@ -509,7 +507,7 @@ include_graphics("./pics/Quiz_250908_Q6.png")
 
 ### 조출생률과 합계출산율(집계표)
 
-```{r, birth rates, echo = FALSE}
+```{r, birth rates, echo = FALSE, warning = FALSE}
 tbl_q6_a <- 
   quiz$Q6 %>% 
   table(quiz$group, ., useNA = "ifany") %>%
@@ -732,12 +730,12 @@ days_tbl %>%
 ```{r, echo = FALSE, warning = FALSE}
 days_tbl %>%
   rbind("계" = colSums(.)) %>%
-  `[`(3, 13:14) %>%
+  `[`(3, 8:14) %>%
   pander
 days_chisq_test <-
   days_tbl %>%
   rbind("계" = colSums(.)) %>%
-  `[`(3, 13:14) %>%
+  `[`(3, 8:14) %>%
   chisq.test(simulate.p.value = FALSE) 
 days_chisq_test %>%
   pander
@@ -785,11 +783,11 @@ invisible(dev.off())
 ```{r, echo = FALSE, warning = FALSE}
 days_tbl %>%
   rbind("계" = colSums(.)) %>%
-  `[`(-3, 13:14) %>%
+  `[`(-3, 8:14) %>%
   pander
 days_RnB_chisq_test <-
   days_tbl %>%
-  `[`(-3, 13:14) %>%
+  `[`(-3, 8:14) %>%
   chisq.test(simulate.p.value = FALSE) 
 days_RnB_chisq_test %>%
   pander
@@ -836,5 +834,4 @@ ggsave("./pics/Quiz250908_submission_2.png", dpi = 120, width = 960, height = 84
 
 ```{r, save, echo = FALSE}
 saveRDS(quiz, file = "./quiz250908.RDS")
-# save.image("./quiz250908.RData")
 ```
