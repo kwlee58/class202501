@@ -152,9 +152,7 @@ quiz_wrong_ids <- quiz %>%
 wrong_ids <- quiz_wrong_ids$id
 quiz_wrong_ids <- quiz_wrong_ids %>%
   mutate(id = case_when(
-    id == "20242708" ~ "20243708",
-    id == "2043817" ~ "20243817",
-    id == "20343429" ~ "20243429",
+    id == "2023016" ~ "20253016",
     TRUE ~ id
   ))
 # 3. quiz 에서 id 틀린 행을 제거하고 옳은 id 갖춘 행으로 교체하기
@@ -438,7 +436,7 @@ tbl_q4_a %>%
   pander 
 chisq_test_q4 <- 
   tbl_q4_a %>%
-  `[`(-3, -5) %>%
+  `[`(-3, -c(4, 5)) %>%
   chisq.test(simulate.p.value = FALSE) 
 chisq_test_q4 %>%
   pander
