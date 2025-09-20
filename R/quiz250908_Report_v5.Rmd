@@ -71,6 +71,14 @@ str(quiz)
 quiz$time <- format(quiz$time, format = "%Y-%m-%d %H:%M:%S")
 ## 자정 전에 제출한 사람의 시간 조정
 # quiz[quiz$id == "20232998", "time"] <- c("2025-03-10 00:00:01")
+#> 20255124 김보연이 학과명도 20255124 라고 적어서 발생한 오류의 해결책.
+class(quiz$dept) <- "character"
+quiz <- quiz %>%
+  mutate(dept = case_when(
+    id == "20255124" ~ "소프트웨어학부",
+    TRUE ~ dept
+  ))
+# quiz[quiz$id == "20255124", "dept"] <- "소프트웨어학부"
 quiz <- data.frame(quiz)
 class(quiz$id) <- "character"
 class(quiz$Q3) <- "character"
@@ -731,12 +739,12 @@ days_tbl %>%
 ```{r, echo = FALSE, warning = FALSE}
 days_tbl %>%
   rbind("계" = colSums(.)) %>%
-  `[`(3, 3:14) %>%
+  `[`(3, 2:14) %>%
   pander
 days_chisq_test <-
   days_tbl %>%
   rbind("계" = colSums(.)) %>%
-  `[`(3, 3:14) %>%
+  `[`(3, 2:14) %>%
   chisq.test(simulate.p.value = FALSE) 
 days_chisq_test %>%
   pander
@@ -784,11 +792,11 @@ invisible(dev.off())
 ```{r, echo = FALSE, warning = FALSE}
 days_tbl %>%
   rbind("계" = colSums(.)) %>%
-  `[`(-3, 3:14) %>%
+  `[`(-3, 2:14) %>%
   pander
 days_RnB_chisq_test <-
   days_tbl %>%
-  `[`(-3, 3:14) %>%
+  `[`(-3, 2:14) %>%
   chisq.test(simulate.p.value = FALSE) 
 days_RnB_chisq_test %>%
   pander

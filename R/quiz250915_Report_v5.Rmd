@@ -57,6 +57,14 @@ names(quiz) <-
   c("time", "email", "dept", "id", "name", 
     "Q1", "Q2", "Q3", "Q4", "Q5", "Q6", "group", "Q7_R", "Q7_B")
 str(quiz)
+#> 20255124 김보연이 학과명도 20255124 라고 적어서 발생한 오류의 해결책.
+class(quiz$dept) <- "character"
+quiz <- quiz %>%
+  mutate(dept = case_when(
+    id == "20255124" ~ "소프트웨어학부",
+    TRUE ~ dept
+  ))
+# quiz[quiz$id == "20255124", "dept"] <- "소프트웨어학부"
 quiz <- data.frame(quiz)
 class(quiz$id) <- "character"
 quiz$Q2 <- paste0(quiz$Q2 * 100, "%")
@@ -733,12 +741,12 @@ days_tbl %>%
 ```{r, echo = FALSE, warning = FALSE}
 days_tbl %>%
   rbind("계" = colSums(.)) %>%
-  `[`(3, 10:14) %>%
+  `[`(3, 9:14) %>%
   pander
 days_chisq_test <-
   days_tbl %>%
   rbind("계" = colSums(.)) %>%
-  `[`(3, 10:14) %>%
+  `[`(3, 9:14) %>%
   chisq.test(simulate.p.value = FALSE) 
 days_chisq_test %>%
   pander
@@ -786,11 +794,11 @@ invisible(dev.off())
 ```{r, echo = FALSE, warning = FALSE}
 days_tbl %>%
   rbind("계" = colSums(.)) %>%
-  `[`(-3, 10:14) %>%
+  `[`(-3, 9:14) %>%
   pander
 days_RnB_chisq_test <-
   days_tbl %>%
-  `[`(-3, 10:14) %>%
+  `[`(-3, 9:14) %>%
   chisq.test(simulate.p.value = FALSE) 
 days_RnB_chisq_test %>%
   pander
