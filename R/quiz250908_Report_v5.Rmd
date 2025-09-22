@@ -1,8 +1,8 @@
 ---
 title: "Quiz 250908"
 author: "coop711"
-# date: "2025-09-08"
-date: "`r format(Sys.time(), '%Y-%m-%d %H:%M:%S')`"
+date: "2025-09-08"
+# date: "`r format(Sys.time(), '%Y-%m-%d %H:%M:%S')`"
 output: html_document
 ---
 
@@ -37,25 +37,26 @@ Q7에서는 같은 상황에 대해서 중립적인 프레임을 쓸 때(Red)와
 class_roll0906 <- 
   readRDS("./class_roll_250906.RDS")
 ## Red_and_Black_250906_roll_v2.Rmd 에서 생성된 RDS 파일이어야 함.
-# class_roll0314 <- 
-#   read_excel("./data/class_roll_250314.xlsx", range = "B1:H611")
-# str(class_roll0314)
-# names(class_roll0314) <-
-#   c("dept", "colleges", "id", "name", "status", "email", "cell_no")
-# class_roll0314$group <- 
-#   class_roll0908$group[match(class_roll0314$id, class_roll0908$id)]
+class_roll0921 <- 
+  read_excel("./data/class_roll_250921.xlsx", range = "B1:H611")
+str(class_roll0921)
+names(class_roll0921) <-
+  c("dept", "colleges", "id", "name", "status", "email", "cell_no")
+class_roll0921$group <- 
+  class_roll0906$group[match(class_roll0921$id, class_roll0906$id)]
+table(class_roll0921$group)
 #> 폐강으로 인하여 들어 온 수강생들의 그룹 설정
-# na_gr <- which(is.na(class_roll0314$group)) 
-# class_roll0314[na_gr, ]
+na_gr <- which(is.na(class_roll0921$group)) 
+class_roll0921[na_gr, ]
 #> 나간 사람들이 모두 Black 이므로
-# class_roll0314[na_gr, "group"] <- c("Black")
-# saveRDS(class_roll0314, file = "./class_roll_250314.RDS")
+class_roll0921[na_gr, "group"] <- c("Black")
+saveRDS(class_roll0921, file = "./class_roll_250921.RDS")
 #> 3월17일 기준 수강철회자 파악 후 조치
 # class_roll0317 <- class_roll0314 %>%
 #   filter(id != "20252139")
 # class_roll0317 <- class_roll0314[!(class_roll0314$id == "20252139"), ]
 # saveRDS(class_roll0317, file = "./class_roll_250317.RDS")
-class_roll <- class_roll0906
+class_roll <- class_roll0921
 #> quiz reading
 sheet_url <- "https://docs.google.com/spreadsheets/d/1r3xiEqfW9X0NmQyK7cabPSC1lRa6HpsFu4TBTy5IuLA"
 quiz <- read_sheet(sheet_url)
@@ -203,11 +204,11 @@ wrong_group <- quiz %>%
   filter(group2 != group)
 
 #> 잘못된 그룹 정보 출력
-wrong_group %>%
-  select(time, id, group2, group) %>%
-  arrange(time) %>%
-  rename(제출시간 = time, 학번 = id, 랜덤화출석부 = group2, 구글예습퀴즈 = group) %>%
-  pander(row.names = FALSE)
+# wrong_group %>%
+#   select(time, id, group2, group) %>%
+#   arrange(time) %>%
+#   rename(제출시간 = time, 학번 = id, 랜덤화출석부 = group2, 구글예습퀴즈 = group) %>%
+#   pander(row.names = FALSE)
 
 #> 옛 코드
 # quiz$group2 <- class_roll$group[match(quiz$id, class_roll$id)]
@@ -739,12 +740,12 @@ days_tbl %>%
 ```{r, echo = FALSE, warning = FALSE}
 days_tbl %>%
   rbind("계" = colSums(.)) %>%
-  `[`(3, 2:14) %>%
+  `[`(3, 1:14) %>%
   pander
 days_chisq_test <-
   days_tbl %>%
   rbind("계" = colSums(.)) %>%
-  `[`(3, 2:14) %>%
+  `[`(3, 1:14) %>%
   chisq.test(simulate.p.value = FALSE) 
 days_chisq_test %>%
   pander
@@ -792,11 +793,11 @@ invisible(dev.off())
 ```{r, echo = FALSE, warning = FALSE}
 days_tbl %>%
   rbind("계" = colSums(.)) %>%
-  `[`(-3, 2:14) %>%
+  `[`(-3, 1:14) %>%
   pander
 days_RnB_chisq_test <-
   days_tbl %>%
-  `[`(-3, 2:14) %>%
+  `[`(-3, 1:14) %>%
   chisq.test(simulate.p.value = FALSE) 
 days_RnB_chisq_test %>%
   pander
