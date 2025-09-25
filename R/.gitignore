@@ -9,7 +9,6 @@
 *.utf8.md
 *.knit.md
 *.Rmd~
-*.RDS
 *.rda
 
 # Bookdown output
