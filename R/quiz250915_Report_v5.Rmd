@@ -37,15 +37,15 @@ class_roll0921 <-
   readRDS("./class_roll_250921.RDS")
 class_roll0921 <- data.frame(class_roll0921)
 ## 수강 철회 반영 새 출석부
-# class_roll0321 <- read_excel("./data/class_roll_250321.xlsx", 
-#                         range = "B1:H605")
-# names(class_roll0321) <- c("dept", "college", "id", "name", "status", "email", "cell_no")
-# str(class_roll0321)
-# class_roll0321$group <- 
-#   class_roll0906$group[match(class_roll0321$id, class_roll0906$id)]
-#> class_roll_250321 저장
-# saveRDS(class_roll0321, file = "./class_roll_250321.RDS")
-class_roll <- class_roll0921
+class_roll0928 <- read_excel("./data/class_roll_250928.xlsx", 
+                        range = "B1:H609")
+names(class_roll0928) <- c("dept", "college", "id", "name", "status", "email", "cell_no")
+str(class_roll0928)
+class_roll0928$group <- 
+  class_roll0921$group[match(class_roll0928$id, class_roll0921$id)]
+# class_roll_250928 저장
+saveRDS(class_roll0928, file = "./class_roll_250928.RDS")
+class_roll <- class_roll0928
 sheet_url <- "https://docs.google.com/spreadsheets/d/1dw16Vx1cnKrOODjP8Tgbn3KbchTA1M1txETx8FB1VAQ"
 quiz <- 
   read_sheet(sheet_url)
@@ -163,6 +163,7 @@ quiz_wrong_ids <- quiz_wrong_ids %>%
     id == "2023016" ~ "20253016",
     id == "20204134" ~ "20204133",
     id == "1" & name == "ㅈ" & dept == "ㅈ" ~ "20255152",
+    id == "29256308" ~ "20256308",
     TRUE ~ id
   ))
 # 3. quiz 에서 id 틀린 행을 제거하고 옳은 id 갖춘 행으로 교체하기
@@ -611,10 +612,6 @@ Q7의 Red에는 아일랜드의 사례에서 감세 정책의 긍정적 측면�
 Black은 같은 아일랜드의 사례에서 감세 정책의 부정적 측면을 설명한 후 우리나라 조세 정책의 방향에 대하여 물었을 떄, `r tbl_q7_a[2, 4]`명이 응답한 가운데 `r tbl_q7_a[2, 1]`명이 우리나라의 국민부담률을 아일랜드 수준으로 "낮춰야 한다"는 반응을 보이고, `r tbl_q7_a[2, 2]`명이 OECD 평균 수준으로 "높여야 한다"는 반응을 보입니다.
 
 그리고 "모름/무응답"에 답한 인원은 Red에 `r tbl_q7_a[1, 3]`명, Black 에 `r tbl_q7_a[2, 3]`명이 응답하였습니다.
-
-우연일까요?
-
-모름/무응답에 있어서는 Red, Black이 몹시 닮았습니다.
 
 카이제곱 테스트는 이와 같은 상황에서 감세정책의 긍정적 측면을 부각시킨 경우와 부정적 측면을 부각시킨 경우에 그 차이가 통계적으로 매우, 매우, ... 유의하다는 것을 보여 줍니다.
 
