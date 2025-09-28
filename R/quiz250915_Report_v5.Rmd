@@ -708,7 +708,7 @@ ggsave("./pics/Quiz250915_Q7_RnB.png", dpi = 120, width = 960, height = 840, uni
 
 Mosaic Plot 은 이 집계결과를 시각적으로 잘 보여줍니다.
 
-감세정책의 긍정적 측면을 설명한 Red 에서 우리나라의 국민부담률을 "낮춰야 한다"고 응답한 백분율이 높고, 감세정책의 부정적 측면을 설명한 Black 에서 우리나라의 국민부담률을 "높여야 한다"고 응답한 백분율이 월등히 높은 것을 시각적으로 알 수 있습니다.
+감세정책의 긍정적 측면을 설명한 Red 에서 우리나라의 국민부담률을 "높여야 한다"고 응답한 백분율은 "낮춰야 한다"고 응답한 백분율보다 다소 높지만, 감세정책의 부정적 측면을 설명한 Black 에서 우리나라의 국민부담률을 "높여야 한다"고 응답한 백분율이 월등히 높은 것을 시각적으로 알 수 있습니다.
 
 ## 마감 시간으로부터 제출 시간의 분포
 
@@ -739,12 +739,12 @@ days_tbl %>%
 ```{r, echo = FALSE, warning = FALSE}
 days_tbl %>%
   rbind("계" = colSums(.)) %>%
-  `[`(3, 2:14) %>%
+  `[`(3, 1:14) %>%
   pander
 days_chisq_test <-
   days_tbl %>%
   rbind("계" = colSums(.)) %>%
-  `[`(3, 2:14) %>%
+  `[`(3, 1:14) %>%
   chisq.test(simulate.p.value = FALSE) 
 days_chisq_test %>%
   pander
@@ -792,11 +792,11 @@ invisible(dev.off())
 ```{r, echo = FALSE, warning = FALSE}
 days_tbl %>%
   rbind("계" = colSums(.)) %>%
-  `[`(-3, 2:14) %>%
+  `[`(-3, 1:14) %>%
   pander
 days_RnB_chisq_test <-
   days_tbl %>%
-  `[`(-3, 2:14) %>%
+  `[`(-3, 1:14) %>%
   chisq.test(simulate.p.value = FALSE) 
 days_RnB_chisq_test %>%
   pander
