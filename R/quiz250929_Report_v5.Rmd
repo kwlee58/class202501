@@ -137,13 +137,7 @@ wrong_keys <- quiz_wrong_ids %>%
 quiz_wrong_ids <- quiz_wrong_ids %>%
   mutate(
     id = case_when(
-      id == "202227096" ~ "20227096",
-      id == "02053725" ~ "20253725",
-      id == "20241595" ~ "20241506",
-      id == "202222713" ~ "20222713",
-      id == "202013353" ~ "20213353",
-      id == "2042918" ~ "20242918",
-      id == "202244144" ~ "20244144",
+      id == "29225238" ~ "20225238",
       TRUE ~ id
       ),
     name = case_when(
@@ -166,7 +160,7 @@ quiz %>%
 # which(duplicated(quiz$id)) %>%
 #   quiz[., c("id", "name")]
 quiz %>%
-  filter(id %in% c("20202913"))
+  filter(id %in% c("20245269"))
 quiz <- quiz %>% 
   arrange(id, desc(time)) %>%
   distinct(id, .keep_all = TRUE)
