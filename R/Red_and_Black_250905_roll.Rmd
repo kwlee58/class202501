@@ -13,12 +13,12 @@ library(dplyr)
 panderOptions('table.split.table', Inf)
 ```
 
-<!--### Data
+### Data
 
 ```{r, data, echo = FALSE}
 class_roll_250905 <- readRDS("./class_roll_250905.RDS")
 class_roll_250906 <- read_excel("./data/class_roll_250906.xlsx", 
-                        range = "B1:H616")
+                                range = "B1:H616")
 str(class_roll_250906)
 names(class_roll_250906) <- c("dept", "college", "id", "name", "status", "email", "cell_no")
 str(class_roll_250906)
@@ -39,7 +39,8 @@ class_roll_250906 <- class_roll_250906 %>%
     id == id_new[1] ~ "Black",
     id == id_new[2] ~ "Red",
     TRUE ~ group
-  ))
+  )) %>%
+  mutate(group = factor(group, levels = levels(class_roll_250905$group)))
 class_roll_250906 %>%
   filter(id %in% id_new) %>%
   select(id, name, group)

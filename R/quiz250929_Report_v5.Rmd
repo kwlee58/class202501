@@ -1,8 +1,8 @@
 ---
 title: "Quiz 250929 (Framing Effects)"
 author: "coop711"
-date: "2025-09-29"
-# date: "`r format(Sys.time(), '%Y-%m-%d %H:%M:%S')`"
+# date: "2025-09-29"
+date: "`r format(Sys.time(), '%Y-%m-%d %H:%M:%S')`"
 output: html_document
 ---
 
@@ -244,7 +244,7 @@ Red를 Black 이라고 한 사람이 `r wrong_tbl[1, 2]`명, Black 을 Red 라�
 
 우선 Red, Black 을 잘못 선택한 `r nrow(wrong_group)`명을 랜덤하게 둘로 나누면 어느 한 쪽 집단에 들어갈 기대인원은 `r nrow(wrong_group)`명을 둘로 나눈 `r nrow(wrong_group) / 2`(명)이고, 표준오차는 `r nrow(wrong_group)`의 제곱근에 1/2을 곱해 준 `r round(sqrt(nrow(wrong_group)) / 2, digits  = 1)`명이 됩니다. 
 
-실제로 Red를 Black 이라고 한 사람수, `r wrong_tbl[1, 2]`명이나 Black 을 Red 라고 한 사람수, `r wrong_tbl[2, 1]`명은 기대인원으로부터 표준오차 범위는 벗어 나지만 표준오차 두  배 범위에는 잘  들어갑니다.
+실제로 Red를 Black 이라고 한 사람수, `r wrong_tbl[1, 2]`명이나 Black 을 Red 라고 한 사람수, `r wrong_tbl[2, 1]`명은 기대인원으로부터 표준오차 범위에 잘  들어갑니다.
 
 두 번째 분석 방법은 확률을 계산해 보는 것입니다. 
 
@@ -725,13 +725,13 @@ days_tbl %>%
 ```{r, echo = FALSE, warning = FALSE}
 days_tbl %>%
   rbind("계" = colSums(.)) %>%
-  `[`(3, 8:14) %>%
-  `names<-`(., paste0(7:1, "일")) %>%
+  `[`(3, 7:14) %>%
+  `names<-`(., paste0(8:1, "일")) %>%
   pander
 days_chisq_test <-
   days_tbl %>%
   rbind("계" = colSums(.)) %>%
-  `[`(3, 8:14) %>%
+  `[`(3, 7:14) %>%
   chisq.test(simulate.p.value = FALSE) 
 days_chisq_test %>%
   pander
@@ -777,12 +777,12 @@ invisible(dev.off())
 ```{r, echo = FALSE, warning = FALSE}
 days_tbl %>%
   rbind("계" = colSums(.)) %>%
-  `[`(-3, 8:14) %>%
-  `colnames<-`(., paste0(7:1, "일")) %>%
+  `[`(-3, 7:14) %>%
+  `colnames<-`(., paste0(8:1, "일")) %>%
   pander
 days_RnB_chisq_test <-
   days_tbl %>%
-  `[`(-3, 8:14) %>%
+  `[`(-3, 7:14) %>%
   chisq.test(simulate.p.value = FALSE) 
 days_RnB_chisq_test %>%
   pander
