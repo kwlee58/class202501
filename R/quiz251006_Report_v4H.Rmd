@@ -1,8 +1,8 @@
 ---
 title: "Quiz 251006 (Which World?)"
 author: "coop711"
-date: "2025-10-06"
-# date: "`r format(Sys.time(), '%Y-%m-%d %H:%M:%S')`"
+# date: "2025-10-06"
+date: "`r format(Sys.time(), '%Y-%m-%d %H:%M:%S')`"
 output: html_document
 ---
 
@@ -833,13 +833,13 @@ days_tbl %>%
 ```{r, echo = FALSE, warning = FALSE}
 days_tbl %>%
   rbind("계" = colSums(.)) %>%
-  `[`(3, 10:14) %>%
-  `names<-`(., paste0(5:1, "일")) %>%
+  `[`(3, 8:14) %>%
+  `names<-`(., paste0(7:1, "일")) %>%
   pander
 days_chisq_test <-
   days_tbl %>%
   rbind("계" = colSums(.)) %>%
-  `[`(3, 10:14) %>%
+  `[`(3, 8:14) %>%
   chisq.test(simulate.p.value = FALSE) 
 days_chisq_test %>%
   pander
@@ -885,12 +885,12 @@ invisible(dev.off())
 ```{r, echo = FALSE, warning = FALSE}
 days_tbl %>%
   rbind("계" = colSums(.)) %>%
-  `[`(-3, 10:14) %>%
-  `colnames<-`(., paste0(5:1, "일")) %>%
+  `[`(-3, 8:14) %>%
+  `colnames<-`(., paste0(7:1, "일")) %>%
   pander
 days_RnB_chisq_test <-
   days_tbl %>%
-  `[`(-3, 10:14) %>%
+  `[`(-3, 8:14) %>%
   chisq.test(simulate.p.value = FALSE) 
 days_RnB_chisq_test %>%
   pander

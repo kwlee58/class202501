@@ -1,8 +1,8 @@
 ---
 title: "Quiz 250929 (Framing Effects)"
 author: "coop711"
-# date: "2025-09-29"
-date: "`r format(Sys.time(), '%Y-%m-%d %H:%M:%S')`"
+date: "2025-09-29"
+# date: "`r format(Sys.time(), '%Y-%m-%d %H:%M:%S')`"
 output: html_document
 ---
 
@@ -33,19 +33,19 @@ Q7에서는 컵에 우유를 반을 쏟은 상황에서 긍정적인 단어를 �
 끝으로 제출시간의 분포가 날마다 고른지, Red, Black 간에는 닮았는지 알아봅니다.
 
 ```{r, data, echo = FALSE, results = 'hide', message = FALSE}
-class_roll0921 <- readRDS("./class_roll_250921.RDS")
-class_roll0921 %<>% 
+class_roll1005 <- readRDS("./class_roll_251005.RDS")
+class_roll1005 %<>% 
   data.frame
 #> 출석부에 변화가 생기면 조치
-# class_roll0929 <- 
-#   read_excel("./data/class_roll_250929.xlsx", range = "B1:H603")
-# str(class_roll0929)
-# names(class_roll0929) <- 
-#   c("dept", "college", "id", "name", "status", "email", "cell_no")
-# class_roll0929$group <- 
-#   class_roll0921$group[match(class_roll0929$id, class_roll0921$id)]
-# saveRDS(class_roll0929, file = "./class_roll_250929.RDS")
-class_roll <- class_roll0921
+class_roll1012 <- 
+  read_excel("./data/class_roll_251012.xlsx", range = "B1:H608")
+str(class_roll1012)
+names(class_roll1012) <- 
+  c("dept", "college", "id", "name", "status", "email", "cell_no")
+class_roll1012$group <- 
+  class_roll1005$group[match(class_roll1012$id, class_roll1005$id)]
+saveRDS(class_roll1012, file = "./class_roll_251012.RDS")
+class_roll <- class_roll1012
 str(class_roll)
 #> googlesheets
 sheet_url <- "https://docs.google.com/spreadsheets/d/1sfNPMOadcjPtdCntAX-35cq582VJxByYhP1KWz87f84"
@@ -161,10 +161,11 @@ quiz %>%
 # which(duplicated(quiz$id)) %>%
 #   quiz[., c("id", "name")]
 quiz %>%
-  filter(id %in% c("20245269"))
+  filter(id %in% c("20245269", "20237016", "20215201", "20203823", "20252238"))
 quiz <- quiz %>% 
   arrange(id, desc(time)) %>%
   distinct(id, .keep_all = TRUE)
+
 #> 불참자들
 absentee <- class_roll %>%
   anti_join(quiz, by = "id") %>%
@@ -205,11 +206,11 @@ wrong_group <- quiz %>%
   filter(group2 != group)
 
 #> 잘못된 그룹 정보 출력
-wrong_group %>%
-  select(time, id, group2, group) %>%
-  arrange(time) %>%
-  rename("제출시간" = time, "학번" = id, "랜덤화출석부" = group2, "구글예습퀴즈" = group) %>%
-  pander(row.names = FALSE)
+# wrong_group %>%
+#   select(time, id, group2, group) %>%
+#   arrange(time) %>%
+#   rename("제출시간" = time, "학번" = id, "랜덤화출석부" = group2, "구글예습퀴즈" = group) %>%
+#   pander(row.names = FALSE)
 
 #> 옛 코드
 # quiz$group2 <- class_roll$group[match(quiz$id, class_roll$id)]
@@ -720,13 +721,13 @@ days_tbl %>%
 ```{r, echo = FALSE, warning = FALSE}
 days_tbl %>%
   rbind("계" = colSums(.)) %>%
-  `[`(3, 3:14) %>%
-  `names<-`(., paste0(12:1, "일")) %>%
+  `[`(3, 1:14) %>%
+  `names<-`(., paste0(14:1, "일")) %>%
   pander
 days_chisq_test <-
   days_tbl %>%
   rbind("계" = colSums(.)) %>%
-  `[`(3, 3:14) %>%
+  `[`(3, 1:14) %>%
   chisq.test(simulate.p.value = FALSE) 
 days_chisq_test %>%
   pander
@@ -772,12 +773,12 @@ invisible(dev.off())
 ```{r, echo = FALSE, warning = FALSE}
 days_tbl %>%
   rbind("계" = colSums(.)) %>%
-  `[`(-3, 3:14) %>%
-  `colnames<-`(., paste0(12:1, "일")) %>%
+  `[`(-3, 1:14) %>%
+  `colnames<-`(., paste0(14:1, "일")) %>%
   pander
 days_RnB_chisq_test <-
   days_tbl %>%
-  `[`(-3, 3:14) %>%
+  `[`(-3, 1:14) %>%
   chisq.test(simulate.p.value = FALSE) 
 days_RnB_chisq_test %>%
   pander
