@@ -1,5 +1,5 @@
 ---
-title: "Quiz 251006 (Which World?)"
+title: "Quiz 251006 (The more, the better?)"
 author: "coop711"
 # date: "2025-10-06"
 date: "`r format(Sys.time(), '%Y-%m-%d %H:%M:%S')`"
@@ -16,6 +16,11 @@ library(knitr)
 library(magrittr)
 library(dplyr)
 library(googlesheets4)
+library(showtext)
+font_add(family = "kopub",
+         regular = "~/Library/Fonts/KoPubWorld Dotum Medium.ttf",
+         bold = "~/Library/Fonts/KoPubWorld Dotum Bold.ttf")
+showtext_auto()
 panderOptions('table.split.table', Inf)
 panderOptions('table.alignment.rownames', 'left')
 panderOptions('table.alignment.default', 'right')
@@ -720,9 +725,9 @@ df$Var2 %<>% factor(labels = c("Red('내가 남보다' 먼저)", "Black('남이 
 # p_df$Var1 %<>% factor(labels = c("반이나 남았네", "반밖에 안 남았네", "모름/무응답"))
 p_df$Var2 %<>% factor(labels = c("Red('내가 남보다' 먼저)", "Black('남이 나보다' 먼저)"))
 m + geom_text(aes(x = center, y = 1.05), 
-              family = "KoPubWorldDotum Medium",
+#              family = "kopub",
               label = df[, 2]) +
-  theme_bw(base_family = "KoPubWorldDotum Medium") +
+  theme_bw(base_family = "kopub") +
   labs(title = "The more, the better?", x = "Red or Black(누적 %)", y = "인원(%, 명)") +
   scale_fill_brewer(name = "응답", 
                     labels = c("내가 남보다 많이", "남이 나보다 많이"),
@@ -731,7 +736,7 @@ m + geom_text(aes(x = center, y = 1.05),
                     direction = 1) +
   theme(plot.title = element_text(hjust = 0.5, 
                                   size = 18, 
-                                  family = "KoPubWorldDotum Bold")) 
+                                  face = "bold")) 
 ggsave("./pics/Quiz241007_Q7_RnB.png", dpi = 120, width = 960, height = 840, units = "px")
 ```
 
@@ -780,7 +785,7 @@ custom_labels <-
   c("16/1", "", "", "17/2", "", "", "19/2", "", "20/2", "21/1", "21/2", "22/1", "22/2", "23/1", "23/2", "24/1", "24/2", "25/1")
 m_list$m +
   geom_text(aes(x = center, y = 1.05),
-            family = "KoPubWorldDotum Medium",
+#            family = "KoPubWorldDotum Medium",
             label = rep(custom_labels, each = 2)) +
 # m_list$m +
 #   geom_text(aes(x = center, y = 1.05),
@@ -796,10 +801,10 @@ m_list$m +
                     type = "qual", 
                     palette = "Set2", 
                     direction = 1) +
-  theme(axis.title.x = element_text(family = "KoPubWorldDotum Light"),
-        axis.title.y = element_text(family = "KoPubWorldDotum Light"),
-        legend.text = element_text(family = "KoPubWorldDotum Light"),
-        plot.title = element_text(size = 20, hjust = 0.5, family = "KoPubWorldDotum Bold"))
+  theme(axis.title.x = element_text(),
+        axis.title.y = element_text(),
+        legend.text = element_text(),
+        plot.title = element_text(size = 20, hjust = 0.5, face = "bold"))
 ggsave("./pics/Which_world_mosaic_ggplot.png", width = 16, height = 8, dpi = 72)
 ```
 
@@ -860,7 +865,7 @@ days_chisq_test %>%
 ```{r, echo = FALSE}
 # png(file = "./pics/2302/quiz_submission_8.png", width = 640, height = 480)
 suppressMessages({
-par(family = "KoPubWorldDotum Medium")
+# par(family = "kopub")
 b <- 
   quiz$days %>%
   cut(breaks = c(0:14), include.lowest = TRUE) %>%
@@ -900,11 +905,9 @@ days_RnB_chisq_test %>%
 
 이번에는 분포표의 첫번째와 두번째 행, '계'열을 제외한 나머지 열에 대해서 카이제곱테스트를 수행합니다. 
 
-카이제곱 통계량은 `r format(days_RnB_chisq_test[1], digits = 2, nsmall = 2)`, 자유도는 `r format(days_RnB_chisq_test[2], digits = 2, nsmall = 2)`, p-value 는 `r format(days_RnB_chisq_test[3], digits = 2, nsmall = 2)` 이므로 제출 시간의 분포는 Red, Black 간에 통계적으로 유의한 차이가 관찰되고 있습니다. 
+카이제곱 통계량은 `r format(days_RnB_chisq_test[1], digits = 4, nsmall = 2)`, 자유도는 `r format(days_RnB_chisq_test[2], digits = 2, nsmall = 2)`, p-value 는 `r format(days_RnB_chisq_test[3], digits = 4, nsmall = 2)` 이므로 제출 시간의 분포는 Red, Black 간에 통계적으로 유의한 차이가 관찰되지 않습니다. 
 
 이 사실을 Mosaic Plot 을 이용하여 시각적으로 살펴보겠습니다. 
-
-어디서 차이가 나고 있나요?
 
 ### Mosaic Plot
 
@@ -918,9 +921,9 @@ df2 <- m2_list$df
 p_df2 <- m2_list$p_df
 names(df2[, 2]) <- "Days"
 m2 + geom_text(aes(x = center, y = 1.05), 
-              family = "KoPubWorldDotum Medium",
+#              family = "KoPubWorldDotum Medium",
               label = rep(rep(c("월", "화", "수", "목", "금", "토", "일"), each = 2), times = 2)) +
-  theme_bw(base_family = "KoPubWorldDotum Medium") +
+  theme_bw() +
   labs(title = "마감일로부터 제출시간의 분포", x = "마감일로부터 일수(누적 %)", y = "인원 백분율(%)") +
   scale_fill_brewer(name = "그룹", 
                     labels = c("Red", 
@@ -930,7 +933,7 @@ m2 + geom_text(aes(x = center, y = 1.05),
                     direction = 1) +
   theme(plot.title = element_text(hjust = 0.5, 
                                   size = 18, 
-                                  family = "KoPubWorldDotum Bold"),
+                                  face = "bold"),
         axis.text.x = element_text(angle = -90, vjust = 0.5)) 
 ggsave("./pics/Quiz251006_submission_6.png", dpi = 120, width = 960, height = 840, units = "px")
 ```

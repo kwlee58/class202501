@@ -1,0 +1,1311 @@
+---
+title: "Quiz 251013 (Wason Selection Task)"
+author: "coop711"
+date: "2025-04-14"
+# date: "`r format(Sys.time(), '%Y-%m-%d %H:%M:%S')`"
+output: html_document
+---
+
+# 7주차 데이터 실험 집계
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(readxl)
+library(pander)
+library(knitr)
+library(magrittr)
+library(dplyr)
+library(stringr)
+library(googlesheets4)
+library(showtext)
+font_add(family = "kopub",
+         regular = "~/Library/Fonts/KoPubWorld Dotum Medium.ttf",
+         bold = "~/Library/Fonts/KoPubWorld Dotum Bold.ttf")
+showtext_auto()
+panderOptions('table.split.table', Inf)
+panderOptions('table.alignment.rownames', 'left')
+panderOptions('table.alignment.default', 'right')
+options(width=180)
+```
+
+## 실험의 목적
+
+7주차 구글 예습 설문지 집계결과를 분석합니다.
+
+Q1 ~ Q6에서는 랜덤화의 효과로 Red, Black 이 얼마나 닮았는지 알아봅니다.
+
+Q7에서는 Wason Selection Task에서 추상적 문제에 취약하고 인지적 편향에 쏠리는 우리의 모습을 파악합니다. 같은 구조의 문제를 추상적으로 표현할 때와 구체적인 사례를 들어 표현할 때 정답률이 매우 차이나는 것을 살펴보고 인지적 편향을 어떻게 확인하는지 그리고 학습 방법에 대한 추론까지 진행해 봅니다.
+
+제출시간의 분포가 날마다 고른지, Red, Black 간에는 닮았는지 알아봅니다.
+
+```{r, load-data, echo = FALSE, results = 'hide', message = FALSE}
+class_roll <- readRDS("./class_roll_251005.RDS")
+# class_roll <- 
+#   read_excel("./data/class_roll_251013.xlsx", 
+#              range = "B1:H600")
+# class_roll %<>% 
+#   data.frame
+# str(class_roll)
+# names(class_roll) <- c("dept", "colleges", "id", "name", "status", "email", "cell_no")
+# class_roll$group <- class_roll0407$group[match(class_roll$id, class_roll0407$id)]
+# saveRDS(class_roll, file = "./class_roll_251013.RDS")
+#> googlesheets4 패키지 시험
+quiz_url <-"https://docs.google.com/spreadsheets/d/18CkTaaw_xOLKaNy3JEoh_Aql9-ELlbGFoZqp-UEArAM"
+# gs4_deauth()
+quiz <- read_sheet(quiz_url)
+# quiz <- gsheet2tbl(quiz_url)
+#> 잘 안됨.  
+# quiz <- 
+#   read_excel("./data/quiz_251013.xlsx",
+#              range = "A2:P746",
+#              col_names = FALSE)
+names(quiz) <- 
+  c("time", "email", "dept", "id", "name", paste0("Q", 1:6),  "group", "Q7_R", "Q8_R", "Q7_B", "Q8_B")
+class(quiz$id) <- "character"
+str(quiz)
+quiz %>%
+  select(Q7_R, Q8_R, Q7_B, Q8_B, group)
+
+clean_nulls <- function(x) {
+  x <- as.character(x)
+  x <- na_if(x, "NULL")
+  x <- na_if(x, ".")
+  x <- na_if(x, "")
+  return(x)
+}
+
+quiz <- quiz %>%
+  mutate(across(c(Q7_R, Q7_B, Q8_R, Q8_B), clean_nulls)) %>%
+  mutate(Q7 = coalesce(Q7_R, Q7_B),
+         Q8 = coalesce(Q8_R, Q8_B))
+
+# quiz$Q7 <- ifelse(is.na(quiz$Q7_R), quiz$Q7_B, quiz$Q7_R)
+# quiz$Q8 <- ifelse(is.na(quiz$Q8_R), quiz$Q8_B, quiz$Q8_R)
+quiz %>%
+  select(Q7_R, Q7_B, Q7, Q8_R, Q8_B, Q8, group)
+#   `[`(., c("Q7", "Q8", "group"))
+#> 입력 오류 수정 함수
+fix_wason_response_simple <- function(x) {
+  x <- str_remove_all(x, "\\s")         # 공백 제거
+  x <- str_replace(x, "^\\.", "")       # 앞 점 제거
+  x <- str_remove_all(x, "[()]")         # (추가) 괄호 제거 (A,2) → A,2
+  
+  # 1. 숫자 먼저 온 입력은 순서 바꾸기
+  x <- str_replace(x, "^([0-9]+),([A-Za-z]+)$", "\\2,\\1")
+  x <- str_replace(x, "^([0-9]+)([A-Za-z]+)$", "\\2,\\1")
+  x <- str_replace(x, "^([A-Za-z]+)[/\\|]([0-9]+)$", "\\1,\\2")
+  
+  # 2. 문자 먼저 온 붙은 입력: 쉼표 추가
+  x <- str_replace(x, "^([A-Za-z]+)([0-9]+)$", "\\1,\\2")   # "Beer17" → "Beer,17"
+  x <- str_replace(x, "^Bear,([0-9]+)$", "Beer,\\1")
+  x <- str_replace(x, "^Be{2,}r,([0-9]+)$", "Beer,\\1")  # 추가: Beeer → Beer
+  x <- str_replace(x, regex("^B[eE]{2,}r,([0-9]+)$", ignore_case = TRUE), "Beer,\\1") 
+  x <- str_replace(x, "^([A-Za-z]+)\\.([0-9]+)$", "\\1,\\2")   # 추가: A.2 → A,2
+  
+  # 3. 대소문자 정리 (마지막 단계)
+  x <- str_to_title(x)                  # Beer, Coke, A, B 등 대소문자 정리
+  
+  # 강제 패턴 부여: 일치하는 경우에만 쉼표 넣기
+  x <- str_replace_all(x, 
+                       c("^A2$" = "A,2",
+                         "^A3$" = "A,3",
+                         "^B2$" = "B,2",
+                         "^B3$" = "B,3",
+                         "^Beer17$" = "Beer,17",
+                         "^Beer31$" = "Beer,31",
+                         "^Coke17$" = "Coke,17",
+                         "^Coke31$" = "Coke,31"))
+
+  return(x)
+}
+quiz$Q7 <- fix_wason_response_simple(quiz$Q7)
+quiz$Q8 <- fix_wason_response_simple(quiz$Q8)
+#> 응답 결과를 정답과 오답으로 나누어 변환할 변수 설정
+quiz <- quiz %>%
+  mutate(
+    # Red와 Black 논리 벡터 설정
+    Red = group == "Red",
+    Black = group == "Black",
+    
+    # Q7_2 변환: 그룹에 따른 정답/오답 처리
+    Q7_2 = case_when(
+      Red & Q7 == "A,3" ~ "Right",
+      Black & Q7 == "Beer,17" ~ "Right",
+      TRUE ~ "Wrong"
+    ),
+    
+    # Q8_2 변환: 그룹에 따른 정답/오답 처리
+    Q8_2 = case_when(
+      Red & Q8 == "Beer,17" ~ "Right",
+      Black & Q8 == "A,3" ~ "Right",
+      TRUE ~ "Wrong"
+    )
+  )
+# 결과 확인
+quiz %>% 
+  select(Q7, Q7_2, Q8, Q8_2, group)
+# #> 옛코드
+# #> Red, Black 논리 벡터 설정
+# Red <- quiz$group %>%
+#   `==` ("Red")
+# Black <- quiz$group %>%
+#   `==` ("Black")
+# #> 무응답을 포함하여 정답 이외의 응답은 오답으로 간주
+# quiz$Q7_2[Red] <- quiz$Q7 %>%
+#   `[`(Red) %>%
+#   `==`("A,3") %>%
+#   ifelse("Right", "Wrong")
+# quiz$Q7_2[Black] <- quiz$Q7 %>%
+#   `[`(Black) %>%
+#   `==`("Beer,17") %>%
+#   ifelse("Right", "Wrong")
+# quiz[c("Q7", "Q7_2", "group")]
+# quiz$Q8_2 <- quiz$Q8
+# quiz$Q8_2[Red] <- quiz$Q8 %>%
+#   `[`(Red) %>%
+#   `==`("Beer,17") %>%
+#   ifelse("Right", "Wrong")
+# quiz$Q8_2[Black] <- quiz$Q8 %>%
+#   `[`(Black) %>%
+#   `==`("A,3") %>%
+#   ifelse("Right", "Wrong")
+# quiz[c("Q8", "Q8_2", "group")]
+str(quiz)
+#> 확증 편향을 입증하는 데이터 생성
+quiz <- quiz %>%
+  mutate(
+    # Q9 생성: Q7_R와 Q8_B 중 하나의 값 선택하고 인지 편향을 확인하는 범주 생성
+    Q9 = coalesce(Q7_R, Q8_B),
+    Q9 = case_when(
+      Q9 %in% c("A,2", "A,3") ~ Q9,
+      TRUE ~ "Other"
+    ) %>% factor(levels = c("A,2", "A,3", "Other"))
+  )
+#> Old Code
+# quiz$Q9 <- coalesce(quiz$Q7_R, quiz$Q8_B)
+# quiz$Q9 <- ifelse(quiz$Q9 %in% c("A,2", "A,3"), quiz$Q9, "Other") %>%
+#   factor(levels = c("A,2", "A,3", "Other"))
+# quiz$dept %<>% 
+#   factor
+quiz$group %<>% 
+  factor(levels = c("Red", "Black"))
+quiz$Q1 %<>%
+  factor(levels = c("공평", "무난", "철저", "균일"))
+quiz$Q2 %<>% 
+  factor(levels = c("Selection Bias", "Response Bias", "Non-response Bias", "Panel Bias"))
+quiz$Q3 %<>% 
+  factor(levels = c("다단계 집락 추출방법", "할당법", "단순 랜덤추출방법", "RDD"))
+quiz$Q4 <- 
+  factor(quiz$Q4, 
+         levels = c("확률적 표본추출방법이 도입되었다.", 
+                    "할당법이 도입되었다.", 
+                    "유선전화번호부를 활용하게 되었다.", 
+                    "Random Digit Dialling이 전면적으로 도입되었다."),
+         labels = c("확률적 표본추출", 
+                    "할당법", 
+                    "유선전화번호부", 
+                    "RDD도입"))
+quiz$Q5 <- 
+  factor(quiz$Q5, 
+         levels = c("2배로 늘린다.", 
+                    "4배로 늘린다.",  
+                    "1/2로 줄인다.", 
+                    "1/4로 줄인다."), 
+         labels = c("2배로", 
+                    "4배로", 
+                    "1/2로", 
+                    "1/4로"))
+quiz$Q6 <- 
+  factor(quiz$Q6, 
+         levels = c("국민 전체", 
+                    "18세 이상 국민 전체",  
+                    "등록된 유권자 전체", 
+                    "선거 당일 투표하는 유권자 전체"))
+
+#> 마감기한으로부터 제출시점의 기간
+#> ## TZ Asia/Seoul 로 설정. UTC 왜곡 배제 효과
+# quiz$time <- as.POSIXct(quiz$time, tz = "Asia/Seoul")
+quiz$time <- format(quiz$time, format = "%Y-%m-%d %H:%M:%S")
+## 자정 전에 들어 온 사람은 몇 명이나?
+as.Date(quiz$time) %>%
+  table
+# 03-23 제출자 인덱스 찾기
+# idx <- which(as.Date(quiz$time) == as.Date("2025-03-23"))
+
+# 새 시간 생성: 2025-03-17 00:01:00, 00:02:00, ...
+# new_times <- as.POSIXct("2025-03-17 00:01:00") + 60 * (seq_along(idx) - 1)
+
+# 해당 사람들의 시간 업데이트
+# quiz$time[idx] <- new_times
+
+# 강제로 타임존 설정
+# attr(quiz$time, "tzone") <- "Asia/Seoul"
+
+# 확인
+# table(as.Date(format(quiz$time, format = "%Y-%m-%d", tz = "Asia/Seoul")))
+## 자정 전에 제출한 사람의 시간 수동 조정
+# quiz[quiz$id == "20237008", "time"] <- c("2025-03-17 00:00:01")
+# quiz[quiz$id == "20226782", "time"] <- c("2025-03-17 00:00:02")
+str(quiz)
+as.Date(quiz$time) %>%
+  table
+quiz <- data.frame(quiz)
+#> 마감기한으로부터 제출시점의 기간
+quiz$days <- as.numeric(difftime("2025-10-27 00:00:00", quiz$time, units = 'days'))
+quiz$hours <- as.numeric(difftime("2025-10-27 00:00:00", quiz$time, units = 'hours'))
+str(quiz)
+```
+
+```{r, cleaning, echo = FALSE, results = 'hide'}
+#> 학번 잘못 써서 고생시키는 녀석들 찾아내는 코드
+wrong_id <- setdiff(quiz$id, class_roll$id)
+quiz %>%
+  filter(id %in% wrong_id) %>%
+  select(id, name, dept, email)
+
+# 1. 잘못된 id 또는 name 가진 행 찾기
+quiz_wrong_ids <- quiz %>%
+  anti_join(class_roll, by = c("id", "name")) 
+
+# 2. 수정 전 원래의 id와 name 쌍을 저장
+wrong_keys <- quiz_wrong_ids %>% 
+  select(id, name)
+
+# 3. 잘못된 id 또는 name 수정
+quiz_wrong_ids <- quiz_wrong_ids %>%
+  mutate(
+    id = case_when(
+      id == "20241048" ~ "20241049",
+      id == "202266628" ~ "20226628",
+    TRUE ~ id
+    ),
+    name = case_when(
+      name == "040924" ~ "김무원",
+      TRUE ~ name
+      )
+    )
+# 3. quiz 에서 id 또는 name 틀린 행을 제거하고 옳은 id 또는 name 갖춘 행으로 교체하기
+quiz <- quiz %>%
+  anti_join(wrong_keys %>% select(id, name), by = c("id", "name")) %>%
+  bind_rows(quiz_wrong_ids)
+
+#> 틀린 학번 수정하여 되돌리기 (작동하지 않음. 참고로만)
+# quiz <- quiz %>%
+#   #> `left_join`으로 `name`과 `dept`를 기준으로 교정 정보를 추가
+#   left_join(class_roll %>% select(id, name, dept), 
+#             by = "name", 
+#             suffix = c("", "_correct")) %>%
+#   #> `id_correct`가 있는 경우 이를 사용하여 `id`를 교정하고, 그렇지 않으면 기존의 `id`를 유지
+#   mutate(id = if_else(!is.na(id_correct) & id != id_correct, id_correct, id)) %>%
+#   #> 임시로 추가된 `id_correct` 열 제거
+#   select(-id_correct)
+
+#> 중복 제출자
+quiz %>%
+  filter(duplicated(id)) %>%
+  select(time, id, name) %>%
+  arrange(time)
+# which(duplicated(quiz$id)) %>%
+#   quiz[., c("id", "name")]
+quiz %>%
+  filter(id %in% c("20202913"))
+# quiz[quiz$name %in% c("최재혁", "박지연"), ] #> 최재혁, 박지연이 중복 제출
+quiz <- quiz %>% 
+  arrange(id, desc(time)) %>%
+  distinct(id, .keep_all = TRUE)
+#> 불참자들
+absentee <- class_roll %>%
+  anti_join(quiz, by = "id") %>%
+  select(id, name, group) %>%
+  arrange(id)
+# absentee <- 
+#   class_roll[class_roll$id %in% setdiff(class_roll$id, quiz$id), c("id", "name", "group")] %>%
+#   `[`(order(.$name), ) 
+absentee %>%
+  pander(row.names = FALSE) 
+absentee %>%
+  count(group) %>%
+  print()
+# absentee$group %>%
+#   table
+```
+
+### Red, Black을 잘못 표시한 사람들
+
+```{r, wrong group, echo = FALSE}
+#> group2 생성
+quiz <- quiz %>%
+  left_join(class_roll %>% select(id, group), by = "id", suffix = c("", "_class_roll")) %>%
+  rename(group2 = group_class_roll)
+
+#> group 과 group2가 다른 행 필터링
+wrong_group <- quiz %>%
+  filter(group2 != group)
+
+#> 잘못된 그룹 정보 출력
+# wrong_group %>%
+#   select(time, id, group2, group) %>%
+#   arrange(time) %>%
+#   rename("제출시간" = time, "학번" = id, "랜덤화출석부" = group2, "구글예습퀴즈" = group) %>%
+#   pander(row.names = FALSE)
+
+#> 옛 코드
+# quiz$group2 <- class_roll$group[match(quiz$id, class_roll$id)]
+# wrong_group <- which(quiz$group != quiz$group2)
+# class_roll[wrong_group, c("id", "name", "group", "group2")] %>%
+#   `colnames<-`(c("학번", "이름", "랜덤화출석부", "구글예습퀴즈")) %>%
+#   pander
+# quiz[wrong_group, c("time", "id", "name", "group2", "group")] %>%
+#   `[`(order(.$time), ) %>%
+#   `colnames<-`(c("제출시간", "학번", "이름", "랜덤화출석부", "구글예습퀴즈")) %>%
+#   pander(row.name = FALSE)
+
+#> 잘못된 그룹 정보의 테이블 생성 및 출력
+wrong_tbl <- 
+  table("랜덤화출석부" = quiz$group2, "구글예습퀴즈" = quiz$group)
+
+wrong_tbl %>%
+  rbind("계" = colSums(.)) %>%
+  pander(row.names = c("Red(랜덤화출석부)", "Black(랜덤화출석부)", "계"), 
+         col.names = c("Red(구글예습퀴즈)", "Black(구글예습퀴즈)"))
+```
+
+랜덤화출석부에 있는 Red, Black 과 실제 구글설문에 올린 Red, Black 이 다른 사람들의 수효는 `r nrow(wrong_group)`명입니다.
+
+Red를 Black 이라고 한 사람이 `r wrong_tbl[1, 2]`명, Black 을 Red 라고 한 사람이 `r wrong_tbl[2, 1]`명입니다.
+
+두 가지 방법으로 분석합니다.
+
+우선 Red, Black 을 잘못 선택한 `r nrow(wrong_group)`명을 랜덤하게 둘로 나누면 어느 한 쪽 집단에 들어갈 기대인원은 `r nrow(wrong_group)`명을 둘로 나눈 `r nrow(wrong_group) / 2`(명)이고, 표준오차는 `r nrow(wrong_group)`의 제곱근에 1/2을 곱해 준 `r round(sqrt(nrow(wrong_group)) / 2, digits  = 1)`명이 됩니다.
+
+실제로 Red를 Black 이라고 한 사람수, `r wrong_tbl[1, 2]`명이나 Black 을 Red 라고 한 사람수, `r wrong_tbl[2, 1]`명은 기대인원으로부터 표준오차 범위는 벗어 나지만 표준오차 두 배 범위에는 잘 들어갑니다.
+
+두 번째 분석 방법은 확률을 계산해 보는 것입니다.
+
+Red, Black 을 잘못 선택한 `r nrow(wrong_group)`명을 랜덤하게 둘로 나눌 때, 실제로 관찰된 `r max(wrong_tbl[1, 2], wrong_tbl[2, 1])`명 이상이나 `r min(wrong_tbl[1, 2], wrong_tbl[2, 1])`명이하로 잘못 선택한 사람수가 나올 가능성은 얼마나 되는가 입니다.
+
+이 경우 공평한 동전던지기를 확률 법칙으로 표현한 이항분포로부터 계산할 수 있습니다.
+
+시행횟수가 `r nrow(wrong_group)`이고 한 번 시행에서 성공확률이 1/2 인 이항분포에서 성공횟수가 `r min(wrong_tbl[1, 2], wrong_tbl[2, 1])`이하이거나 `r max(wrong_tbl[1, 2], wrong_tbl[2, 1])`이상을 관찰할 확률은 `r round(pbinom(min(wrong_tbl[1, 2], wrong_tbl[2, 1]), nrow(wrong_group), 1/2) * 2,  digits = 3)`입니다.
+
+공평한 동전 던지기에서 앞면이 `r min(wrong_tbl[1, 2], wrong_tbl[2, 1])`개 이하 나오는 확률은 `r max(wrong_tbl[1, 2], wrong_tbl[2, 1])`개 이상 나오는 확률과 같기 때문에 사실상 한쪽만 계산해서 2배 해 주면 됩니다.
+
+이 값을 p-value 라고 하는데, p-value가 0.05보다 작을 때 **통계적으로 유의한 차이를 관찰**하였다고 말합니다.
+
+즉, 공평한 동전을 던지는 것과 같은 과정이라고 가정하였을 때 실제로 관찰된 값들이 가정으로부터 얼마나 떨어져 있는지를 표현한 것입니다.
+
+0.05는 이런 실험을 스무 번 정도 반복하면 1번 나올 정도로 드문 사건을 의미합니다.
+
+즉 가정이 잘못되었다는 것입니다.
+
+그런데 Red, Black 을 잘못 표시한 사람들의 분포에서 관찰된 p-value 는 0.05와는 비교도 안될 정도로 큰 값입니다.
+
+따라서 두 집단이 랜덤화 효과가 작동하여 **통계적으로 유의한 차이를 보이지 않는다**고 할 수 있습니다.
+
+### 응답인원의 Red, Black
+
+Red 로 응답한 인원은 `r colSums(wrong_tbl)[1]`명, Black 에 응답한 인원은 `r colSums(wrong_tbl)[2]`명입니다.
+
+전체 응답인원 `r sum(wrong_tbl)` 명을 랜덤하게 둘로 나눌 때 어느 한 쪽의 기대인원은 전체 응답인원의 절반인 `r sum(wrong_tbl) / 2`명이고, 표준오차는 전체 응답인원의 제곱근에 1/2을 곱해 준 `r round(sqrt(sum(wrong_tbl)) * 1 / 2, digits = 1)` 명입니다.
+
+따라서 Red, Black 각 그룹에 관찰된 인원은 기대인원으로부터 표준오차 범위 안에 들어갑니다.
+
+## Q1. 통계학의 기본원리
+
+```{r, echo = FALSE, out.width = "75%", fig.align = "left"}
+include_graphics("./pics/Quiz210406_Q1.png")
+```
+
+### 공평하게 추출하면 ...
+
+```{r, fairness, echo = FALSE, warning = FALSE}
+tbl_q1_a <- quiz$Q1 %>% 
+  table(quiz$group, ., useNA = "ifany") %>%
+  cbind("계" = rowSums(.)) %>%
+  rbind("계" = colSums(.))
+tbl_q1_a %>% 
+  pander 
+chisq_test_q1 <- 
+  tbl_q1_a %>%
+  `[`(-3, -5) %>%
+  chisq.test(simulate.p.value = FALSE) 
+chisq_test_q1 %>%
+  pander
+```
+
+Q1의 집계 결과가 Red, Black 간에 통계적으로 유의한 차이가 있는지 알아보기 위하여 카이제곱 테스트를 수행하였습니다.
+
+그 결과 카이제곱 통계량은 `r chisq_test_q1[1] %>% format(digits = 2, nsmall = 2)`, 자유도는 `r chisq_test_q1[2] %>% format(digits = 2, nsmall = 2)` , p-value 는 `r chisq_test_q1[3] %>% format(digits = 2, nsmall = 2)`이므로 Red, Black 간에 통계적으로 유의한 차이를 보이지 않습니다.
+
+실제로 닮은 게 느껴집니까?
+
+### 공평하게 추출하면 ... (%)
+
+```{r, fairness in percentage, echo = FALSE}
+ptbl_q1 <- 
+  tbl_q1_a %>% 
+  `[`(3, -5) %>%
+  prop.table %>% 
+  c("계" = sum(.)) %>%
+  `*`(100) 
+ptbl_q1 %>%
+  format(digits = 2, nsmall = 1) %>%
+  pander
+```
+
+정답률은 Red, Black 을 합하여 계산하는데, `r ptbl_q1[1] %>% format(digits = 2, nsmall = 1)`(%) 입니다.
+
+## Q2. 리터러리 다이제스트의 실패
+
+```{r, echo = FALSE, out.width = "75%", fig.align = "left"}
+include_graphics("./pics/Quiz210406_Q2.png")
+```
+
+### Selection Bias
+
+```{r, Selection Bias, echo = FALSE, warning = FALSE}
+tbl_q2_a <- 
+  quiz$Q2 %>% 
+  table(quiz$group, ., useNA = "ifany") %>%
+  cbind("계" = rowSums(.)) %>%
+  rbind("계" = colSums(.))
+tbl_q2_a %>% 
+  pander 
+chisq_test_q2 <- 
+  tbl_q2_a %>%
+  `[`(-3, -5) %>%
+  chisq.test(simulate.p.value = FALSE) 
+chisq_test_q2 %>%
+  pander
+```
+
+Q2의 집계 결과가 Red, Black 간에 통계적으로 유의한 차이가 있는지 알아보기 위하여 카이제곱 테스트를 수행하였습니다.
+
+그 결과 카이제곱 통계량은 `r chisq_test_q2[1] %>% format(digits = 2, nsmall = 2)`, 자유도는 `r chisq_test_q2[2] %>% format(digits = 2, nsmall = 2)`, p-value 는 `r chisq_test_q2[3] %>% format(digits = 2, nsmall = 2)`이므로 Red, Black 간에 통계적으로 유의한 차이를 보이지 않습니다.
+
+실제로 닮은 게 느껴집니까?
+
+### Selection Bias (%)
+
+```{r, Selection Bias in percentage, echo = FALSE}
+ptbl_q2 <- 
+  tbl_q2_a %>% 
+  `[`(3, -5) %>%
+  prop.table %>% 
+  c("계" = sum(.)) %>%
+  `*`(100) 
+ptbl_q2 %>%
+  format(digits = 2, nsmall = 1) %>%
+  pander
+```
+
+정답률은 Red, Black 을 합하여 계산하는데, `r ptbl_q2[1] %>% format(digits = 2, nsmall = 1)`(%) 입니다.
+
+## Q3. 1948년, 여론조사가 듀이를 당선시킨 해
+
+```{r, echo = FALSE, out.width = "75%", fig.align = "left"}
+include_graphics("./pics/Quiz210406_Q3.png")
+```
+
+### 할당법의 문제점
+
+```{r, quota sampling, echo = FALSE, warning = FALSE}
+tbl_q3_a <- 
+  quiz$Q3 %>% 
+  table(quiz$group, ., useNA = "ifany") %>%
+  cbind("계" = rowSums(.)) %>%
+  rbind("계" = colSums(.))
+tbl_q3_a %>% 
+  pander 
+chisq_test_q3 <- 
+  tbl_q3_a %>%
+  `[`(-3, -5) %>%
+  chisq.test(simulate.p.value = FALSE) 
+chisq_test_q3 %>%
+  pander
+```
+
+Q3의 집계 결과가 Red, Black 간에 통계적으로 유의한 차이가 있는지 알아보기 위하여 카이제곱 테스트를 수행하였습니다.
+
+그 결과 카이제곱 통계량은 `r chisq_test_q3[1] %>% format(digits = 2, nsmall = 2)`, 자유도는 `r chisq_test_q3[2] %>% format(digits = 2, nsmall = 2)`, p-value 는 `r chisq_test_q3[3] %>% format(digits = 2, nsmall = 2)`이므로 Red, Black 간에 통계적으로 유의한 차이를 보이지 않습니다.
+
+실제로 닮은 게 느껴집니까?
+
+### 할당법의 문제점(%)
+
+```{r, quota sampling in percentage, echo = FALSE}
+ptbl_q3 <- 
+  tbl_q3_a %>% 
+  `[`(3, -5) %>%
+  prop.table %>% 
+  c("계" = sum(.)) %>%
+  `*`(100) 
+ptbl_q3 %>%
+  format(digits = 2, nsmall = 1) %>%
+  pander
+```
+
+정답률은 Red, Black 을 합하여 계산하는데, `r ptbl_q3[2] %>% format(digits = 2, nsmall = 1)`(%) 입니다.
+
+## Q4. 1948 미 대선 이후
+
+```{r, echo = FALSE, out.width = "75%", fig.align = "left"}
+include_graphics("./pics/Quiz210406_Q4.png")
+```
+
+### 확률적 표본추출방법 도입
+
+```{r, echo = FALSE, warning = FALSE}
+tbl_q4_a <- 
+  quiz$Q4 %>% 
+  table(quiz$group, ., useNA = "ifany") %>%
+  cbind("계" = rowSums(.)) %>%
+  rbind("계" = colSums(.))
+tbl_q4_a %>% 
+  pander
+chisq_test_q4 <- 
+  tbl_q4_a %>%
+  `[`(-3, -5) %>%
+  chisq.test(simulate.p.value = FALSE) 
+chisq_test_q4 %>%
+  pander
+```
+
+Q4의 집계 결과가 Red, Black 간에 통계적으로 유의한 차이가 있는지 알아보기 위하여 카이제곱 테스트를 수행하였습니다.
+
+그 결과 카이제곱 통계량은 `r chisq_test_q4[1] %>% format(digits = 2, nsmall = 2)`, 자유도는 `r chisq_test_q4[2] %>% format(digits = 2, nsmall = 2)`, p-value 는 `r chisq_test_q4[3] %>% format(digits = 2, nsmall = 2)`이므로 Red, Black 간에 통계적으로 유의한 차이를 보이지 않습니다.
+
+실제로 닮은 게 느껴집니까?
+
+### 확률적 표본추출방법 도입 ... (%)
+
+```{r, echo = FALSE}
+ptbl_q4 <- 
+  tbl_q4_a %>% 
+  `[`(3, -5) %>%
+  prop.table %>% 
+  c("계" = sum(.)) %>%
+  `*`(100) 
+ptbl_q4 %>%
+  format(digits = 2, nsmall = 1) %>%
+  pander
+```
+
+정답률은 Red, Black 을 합하여 계산하는데, `r ptbl_q4[1] %>% format(digits = 2, nsmall = 1)`(%) 입니다.
+
+## Q5. 표본오차를 반으로 줄이려면?
+
+```{r, echo = FALSE, out.width = "75%", fig.align = "left"}
+include_graphics("./pics/Quiz210406_Q5.png")
+```
+
+### 4배로 늘려야
+
+```{r, echo = FALSE, warning = FALSE}
+tbl_q5_a <- 
+  quiz$Q5 %>% 
+  table(quiz$group, ., useNA = "ifany") %>%
+  cbind("계" = rowSums(.)) %>%
+  rbind("계" = colSums(.))
+tbl_q5_a %>% 
+  pander 
+chisq_test_q5 <- 
+  tbl_q5_a %>%
+  `[`(-3, -5) %>%
+  chisq.test(simulate.p.value = FALSE) 
+chisq_test_q5 %>%
+  pander
+```
+
+Q5의 집계 결과가 Red, Black 간에 통계적으로 유의한 차이가 있는지 알아보기 위하여 카이제곱 테스트를 수행하였습니다.
+
+그 결과 카이제곱 통계량은 `r chisq_test_q5[1] %>% format(digits = 2, nsmall = 2)`, 자유도는 `r chisq_test_q5[2] %>% format(digits = 2, nsmall = 2)`, p-value 는 `r chisq_test_q5[3] %>% format(digits = 2, nsmall = 2)`이므로 Red, Black 간에 통계적으로 유의한 차이를 보이지 않습니다.
+
+실제로 닮은 게 느껴집니까?
+
+### 4배로 눌려야 (%)
+
+```{r, echo = FALSE}
+ptbl_q5 <- 
+  tbl_q5_a %>% 
+  `[`(3, -5) %>%
+  prop.table %>% 
+  c("계" = sum(.)) %>%
+  `*`(100) 
+ptbl_q5 %>%
+  format(digits = 2, nsmall = 1) %>%
+  pander
+```
+
+정답률은 Red, Black 을 합하여 계산하는데, `r ptbl_q5[2] %>% format(digits = 2, nsmall = 1)`(%) 입니다.
+
+## Q6. 대선 여론조사의 목표모집단?
+
+```{r, echo = FALSE, out.width = "75%", fig.align = "left"}
+include_graphics("./pics/Quiz210406_Q6.png")
+```
+
+### 선거당일 투표하는 유권자 전체
+
+```{r, echo = FALSE, warning = FALSE}
+tbl_q6_a <- 
+  quiz$Q6 %>% 
+  table(quiz$group, ., useNA = "ifany") %>%
+  cbind("계" = rowSums(.)) %>%
+  rbind("계" = colSums(.))
+tbl_q6_a %>% 
+  pander 
+chisq_test_q6 <- 
+  tbl_q6_a %>%
+  `[`(-3, -5) %>%
+  chisq.test(simulate.p.value = FALSE) 
+chisq_test_q6 %>%
+  pander
+```
+
+Q6의 집계 결과가 Red, Black 간에 통계적으로 유의한 차이가 있는지 알아보기 위하여 카이제곱 테스트를 수행하였습니다.
+
+그 결과 카이제곱 통계량은 `r chisq_test_q6[1] %>% format(digits = 2, nsmall = 2)`, 자유도는 `r chisq_test_q6[2] %>% format(digits = 2, nsmall = 2)`, p-value 는 `r chisq_test_q6[3] %>% format(digits = 2, nsmall = 2)`이므로 Red, Black 간에 통계적으로 유의한 차이를 보이지 않습니다.
+
+실제로 닮은 게 느껴집니까?
+
+### 선거당일 투표하는 유권자 전체(%)
+
+```{r, echo = FALSE}
+ptbl_q6 <- 
+  tbl_q6_a %>% 
+  `[`(3, -5) %>%
+  prop.table %>% 
+  c("계" = sum(.)) %>%
+  `*`(100) 
+ptbl_q6 %>%
+  format(digits = 2, nsmall = 1) %>%
+  pander
+```
+
+정답률은 Red, Black 을 합하여 계산하는데, `r ptbl_q6[4] %>% format(digits = 2, nsmall = 1)`(%) 입니다.
+
+## Wason Selection Task
+
+같은 구조의 문제를 추상적으로 물어볼 때와 구체적으로 사례를 들어서 물어볼 때의 정답률에 큰 차이가 있음에 유의하세요.
+
+Red 집단에게는 추상적 질문을 먼저 던지고, 구체적 사례를 든 질문을 나중에 던졌으며 Black 집단에게는 구체적 사례를 든 질문을 먼저 던지고, 추상적 질문을 나중에 던졌습니다.
+
+추상적인 질문에 대해서는 매우 낮은 정답률을 보이지만 구체적인 질문에 대해서는 정답률이 훨씬 올라가는 것을 관찰할 수 있습니다.
+
+추상적인 질문에 쩔쩔매는 것이 정상입니다. <br><br>
+
+Wason Selection Task 는 인지 편향, 그 중에서도 확증 편향이 많은 사람들에게 공통적으로 나타난다는 것을 보여줍니다.
+
+반증의 근거가 되는 자료는 잘 들여다 보려 하지 않습니다.
+
+이 실험 결과의 어느 부분이 이를 입증하는 지 살펴 봅니다.
+
+### Red. Q7에 추상적 문제, Q8에 구체적 문제
+
+```{r, echo = FALSE, out.width = "75%", fig.align = "left"}
+include_graphics("./pics/Quiz240412_Q7_Red.png")
+```
+
+### Black. Q7에 구체적 문제, Q8에 추상적 문제
+
+```{r, echo = FALSE, out.width = "75%", fig.align = "left"}
+include_graphics("./pics/Quiz240412_Q7_Black.png")
+```
+
+## Q7. Red에 추상적 질문, Black에 구체적 질문
+
+"한쪽 면이 모음이면 다른 쪽은 짝수가 있다."
+
+이 규칙은 "X이면 Y이다"의 형식으로 되어 있습니다.
+
+이 논리식과 동등한 것은 **대우**인 "Y가 아니면 X가 아니다"입니다.
+
+매우 불편한 구조이죠.
+
+그렇다 보니까 이게 잘 떠오를 리가 없습니다.
+
+'선거여론조사의 발달'에서 학습한 바 있는 "표본을 공평하게 뽑으면 모집단의 특성을 잘 닮는다"의 대우가 바로 "모집단을 닮지 않으면 표본을 공평하게 뽑지 않은 것이다"입니다.
+
+즉, 표본을 공평하게 뽑지 않아서 모집단을 제대로 닮지 않은 표본을 뽑았다는 것이죠.
+
+주어진 네 장의 카드 중에서 한쪽 면이 모음인 것은 A입니다.
+
+따라서 A는 우선 들쳐봐야 하는 카드이고, "한쪽 면이 모음이면 다른 쪽은 짝수가 있다"의 대우는 "한쪽 면이 짝수가 아니면 다른 쪽 면이 모음이 아니다", 즉 "한쪽 면이 홀수이면 다른 쪽 면은 자음이다"가 됩니다.
+
+짝수가 아니면 홀수이고, 모음이 아니면 자음이니까요.
+
+따라서 홀수 카드를 들쳐봐야 합니다.
+
+그래서 A,3 두 장을 들쳐보면 됩니다.
+
+맥주와 연령 문제는 실생활과 밀접한 구체적인 사안이어서 "어, 맥주 마시는 사람 신분증 좀 보여주세요, 17살 미성년자는 지금 마시는 것이 맥주인가요?"하고 묻는 데 익숙하지만 직관적으로 Beer와 17을 검문해야 한다고 추론하였는지 논증하는 연습이 필요합니다.
+
+"맥주를 마시려면, 21세 이상이어야 한다"라는 규칙으로부터 "맥주"를 검문해야 하고, 검문으로부터 나이를 확인합니다.
+
+그리고 이 규칙과 동등한 대우인 "21세 이상이 아니면, 맥주를 마실 수 없다", 즉, "21세 미만이면 맥주를 마실 수 없다"로부터 "21세 미만"인 "17세"를 검문해야 하는 것입니다.
+
+물론 실생활에서 접할 수 있는 문제이기 때문에 미성년자가 맥주를 마시고 있는 것은 아닌지 Beer와 17을 골라야 한다고 쉽게 답할 수 있지만 그 배경에는 이러한 논리가 숨어 있습니다.
+
+### 집계
+
+```{r, Wason Selection 1 in Red, echo = FALSE}
+tbl_q7_a <- 
+  quiz$Q7_2 %>%
+  table(quiz$group, ., useNA = "ifany") %>%
+  cbind("계" = rowSums(.)) %>%
+  rbind("계" = colSums(.))
+colnames(tbl_q7_a) <- c("정답", "오답", "계")
+rownames(tbl_q7_a) <- c("Red(추상적 질문)", "Black(구체적 질문)", "계") 
+pander(tbl_q7_a, caption = "Red에 추상적 질문, Black에 구체적 질문")
+```
+
+{A, 2, B, 3}에서 어느 카드를(들을) 골라야 "한쪽 면이 모음이면, 다른 쪽 면은 짝수이다"라는 규칙을 지키고 있는 지 확인할 수 있는가? 라는 질문을 Red에 배치하고, {Beer, 31, Coke, 17}에서 누구를(들을) 검문해야 하는가라는 질문을 Black에 배치했습니다.
+
+Red의 경우 총 `r format(tbl_q7_a[1, 3], digits = 3, nsmall = 0)`(명)이 응답하였고 `r format(tbl_q7_a[1, 1], digits = 3, nsmall = 0)`(명)이 정답인 {A, 3}를 올렸습니다.
+
+구체적인 상황에 놓인 Black의 경우 총 `r format(tbl_q7_a[2, 3], digits = 3, nsmall = 0)`(명)이 응답하였고 `r format(tbl_q7_a[2, 1], digits = 3, nsmall = 0)`(명)이 정답인 {Beer,17}을 올려서 구체적인 질문에 압도적으로 많은 정답이 나온 것을 알 수 있습니다.
+
+이를 백분율로 비교해 보면
+
+### % 비교
+
+```{r, Wason Selection 1 in Red in percentage, echo = FALSE}
+ptbl_q7_a <- 
+  tbl_q7_a %>% 
+  `[`(-3, -3) %>%
+  prop.table(margin = 1) %>% 
+  cbind("계" = rowSums(.)) %>%
+  `*`(100) 
+ptbl_q7_a %>%
+  format(digits = 2, nsmall = 1) %>%
+  pander
+```
+
+추상적인 질문으로 이루어진 Red에서는 `r format(ptbl_q7_a[1, 1], digits = 2, nsmall = 1)`(%)가 정답을 올렸고, 구체적인 질문으로 이루어진 Black에서는 `r format(ptbl_q7_a[2, 1], digits = 2, nsmall = 1)`(%)가 정답을 올려서 구체적인 질문에 압도적으로 많은 정답이 올라왔다는 것을 알 수 있습니다.
+
+이 상황을 Mosiac Plot으로 살펴보겠습니다.
+
+### Mosaic Plot
+
+```{r, mosaic plot1, echo = FALSE, fig.width = 7, fig.height = 5}
+library(ggplot2)
+source("./mosaic_gg.R")
+m_list <- 
+  quiz$Q7_2 %>%
+  table(quiz$group, ., useNA = "ifany") %>%
+  t %>%
+  mosaic_gg
+m <- m_list$m
+df <- m_list$df
+p_df <- m_list$p_df
+names(df)[1] <- "Var1"
+names(p_df)[1] <- "Var1"
+df$Var2 %<>% factor(labels = c("Red(추상적 질문)", "Black(구체적 질문)"))
+p_df$Var2 %<>% factor(labels = c("Red(추상적 질문)", "Black(구체적 질문)"))
+m + geom_text(aes(x = center, y = 1.05), 
+              label = df[, 2]) +
+  theme_bw(base_family = "kopub") +
+  labs(title = "Wason Selection", x = "Red or Black(누적 %)", y = "인원(%, 명)") +
+  scale_fill_brewer(name = "응답", 
+                    labels = c("정답", "오답"),
+                    type = "qual", 
+                    palette = "Set2", 
+                    direction = 1) +
+  theme(plot.title = element_text(hjust = 0.5, 
+                                  size = 18, 
+                                  face = "bold")) 
+ggsave("./pics/Quiz251013_Q7_RnB.png", dpi = 120, width = 960, height = 840, units = "px")
+```
+
+Mosaic Plot으로부터 추상적 질문이 주어진 Red 에서 정답 비율이 구체적 질문이 주어진 Black 에서 정답 비율에 비해서 매우 적다는 것을 시각적으로 파악할 수 있습니다.
+
+## Q8. Red에 구체적 질문, Black에 추상적 질문
+
+Q8에서는 Q7과 반대로 Red에 구체적 질문, Black에 추상적 질문을 배치하였습니다.
+
+이렇게 하므로써 질문지에 응답한 모든 사람은 한 번씩 구체적 질문과 추상적 질문에 답할 수 있게 되었습니다.
+
+집계 결과는 비슷합니다.
+
+다만, 이렇게 추상적 질문을 먼저 배치하고 구체적 질문을 나중에 배치하느냐, 혹은 그 반대로 구체적 질문을 먼저 배치하고 추상적 질문을 나중에 배치한 것의 영향이 있는지를 파악한다면 학습 순서가 정답률과 어떤 관계가 있는지 파악할 수 있지 않을까 합니다.
+
+### 집계
+
+```{r, Wason Selection 1 in Black, echo = FALSE}
+tbl_q8_a <- 
+  quiz$Q8_2 %>%
+  table(quiz$group, ., useNA = "ifany") %>%
+  cbind("계" = rowSums(.)) %>%
+  rbind("계" = colSums(.))
+colnames(tbl_q8_a) <- c("정답", "오답", "계")
+rownames(tbl_q8_a) <- c("Red(구체적 질문)", "Black(추상적 질문)", "계") 
+pander(tbl_q8_a, caption = "Red에 구체적 질문, Black에 추상적 질문")
+```
+
+구체적인 질문을 배치한 Red의 경우 총 `r format(tbl_q8_a[1, 3], digits = 3, nsmall = 0)`(명)이 응답하였고 `r format(tbl_q8_a[1, 1], digits = 3, nsmall = 0)`(명)이 정답인 {Beer, 17}(을)를 올렸습니다.
+
+추상적인 질문을 배치한 Black의 경우 총 `r format(tbl_q8_a[2, 3], digits = 3, nsmall = 0)`(명)이 응답하였고 `r format(tbl_q8_a[2, 1], digits = 3, nsmall = 0)`(명)이 정답인 {A,3}(을)를 올려서 구체적인 질문에 압도적으로 많은 정답이 나온 것을 알 수 있습니다.
+
+이를 백분율로 비교해 보면
+
+### % 비교.
+
+```{r, Wason Selection 1 in Black in percentage, echo = FALSE}
+ptbl_q8_a <- 
+  tbl_q8_a %>% 
+  `[`(-3, -3) %>%
+  prop.table(margin = 1) %>% 
+  cbind("계" = rowSums(.)) %>%
+  `*`(100) 
+ptbl_q8_a %>%
+  format(digits = 2, nsmall = 1) %>%
+  pander
+```
+
+구체적인 질문을 배치한 Red에서는 `r format(ptbl_q8_a[1, 1], digits = 2, nsmall = 1)`(%)가 정답을 올렸고, 추상적인 질문을 배치한 Black에서는 `r format(ptbl_q8_a[2, 1], digits = 2, nsmall = 1)`(%)가 정답을 올려서 구체적인 질문에 압도적으로 많은 정답이 올라왔다는 것을 알 수 있습니다.
+
+이 상황을 Mosaic Plot으로 살펴보겠습니다.
+
+### Mosaic Plot
+
+```{r, mosaic plot2, echo = FALSE, fig.width = 7, fig.height = 5}
+m_list <- 
+  quiz$Q8_2 %>%
+  table(quiz$group, ., useNA = "ifany") %>%
+  t %>%
+  mosaic_gg
+m <- m_list$m
+df <- m_list$df
+p_df <- m_list$p_df
+names(df)[1] <- "Var1"
+names(p_df)[1] <- "Var1"
+df$Var2 %<>% factor(labels = c("Red(구체적 질문)", "Black(추상적 질문)"))
+p_df$Var2 %<>% factor(labels = c("Red(구체적 질문)", "Black(추상적 질문)"))
+m + geom_text(aes(x = center, y = 1.05), 
+              label = df[, 2]) +
+  theme_bw() +
+  labs(title = "Wason Selection", x = "Red or Black(누적 %)", y = "인원(%, 명)") +
+  scale_fill_brewer(name = "응답", 
+                    labels = c("정답", "오답"),
+                    type = "qual", 
+                    palette = "Set2", 
+                    direction = 1) +
+  theme(plot.title = element_text(hjust = 0.5, 
+                                  size = 18, 
+                                  face = "bold")) 
+ggsave("./pics/Quiz251013_Q8_RnB.png", dpi = 120, width = 960, height = 840, units = "px")
+```
+
+Mosaic Plot으로부터 구체적 질문이 주어진 Red 의 정답 비율이 추상적 질문이 주어진 Black의 정답 비율에 비해서 매우 높다는 것을 시각적으로 파악할 수 있습니다.
+
+````{=html}
+<!--
+### 정답율 비교
+
+```{r, echo = FALSE}
+cbind(tbl_q7_a[, 1], tbl_q8_a[, 1]) %>%
+  chisq.test %>%
+  pander
+prop.test(x = c(tbl_q7_a[3, 1], tbl_q8_a[3, 1]), 
+          n = c(tbl_q7_a[3, 3], tbl_q8_a[3, 3])) %>%
+  pander
+```
+-->
+````
+
+## Q9. 인지적 편향과 오류
+
+Wason Selection Task 에서 많은 사람들이 겪는 흔한 오류(예 : 확증편향)을 설명합니다.
+
+사람들은 보통 자신의 가설을 확인하기 위한 정보만 찾고, 반례가 될 수 있는 카드는 무시하려는 경향이 있습니다.
+
+Peter C. Wason (1924-2003)의 연구에 의하면 정답을 찾아내는 백분율은 10%에 불과합니다.
+
+여러분의 응답과 비교해 보세요.
+
+### 집계
+
+```{r, Wason Selection Task for Cognitive Bias, echo = FALSE}
+tbl_q9_a <- 
+  quiz$Q9 %>%
+  table(quiz$group, ., useNA = "ifany") %>%
+  cbind("계" = rowSums(.)) %>%
+  rbind("계" = colSums(.))
+colnames(tbl_q9_a) <- c("A,2", "A,3", "Other", "계")
+rownames(tbl_q9_a) <- c("Red(추상적 질문 먼저)", "Black(구체적 질문 먼저)", "계") 
+pander(tbl_q9_a, caption = "Wason Selection Task 인지편향 분석")
+```
+
+{A, 2, B, 3}에서 어느 카드를(들을) 골라야 "한쪽 면이 모음이면, 다른 쪽 면은 짝수이다"라는 규칙을 지키고 있는 지 확인할 수 있는가? 라는 질문이 Q7에 먼저 나오는 것을 Red에 배치하고, Black 에서는 {A, 2, B, 3}에 대한 질문이 Q8에 나오도록 배치했습니다.
+
+많은 사람들은 이 질문에 대해서 A와 2를 뒤집으려 합니다.
+
+A는 모음이니까 확인해야 할 것 같고, 2는 짝수이니까 확인하려고 듭니다.
+
+여기서 확증 편향이 나타납니다.
+
+사람들은 주어진 규칙을 확인하기 위해 당장 눈에 들어오는 모음과 짝수, 즉 A와 2를 확인하려는 경향이 강합니다.
+
+그러나 논리적으로 규칙을 검증하려면 짝수가 아닌 홀수 카드를 뒤집어야 합니다.
+
+"한쪽 면이 모음이면, 다른 쪽 면은 짝수이다"와 동등한 규칙은 "한쪽 면이 짝수가 아니면, 다른 쪽 면은 모응이 아니다"이기 때문입니다.
+
+짝수가 아니면 홀수이니까 3을 뒤집어야 하는 것이죠.
+
+추상적 질문이 먼저 Q7에 나온 Red의 경우 총 `r format(tbl_q9_a[1, 4], digits = 3, nsmall = 0)`(명)이 응답하였고 `r format(tbl_q9_a[1, 1], digits = 3, nsmall = 0)`(명)이 확증편향에서 비롯된 {A,2}를 올렸습니다.
+
+정답인 {A,3}를 올린 `r format(tbl_q9_a[1, 2], digits = 3, nsmall = 0)`(명)보다 훨씬 많습니다.
+
+추상적 질문이 Q8에 나온 Black 의 경우 총 `r format(tbl_q9_a[2, 4], digits = 3, nsmall = 0)`(명)이 응답하였고 `r format(tbl_q9_a[2, 1], digits = 3, nsmall = 0)`(명)이 확증편향에서 비롯된 {A,2}를 올렸습니다.
+
+정답인 {A,3}를 올린 `r format(tbl_q9_a[2, 2], digits = 3, nsmall = 0)`(명)보다 훨씬 많습니다.
+
+합해서 `r format(tbl_q9_a[3, 1], digits = 3, nsmall = 0)`(명)이 확증편향에서 비롯된 {A,2}를 올렸고, `r format(tbl_q9_a[3, 2], digits = 3, nsmall = 0)`(명)이 정답인 {A,3}를 올렸습니다.
+
+이는 확증편향에서 비롯된 응답이 정답의 2배를 넘을 정도로 많다는 것을 보여줍니다.
+
+백분율로 살펴 보겠습니다.
+
+### % 비교.
+
+```{r, Wason Selection Task for Cognitive Bias in percentage, echo = FALSE}
+ptbl_q9_a <- 
+  tbl_q9_a %>% 
+  `[`(, -4) %>%
+  prop.table(margin = 1) %>% 
+  cbind("계" = rowSums(.)) %>%
+  `*`(100) 
+ptbl_q9_a %>%
+  format(digits = 2, nsmall = 1) %>%
+  pander
+```
+
+추상적인 질문이 먼저 Q7에 나온 Red에서는 `r format(ptbl_q9_a[1, 1], digits = 2, nsmall = 1)`(%)가 확증편향에서 비롯된 응답 {A,2}를 올렸고, `r format(ptbl_q9_a[1, 2], digits = 2, nsmall = 1)`(%)가 정답인 {A,3}을 올렸는데, 추상적인 질문이 나중에 Q8에 나온 Black 에서는 `r format(ptbl_q9_a[2, 1], digits = 2, nsmall = 1)`(%)가 확증편향에서 비롯된 응답 {A,2}를 올렸고, `r format(ptbl_q9_a[2, 2], digits = 2, nsmall = 1)`(%)가 정답인 {A,3}을 올렸습니다.
+
+합해서 보면 `r format(ptbl_q9_a[3, 1], digits = 2, nsmall = 1)`(%)가 확증편향에서 비롯된 응답 {A,2}를 올렸고, `r format(ptbl_q9_a[3, 2], digits = 2, nsmall = 1)`(%)가 정답인 {A,3}을 올렸습니다.
+
+확증편향으로 인한 응답이 정답보다 2배를 넘어가는 것을 다시 확인할 수 있습니다.
+
+이 상황을 Mosiac Plot으로 살펴보겠습니다.
+
+### Mosaic Plot
+
+```{r, mosaic plot_Q9, echo = FALSE, fig.width = 7, fig.height = 5}
+m_list <- 
+  quiz$Q9 %>%
+  table(quiz$group, ., useNA = "ifany") %>%
+  t %>%
+  mosaic_gg
+m <- m_list$m
+df <- m_list$df
+p_df <- m_list$p_df
+names(df)[1] <- "Var1"
+names(p_df)[1] <- "Var1"
+df$Var2 %<>% factor(labels = c("Q7에 추상적 질문", "Q8에 추상적 질문"))
+p_df$Var2 %<>% factor(labels = c("Q7에 추상적 질문", "Q7에 추상적 질문"))
+m + geom_text(aes(x = center, y = 1.05), 
+              label = df[, 2]) +
+  theme_bw() +
+  labs(title = "Wason Selection", x = "Red or Black(누적 %)", y = "인원(%, 명)") +
+  scale_fill_brewer(name = "응답", 
+                    labels = c("{A,2}", "{A,3}", "Other"),
+                    type = "qual", 
+                    palette = "Set2", 
+                    direction = 1) +
+  theme(plot.title = element_text(hjust = 0.5, 
+                                  size = 18, 
+                                  face = "bold")) 
+ggsave("./pics/Quiz251013_Q9_RnB.png", dpi = 120, width = 960, height = 840, units = "px")
+```
+
+Mosaic Plot으로부터 확증편향에서 비롯된 응답의 비율이 정답의 비율이나 기타 응답의 비율보다 월등히 높다는 것을 시각적으로 파악할 수 있습니다.
+
+## 학습 순서의 영향
+
+구체적 질문을 먼저 학습하고 추상적 질문을 학습하는 것과 추상적 질문을 먼저 학습하고 구체적 질문을 학습하는 방식 중에 어느 것이 더 나은지 비교한 결과 정답 인원은 매우 닮았는데, 순서에 따라 정답인원의 차이에는 통계적으로 유의한 차이가 관찰되지 않았습니다.
+
+어떻게 해석할 수 있을까요?
+
+### 집계표
+
+```{r, Wason Selection, echo = FALSE, results = 'show'}
+#> Red (추상적 질문 먼저) 집계
+wason_1 <- c(tbl_q7_a[1, 1], tbl_q8_a[1, 1])
+#> Black (구체적 질문 먼저) 집계
+wason_2 <- c(tbl_q8_a[2, 1], tbl_q7_a[2, 1])
+#> 한 개의 테이블로
+wason_tbl <- 
+  rbind(wason_1, wason_2) %>%
+  as.table 
+#> 행이름 설정
+wason_tbl %<>%
+  `rownames<-`(c("Red(추상적 질문 먼저)", "Black(구체적 질문 먼저)"))
+wason_tbl %<>%
+  `colnames<-`(c("추상적 질문 정답", "구체적 질문 정답"))
+wason_tbl_a <- 
+  wason_tbl %>%
+  cbind("계" = rowSums(.)) 
+wason_tbl_a %>%
+  pander(caption = "Wason Selection")
+wason_tbl_a[, -3] %>%
+  chisq.test %>%
+  pander
+```
+
+추상적 질문을 Q7에 배치하고 구체적 질문을 Q8에 배치한 Red의 경우 추상적 질문과 구체적 질문에 정답을 올린 사람은 총 `r wason_tbl_a[1, 3]`(명)이고 구체적 질문을 Q7에 배치하고 추상적 질문을 Q8에 배치한 Black의 경우 추상적 질문과 구체적 질문에 정답을 올린 사람은 총 `r wason_tbl_a[2, 3]`(명)으로 별로 차이가 나지 않습니다.
+
+추상적 질문을 Q8에 배치한 Black 의 경우 `r wason_tbl_a[2, 1]`(명) 이 정답을 올려서 추상적 질문을 먼저 학습한 경우 정답을 더 많이 내었지만 통계적으로 유의한 차이는 아닌 것으로 나타나고 있습니다.
+
+카이제곱 통계량은 `r format(chisq.test(wason_tbl_a[, -3])[1], digits = 2, nsmall = 2)`, p-value 는 `r format(chisq.test(wason_tbl_a[, -3])[3], digits = 2, nsmall = 2)`으로 통계적으로 유의한 차이를 관찰하지 못하였습니다.
+
+따라서 학습 순서는 추상적 질문의 정답율에 영향을 미치지 못하고 있습니다.
+
+백분율을 살펴 보겠습니다.
+
+### % 비교
+
+```{r, Wason Selection in percentage, echo = FALSE}
+wason_ptbl <- wason_tbl %>% 
+  prop.table(margin = 2) %>% 
+  rbind("계" = colSums(.)) %>%
+  `*`(100) 
+wason_ptbl %>%
+  format(digits = 2, nsmall = 1) %>%
+  pander(caption = "Wason Selection")
+```
+
+추상적 질문에 대한 Red, Black 간 정답률 차이와 구체적 질문에 대한 Red, Black 간 정답률 차이를 비교하였습니다.
+
+추상적 질문에 대한 전체 정답 중에서 추상적 질문을 먼저 제시한 Red 가 `r format(wason_ptbl[1, 1], digits = 2, nsmall = 1)`(%)를 차지하여 추상적 질문을 나중에 제시한 Black 보다 높습니다만 그 차이는 앞에서 살펴 본 것처럼 통계적으로 유의하지는 않습니다.
+
+```{r, mosaic plot3, echo = FALSE, fig.width = 7, fig.height = 5}
+m_list <- 
+  wason_tbl %>%
+#  t  %>%
+  mosaic_gg
+m <- m_list$m
+df <- m_list$df
+p_df <- m_list$p_df
+names(df)[1] <- "Var1"
+names(p_df)[1] <- "Var1"
+df$Var2 %<>% factor(labels = c("추상적 질문 정답", "구체적 질문 정답"))
+p_df$Var2 %<>% factor(labels = c("추상적 질문 정답", "구체적 질문 정답"))
+m + 
+  geom_text(aes(x = center, y = 1.05), 
+            label = df[, 2]) +
+  theme_bw() +
+  labs(title = "Wason Selection", x = "질문 순서(누적 %)", y = "인원(%, 명)") +
+  scale_fill_brewer(name = "응답", 
+                    labels = c("추상적 질문 먼저", "구체적 질문 먼저"),
+                    type = "qual", 
+                    palette = "Set3", 
+                    direction = 1) +
+  theme(plot.title = element_text(hjust = 0.5, 
+                                  size = 18, 
+                                  face = "bold")) 
+ggsave("./pics/Quiz251013_Wason_RnB.png", dpi = 120, width = 960, height = 840, units = "px")
+```
+
+Mosaic Plot으로부터 구체적 질문이 먼저 주어진 Red나 구체적 질문이 나중에 주어진 Black이나정답을 올린 인원이나 백분율이 비슷한다는 것을 시각적으로 파악할 수 있습니다.
+
+### 합산
+
+실험에 참여한 어느 누구나 추상적 문제와 구체적 문제를 한 번씩 풀게 됩니다.
+
+학습 순서의 영향은 없는 것으로 파악되었으니까 추상적 문제의 정답률과 구체적 문제의 정답률을 합쳐서 비교하는 것이 합리적입니다.
+
+### 집계표
+
+```{r, echo = FALSE}
+wason <- 
+  rbind(tbl_q7_a[1, ] + tbl_q8_a[2, ], 
+        tbl_q7_a[2, ] + tbl_q8_a[1, ]) %>%
+  `rownames<-`(c("추상적 문제", "구체적 문제")) 
+wason %>%
+  pander
+```
+
+추상적 질문에 답한 사람 총 `r wason[1, 3]`(명) 중에 정답을 올린 사람은 모두 `r wason[1, 1]`(명)이고 구체적 질문에 답한 사람 총 `r wason[2, 3]`(명) 중에 정답을 올린 사람은 모두 `r wason[2, 1]`(명)입니다. 백분율로 비교해 보면
+
+### % 비교
+
+```{r, echo = FALSE}
+wason_p <- wason[, -3] %>%
+  prop.table(margin = 1) %>%
+  `*`(100) %>%
+  cbind("계" = rowSums(.)) 
+wason_p %>%
+  format(digits = 2, nsmall = 1) %>%
+  pander
+```
+
+추상적 질문에 정답을 올린 사람의 백분율은 `r format(wason_p[1, 1], digits = 2, nsmall = 1)`(%)이고 구체적 질문에 정답을 올린 사람의 백분율은 `r format(wason_p[1, 1], digits = 2, nsmall = 1)`(%)입니다.
+
+추상적 질문의 정답율이 구체적 질문의 정답율에 비하여 월등히 낮다는 것을 알 수 있습니다. 이를 시각적으로 비교해 보겠습니다.
+
+### Barplot
+
+```{r, echo = FALSE}
+source("./barplot_gg.R")
+b_fill <-
+  wason[, -3] %>%
+  t %>%
+  as.table %>%
+  as.data.frame %>%
+  barplot_gg(position = "fill")
+b_fill + 
+  theme_bw() +
+  labs(title = "Wason Selection", x = "문제 유형", y = "집계(%, 명)") +
+  scale_fill_brewer(name = "응답", 
+                    labels = c("정답", "오답"),
+                    type = "qual", 
+                    palette = "Set2", 
+                    direction = 1) +
+  theme(plot.title = element_text(hjust = 0.5, 
+                                  size = 18, 
+                                  face = "bold")) 
+ggsave("./pics/Quiz251013_Wason_Result.png", dpi = 120, width = 960, height = 840, units = "px")
+```
+
+이 경우에는 막대그래프로 표현하는 것이 보다 시각적으로 두 상황을 비교하기에 더 효과적입니다.
+
+추상적 질문의 응답 중에서 정답의 비율이 구체적 질문의 응답 중 정답의 비율보다 월등히 적다는 것이 시각적으로 잘 드러나고 있습니다.
+
+<P style = "page-break-before:always">
+
+## 마감 시간으로부터 제출 시간의 분포
+
+### 분포표
+
+```{r, echo = FALSE, warning = FALSE}
+N <- nrow(quiz)
+days_tbl <- 
+  quiz$days %>%
+  cut(breaks = c(0:14), include.lowest = TRUE) %>%
+  table(quiz$group, .) 
+days_tbl %>%
+  cbind("계" = rowSums(.)) %>%
+  rbind("계" = colSums(.)) %>%
+  `colnames<-`(., c(paste0(14:1, "일"), "계")) %>%
+  pander(caption = "일 단위")
+```
+
+분포표로부터 두 가지 문제를 살펴보겠습니다.
+
+첫째, 날마다 고르게 제출하는가?
+
+둘째, Red, Black 간에 통계적으로 유의한 차이가 있는가?
+
+각 문제를 살펴보기 위해서는 분포표의 일부분을 대상으로 카이제곱 테스트를 수행합니다.
+
+### 날마다 고르게 제출하는가?
+
+```{r, echo = FALSE, warning = FALSE}
+days_tbl %>%
+  rbind("계" = colSums(.)) %>%
+  `[`(3, 13:14) %>%
+  `names<-`(., paste0(2:1, "일")) %>%
+  pander
+days_chisq_test <-
+  days_tbl %>%
+  rbind("계" = colSums(.)) %>%
+  `[`(3, 13:14) %>%
+  chisq.test(simulate.p.value = FALSE) 
+days_chisq_test %>%
+  pander
+```
+
+날마다 고르게 제출하는지 알아 보았습니다.
+
+분포표의 "계"행에서 '계'열을 제외하고 카이제곱테스트를 수행합니다.
+
+분포표 만으로도 쉽게 파악할 수 있지만 카이제곱테스트가 명확히 해 줍니다.
+
+카이제곱 통계량은 `r format(days_chisq_test[1], digits = 2, nsmall = 2)`, 자유도는 `r format(days_chisq_test[2], digits = 2, nsmall = 2)`, p-value 는 `r format(days_chisq_test[3], digits = 2, nsmall = 4)` 이므로 날짜별로 고르게 제출하지  않았습니다. 
+
+그리고 그 차이는 통계적으로 매우, 매우 유의합니다.
+
+막대그래프로 살펴 보겠습니다.
+
+### 막대그래프
+
+```{r, echo = FALSE}
+# png(file = "./pics/2302/quiz_submission_8.png", width = 640, height = 480)
+suppressMessages({
+b <- 
+  quiz$days %>%
+  cut(breaks = c(0:14), include.lowest = TRUE) %>%
+  table %>%
+  rev %>%
+  barplot(space = 0, names.arg = rep(c("월", "화", "수", "목", "금", "토", "일"), 2),
+          col = c(rep("white", 13), "pink"),
+          ylim = c(0, 300)) 
+text(x = b[14, 1], y = sum(days_tbl[, 1]), 
+     labels = paste0(sum(days_tbl[, 1]), "명"), pos = 3)
+text(x = b[14, 1], y = sum(days_tbl[, 1]) / 2, 
+     labels = paste0(format(sum(days_tbl[, 1]) / N * 100, digits = 1, nsmall = 0), "%"))
+title(main = paste0("Quiz251013 (", N, "명 제출)"))
+# title(main = "일 단위 퀴즈 제출 인원", sub = paste0("Quiz230925 (", N, "명 제출)"))
+dev.copy(png, file = "./pics/2501/quiz_submission_7.png", width = 640, height = 480)
+invisible(dev.off())
+})
+```
+
+### Red, Black 간에 닮았는가?
+
+```{r, echo = FALSE, warning = FALSE}
+days_tbl %>%
+  rbind("계" = colSums(.)) %>%
+  `[`(-3, 13:14) %>%
+  `colnames<-`(., paste0(2:1, "일")) %>%
+  pander
+days_RnB_chisq_test <-
+  days_tbl %>%
+  `[`(-3, 13:14) %>%
+  chisq.test(simulate.p.value = FALSE) 
+days_RnB_chisq_test %>%
+  pander
+```
+
+제출시간의 분포가 Red, Black 간에 닮았는지 알아 보았습니다.
+
+이번에는 분포표의 첫번째와 두번째 행, '계'열을 제외한 나머지 열에 대해서 카이제곱테스트를 수행합니다.
+
+카이제곱 통계량은 `r format(days_RnB_chisq_test[1], digits = 2, nsmall = 2)`, 자유도는 `r format(days_RnB_chisq_test[2], digits = 2, nsmall = 2)`, p-value 는 `r format(days_RnB_chisq_test[3], digits = 2, nsmall = 4)` 이므로 제출 시간의 분포는 Red, Black 간에 통계적으로 유의한 차이가 관찰되지 않았습니다.
+
+이 사실을 Mosaic Plot 을 이용하여 시각적으로 살펴보겠습니다.
+
+닮았다고 느껴지나요?
+
+### Mosaic Plot
+
+```{r, echo = FALSE, fig.width = 10, fig.height = 5}
+library(ggplot2)
+source("./mosaic_gg.R")
+m2_list <- days_tbl[, 14:1] %>%
+  mosaic_gg
+m2 <- m2_list$m
+df2 <- m2_list$df
+p_df2 <- m2_list$p_df
+names(df2[, 2]) <- "Days"
+m2 + geom_text(aes(x = center, y = 1.05), 
+              label = rep(rep(c("월", "화", "수", "목", "금", "토", "일"), each = 2), times = 2)) +
+  theme_bw() +
+  labs(title = "마감일로부터 제출시간의 분포", x = "마감일로부터 일수(누적 %)", y = "인원 백분율(%)") +
+  scale_fill_brewer(name = "그룹", 
+                    labels = c("Red", 
+                               "Black"),
+                    type = "qual", 
+                    palette = "Set1", 
+                    direction = 1) +
+  theme(plot.title = element_text(hjust = 0.5, 
+                                  size = 18, 
+                                  face = "bold"),
+        axis.text.x = element_text(angle = -90, vjust = 0.5)) 
+ggsave("./pics/Quiz251013_submission_7.png", dpi = 120, width = 960, height = 840, units = "px")
+```
+
+```{r, save, echo = FALSE}
+saveRDS(quiz, file = "quiz251013.RDS")
+```
