@@ -16,6 +16,11 @@ library(knitr)
 library(magrittr)
 library(dplyr)
 library(googlesheets4)
+library(showtext)
+font_add(family = "kopub",
+         regular = "~/Library/Fonts/KoPubWorld Dotum Medium.ttf",
+         bold = "~/Library/Fonts/KoPubWorld Dotum Bold.ttf")
+showtext_auto()
 panderOptions('table.split.table', Inf)
 panderOptions('table.alignment.rownames', 'left')
 panderOptions('table.alignment.default', 'right')
@@ -688,9 +693,8 @@ df$Var2 %<>% factor(labels = c("찬성한다에 부연설명", "반대한다에 
 # p_df$Var1 %<>% factor(labels = c("반이나 남았네", "반밖에 안 남았네", "모름/무응답"))
 p_df$Var2 %<>% factor(labels = c("찬성한다에 부연설명", "반대한다에 부연설명"))
 m + geom_text(aes(x = center, y = 1.05), 
-              family = "KoPubWorldDotum Medium",
               label = df[, 2]) +
-  theme_bw(base_family = "KoPubWorldDotum Medium") +
+  theme_bw(base_family = "kopub") +
   labs(title = "부연설명의 영향", x = "Red or Black(누적 %)", y = "인원(%, 명)") +
   scale_fill_brewer(name = "응답", 
                     labels = c("찬성한다", "반대한다", "모름/무응답"),
@@ -699,7 +703,7 @@ m + geom_text(aes(x = center, y = 1.05),
                     direction = 1) +
   theme(plot.title = element_text(hjust = 0.5, 
                                   size = 18, 
-                                  family = "KoPubWorldDotum Bold")) 
+                                  face = "bold")) 
 ggsave("./pics/Quiz250922_Q7_RnB.png", dpi = 120, width = 960, height = 840, units = "px")
 ```
 
@@ -766,7 +770,6 @@ days_chisq_test %>%
 ```{r, echo = FALSE}
 # png(file = "./pics/2302/quiz_submission_8.png", width = 640, height = 480)
 suppressMessages({
-par(family = "KoPubWorldDotum Medium")
 b <- 
   quiz$days %>%
   cut(breaks = c(0:14), include.lowest = TRUE) %>%
@@ -826,9 +829,8 @@ df2 <- m2_list$df
 p_df2 <- m2_list$p_df
 names(df2[, 2]) <- "Days"
 m2 + geom_text(aes(x = center, y = 1.05), 
-              family = "KoPubWorldDotum Medium",
               label = rep(rep(c("월", "화", "수", "목", "금", "토", "일"), each = 2), times = 2)) +
-  theme_bw(base_family = "KoPubWorldDotum Medium") +
+  theme_bw() +
   labs(title = "마감일로부터 제출시간의 분포", x = "마감일로부터 일수(누적 %)", y = "인원 백분율(%)") +
   scale_fill_brewer(name = "그룹", 
                     labels = c("Red", 
@@ -838,7 +840,7 @@ m2 + geom_text(aes(x = center, y = 1.05),
                     direction = 1) +
   theme(plot.title = element_text(hjust = 0.5, 
                                   size = 18, 
-                                  family = "KoPubWorldDotum Bold"),
+                                  face = "bold"),
         axis.text.x = element_text(angle = -90, vjust = 0.5)) 
 ggsave("./pics/Quiz250922_submission_4.png", dpi = 120, width = 960, height = 840, units = "px")
 ```
