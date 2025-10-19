@@ -778,10 +778,16 @@ p_df <- m_list$p_df
 # str(p_df)
 y_min <- min(p_df$y_breaks)
 y_max <- sort(unique(p_df$y_breaks[p_df$y_breaks < 0.99]), decreasing = TRUE)[1]
+custom_labels <-
+  c("16/1", "", "", "17/2", "", "", "19/2", "", "20/2", "21/1", "21/2", "22/1", "22/2", "23/1", "23/2", "24/1", "24/2", "25/1")
 m_list$m +
   geom_text(aes(x = center, y = 1.05),
-            family = "KoPubWorldDotum Medium",
-            label = p_df[, 2]) + 
+#            family = "KoPubWorldDotum Medium",
+            label = rep(custom_labels, each = 2)) +
+# m_list$m +
+#   geom_text(aes(x = center, y = 1.05),
+#             family = "KoPubWorldDotum Medium",
+#             label = p_df[, 2]) + 
   theme_bw() +
   scale_y_continuous(breaks = c(0, y_min, y_max, 1),
                      labels = format(c(0, y_min, y_max, 1) * 100, digits = 2, nsmall = 1)) +
@@ -893,11 +899,9 @@ days_RnB_chisq_test %>%
 
 이번에는 분포표의 첫번째와 두번째 행, '계'열을 제외한 나머지 열에 대해서 카이제곱테스트를 수행합니다. 
 
-카이제곱 통계량은 `r format(days_RnB_chisq_test[1], digits = 2, nsmall = 2)`, 자유도는 `r format(days_RnB_chisq_test[2], digits = 2, nsmall = 2)`, p-value 는 `r format(days_RnB_chisq_test[3], digits = 2, nsmall = 2)` 이므로 제출 시간의 분포는 Red, Black 간에 통계적으로 유의한 차이가 관찰되고 있습니다. 
+카이제곱 통계량은 `r format(days_RnB_chisq_test[1], digits = 2, nsmall = 2)`, 자유도는 `r format(days_RnB_chisq_test[2], digits = 2, nsmall = 2)`, p-value 는 `r format(days_RnB_chisq_test[3], digits = 2, nsmall = 2)` 이므로 제출 시간의 분포는 Red, Black 간에 통계적으로 유의한 차이가 관찰되지 않습니다. 
 
 이 사실을 Mosaic Plot 을 이용하여 시각적으로 살펴보겠습니다. 
-
-어디서 차이가 나고 있나요?
 
 ### Mosaic Plot
 

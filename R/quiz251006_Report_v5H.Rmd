@@ -1,8 +1,8 @@
 ---
 title: "Quiz 251006 (The more, the better?)"
 author: "coop711"
-# date: "2025-10-06"
-date: "`r format(Sys.time(), '%Y-%m-%d %H:%M:%S')`"
+date: "2025-10-06"
+# date: "`r format(Sys.time(), '%Y-%m-%d %H:%M:%S')`"
 output: html_document
 ---
 
@@ -158,10 +158,10 @@ str(quiz)
 
 ```{r, cleaning, echo = FALSE, results = 'hide'}
 #> 학번 잘못 써서 고생시키는 녀석들 찾아내는 코드
-wrong_id <- setdiff(quiz$id, class_roll$id)
-quiz %>%
-  filter(id %in% wrong_id) %>%
-  select(id, name, dept, email)
+# wrong_id <- setdiff(quiz$id, class_roll$id)
+# quiz %>%
+#   filter(id %in% wrong_id) %>%
+#   select(id, name, dept, email)
 
 # 1. 잘못된 id 또는 name 가진 행 찾기
 quiz_wrong_ids <- quiz %>%
@@ -177,11 +177,19 @@ quiz_wrong_ids <- quiz_wrong_ids %>%
     id = case_when(
       id == "2055224" ~ "20255224",
       id == "20237015" ~ "20237016",
+      id == "20246425" ~ "20236425",
+      id == "2021348" ~ "20213348",
+      id == "20553251" ~ "20253251",
+      id == "2023108" ~ "20231088",
+      id == "2025312" ~ "20253012",
       TRUE ~ id
       ),
     name = case_when(
-      name == "이소여" ~ "이소연",
-      name == "안효빔" ~ "안효빈",
+      name == "Chenshuaihao" ~ "CHEN SHUAIHAO",
+      name == "biexi" ~ "bie xi",
+      name == "박 윤" ~ "박윤",
+      name == "WANGAOXIANG" ~ "WANG AOXIANG",
+      name == "xuchenxing" ~ "xu chenxing",
       TRUE ~ name
       )
     )
@@ -260,11 +268,11 @@ wrong_group <- quiz %>%
   filter(group2 != group)
 
 #> 잘못된 그룹 정보 출력
-wrong_group %>%
-  select(time, id, group2, group) %>%
-  arrange(time) %>%
-  rename("제출시간" = time, "학번" = id, "랜덤화출석부" = group2, "구글예습퀴즈" = group) %>%
-  pander(row.names = FALSE)
+# wrong_group %>%
+#   select(time, id, group2, group) %>%
+#   arrange(time) %>%
+#   rename("제출시간" = time, "학번" = id, "랜덤화출석부" = group2, "구글예습퀴즈" = group) %>%
+#   pander(row.names = FALSE)
 
 #> 옛 코드
 # quiz$group2 <- class_roll$group[match(quiz$id, class_roll$id)]
@@ -664,7 +672,7 @@ Black 은 각 선택지의 순서만 바꿔서 소위 1번효과를 측정하려
 
 여기서 선택지의 순서를 바꾸는 것이 응답에 영향을 끼치지 않는다고 가정해 봅시다. 
 
-그렇다면 Red, Black 의 응답은 Q1~Q4 에서와 같이 랜덤화 효과에 의하여 통계적으로 유의한 차이를 보이지 않을 것입니다. 
+그렇다면 Red, Black 의 응답은 Q1 ~ Q6 에서와 같이 랜덤화 효과에 의하여 통계적으로 유의한 차이를 보이지 않을 것입니다. 
 
 그리고 실제로 관찰된 카이제곱 통계값의 p-value 도 0.05와는 비교도 안 되는 수준으로 크기 때문에 통계적으로 유의한 차이를 보여주지 못합니다.  
 
@@ -747,6 +755,7 @@ Mosaic Plot 은 이 집계결과를 시각적으로 잘 보여줍니다.
 ### History of "The more, the better?"
 
 ```{r, echo = FALSE, fig.width = 12, fig.height = 6, message = FALSE}
+W25_2 <- c(tbl_q7_a[3, -3])
 W25_1 <- c(417, 142)
 W24_2 <- c(518, 215)
 W24_1 <- c(585, 177)
@@ -765,8 +774,8 @@ W17_2 <- c(110, 47)
 W17_1 <- c(105, 37)
 W16_2 <- c(63, 28)
 W16_1 <- c(44, 19)
-WW <- cbind(W16_1, W16_2, W17_1, W17_2, W18_2, W19_1, W19_2, W20_1, W20_2, W21_1, W21_2, W22_1, W22_2, W23_1, W23_2, W24_1, W24_2, W25_1)
-semesters <- c("16/1", "16/2", "17/1", "17/2", "18/2", "19/1", "19/2", "20/1", "20/2", "21/1", "21/2", "22/1", "22/2", "23/1", "23/2", "24/1", "24/2", "25/1")
+WW <- cbind(W16_1, W16_2, W17_1, W17_2, W18_2, W19_1, W19_2, W20_1, W20_2, W21_1, W21_2, W22_1, W22_2, W23_1, W23_2, W24_1, W24_2, W25_1, W25_2)
+semesters <- c("16/1", "16/2", "17/1", "17/2", "18/2", "19/1", "19/2", "20/1", "20/2", "21/1", "21/2", "22/1", "22/2", "23/1", "23/2", "24/1", "24/2", "25/1", "25/2")
 colnames(WW) <- semesters
 # apply(WW, MARGIN = 2, proportions) %>% 
 #   `*`(100) %>% 
@@ -782,14 +791,12 @@ p_df <- m_list$p_df
 y_min <- min(p_df$y_breaks)
 y_max <- sort(unique(p_df$y_breaks[p_df$y_breaks < 0.99]), decreasing = TRUE)[1]
 custom_labels <-
-  c("16/1", "", "", "17/2", "", "", "19/2", "", "20/2", "21/1", "21/2", "22/1", "22/2", "23/1", "23/2", "24/1", "24/2", "25/1")
+  c("16/1", "", "", "17/2", "", "", "19/2", "", "20/2", "21/1", "21/2", "22/1", "22/2", "23/1", "23/2", "24/1", "24/2", "25/1", "25/2")
 m_list$m +
   geom_text(aes(x = center, y = 1.05),
-#            family = "KoPubWorldDotum Medium",
             label = rep(custom_labels, each = 2)) +
 # m_list$m +
 #   geom_text(aes(x = center, y = 1.05),
-#             family = "KoPubWorldDotum Medium",
 #             label = p_df[, 2]) + 
   theme_bw() +
   scale_y_continuous(breaks = c(0, y_min, y_max, 1),
@@ -838,13 +845,13 @@ days_tbl %>%
 ```{r, echo = FALSE, warning = FALSE}
 days_tbl %>%
   rbind("계" = colSums(.)) %>%
-  `[`(3, 5:14) %>%
-  `names<-`(., paste0(10:1, "일")) %>%
+  `[`(3, 1:14) %>%
+  `names<-`(., paste0(14:1, "일")) %>%
   pander
 days_chisq_test <-
   days_tbl %>%
   rbind("계" = colSums(.)) %>%
-  `[`(3, 5:14) %>%
+  `[`(3, 1:14) %>%
   chisq.test(simulate.p.value = FALSE) 
 days_chisq_test %>%
   pander
@@ -890,12 +897,12 @@ invisible(dev.off())
 ```{r, echo = FALSE, warning = FALSE}
 days_tbl %>%
   rbind("계" = colSums(.)) %>%
-  `[`(-3, 5:14) %>%
-  `colnames<-`(., paste0(10:1, "일")) %>%
+  `[`(-3, 1:14) %>%
+  `colnames<-`(., paste0(14:1, "일")) %>%
   pander
 days_RnB_chisq_test <-
   days_tbl %>%
-  `[`(-3, 5:14) %>%
+  `[`(-3, 1:14) %>%
   chisq.test(simulate.p.value = FALSE) 
 days_RnB_chisq_test %>%
   pander
