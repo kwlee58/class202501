@@ -745,7 +745,7 @@ m + geom_text(aes(x = center, y = 1.05),
   theme(plot.title = element_text(hjust = 0.5, 
                                   size = 18, 
                                   face = "bold")) 
-ggsave("./pics/Quiz241007_Q7_RnB.png", dpi = 120, width = 960, height = 840, units = "px")
+ggsave("./pics/Quiz251006_Q7_RnB.png", dpi = 120, width = 960, height = 840, units = "px")
 ```
 
 Mosaic Plot 은 이 집계결과를 시각적으로 잘 보여줍니다. 
@@ -887,7 +887,7 @@ text(x = b[14, 1], y = sum(days_tbl[, 1]) / 2,
      labels = paste0(format(sum(days_tbl[, 1]) / N * 100, digits = 1, nsmall = 0), "%"))
 title(main = paste0("Quiz251006 (", N, "명 제출)"))
 # title(main = "일 단위 퀴즈 제출 인원", sub = paste0("Quiz230925 (", N, "명 제출)"))
-dev.copy(png, file = "./pics/2501/quiz_submission_6.png", width = 640, height = 480)
+dev.copy(png, file = "./pics/2502/quiz_submission_6.png", width = 640, height = 480)
 invisible(dev.off())
 })
 ```
@@ -928,7 +928,6 @@ df2 <- m2_list$df
 p_df2 <- m2_list$p_df
 names(df2[, 2]) <- "Days"
 m2 + geom_text(aes(x = center, y = 1.05), 
-#              family = "KoPubWorldDotum Medium",
               label = rep(rep(c("월", "화", "수", "목", "금", "토", "일"), each = 2), times = 2)) +
   theme_bw() +
   labs(title = "마감일로부터 제출시간의 분포", x = "마감일로부터 일수(누적 %)", y = "인원 백분율(%)") +

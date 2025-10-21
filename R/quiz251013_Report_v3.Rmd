@@ -343,11 +343,11 @@ wrong_group <- quiz %>%
   filter(group2 != group)
 
 #> 잘못된 그룹 정보 출력
-# wrong_group %>%
-#   select(time, id, group2, group) %>%
-#   arrange(time) %>%
-#   rename("제출시간" = time, "학번" = id, "랜덤화출석부" = group2, "구글예습퀴즈" = group) %>%
-#   pander(row.names = FALSE)
+wrong_group %>%
+  select(time, id, group2, group) %>%
+  arrange(time) %>%
+  rename("제출시간" = time, "학번" = id, "랜덤화출석부" = group2, "구글예습퀴즈" = group) %>%
+  pander(row.names = FALSE)
 
 #> 옛 코드
 # quiz$group2 <- class_roll$group[match(quiz$id, class_roll$id)]
@@ -899,7 +899,6 @@ ggsave("./pics/Quiz251013_Q8_RnB.png", dpi = 120, width = 960, height = 840, uni
 
 Mosaic Plot으로부터 구체적 질문이 주어진 Red 의 정답 비율이 추상적 질문이 주어진 Black의 정답 비율에 비해서 매우 높다는 것을 시각적으로 파악할 수 있습니다.
 
-````{=html}
 <!--
 ### 정답율 비교
 
@@ -912,7 +911,6 @@ prop.test(x = c(tbl_q7_a[3, 1], tbl_q8_a[3, 1]),
   pander
 ```
 -->
-````
 
 ## Q9. 인지적 편향과 오류
 
@@ -1204,13 +1202,13 @@ days_tbl %>%
 ```{r, echo = FALSE, warning = FALSE}
 days_tbl %>%
   rbind("계" = colSums(.)) %>%
-  `[`(3, 8:14) %>%
-  `names<-`(., paste0(7:1, "일")) %>%
+  `[`(3, 6:14) %>%
+  `names<-`(., paste0(9:1, "일")) %>%
   pander
 days_chisq_test <-
   days_tbl %>%
   rbind("계" = colSums(.)) %>%
-  `[`(3, 8:14) %>%
+  `[`(3, 6:14) %>%
   chisq.test(simulate.p.value = FALSE) 
 days_chisq_test %>%
   pander
@@ -1247,7 +1245,7 @@ text(x = b[14, 1], y = sum(days_tbl[, 1]) / 2,
      labels = paste0(format(sum(days_tbl[, 1]) / N * 100, digits = 1, nsmall = 0), "%"))
 title(main = paste0("Quiz251013 (", N, "명 제출)"))
 # title(main = "일 단위 퀴즈 제출 인원", sub = paste0("Quiz230925 (", N, "명 제출)"))
-dev.copy(png, file = "./pics/2501/quiz_submission_7.png", width = 640, height = 480)
+dev.copy(png, file = "./pics/2502/quiz_submission_7.png", width = 640, height = 480)
 invisible(dev.off())
 })
 ```
@@ -1257,12 +1255,12 @@ invisible(dev.off())
 ```{r, echo = FALSE, warning = FALSE}
 days_tbl %>%
   rbind("계" = colSums(.)) %>%
-  `[`(-3, 8:14) %>%
-  `colnames<-`(., paste0(7:1, "일")) %>%
+  `[`(-3, 6:14) %>%
+  `colnames<-`(., paste0(9:1, "일")) %>%
   pander
 days_RnB_chisq_test <-
   days_tbl %>%
-  `[`(-3, 8:14) %>%
+  `[`(-3, 6:14) %>%
   chisq.test(simulate.p.value = FALSE) 
 days_RnB_chisq_test %>%
   pander
