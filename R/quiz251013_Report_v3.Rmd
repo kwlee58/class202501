@@ -1,8 +1,8 @@
 ---
 title: "Quiz 251013 (Wason Selection Task)"
 author: "coop711"
-date: "2025-04-14"
-# date: "`r format(Sys.time(), '%Y-%m-%d %H:%M:%S')`"
+# date: "2025-10-13"
+date: "`r format(Sys.time(), '%Y-%m-%d %H:%M:%S')`"
 output: html_document
 ---
 
@@ -34,7 +34,7 @@ options(width=180)
 
 Q1 ~ Q6에서는 랜덤화의 효과로 Red, Black 이 얼마나 닮았는지 알아봅니다.
 
-Q7에서는 Wason Selection Task에서 추상적 문제에 취약하고 인지적 편향에 쏠리는 우리의 모습을 파악합니다. 같은 구조의 문제를 추상적으로 표현할 때와 구체적인 사례를 들어 표현할 때 정답률이 매우 차이나는 것을 살펴보고 인지적 편향을 어떻게 확인하는지 그리고 학습 방법에 대한 추론까지 진행해 봅니다.
+Q7, Q8에서는 Wason Selection Task에서 추상적 문제에 취약하고 인지적 편향에 쏠리는 우리의 모습을 파악합니다. 같은 구조의 문제를 추상적으로 표현할 때와 구체적인 사례를 들어 표현할 때 정답률이 매우 차이나는 것을 살펴보고 인지적 편향을 어떻게 확인하는지 그리고 학습 방법에 대한 추론까지 진행해 봅니다.
 
 제출시간의 분포가 날마다 고른지, Red, Black 간에는 닮았는지 알아봅니다.
 
@@ -1202,13 +1202,13 @@ days_tbl %>%
 ```{r, echo = FALSE, warning = FALSE}
 days_tbl %>%
   rbind("계" = colSums(.)) %>%
-  `[`(3, 6:14) %>%
-  `names<-`(., paste0(9:1, "일")) %>%
+  `[`(3, 5:14) %>%
+  `names<-`(., paste0(10:1, "일")) %>%
   pander
 days_chisq_test <-
   days_tbl %>%
   rbind("계" = colSums(.)) %>%
-  `[`(3, 6:14) %>%
+  `[`(3, 5:14) %>%
   chisq.test(simulate.p.value = FALSE) 
 days_chisq_test %>%
   pander
@@ -1255,12 +1255,12 @@ invisible(dev.off())
 ```{r, echo = FALSE, warning = FALSE}
 days_tbl %>%
   rbind("계" = colSums(.)) %>%
-  `[`(-3, 6:14) %>%
-  `colnames<-`(., paste0(9:1, "일")) %>%
+  `[`(-3, 5:14) %>%
+  `colnames<-`(., paste0(10:1, "일")) %>%
   pander
 days_RnB_chisq_test <-
   days_tbl %>%
-  `[`(-3, 6:14) %>%
+  `[`(-3, 5:14) %>%
   chisq.test(simulate.p.value = FALSE) 
 days_RnB_chisq_test %>%
   pander
