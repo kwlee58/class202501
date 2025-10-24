@@ -62,6 +62,7 @@ quiz <- read_sheet(quiz_url)
 names(quiz) <- 
   c("time", "email", "dept", "id", "name", paste0("Q", 1:6),  "group", "Q7_R", "Q8_R", "Q7_B", "Q8_B")
 class(quiz$id) <- "character"
+class(quiz$dept) <- "character"
 str(quiz)
 quiz %>%
   select(Q7_R, Q8_R, Q7_B, Q8_B, group)
@@ -89,6 +90,7 @@ fix_wason_response_simple <- function(x) {
   x <- str_remove_all(x, "\\s")         # 공백 제거
   x <- str_replace(x, "^\\.", "")       # 앞 점 제거
   x <- str_remove_all(x, "[()]")         # (추가) 괄호 제거 (A,2) → A,2
+  x <- str_replace_all(x, "，", ",")    # 한글 쉼표 → 일반 쉼표
   
   # 1. 숫자 먼저 온 입력은 순서 바꾸기
   x <- str_replace(x, "^([0-9]+),([A-Za-z]+)$", "\\2,\\1")
@@ -98,6 +100,7 @@ fix_wason_response_simple <- function(x) {
   # 2. 문자 먼저 온 붙은 입력: 쉼표 추가
   x <- str_replace(x, "^([A-Za-z]+)([0-9]+)$", "\\1,\\2")   # "Beer17" → "Beer,17"
   x <- str_replace(x, "^Bear,([0-9]+)$", "Beer,\\1")
+  x <- str_replace(x, "^Bee,([0-9]+)$",  "Beer,\\1")   # ✅ 추가: Bee,17 → Beer,17
   x <- str_replace(x, "^Be{2,}r,([0-9]+)$", "Beer,\\1")  # 추가: Beeer → Beer
   x <- str_replace(x, regex("^B[eE]{2,}r,([0-9]+)$", ignore_case = TRUE), "Beer,\\1") 
   x <- str_replace(x, "^([A-Za-z]+)\\.([0-9]+)$", "\\1,\\2")   # 추가: A.2 → A,2

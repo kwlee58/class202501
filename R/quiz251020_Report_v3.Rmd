@@ -150,7 +150,7 @@ quiz_wrong_ids <- quiz_wrong_ids %>%
       TRUE ~ id
       ),
     name = case_when(
-      name == "김민연" ~ "김민영",
+      id == "20236155" & name == "이태" ~ "이태경",
       )
     )
 # 3. quiz 에서 id 또는 name 틀린 행을 제거하고 옳은 id 또는 name 갖춘 행으로 교체하기
@@ -179,7 +179,7 @@ quiz %>%
 # which(duplicated(quiz$id)) %>%
 #   quiz[., c("id", "name")]
 quiz %>%
-  filter(id %in% c("20242581"))
+  filter(id %in% c("20253208"))
 #> 전유빈이  정소은 id 를 갖다 쓴 상황 발생
 # quiz[quiz$name == "전유빈", "id"] <- class_roll[class_roll$name == "전유빈", "id"]
 # quiz <- quiz %>%
