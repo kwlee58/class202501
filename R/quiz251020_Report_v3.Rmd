@@ -23,7 +23,7 @@ font_add(family = "kopub",
 showtext_auto()
 panderOptions('table.split.table', Inf)
 panderOptions('table.alignment.rownames', 'left')
-panderOptions('table.alignment.default', 'left')
+panderOptions('table.alignment.default', 'right')
 options(width = 180)
 ```
 
@@ -147,6 +147,7 @@ quiz_wrong_ids <- quiz_wrong_ids %>%
   mutate(
     id = case_when(
       id == "202233456" ~ "20223346",
+      id == "202106511" ~ "20216511",
       TRUE ~ id
       ),
     name = case_when(
