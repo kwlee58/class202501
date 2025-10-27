@@ -247,6 +247,7 @@ as.Date(quiz$time) %>%
 # 확인
 # table(as.Date(format(quiz$time, format = "%Y-%m-%d", tz = "Asia/Seoul")))
 ## 자정 전에 제출한 사람의 시간 수동 조정
+quiz[quiz$id == "202522991", "time"] <- c("2025-10-26 23:59:00")
 # quiz[quiz$id == "20237008", "time"] <- c("2025-03-17 00:00:01")
 # quiz[quiz$id == "20226782", "time"] <- c("2025-03-17 00:00:02")
 str(quiz)
