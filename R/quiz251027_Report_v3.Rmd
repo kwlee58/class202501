@@ -722,6 +722,7 @@ days_tbl <-
 days_tbl %>%
   cbind("계" = rowSums(.)) %>%
   rbind("계" = colSums(.)) %>%
+  `colnames<-`(., c(paste0(14:1, "일"), "계")) %>%
   pander(caption = "일 단위")
 ```
 
@@ -738,12 +739,13 @@ days_tbl %>%
 ```{r, echo = FALSE, warning = FALSE}
 days_tbl %>%
   rbind("계" = colSums(.)) %>%
-  `[`(3, 1:14) %>%
+  `[`(3, 13:14) %>%
+  `names<-`(., paste0(2:1, "일")) %>%
   pander
 days_chisq_test <-
   days_tbl %>%
   rbind("계" = colSums(.)) %>%
-  `[`(3, 1:14) %>%
+  `[`(3, 13:14) %>%
   chisq.test(simulate.p.value = FALSE) 
 days_chisq_test %>%
   pander
@@ -788,11 +790,12 @@ invisible(dev.off())
 ```{r, echo = FALSE, warning = FALSE}
 days_tbl %>%
   rbind("계" = colSums(.)) %>%
-  `[`(-3, 1:14) %>%
+  `[`(-3, 13:14) %>%
+  `colnames<-`(., paste0(2:1, "일")) %>%
   pander
 days_RnB_chisq_test <-
   days_tbl %>%
-  `[`(-3, 1:14) %>%
+  `[`(-3, 13:14) %>%
   chisq.test(simulate.p.value = FALSE) 
 days_RnB_chisq_test %>%
   pander
