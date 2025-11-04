@@ -713,7 +713,7 @@ days_chisq_test %>%
 ```{r, echo = FALSE}
 # png(file = "./pics/2302/quiz_submission_8.png", width = 640, height = 480)
 suppressMessages({
-par(family = "KoPubWorldDotum Medium")
+par()
 b <- 
   quiz$days %>%
   cut(breaks = c(0:14), include.lowest = TRUE) %>%
