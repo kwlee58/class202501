@@ -454,7 +454,7 @@ ptbl_q4 %>%
   pander
 ```
 
-정답률은 Red, Black 을 합하여 계산하는데, `r ptbl_q4[3] %>% format(digits = 2, nsmall = 1)`(%) 입니다.
+정답률은 Red, Black 을 합하여 계산하는데, `r ptbl_q4[1] %>% format(digits = 2, nsmall = 1)`(%) 입니다.
 
 ## Q5. 생산성과 급료의 격차
 
@@ -687,7 +687,7 @@ ptbl_q7_a2 %>%
   pander
 ```
 
-이를 백분율로 살펴보면 Red 에서 100만원 이하를 적정 수준이라고 답한 백분율, `r format(ptbl_q7_a2[1, 1], digits = 2, nsmall = 1)`(%)은 200만원 이상을 적정 수준이라고 답한 백분율, `r format(ptbl_q7_a[1, 2], digits = 2, nsmall = 1)`(%) 보다 월등히 높습니다. 반면 Black에서 100만원 이하를 적정 수준이라고 답한 백분율, `r format(ptbl_q7_a[2, 1], digits = 2, nsmall = 1)`(%)은 200만원 이상을 적정 수준이라고 답한 백분율, `r format(ptbl_q7_a[2, 2], digits = 2, nsmall = 1)`(%) 보다 낮습니다. 
+이를 백분율로 살펴보면 Red 에서 100만원 이하를 적정 수준이라고 답한 백분율, `r format(ptbl_q7_a2[1, 1], digits = 2, nsmall = 1)`(%)은 200만원 이상을 적정 수준이라고 답한 백분율, `r format(ptbl_q7_a2[1, 2], digits = 2, nsmall = 1)`(%) 보다 상당히 높습니다. 반면 Black에서 100만원 이하를 적정 수준이라고 답한 백분율, `r format(ptbl_q7_a2[2, 1], digits = 2, nsmall = 1)`(%)은 200만원 이상을 적정 수준이라고 답한 백분율, `r format(ptbl_q7_a2[2, 2], digits = 2, nsmall = 1)`(%) 보다 월등히 낮습니다. 
 
 Anchor Effects 를 확인할 수 있는 것입니다.
 

@@ -556,7 +556,7 @@ ptbl_q6 %>%
 
 이득은 확고히 하고, 손실은 피하고자 하는 보통 사람들의 심리적 경향을 확인합니다. 
 
-기대값을 계산해 보면 어는 게임을 선택하더라도 상관이 없어야 하는 데 이득 게임인 Red에서는 조금 덜 받더라도이득을 확고히 하려는 게임(A)에, 손실 게임인 Black에서는 손실을 확률적으로 줄이려는 게임(B)을 많이 선택하여 Kahneman과 Tversky의 Prospect Theory 에 부합하는 결과를 보여줍니다.
+기대값을 계산해 보면 어느 게임을 선택하더라도 상관이 없어야 하는 데 이득 게임인 Red에서는 조금 덜 받더라도이득을 확고히 하려는 게임(A)에, 손실 게임인 Black에서는 손실을 확률적으로 줄이려는 게임(B)을 많이 선택하여 Kahneman과 Tversky의 Prospect Theory 에 부합하는 결과를 보여줍니다.
 
 ```{r, echo = FALSE, out.width = "75%"}
 include_graphics("./pics/Quiz240503_Q7_Red.png")
