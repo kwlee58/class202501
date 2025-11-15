@@ -63,8 +63,8 @@ quiz <- read_sheet(quiz_url)
 str(quiz)
 names(quiz) <- 
   c("time", "email", "dept", "id", "name", paste0("Q", 1:6),  "group", "Q7_R", "Q7_B")
-# class(quiz$id) <- "character"
 class(quiz$id) <- "character"
+class(quiz$dept) <- "character"
 quiz <- data.frame(quiz)
 quiz[c("group", "Q7_R", "Q7_B")]
 quiz$Q7 <- ifelse(is.na(quiz$Q7_R), quiz$Q7_B, quiz$Q7_R)
@@ -152,10 +152,11 @@ quiz_wrong_ids <- quiz_wrong_ids %>%
   mutate(
     id = case_when(
       id == "20523112" ~ "20253112",
+      id == "200256709" ~ "20256709",
     TRUE ~ id
     ),
     name = case_when(
-      name == "최유" ~ "최유환",
+      id == "20256726" & name == "박 윤" ~ "박윤",
       TRUE ~ name
       )
     )
@@ -165,9 +166,7 @@ quiz <- quiz %>%
   bind_rows(quiz_wrong_ids)
 
 #> 학과 이름에 학번 쓴 사람 처리
-quiz[quiz$dept == "20213353", "dept"] <- "디스플레이전공"
-quiz[quiz$dept == "20226424", "dept"] <- "글로벌비즈니스전공"
-quiz[quiz$dept == "20246627", "dept"] <- "디지털인문예술전공"
+quiz[quiz$dept == "202255136", "dept"] <- "소프트웨어학부"
 #> 중복 제출자
 quiz %>%
   filter(duplicated(id)) %>%
@@ -681,13 +680,13 @@ days_tbl %>%
 ```{r, echo = FALSE, warning = FALSE}
 days_tbl %>%
   rbind("계" = colSums(.)) %>%
-  `[`(3, 2:14) %>%
-  `names<-`(., paste0(13:1, "일")) %>%
+  `[`(3, 1:14) %>%
+  `names<-`(., paste0(14:1, "일")) %>%
   pander
 days_chisq_test <-
   days_tbl %>%
   rbind("계" = colSums(.)) %>%
-  `[`(3, 2:14) %>%
+  `[`(3, 1:14) %>%
   chisq.test(simulate.p.value = FALSE) 
 days_chisq_test %>%
   pander
@@ -733,12 +732,12 @@ invisible(dev.off())
 ```{r, echo = FALSE, warning = FALSE}
 days_tbl %>%
   rbind("계" = colSums(.)) %>%
-  `[`(-3, 2:14) %>%
-  `colnames<-`(., paste0(13:1, "일")) %>%
+  `[`(-3, 1:14) %>%
+  `colnames<-`(., paste0(14:1, "일")) %>%
   pander
 days_RnB_chisq_test <-
   days_tbl %>%
-  `[`(-3, 2:14) %>%
+  `[`(-3, 1:14) %>%
   chisq.test(simulate.p.value = FALSE) 
 days_RnB_chisq_test %>%
   pander
