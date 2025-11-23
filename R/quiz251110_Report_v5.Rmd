@@ -140,10 +140,14 @@ quiz_wrong_ids <- quiz_wrong_ids %>%
   mutate(
     id = case_when(
       id == "2022625" ~ "20221625",
+      id == "20256178" ~ "20256718",
     TRUE ~ id
     ),
     name = case_when(
-      name == "김종유" ~ "김종우",
+      id == "20256726" & name == "박 윤" ~ "박윤",
+      id == "20218008" & name == "biexi" ~ "bie xi",
+      id == "20178019" & name == "cHENSHUAIHAO" ~ "CHEN SHUAIHAO",
+      id == "20238010" & name == "xuchenxing" ~ "xu chenxing",
       TRUE ~ name
       )
     )
@@ -164,7 +168,7 @@ quiz %>%
 # which(duplicated(quiz$id)) %>%
 #   quiz[., c("id", "name")]
 quiz %>%
-  filter(id %in% c("20226424", "20242615"))
+  filter(id %in% c("20221625"))
 quiz <- quiz %>% 
   arrange(id, desc(time)) %>%
   distinct(id, .keep_all = TRUE)
@@ -198,11 +202,11 @@ wrong_group <- quiz %>%
   filter(group2 != group)
 
 #> 잘못된 그룹 정보 출력
-# wrong_group %>%
-#   select(time, id, group2, group) %>%
-#   arrange(time) %>%
-#   rename("제출시간" = time, "학번" = id, "랜덤화출석부" = group2, "구글예습퀴즈" = group) %>%
-#   pander(row.names = FALSE)
+wrong_group %>%
+  select(time, id, group2, group) %>%
+  arrange(time) %>%
+  rename("제출시간" = time, "학번" = id, "랜덤화출석부" = group2, "구글예습퀴즈" = group) %>%
+  pander(row.names = FALSE)
 
 #> 옛 코드
 # quiz$group2 <- class_roll$group[match(quiz$id, class_roll$id)]
@@ -754,13 +758,13 @@ days_tbl %>%
 ```{r, echo = FALSE, warning = FALSE}
 days_tbl %>%
   rbind("계" = colSums(.)) %>%
-  `[`(3, 3:14) %>%
-  `names<-`(., paste0(12:1, "일")) %>%
+  `[`(3, 1:14) %>%
+  `names<-`(., paste0(14:1, "일")) %>%
   pander
 days_chisq_test <-
   days_tbl %>%
   rbind("계" = colSums(.)) %>%
-  `[`(3, 3:14) %>%
+  `[`(3, 1:14) %>%
   chisq.test(simulate.p.value = FALSE) 
 days_chisq_test %>%
   pander
@@ -806,12 +810,12 @@ invisible(dev.off())
 ```{r, echo = FALSE, warning = FALSE}
 days_tbl %>%
   rbind("계" = colSums(.)) %>%
-  `[`(-3, 3:14) %>%
-  `colnames<-`(., paste0(12:1, "일")) %>%
+  `[`(-3, 1:14) %>%
+  `colnames<-`(., paste0(14:1, "일")) %>%
   pander
 days_RnB_chisq_test <-
   days_tbl %>%
-  `[`(-3, 3:14) %>%
+  `[`(-3, 1:14) %>%
   chisq.test(simulate.p.value = FALSE) 
 days_RnB_chisq_test %>%
   pander
