@@ -77,10 +77,10 @@ quiz$Q1 %<>%
                     "열에 여덟명"))
 quiz$Q2 %<>% 
   factor(levels = c("가", "나", "다", "라"), 
-         labels = c("15%", "25%", "45%", "65%"))
+         labels = c("1명", "2명", "3명", "4명"))
 quiz$Q3 %<>% 
   factor(levels = c("가", "나", "다", "라"), 
-         labels = c("1명", "2명", "3명", "4명"))
+         labels = c("15%", "25%", "45%", "65%"))
 quiz$Q4 <- 
   apply(quiz[paste("Q4", 1:5, sep = "_")], MARGIN = 1, paste, collapse = ",")
 quiz$Q5 <- 
@@ -321,21 +321,21 @@ ptbl_q1 %>%
 
 정답률은 Red, Black 을 합하여 계산하는데, `r ptbl_q1[1] %>% format(digits = 2, nsmall = 1)`(%) 입니다.
 
-## Q2. Stanley Milgram
+## Q2. Solomon Asch
 
 ```{r, echo = FALSE, out.width = "90%"}
-include_graphics("./pics/Quiz201109_02.png")
+include_graphics("./pics/Quiz201109_03.png")
 ```
 
-### 450V까지 누르는 사람
+### Power of 3
 
-```{r, obedience, echo = FALSE, warning = FALSE}
+```{r, Power of 3, echo = FALSE, warning = FALSE}
 tbl_q2_a <- quiz$Q2 %>%
-  table(quiz$group, ., useNA = "ifany") %>%
+  table(quiz$group, ., useNA = "ifany")  %>%
   cbind("계" = rowSums(.)) %>%
   rbind("계" = colSums(.))
 tbl_q2_a %>% 
-  pander 
+  pander
 chisq_test_q2 <- 
   tbl_q2_a %>%
   `[`(-3, -5) %>%
@@ -350,9 +350,9 @@ Q2의 집계 결과가 Red, Black 간에 통계적으로 유의한 차이가 있
 
 실제로 닮은 게 느껴집니까?
 
-### 450V까지 누르는 사람 (%)
+### Power of 3 (%)
 
-```{r, obedience in percentage, echo = FALSE}
+```{r, Power of 3 in percentage, echo = FALSE}
 ptbl_q2 <- 
   tbl_q2_a %>% 
   `[`(3, -5) %>%
@@ -366,21 +366,21 @@ ptbl_q2 %>%
 
 정답률은 Red, Black 을 합하여 계산하는데, `r ptbl_q2[3] %>% format(digits = 2, nsmall = 1)`(%) 입니다.
 
-## Q3. Solomon Asch
+## Q3. Stanley Milgram
 
 ```{r, echo = FALSE, out.width = "90%"}
-include_graphics("./pics/Quiz201109_03.png")
+include_graphics("./pics/Quiz201109_02.png")
 ```
 
-### Power of 3
+### 450V까지 누르는 사람
 
-```{r, Power of 3, echo = FALSE, warning = FALSE}
+```{r, obedience, echo = FALSE, warning = FALSE}
 tbl_q3_a <- quiz$Q3 %>%
-  table(quiz$group, ., useNA = "ifany")  %>%
+  table(quiz$group, ., useNA = "ifany") %>%
   cbind("계" = rowSums(.)) %>%
   rbind("계" = colSums(.))
 tbl_q3_a %>% 
-  pander
+  pander 
 chisq_test_q3 <- 
   tbl_q3_a %>%
   `[`(-3, -5) %>%
@@ -395,9 +395,9 @@ Q3의 집계 결과가 Red, Black 간에 통계적으로 유의한 차이가 있
 
 실제로 닮은 게 느껴집니까?
 
-### Power of 3 (%)
+### 450V까지 누르는 사람 (%)
 
-```{r, Power of 3 in percentage, echo = FALSE}
+```{r, obedience in percentage, echo = FALSE}
 ptbl_q3 <- 
   tbl_q3_a %>% 
   `[`(3, -5) %>%
@@ -526,7 +526,7 @@ chisq_test_q6 %>%
 
 Q6의 집계 결과가 Red, Black 간에 통계적으로 유의한 차이가 있는지 알아보기 위하여 카이제곱 테스트를 수행하였습니다. 
 
-그 결과 카이제곱 통계량은 `r chisq_test_q6[1] %>% format(digits = 2, nsmall = 3)`, 자유도는 `r chisq_test_q6[2] %>% format(digits = 2, nsmall = 2)`, p-value 는 `r chisq_test_q6[3] %>% format(digits = 2, nsmall = 4)`이므로 Red, Black 간에 통계적으로 유의한 차이를 (보이고 있습니다.) 보이지 않습니다.
+그 결과 카이제곱 통계량은 `r chisq_test_q6[1] %>% format(digits = 2, nsmall = 3)`, 자유도는 `r chisq_test_q6[2] %>% format(digits = 2, nsmall = 2)`, p-value 는 `r chisq_test_q6[3] %>% format(digits = 2, nsmall = 4)`이므로 Red, Black 간에 통계적으로 유의한 차이를 보이지 않습니다.
 
 실제로 닮은 게 느껴집니까?
 
