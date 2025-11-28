@@ -1299,7 +1299,7 @@ m_list$m +
         axis.title.y = element_text(family = "KoPubWorldDotum Light"),
         legend.text = element_text(family = "KoPubWorldDotum Light"),
         plot.title = element_text(size = 20, hjust = 0.5, family = "KoPubWorldDotum Bold"))
-ggsave("./pics/Monty_Hall_mosaic_ggplot.png", width = 12, height = 6, dpi = 600)
+ggsave("./pics/Monty_Hall_mosaic_ggplot_2501.png", width = 12, height = 6, dpi = 600)
 ```
 
 ## 마감 시간으로부터 제출 시간의 분포
