@@ -152,6 +152,8 @@ wrong_ids <- quiz_wrong_ids$id
 quiz_wrong_ids <- quiz_wrong_ids %>%
   mutate(id = case_when(
     id == "2019287" ~ "20192837",
+    id == "2021990" ~ "20212990",
+    id == "021107" ~ "20217123",
     TRUE ~ id
   ),
   name = case_when(
