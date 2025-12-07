@@ -1,8 +1,8 @@
 ---
 title: "Quiz 251124 (Birthday Problem, Monty Hall, ..."
 author: "coop711"
-# date : "2025-11-24"
-date: "`r format(Sys.time(), '%Y-%m-%d %H:%M:%S')`"
+date : "2025-11-24"
+# date: "`r format(Sys.time(), '%Y-%m-%d %H:%M:%S')`"
 output: html_document
 ---
 
@@ -120,14 +120,20 @@ quiz_wrong_ids <- quiz_wrong_ids %>%
   mutate(
     id = case_when(
       id == "20233105" ~ "20233015",
-      id == "데이터사이언스학부" & name == "정민재" ~ "20253246",
+      id == "20245735" ~ "20246735",
+      id == "202533249" ~ "20253249",
+      id == "20353941" ~ "20253941",
+      id == "28178019" & name == "CHEN SHUAIHAO" ~ "20178019",
     TRUE ~ id
     ),
     name = case_when(
-      name == "ZOUYUANYUAN" ~ "ZOU YUANYUAN",
-      TRUE ~ name
-      )
+      id == "20256726" & name == "박 윤" ~ "박윤",
+      id == "20218008" & name == "biexi" ~ "bie xi",
+      id == "28178019" & name == "CHEN SHUAIHAO" ~ "CHEN SHUAIHAO",
+      id == "20238010" & name == "xuchenxing" ~ "xu chenxing",
+    TRUE ~ name
     )
+  )
 # 3. quiz 에서 id 또는 name 틀린 행을 제거하고 옳은 id 또는 name 갖춘 행으로 교체하기
 quiz <- quiz %>%
   anti_join(wrong_keys %>% select(id, name), by = c("id", "name")) %>%
@@ -357,6 +363,8 @@ as.Date(quiz$time) %>%
   table
 ## 자정 전에 제출한 사람의 시간 수동 조정
 quiz[quiz$id == "20253042", "time"] <- c("2025-11-24 00:00:01")
+## 자정 직후 제출한 사람의 시간 수동 조정
+quiz[quiz$id == "20252998", "time"] <- c("2025-12-07 23:59:00")
 ## 집계시점으로부터 제출시간까지의 소요일수
 quiz$days <- 
   as.numeric(difftime("2025-12-08 00:00:00", 
@@ -380,11 +388,11 @@ wrong_group <- quiz %>%
   filter(group2 != group)
 
 #> 잘못된 그룹 정보 출력
-wrong_group %>%
-  select(time, id, group2, group) %>%
-  arrange(time) %>%
-  rename("제출시간" = time, "학번" = id, "랜덤화출석부" = group2, "구글예습퀴즈" = group) %>%
-  pander(row.names = FALSE)
+# wrong_group %>%
+#   select(time, id, group2, group) %>%
+#   arrange(time) %>%
+#   rename("제출시간" = time, "학번" = id, "랜덤화출석부" = group2, "구글예습퀴즈" = group) %>%
+#   pander(row.names = FALSE)
 
 #> 옛 코드
 # quiz$group2 <- class_roll$group[match(quiz$id, class_roll$id)]
@@ -1333,13 +1341,13 @@ days_tbl %>%
 ```{r, echo = FALSE, warning = FALSE}
 days_tbl %>%
   rbind("계" = colSums(.)) %>%
-  `[`(3, 2:14) %>%
-  `names<-`(., paste0(13:1, "일")) %>%
+  `[`(3, 1:14) %>%
+  `names<-`(., paste0(14:1, "일")) %>%
   pander
 days_chisq_test <-
   days_tbl %>%
   rbind("계" = colSums(.)) %>%
-  `[`(3, 2:14) %>%
+  `[`(3, 1:14) %>%
   chisq.test(simulate.p.value = FALSE) 
 days_chisq_test %>%
   pander
@@ -1385,12 +1393,12 @@ invisible(dev.off())
 ```{r, echo = FALSE, warning = FALSE}
 days_tbl %>%
   rbind("계" = colSums(.)) %>%
-  `[`(-3, 2:14) %>%
-  `colnames<-`(., paste0(13:1, "일")) %>%
+  `[`(-3, 1:14) %>%
+  `colnames<-`(., paste0(14:1, "일")) %>%
   pander
 days_RnB_chisq_test <-
   days_tbl %>%
-  `[`(-3, 2:14) %>%
+  `[`(-3, 1:14) %>%
   chisq.test(simulate.p.value = FALSE) 
 days_RnB_chisq_test %>%
   pander
