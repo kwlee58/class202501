@@ -1,0 +1,862 @@
+---
+title: "Invisible Gorilla 202502"
+author: "coop711"
+# date: "2025-11-24"
+date: "`r format(Sys.time(), '%Y-%m-%d %H:%M:%S')`"
+output: html_document
+---
+
+<!--### Data
+
+#### Read In
+-->
+
+```{r, echo = FALSE, message = FALSE, results = 'hide'}
+library(magrittr)
+library(readxl)
+library(pander)
+library(ggplot2)
+library(googlesheets4)
+library(dplyr)
+library(showtext)
+font_add(family = "kopub", 
+         regular = "/Users/kwlee/Library/Fonts/KoPubWorld Dotum Medium.ttf",
+         bold = "/Users/kwlee/Library/Fonts/KoPubWorld Dotum Bold.ttf",
+         italic  = "/Users/kwlee/Library/Fonts/KoPubWorld Dotum Light.ttf")
+showtext_auto()
+panderOptions("table.split.table", Inf)
+options(digits=3)
+```
+
+<!--
+# Data
+-->
+
+```{r, echo = FALSE, message = FALSE, results='hide'}
+class_roll <- readRDS("./class_roll_251026.RDS")
+gorilla_url <- "https://docs.google.com/spreadsheets/d/1Zji_0bxc9DaDmec29tr5_tkZqzjhCj-G-3Aaamw2F0U"
+gorilla <- read_sheet(gorilla_url)
+# gorilla <- "./data/gorilla241118.xlsx" %>%
+#   read_excel(range = "C1:Z723")
+gorilla <- data.frame(gorilla)
+# gorilla <- gorilla[, -c(1, 2)]
+# gorilla[c(4:7, 9:14, 16, 18:21, 23:24)] %<>%
+gorilla[c(6:9, 11:16, 18, 20:23, 25:26)] %<>%
+  sapply(FUN = . %>% {strsplit(., split = "[.]") %>% 
+  sapply(`[`, 1)})
+names(gorilla) <- c("time", "email", "dept", "id", "name", "Q1", "Q2_1", "Q2_2", "Q2_3", "Q3", "Q4_1", "Q4_3", "Q4_5", "Q4_6", "Q4_7", "Q4_8", "Q5_1", "Q5_2", "Q6_1", "Q6_2", "Q6_3", "Q6_4", "Q8", "Q9_1", "Q9_2", "Q9_3")
+gorilla$group <- class_roll$group[match(gorilla$id, class_roll$id)]
+gorilla$group <- factor(gorilla$group, levels = c("Red", "Black"))
+class(gorilla$id) <- "character"
+class(gorilla$dept) <- "character"
+class(gorilla$Q9_1) <- "character"
+str(gorilla)
+table(gorilla$Q9_1)
+# class(gorilla$Q9_1) <- "integer"
+gorilla$Q1 %<>%
+  factor(levels = c("가", "나"), 
+         labels = c("틀리다", "다르다"))
+gorilla$Q2_1 %<>%
+  factor(levels = c("가", "나", "다"), 
+         labels = c("원숭이와 바나나", "원숭이와 팬더", "팬더와 바나나"))
+gorilla$Q2_2 %<>%
+  factor(levels = c("가", "나"), 
+         labels = c("행복해 보인다", "행복해 보이지 않는다"))
+gorilla$Q2_3 %<>%
+  factor(levels = c("가", "나", "다"), 
+         labels = c("맨 위의 비행접시", "중간 위치 비행접시", "맨 아래 비행접시"))
+gorilla$Q3 %<>% 
+  factor(levels = c("가. 평범한 방이다, 나. 크기와 모양이 닮은 창이 둘 있다, 다. 오른쪽 여자의 키가 훨씬 크다",
+                    "가. 평범한 방이다, 나. 크기와 모양이 닮은 창이 둘 있다",
+                    "가. 평범한 방이다, 다. 오른쪽 여자의 키가 훨씬 크다",
+                    "나. 크기와 모양이 닮은 창이 둘 있다, 다. 오른쪽 여자의 키가 훨씬 크다",
+                    "가. 평범한 방이다",
+                    "나. 크기와 모양이 닮은 창이 둘 있다",
+                    "다. 오른쪽 여자의 키가 훨씬 크다"),
+         labels = c("가, 나, 다", "가, 나", "가, 다", "나, 다", "가", "나", "다"))
+gorilla$Q4_1 %<>%
+  factor(levels = c("가", "나"), labels = c("수영", "누영"))
+# gorilla$Q4_2 %<>%
+#   factor(levels = c("가", "나"), labels = c("수나", "누나"))
+gorilla$Q4_3 %<>%
+  factor(levels = c("가", "나"), labels = c("미특보살", "미륵보살"))
+# gorilla$Q4_4 %<>%
+#   factor(levels = c("가", "나"), labels = c("특허청", "륵허청"))
+gorilla$Q4_5 %<>%
+  factor(levels = c("가", "나"), labels = c("248", "2나8"))
+gorilla$Q4_6 %<>%
+  factor(levels = c("가", "나"), labels = c("너와나", "너와4"))
+gorilla$Q4_7 %<>%
+  factor(levels = c("가", "나"), 
+         labels = c("새농어촌건설운동", "미래농어촌건설운동"))  
+gorilla$Q4_8 %<>%
+  factor(levels = c("가", "나", "다", "라"), 
+         labels = c("TAE CAT", "TAE CHT", "THE CAT", "THE CHT"))
+gorilla$Q5_1 %<>%
+  factor(levels = c(12:16))
+gorilla$Q5_2 %<>%
+  factor(levels = c("가", "나"), labels = c("보았다", "못 보았다"))
+gorilla$Q6_1 %<>%
+  factor(levels = c(13:17))
+gorilla$Q6_2 %<>%
+  factor(levels = c("가", "나"), labels = c("보았다", "못 보았다"))
+gorilla$Q6_3 %<>%
+  factor(levels = c("가", "나"), labels = c("보았다", "못 보았다"))
+gorilla$Q6_4 %<>%
+  factor(levels = c("가", "나"), labels = c("보았다", "못 보았다"))
+# gorilla$Q7 %<>%
+#   factor(levels = c("가", "나"), labels = c("알아차렸다", "몰랐다"))
+gorilla$Q8 %<>%
+  factor(levels = c("가", "나"), labels = c("무시한다", "팻말에 따른다"))
+gorilla$Q9_1 %<>%
+#   ifelse(gorilla$Q9_1 <= 5, ., "6개 이상" ) %>%
+  factor(levels = c("0", "1", "2", "3", "4", "5", "6개 이상"))
+gorilla$Q9_2 %<>%
+  factor(levels = c("가", "나"), labels = c("더", "덜"))
+gorilla$Q9_3 %<>%
+  factor(levels = c("가", "나"), labels = c("더", "덜"))
+#> 학번 잘못 써서 고생시키는 녀석들 찾아내는 코드
+# gorilla[gorilla$id %in% setdiff(gorilla$id, class_roll$id), c("id", "name", "dept")]
+# ls()
+```
+
+```{r, cleaning, echo = FALSE, results = 'hide'}
+#> 학번 잘못 써서 고생시키는 녀석들 찾아내는 코드
+wrong_id <- setdiff(gorilla$id, class_roll$id)
+gorilla %>%
+  filter(id %in% wrong_id) %>%
+  select(id, name, dept, email)
+# 1. 잘못된 id 가진 행 찾기
+gorilla_wrong_ids <- gorilla %>%
+  anti_join(class_roll, by = c("id", "name")) 
+# 2. 잘못된 id를 따로 저장하고 수정하기
+wrong_ids <- gorilla_wrong_ids$id
+gorilla_wrong_ids <- gorilla_wrong_ids %>%
+  mutate(
+    id = case_when(
+      id == "20212167" ~ "20212617",
+      id == "20246205" ~ "20246295",
+      id == "20256923" ~ "20246923",
+      id == "20246794" ~ "20246719",
+      id == "202529883" ~ "20252983",
+      id == "소프트웨어학과" & name == "박일경" ~ "20255170",
+      TRUE ~ id
+    ),
+    name = case_when(
+      id == "20256726" & name == "박 윤" ~ "박윤",
+      id == "20203332" & name == "양주" ~ "양주석",
+      id == "20218008" & name == "biexi" ~ "bie xi",
+      id == "28178019" & name == "CHEN SHUAIHAO" ~ "CHEN SHUAIHAO",
+      id == "20238010" & name == "xuchenxing" ~ "xu chenxing",
+    TRUE ~ name
+    )
+  )
+# 3. gorilla 에서 id 틀린 행을 제거하고 옳은 id 갖춘 행으로 교체하기
+gorilla <- gorilla %>%
+  filter(!id %in% wrong_ids) %>%
+  bind_rows(gorilla_wrong_ids)
+# 4. 수정 사항 확인
+gorilla[gorilla$id %in% setdiff(gorilla$id, class_roll$id), c("id", "name", "dept", "group")]
+
+#> 틀린 학번 수정하여 되돌리기 (작동하지 않음. 참고로만)
+# gorilla <- gorilla %>%
+#   #> `left_join`으로 `name`과 `dept`를 기준으로 교정 정보를 추가
+#   left_join(class_roll %>% select(id, name, dept), 
+#             by = "name", 
+#             suffix = c("", "_correct")) %>%
+#   #> `id_correct`가 있는 경우 이를 사용하여 `id`를 교정하고, 그렇지 않으면 기존의 `id`를 유지
+#   mutate(id = if_else(!is.na(id_correct) & id != id_correct, id_correct, id)) %>%
+#   #> 임시로 추가된 `id_correct` 열 제거
+#   select(-id_correct)
+
+#> 중복 제출자
+gorilla %>%
+  filter(duplicated(id)) %>%
+  select(time, id, name) %>%
+  arrange(time)
+# which(duplicated(gorilla$id)) %>%
+#   gorilla[., c("id", "name")]
+gorilla %>%
+  filter(id %in% c("20256613"))
+gorilla <- gorilla %>% 
+  arrange(id, desc(time)) %>%
+  distinct(id, .keep_all = TRUE)
+#> 불참자들
+absentee <- class_roll %>%
+  anti_join(gorilla, by = "id") %>%
+  select(id, name, group) %>%
+  arrange(id)
+# absentee <- 
+#   class_roll[class_roll$id %in% setdiff(class_roll$id, gorilla$id), c("id", "name", "group")] %>%
+#   `[`(order(.$name), ) 
+absentee %>%
+  pander(row.names = FALSE) 
+absentee %>%
+  count(group) %>%
+  print()
+# absentee$group %>%
+#   table
+```
+
+```{r,echo = FALSE}
+paste_pp <- function(tbl) {
+t(matrix(paste0(format(prop.table(tbl) * 100, digits = 2, nsmall = 1), "%"), nrow = dim(tbl)[1], dimnames = dimnames(tbl)))
+}
+dump(list = "paste_pp", file = "./paste_p.R")
+```
+
+## 다르다와 틀리다
+
+```{r, echo = FALSE, out.width = "50%"}
+knitr::include_graphics("./pics/Q1.png")
+```
+
+### 집계
+
+```{r, echo = FALSE}
+source("./paste_p.R")
+gorilla$Q1 %>%
+  table %>%
+  c("계" = sum(.)) %>%
+  pander(caption = "이 사람들은 나하고 생각이")
+```
+
+### %
+
+```{r, echo = FALSE}
+gorilla$Q1 %>%
+  table %>%
+  proportions %>%
+  c("계" = sum(.)) %>%
+  `*`(100) %>%
+  format(digits = 2, nsmall = 1) %>%
+  pander
+# pander(t(matrix(paste(format(prop.table(tbl.wrong_diff)*100, digits = 2, nsmall = 1), "%", sep = ""), nrow = dim(tbl.wrong_diff)[1], dimnames = dimnames(tbl.wrong_diff))))
+```
+
+## 동과 서
+
+### 둘을 고르면?
+
+```{r, echo = FALSE, out.width = "50%"}
+knitr::include_graphics("./pics/Q2_1.png")
+```
+
+#### 집계
+
+```{r, echo = FALSE}
+gorilla$Q2_1 %>%
+  table %>%
+  c("계" = sum(.)) %>%
+  pander(caption = "둘을 고르면?")
+```
+
+#### %
+
+```{r, echo = FALSE}
+gorilla$Q2_1 %>%
+  table %>%
+  proportions %>%
+  c("계" = sum(.)) %>%
+  `*`(100) %>%
+  format(digits = 2, nsmall = 1) %>%
+  pander
+```
+
+### 여전히 행복한가요?
+
+```{r, echo = FALSE, out.width = "50%"}
+knitr::include_graphics("./pics/Q2_2_1.png")
+```
+
+```{r, echo = FALSE, out.width = "50%"}
+knitr::include_graphics("./pics/Q2_2_2.png")
+```
+
+#### 집계
+
+```{r, echo = FALSE}
+gorilla$Q2_2 %>%
+  table %>%
+  c("계" = sum(.)) %>%
+  pander(caption = "여전히 행복한가요?")
+```
+
+#### %
+
+```{r, echo = FALSE}
+gorilla$Q2_2 %>%
+  table %>%
+  proportions %>%
+  c("계" = sum(.)) %>%
+  `*`(100) %>%
+  format(digits = 2, nsmall = 1) %>%
+  pander
+```
+
+### 어떤 게 앞에 있나요?
+
+```{r, echo = FALSE, out.width = "50%"}
+knitr::include_graphics("./pics/Q2_3.png")
+```
+
+#### 집계
+
+```{r, echo = FALSE}
+gorilla$Q2_3 %>%
+  table %>%
+  c("계" = sum(.)) %>%
+  pander(caption = "어떤 게 앞에 있나요?")
+```
+
+#### %
+
+```{r, echo = FALSE}
+gorilla$Q2_3 %>%
+  table %>%
+  proportions %>%
+  c("계" = sum(.)) %>%
+  `*`(100) %>%
+  format(digits = 2, nsmall = 1) %>%
+  pander
+```
+
+## Ames Room
+
+가 : 평범한 방, 나 : 닮은 창 둘, 다 : 오른쪽 여자 키가 더 크다
+
+```{r, echo = FALSE, out.width = "67%"}
+knitr::include_graphics("./pics/Q3.png")
+```
+
+### 집계
+
+```{r, echo = FALSE}
+gorilla$Q3 %>%
+  table %>%
+  c("계" = sum(.)) %>%
+  pander(caption = "가 : 평범한 방, 나 : 닮은 창 둘, 다 : 오른쪽 여자 키가 더 크다")
+```
+
+### %
+
+```{r, echo = FALSE}
+gorilla$Q3 %>%
+  table %>%
+  proportions %>%
+  c("계" = sum(.)) %>%
+  `*`(100) %>%
+  format(digits = 2, nsmall = 1) %>%
+  pander
+```
+
+## 손글씨 읽기
+
+### 수영과 누영
+
+```{r, echo = FALSE, out.width = "25%"}
+knitr::include_graphics("./pics/Q4_1.png")
+```
+
+#### 집계
+
+```{r, echo = FALSE}
+gorilla$Q4_1 %>%
+  table %>%
+  c("계" = sum(.)) %>%
+  pander(caption = "수영 vs 누영")
+```
+
+#### %
+
+```{r, echo = FALSE}
+gorilla$Q4_1 %>%
+  table %>%
+  proportions %>%
+  c("계" = sum(.)) %>%
+  `*`(100) %>%
+  format(digits = 2, nsmall = 1) %>%
+  pander
+```
+
+<!--
+### 수나와 누나
+
+```{r, echo = FALSE, out.width = "25%", eval = FALSE}
+knitr::include_graphics("./pics/Q4_2.png")
+```
+
+#### 집계
+
+```{r, echo = FALSE, eval = FALSE}
+gorilla$Q4_2 %>%
+  table %>%
+  c("계" = sum(.)) %>%
+  pander(caption = "수나 vs 누나")
+```
+
+#### %
+
+```{r, echo = FALSE, eval = FALSE}
+gorilla$Q4_2 %>%
+  table %>%
+  proportions %>%
+  c("계" = sum(.)) %>%
+  `*`(100) %>%
+  format(digits = 2, nsmall = 1) %>%
+  pander
+```
+-->
+
+### 미특보살과 미륵보살
+
+```{r, echo = FALSE, out.width = "25%"}
+knitr::include_graphics("./pics/Q4_3.png")
+```
+
+#### 집계
+
+```{r, echo = FALSE}
+gorilla$Q4_3 %>%
+  table %>%
+  c("계" = sum(.)) %>%
+  pander(caption = "미특보살 vs 미륵보살")
+```
+
+#### %
+
+```{r, echo = FALSE}
+gorilla$Q4_3 %>%
+  table %>%
+  proportions %>%
+  c("계" = sum(.)) %>%
+  `*`(100) %>%
+  format(digits = 2, nsmall = 1) %>%
+  pander
+```
+
+<!--
+### 특허청과 륵허청
+
+```{r, echo = FALSE, out.width = "25%", eval = FALSE}
+knitr::include_graphics("./pics/Q4_4.png")
+```
+
+#### 집계
+
+```{r, echo = FALSE, eval = FALSE}
+gorilla$Q4_4 %>%
+  table %>%
+  c("계" = sum(.)) %>%
+  pander(caption = "특허청 vs 륵허청")
+```
+
+#### %
+
+```{r, echo = FALSE, eval = FALSE}
+gorilla$Q4_4 %>%
+  table %>%
+  proportions %>%
+  c("계" = sum(.)) %>%
+  `*`(100) %>%
+  format(digits = 2, nsmall = 1) %>%
+  pander
+```
+-->
+
+### 248과 2나8
+
+```{r, echo = FALSE, out.width = "25%"}
+knitr::include_graphics("./pics/Q4_5.png")
+```
+
+#### 집계
+
+```{r, echo = FALSE}
+gorilla$Q4_5 %>%
+  table %>%
+  c("계" = sum(.)) %>%
+  pander(caption = "248 vs 2나8")
+```
+
+#### %
+
+```{r, echo = FALSE}
+gorilla$Q4_5 %>%
+  table %>%
+  proportions %>%
+  c("계" = sum(.)) %>%
+  `*`(100) %>%
+  format(digits = 2, nsmall = 1) %>%
+  pander
+```
+
+### 너와나 와 너와4 
+
+```{r, echo = FALSE, out.width = "25%"}
+knitr::include_graphics("./pics/Q4_6.png")
+```
+
+#### 집계
+
+```{r, echo = FALSE}
+gorilla$Q4_6 %>%
+  table %>%
+  c("계" = sum(.)) %>%
+  pander(caption = "너와나 vs 너와4")
+```
+
+#### %
+
+```{r, echo = FALSE}
+gorilla$Q4_6 %>%
+  table %>%
+  proportions %>%
+  c("계" = sum(.)) %>%
+  `*`(100) %>%
+  format(digits = 2, nsmall = 1) %>%
+  pander
+```
+
+### 새농어촌건설운동
+
+```{r, echo = FALSE, out.width = "40%"}
+knitr::include_graphics("./pics/Q4_7.png")
+```
+
+#### 집계
+
+```{r, echo = FALSE}
+gorilla$Q4_7 %>%
+  table %>%
+  c("계" = sum(.)) %>%
+  pander(caption = "새농어촌건설운동")
+```
+
+#### %
+
+```{r, echo = FALSE}
+gorilla$Q4_7 %>%
+  table %>%
+  proportions %>%
+  c("계" = sum(.)) %>%
+  `*`(100) %>%
+  format(digits = 2, nsmall = 1) %>%
+  pander
+```
+
+### THE CAT
+
+```{r, echo = FALSE, out.width = "25%"}
+knitr::include_graphics("./pics/Q4_8.png")
+```
+
+#### 집계
+
+```{r, echo = FALSE}
+gorilla$Q4_8 %>%
+  table %>%
+  c("계" = sum(.)) %>%
+  pander(caption = "THE CAT")
+```
+
+#### %
+
+```{r, echo = FALSE}
+gorilla$Q4_8 %>%
+  table %>%
+  proportions %>%
+  c("계" = sum(.)) %>%
+  `*`(100) %>%
+  format(digits = 2, nsmall = 1) %>%
+  pander
+```
+
+## Selective Attention Test
+
+```{r, echo = FALSE, out.width = "50%"}
+knitr::include_graphics("./pics/Q5.png")
+```
+
+### 흰셔츠 팀의 패스 성공횟수는?
+
+#### 집계
+
+```{r, echo = FALSE}
+gorilla$Q5_1 %>%
+  table %>%
+  c("계" = sum(.)) %>%
+  pander(caption = "패스 성공횟수는?")
+```
+
+#### %
+
+```{r, echo = FALSE}
+gorilla$Q5_1 %>%
+  table %>%
+  proportions %>%
+  c("계" = sum(.)) %>%
+  `*`(100) %>%
+  format(digits = 2, nsmall = 1) %>%
+  pander
+```
+
+### 고릴라를 보았나요?
+
+#### 집계
+
+```{r, echo = FALSE}
+gorilla$Q5_2 %>%
+  table %>%
+  c("계" = sum(.)) %>%
+  pander(caption = "고릴라를 보았나요?")
+```
+
+#### %
+
+```{r, echo = FALSE}
+gorilla$Q5_2 %>%
+  table %>%
+  proportions %>%
+  c("계" = sum(.)) %>%
+  `*`(100) %>%
+  format(digits = 2, nsmall = 1) %>%
+  pander
+```
+
+## Monkey Business Illusion
+
+```{r, echo = FALSE, out.width = "50%"}
+knitr::include_graphics("./pics/Q6.png")
+```
+
+### 흰셔츠 팀의 패스 성공횟수는?
+
+#### 집계
+
+```{r, echo = FALSE}
+gorilla$Q6_1 %>%
+  table %>%
+  c("계" = sum(.)) %>%
+  pander(caption = "패스 성공횟수는?")
+```
+
+#### %
+
+```{r, echo = FALSE}
+gorilla$Q6_1 %>%
+  table %>%
+  proportions %>%
+  c("계" = sum(.)) %>%
+  `*`(100) %>%
+  format(digits = 2, nsmall = 1) %>%
+  pander
+```
+
+### 고릴라를 보았나요?
+
+#### 집계
+
+```{r, echo = FALSE}
+gorilla$Q6_2 %>%
+  table %>%
+  c("계" = sum(.)) %>%
+  pander(caption = "고릴라를 보았나요?")
+```
+
+#### %
+
+```{r, echo = FALSE}
+gorilla$Q6_2 %>%
+  table %>%
+  proportions %>%
+  c("계" = sum(.)) %>%
+  `*`(100) %>%
+  format(digits = 2, nsmall = 1) %>%
+  pander
+```
+
+### 커튼 색깔 바뀌는 걸 눈치채었나요?
+
+#### 집계
+
+```{r, echo = FALSE}
+gorilla$Q6_3 %>%
+  table %>%
+  c("계" = sum(.)) %>%
+  pander(caption = "커튼색깔 바뀌는 걸 눈치채었나요?")
+```
+
+#### %
+
+```{r, echo = FALSE}
+gorilla$Q6_3 %>%
+  table %>%
+  proportions %>%
+  c("계" = sum(.)) %>%
+  `*`(100) %>%
+  format(digits = 2, nsmall = 1) %>%
+  pander
+```
+
+### 선수 나가는 걸 보았나요?
+
+#### 집계
+
+```{r, echo = FALSE}
+gorilla$Q6_4 %>%
+  table %>%
+  c("계" = sum(.)) %>%
+  pander(caption = "선수 나가는 걸 보았나요?")
+```
+
+#### %
+
+```{r, echo = FALSE}
+gorilla$Q6_4 %>%
+  table %>%
+  proportions %>%
+  c("계" = sum(.)) %>%
+  `*`(100) %>%
+  format(digits = 2, nsmall = 1) %>%
+  pander
+```
+
+<!--
+## Door Study
+
+```{r, echo = FALSE, out.width = "50%", eval = FALSE}
+knitr::include_graphics("./pics/Q7.png")
+```
+
+### 집계
+
+```{r, echo = FALSE, eval = FALSE}
+gorilla$Q7 %>%
+  table %>%
+  c("계" = sum(.)) %>%
+  pander(caption = "처음부터 알아차렸나요?")
+```
+
+### %
+
+```{r, echo = FALSE, eval = FALSE}
+gorilla$Q7 %>%
+  table %>%
+  proportions %>%
+  c("계" = sum(.)) %>%
+  `*`(100) %>%
+  format(digits = 2, nsmall = 1) %>%
+  pander
+```
+-->
+
+## 고정관념
+
+```{r, echo = FALSE, out.width = "50%"}
+knitr::include_graphics("./pics/Q8.png")
+```
+
+### 집계
+
+```{r, echo = FALSE}
+gorilla$Q8 %>%
+  table %>%
+  c("계" = sum(.)) %>%
+  pander(caption = "나라면")
+```
+
+### %
+
+```{r, echo = FALSE}
+gorilla$Q8 %>%
+  table %>%
+  proportions %>%
+  c("계" = sum(.)) %>%
+  `*`(100) %>%
+  format(digits = 2, nsmall = 1) %>%
+  pander
+```
+
+## 초컬릿 실험
+
+```{r, echo = FALSE, out.width = "50%"}
+knitr::include_graphics("./pics/Q9.png")
+```
+
+### 몇 개나 줄 거예요?
+
+#### 집계
+
+```{r, echo = FALSE}
+gorilla$Q9_1 %>%
+  table %>%
+  c("계" = sum(.)) %>%
+  pander(caption = "몇 개나 줄거예요?")
+```
+
+#### %
+
+```{r, echo = FALSE}
+gorilla$Q9_1 %>%
+  table %>%
+  proportions %>%
+  c("계" = sum(.)) %>%
+  `*`(100) %>%
+  format(digits = 2, nsmall = 1) %>%
+  pander
+```
+
+### 초등학교 2학년들은 (    ) 줄 것이다.
+
+#### 집계
+
+```{r, echo = FALSE}
+gorilla$Q9_2 %>%
+  table %>%
+  c("계" = sum(.)) %>%
+  pander(caption = "초등학교 2학년")
+```
+
+#### %
+
+```{r, echo = FALSE}
+gorilla$Q9_2 %>%
+  table %>%
+  proportions %>%
+  c("계" = sum(.)) %>%
+  `*`(100) %>%
+  format(digits = 2, nsmall = 1) %>%
+  pander
+```
+
+### 유치원생들은 (    ) 줄 것이다.
+
+#### 집계
+
+```{r, echo = FALSE}
+gorilla$Q9_3 %>%
+  table %>%
+  c("계" = sum(.)) %>%
+  pander(caption = "유치원생")
+```
+
+#### %
+
+```{r, echo = FALSE}
+gorilla$Q9_3 %>%
+  table %>%
+  proportions %>%
+  c("계" = sum(.)) %>%
+  `*`(100) %>%
+  format(digits = 2, nsmall = 1) %>%
+  pander
+```
+
+<!--
+### 자료 갈무리
+
+```{r, save.image, echo = FALSE}
+saveRDS(gorilla, file = "gorilla_2501124.RDS")
+```
+-->
