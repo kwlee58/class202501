@@ -57,21 +57,19 @@ Red 와 Black 은 "고수한다"와 "바꾼다"의 순서를 바꿔 보았는데
 그리고 여러분들이 직관적으로 고른 답은 대부분 정답이 아닌 것으로 드러납니다. 
 
 ```{r, data, echo = FALSE, results = 'hide', message = FALSE}
-class_roll <- 
+class_roll1026 <- 
   readRDS("./class_roll_251026.RDS")
+class_roll1026 %<>% 
+  data.frame
+class_roll <- 
+  read_excel("./data/class_roll_251220.xlsx", 
+             range = "B1:H605")
 class_roll %<>% 
   data.frame
-# class_roll <- 
-#   read_excel("./data/class_roll_250523.xlsx", 
-#              range = "B1:G800")
-# class_roll %<>% 
-#   data.frame
-# str(class_roll)
-# names(class_roll) <- 
-#   c("dept", "id", "name", "status", "email", "cell_no")
-# class_roll$group <- 
-#   class_roll1122$group[match(class_roll$id, class_roll1122$id)]
-# saveRDS(class_roll, file = "./class_roll_241129.RDS")
+str(class_roll)
+names(class_roll) <- c("dept", "colleges", "id", "name", "status", "email", "cell_no")
+class_roll$group <- class_roll1026$group[match(class_roll$id, class_roll1026$id)]
+saveRDS(class_roll, file = "./class_roll_251220.RDS")
 quiz_url <-"https://docs.google.com/spreadsheets/d/1BC_P6QvNzNSL9wqscoy7NwxsptCYbIHqfQ7W9uKbIgs"
 quiz <- read_sheet(quiz_url)
 # quiz <- "./data/quiz251124.xlsx" %>% 

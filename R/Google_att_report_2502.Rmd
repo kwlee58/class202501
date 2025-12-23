@@ -21,7 +21,7 @@ options(width = 180, digits = 3)
 
 ```{r, echo = FALSE, message = FALSE}
 options(digits = 3)
-class_roll <- readRDS("./class_roll_251005.RDS")
+class_roll <- readRDS("./class_roll_251220.RDS")
 att <- class_roll[c("id", "name")]
 # att$q01 <- ifelse(att$id %in% readRDS("./quiz250303.RDS")$id, 1, 0)
 att$q02 <- ifelse(att$id %in% readRDS("./quiz250908.RDS")$id, 1, 0)
@@ -48,7 +48,7 @@ att$q13 <- ifelse(att$id %in% readRDS("./quiz251124.RDS")$id, 1, 0)
 # att$reading <- ifelse(att$id %in% readRDS("./reading190925.RDS")$id, 1, 0)
 # att$world <- ifelse(att$id %in% readRDS("./which_world200430.RDS")$id, 1, 0)
 # att$MW <- ifelse(att$id %in% readRDS("./MW241118.RDS")$id, 1, 0)
-att$total <- apply(att[, -(1:2)], MARGIN = 1, sum, na.rm = TRUE)
+att$total <- apply(att[, -(1:2)], MARGIN = 1, sum, na.rm = TRUE) * 100/12
 # str(att)                  
 pander(att[order(att$id, att$name), -2], row.names = FALSE)
 # pander(att[order(att$name, att$id), c("id", "name", "total")], row.names = FALSE)
