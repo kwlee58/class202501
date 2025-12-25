@@ -278,9 +278,11 @@ rbind("Counts" = format(counts2, digits = 1, nsmall = 0),
 
 ```{r, message = FALSE, echo = FALSE}
 # str(total)
+options(digits = 5)
 total %>% 
   `[`(order(total$ID), ) %>%
-  kable(align = c(rep("c", 2), rep("r", 6), "c"), row.names = FALSE)
+  kable(align = c(rep("c", 2), rep("r", 6), "c"), row.names = FALSE) 
+  
 ```
 
 <!--
