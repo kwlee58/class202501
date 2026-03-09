@@ -5,7 +5,7 @@ title: "Red and Black : Search for the Best"
 output: html_document
 ---
 
-<!--## 5변수, 7,000,001 ~ 8,000,000-->
+## 5변수, 7,000,001 ~ 8,000,000
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
@@ -20,8 +20,8 @@ panderOptions('table.split.table', Inf)
 <!--## Data
 
 ```{r, data, echo = TRUE, results = 'show', warning = TRUE}
-class_roll <- read_excel("./data/class_roll_260309.xlsx", 
-                        range = "B1:H618")
+class_roll <- read_excel("./data/class_roll_250905.xlsx", 
+                        range = "B1:H617")
 str(class_roll)
 names(class_roll) <- c("dept", "college", "id", "name", "status", "email", "cell_no")
 str(class_roll)
@@ -42,7 +42,7 @@ calculate_chi_square <- function(data, group_var) {
 
 # Function to handle Student ID category
 calc_id_chi_square <- function(data) {
-  data$id_2 <- data$id %>% substr(1, 4) %>% ifelse(as.numeric(.) <= 2020, "20", .)
+  data$id_2 <- data$id %>% substr(1, 4) %>% ifelse(as.numeric(.) <= 2019, "19", .)
   calculate_chi_square(data, data$id_2)
 }
 
@@ -98,19 +98,24 @@ red_and_black <- function(k) {
   class_roll$group <- 
     sample(1:N) %% 2 %>% 
     factor(levels = c(0, 1), labels = c("Red", "Black"))
-  
+    
   # Calculate Chi-square for each category
+  
   X1 <- calc_id_chi_square(class_roll)
-  X2 <- calc_email_chi_square(class_roll)
-  X3 <- calc_phone_chi_square(class_roll)
-  X4 <- calc_lastname_chi_square(class_roll)
-  X5 <- calc_college_chi_square(class_roll)
+#  X2 <- calc_email_chi_square(class_roll)
+#  X3 <- calc_phone_chi_square(class_roll)
+#  X4 <- calc_lastname_chi_square(class_roll)
+#  X5 <- calc_college_chi_square(class_roll)
   
   # Sum of all Chi-square statistics
-  Xsum <- X1 + X2 + X3 + X4 + X5
+#  Xsum <- X1 + X2 + X3 + X4 + X5
+   
+   Xsum <- X1
   
   # Return the sum and individual components (for detailed analysis)
-  list(Xsum = Xsum, X1 = X1, X2 = X2, X3 = X3, X4 = X4, X5 = X5)
+#  list(Xsum = Xsum, X1 = X1, X2 = X2, X3 = X3, X4 = X4, X5 = X5)
+
+   list(Xsum = Xsum, X1 = X1)
 }
 ```
 
@@ -156,8 +161,8 @@ Xmin
 ```{r, for Mac, echo = TRUE, eval = TRUE}
 #> Mac or Linux Version
 library(parallel)
-M1 <- 5000001
-M2 <- 6000000
+M1 <- 1
+M2 <- 100000
 
 # Number of cores on your machine
 num_cores <- detectCores() - 1
@@ -332,10 +337,10 @@ class_roll$group <-
 class_roll$id_2 <-
   class_roll$id %>%
   substr(1, 4) %>%
-  ifelse(. <= 2020, 2020, .)
+  ifelse(. <= 2019, 2019, .)
 class_roll %$%
   table(.$group, .$id_2) %>%
-  `colnames<-`(c("2020 이전", 2021:2026)) %>%
+  `colnames<-`(c("2019 이전", 2020:2025)) %>%
   pander
 # 데이터 프레임 생성
 result1 <- data.frame(

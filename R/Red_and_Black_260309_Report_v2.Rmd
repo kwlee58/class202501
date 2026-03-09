@@ -1,7 +1,7 @@
 ---
-title: "Randomization Report (250905)"
+title: "Randomization Report (260309)"
 author: "coop711"
-date: "2025-09-05"
+date: "2026-03-09"
 output: html_document
 ---
 
@@ -20,7 +20,7 @@ panderOptions('table.alignment.default', 'right')
 <!--# Data Reading-->
 
 ```{r, data, echo = FALSE, results = 'hide'}
-class_roll <- readRDS("./class_roll_250905.RDS")
+class_roll <- readRDS("./class_roll_260309.RDS")
 str(class_roll)
 ```
 
@@ -34,7 +34,7 @@ str(class_roll)
 
 ### 랜덤화 출석부 개요
 
-2025년 09월05일 출석부에 나와 있는 변수(단과대학, 학번, 이름, 이메일주소, 휴대전화)들을 활용하여 수강생 들을 Red 와 Black 두 집단으로 랜덤하게 나눈 결과입니다. 
+2026년 03월09일 출석부에 나와 있는 변수(단과대학, 학번, 이름, 이메일주소, 휴대전화)들을 활용하여 수강생 들을 Red 와 Black 두 집단으로 랜덤하게 나눈 결과입니다. 
 
 Red 와 Black 은 초기값에 따라 랜덤하게 배열이 바뀌는 데 닮은 정도를 계산하는 통계 방법을 동원하여 여러 번 초기값을 바꾸어가며 반복 시행한 중에서 가장 잘 닮은 것을 고릅니다. 
 
@@ -122,10 +122,10 @@ randomness 는 여러 분야에서 중요한 역할을 합니다.
 class_roll$id_2 <-
   class_roll$id %>%
   substr(1, 4) %>%
-  ifelse(. <= 2019, "2019", .)
+  ifelse(. <= 2020, "2020", .)
 tbl1 <- class_roll %$%
   table(.$group, .$id_2) %>%
-  `colnames<-`(c("19 이전", 2020:2025)) 
+  `colnames<-`(c("20 이전", 2021:2026)) 
 tbl1 %>%
   pander
 # tbl1 %>%
