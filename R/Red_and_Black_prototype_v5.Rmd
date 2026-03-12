@@ -156,8 +156,8 @@ Xmin
 ```{r, for Mac, echo = TRUE, eval = TRUE}
 #> Mac or Linux Version
 library(parallel)
-M1 <- 5000001
-M2 <- 6000000
+M1 <- 1
+M2 <- 100
 
 # Number of cores on your machine
 num_cores <- detectCores() - 1
@@ -231,7 +231,7 @@ X5_min <- best_config$X5
 ## Plot
 
 ```{r, echo = FALSE}
-hist(Xsum, prob = TRUE, nclass = 50, xlim = c(0, 80), ylim = c(0, 0.06))
+hist(Xsum, prob = TRUE, nclass = 50, xlim = c(0, 80), ylim = c(0, 0.08))
 x <- seq(0, 80, by = 0.1)
 lines(x, dchisq(x, df = 32), col = "red")
 legend("topright", inset = 0.05, legend = c("Xsum", "Chi-square(32)"), col = c("black", "red"), lty = 1)
