@@ -209,11 +209,11 @@ wrong_group <- quiz %>%
   filter(group2 != group)
 
 #> 잘못된 그룹 정보 출력
-# wrong_group %>%
-#   select(time, id, group2, group) %>%
-#   arrange(time) %>%
-#   rename(제출시간 = time, 학번 = id, 랜덤화출석부 = group2, 구글예습퀴즈 = group) %>%
-#   pander(row.names = FALSE)
+wrong_group %>%
+  select(time, id, group2, group) %>%
+  arrange(time) %>%
+  rename(제출시간 = time, 학번 = id, 랜덤화출석부 = group2, 구글예습퀴즈 = group) %>%
+  pander(row.names = FALSE)
 
 #> 옛 코드
 # quiz$group2 <- class_roll$group[match(quiz$id, class_roll$id)]
@@ -378,10 +378,10 @@ ptbl_q2 %>%
 ## Q3. 우리나라 생산가능인구 감소 시기
 
 ```{r, echo = FALSE, out.width = "75%", align = "left"}
-include_graphics("./pics/Quiz210309_03.png")
+include_graphics("./pics/Quiz260310_03.png")
 ```
 
-### 생산가능인구 감소 시기(집계표)
+### 생산가능인구 비중(%) 감소 시기(집계표)
 
 ```{r, labour force, echo = FALSE, warning = FALSE}
 tbl_q3_a <- 
@@ -406,7 +406,7 @@ Q3의 집계 결과가 Red, Black 간에 통계적으로 유의한 차이가 있
 
 실제로 닮은 게 느껴집니까?
 
-### 생산가능인구 감소 시기(%)
+### 생산가능인구 비중(%) 감소 시기(%)
 
 ```{r, labour force in percentage, echo = FALSE}
 ptbl_q3 <- 
@@ -745,13 +745,13 @@ days_tbl %>%
 ```{r, echo = FALSE, warning = FALSE}
 days_tbl %>%
   rbind("계" = colSums(.)) %>%
-  `[`(3, 12:14) %>%
-  `names<-`(., paste0(3:1, "일")) %>%
+  `[`(3, 9:14) %>%
+  `names<-`(., paste0(6:1, "일")) %>%
   pander
 days_chisq_test <-
   days_tbl %>%
   rbind("계" = colSums(.)) %>%
-  `[`(3, 12:14) %>%
+  `[`(3, 9:14) %>%
   chisq.test(simulate.p.value = FALSE) 
 days_chisq_test %>%
   pander
@@ -777,7 +777,7 @@ b <-
   cut(breaks = c(0:14), include.lowest = TRUE) %>%
   table %>%
   rev %>%
-  barplot(space = 0, names.arg = rep(c("월", "화", "수", "목", "금", "토", "일"), 2),
+  barplot(space = 0, names.arg = rep(c("화", "수", "목", "금", "토", "일", "월"), 2),
           col = c(rep("white", 13), "pink"),
           ylim = c(0, 300)) 
 text(x = b[14, 1], y = sum(days_tbl[, 1]), 
@@ -798,12 +798,12 @@ invisible(dev.off())
 ```{r, echo = FALSE, warning = FALSE}
 days_tbl %>%
   rbind("계" = colSums(.)) %>%
-  `[`(-3, 12:14) %>%
-  `colnames<-`(., paste0(3:1, "일")) %>%
+  `[`(-3, 9:14) %>%
+  `colnames<-`(., paste0(6:1, "일")) %>%
   pander
 days_RnB_chisq_test <-
   days_tbl %>%
-  `[`(-3, 12:14) %>%
+  `[`(-3, 9:14) %>%
   chisq.test(simulate.p.value = FALSE) 
 days_RnB_chisq_test %>%
   pander
