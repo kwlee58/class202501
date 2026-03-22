@@ -347,7 +347,7 @@ tbl_q2_a %>%
   pander 
 chisq_test_q2 <- 
   tbl_q2_a %>%
-  `[`(-3, -c(2, 3, 6)) %>%
+  `[`(-3, -6) %>%
   chisq.test(simulate.p.value = FALSE) 
 chisq_test_q2 %>%
   pander
@@ -394,7 +394,7 @@ tbl_q3_a %>%
   pander 
 chisq_test_q3 <- 
   tbl_q3_a %>%
-  `[`(-3, -c(4, 5)) %>%
+  `[`(-3, -5) %>%
   chisq.test(simulate.p.value = FALSE) 
 chisq_test_q3 %>%
   pander

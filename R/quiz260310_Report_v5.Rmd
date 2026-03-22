@@ -42,26 +42,32 @@ Q7에서는 같은 상황에 대해서 중립적인 프레임을 쓸 때(Red)와
 class_roll0309 <- 
   readRDS("./class_roll_260309.RDS")
 ## Red_and_Black_250906_roll_v2.Rmd 에서 생성된 RDS 파일이어야 함.
-# class_roll0921 <- 
-#   read_excel("./data/class_roll_250921.xlsx", range = "B1:H611")
-# str(class_roll0921)
-# names(class_roll0921) <-
-#   c("dept", "colleges", "id", "name", "status", "email", "cell_no")
-# class_roll0921$group <- 
-#   class_roll0906$group[match(class_roll0921$id, class_roll0906$id)]
-# table(class_roll0921$group)
+class_roll0322 <- 
+  read_excel("./data/class_roll_260322.xlsx", range = "B1:H609")
+str(class_roll0322)
+names(class_roll0322) <-
+  c("dept", "colleges", "id", "name", "status", "email", "cell_no")
+class_roll0322$group <- 
+  class_roll0309$group[match(class_roll0322$id, class_roll0309$id)]
+table(class_roll0322$group)
+#> 수강철회하고 나간 사람들의 그룹 분포 확인
+class_roll0309 %>%
+  anti_join(class_roll0322, by = "id") %>%
+  select(id, name, group)
+# class_roll0309[class_roll0309$id %in% setdiff(class_roll0309$id, class_roll0322$id), c("id", "name", "group") ]
 #> 폐강으로 인하여 들어 온 수강생들의 그룹 설정
-# na_gr <- which(is.na(class_roll0921$group)) 
-# class_roll0921[na_gr, ]
-#> 나간 사람들이 모두 Black 이므로
-# class_roll0921[na_gr, "group"] <- c("Black")
-# saveRDS(class_roll0921, file = "./class_roll_250921.RDS")
+na_gr <- which(is.na(class_roll0322$group)) 
+class_roll0322[na_gr, ]
+#> 나간 사람들의 Red, Black 숫자가 동일하고, 남은 사람 중에 Black이 한 명 더 많으므로
+#> 군휴학생 18명 중 Red 가 한 명 적으므로
+class_roll0322[na_gr, "group"] <- c("Red", "Black", "Red")
+saveRDS(class_roll0322, file = "./class_roll_260322.RDS")
 #> 3월17일 기준 수강철회자 파악 후 조치
 # class_roll0317 <- class_roll0314 %>%
 #   filter(id != "20252139")
 # class_roll0317 <- class_roll0314[!(class_roll0314$id == "20252139"), ]
 # saveRDS(class_roll0317, file = "./class_roll_250317.RDS")
-class_roll <- class_roll0309
+class_roll <- class_roll0322
 #> quiz reading
 sheet_url <- "https://docs.google.com/spreadsheets/d/1U9MmKXlilPHV2kV794J_CsdiOq1eL6It93X7gTA2XPM"
 quiz <- read_sheet(sheet_url)
@@ -79,11 +85,11 @@ quiz$time <- format(quiz$time, format = "%Y-%m-%d %H:%M:%S")
 # quiz[quiz$id == "20232998", "time"] <- c("2025-03-10 00:00:01")
 #> 20255124 김보연이 학과명도 20255124 라고 적어서 발생한 오류의 해결책.
 class(quiz$dept) <- "character"
-quiz <- quiz %>%
-  mutate(dept = case_when(
-    id == "20255124" ~ "소프트웨어학부",
-    TRUE ~ dept
-  ))
+# quiz <- quiz %>%
+#   mutate(dept = case_when(
+#     id == "20255124" ~ "소프트웨어학부",
+#     TRUE ~ dept
+#   ))
 # quiz[quiz$id == "20255124", "dept"] <- "소프트웨어학부"
 quiz <- data.frame(quiz)
 class(quiz$id) <- "character"
@@ -135,24 +141,37 @@ pander(summary(quiz))
 
 ```{r, cleaning, echo = FALSE, results = 'hide'}
 #> 학번 잘못 써서 고생시키는 녀석들 찾아내는 코드
-wrong_id <- setdiff(quiz$id, class_roll$id)
-quiz %>%
-  filter(id %in% wrong_id) %>%
-  select(id, name, dept, email)
-# 1. 잘못된 id 가진 행 찾기
+# wrong_id <- setdiff(quiz$id, class_roll$id)
+# quiz %>%
+#   filter(id %in% wrong_id) %>%
+#   select(id, name, dept, email)
+# 1. 잘못된 id 또는 name 가진 행 찾기
 quiz_wrong_ids <- quiz %>%
-  anti_join(class_roll, by = "id") 
-# 2. 잘못된 id를 따로 저장하고 수정하기
-wrong_ids <- quiz_wrong_ids$id
+  anti_join(class_roll, by = c("id", "name")) 
+
+# 2. 수정 전 원래의 id와 name 쌍을 저장
+wrong_keys <- quiz_wrong_ids %>% 
+  select(id, name)
+
+# 3. 잘못된 id 또는 name 수정
 quiz_wrong_ids <- quiz_wrong_ids %>%
-  mutate(id = case_when(
-    id == "220253223" ~ "20253223",
-    id == "２０２５３２５３" ~ "20253253",
-    TRUE ~ id
-  ))
-# 3. quiz 에서 id 틀린 행을 제거하고 옳은 id 갖춘 행으로 교체하기
+  mutate(
+    id = case_when(
+      id == "20253305" ~ "20253005",
+      id == "20243713" & name == "김지혜" ~ "20242713",
+      TRUE ~ id
+      ),
+    name = case_when(
+      name == "chenshuaihao" ~ "CHEN SHUAIHAO",
+      name == "BIE XI" ~ "bie xi",
+      name == "박 윤" ~ "박윤",
+      name == "xuchenxing" ~ "xu chenxing",
+      TRUE ~ name
+      )
+    )
+# 3. quiz 에서 id 또는 name 틀린 행을 제거하고 옳은 id 또는 name 갖춘 행으로 교체하기
 quiz <- quiz %>%
-  filter(!id %in% wrong_ids) %>%
+  anti_join(wrong_keys %>% select(id, name), by = c("id", "name")) %>%
   bind_rows(quiz_wrong_ids)
 # quiz[quiz$id %in% setdiff(quiz$id, class_roll$id), c("id", "name", "dept", "group")]
 
@@ -174,7 +193,7 @@ quiz %>%
 # which(duplicated(quiz$id)) %>%
 #   quiz[., c("id", "name")]
 quiz %>%
-  filter(id %in% c("20246620"))
+  filter(id %in% c("20252516"))
 # quiz[quiz$name %in% c("최재혁", "박지연"), ] #> 최재혁, 박지연이 중복 제출
 quiz <- quiz %>% 
   arrange(id, desc(time)) %>%
@@ -203,7 +222,7 @@ absentee %>%
 quiz <- quiz %>%
   left_join(class_roll %>% select(id, group), by = "id", suffix = c("", "_class_roll")) %>%
   rename(group2 = group_class_roll)
-
+quiz[quiz$id == "20256172", "group2"] <- "Black" #> 수강철회하고 나가서 group2가 <NA>로 잡힘.
 #> group 과 group2가 다른 행 필터링
 wrong_group <- quiz %>%
   filter(group2 != group)
@@ -227,10 +246,13 @@ wrong_group %>%
 #   pander(row.name = FALSE)
 
 #> 잘못된 그룹 정보의 테이블 생성 및 출력
+# wrong_tbl <- 
+#   table("랜덤화출석부" = quiz$group2, 
+#         "구글예습퀴즈" = quiz$group, useNA = "ifany")
 wrong_tbl <- 
   table("랜덤화출석부" = quiz$group2, 
         "구글예습퀴즈" = quiz$group)
-
+# which(is.na(quiz$group2))
 wrong_tbl %>%
   rbind("계" = colSums(.)) %>%
   pander(row.names = c("Red(랜덤화출석부)", "Black(랜덤화출석부)", "계"), 
@@ -745,13 +767,13 @@ days_tbl %>%
 ```{r, echo = FALSE, warning = FALSE}
 days_tbl %>%
   rbind("계" = colSums(.)) %>%
-  `[`(3, 4:14) %>%
-  `names<-`(., paste0(11:1, "일")) %>%
+  `[`(3, 2:14) %>%
+  `names<-`(., paste0(13:1, "일")) %>%
   pander
 days_chisq_test <-
   days_tbl %>%
   rbind("계" = colSums(.)) %>%
-  `[`(3, 4:14) %>%
+  `[`(3, 2:14) %>%
   chisq.test(simulate.p.value = FALSE) 
 days_chisq_test %>%
   pander
@@ -798,12 +820,12 @@ invisible(dev.off())
 ```{r, echo = FALSE, warning = FALSE}
 days_tbl %>%
   rbind("계" = colSums(.)) %>%
-  `[`(-3, 4:14) %>%
-  `colnames<-`(., paste0(11:1, "일")) %>%
+  `[`(-3, 2:14) %>%
+  `colnames<-`(., paste0(13:1, "일")) %>%
   pander
 days_RnB_chisq_test <-
   days_tbl %>%
-  `[`(-3, 4:14) %>%
+  `[`(-3, 2:14) %>%
   chisq.test(simulate.p.value = FALSE) 
 days_RnB_chisq_test %>%
   pander
