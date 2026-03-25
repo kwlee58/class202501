@@ -220,18 +220,23 @@ absentee %>%
 #> group2 생성
 quiz <- quiz %>%
   left_join(class_roll %>% select(id, group), by = "id", suffix = c("", "_class_roll")) %>%
-  rename(group2 = group_class_roll)
+  rename(group2 = group_class_roll) %>%
+  mutate(
+    group2 = if_else(id == "20256172", "Black", as.character(group2)),
+    group2 = factor(group2, levels = c("Red", "Black")),
+    group  = factor(as.character(group), levels = c("Red", "Black"))
+  )
 quiz[quiz$id == "20256172", "group2"] <- "Black" #> 수강철회하고 나가서 group2가 <NA>로 잡힘.
 #> group 과 group2가 다른 행 필터링
 wrong_group <- quiz %>%
   filter(group2 != group)
 
 #> 잘못된 그룹 정보 출력
-# wrong_group %>%
-#   select(time, id, name, group2, group) %>%
-#   arrange(time) %>%
-#   rename(제출시간 = time, 학번 = id, 이름 = name, 랜덤화출석부 = group2, 구글예습퀴즈 = group) %>%
-#   pander(row.names = FALSE)
+wrong_group %>%
+  select(time, id, name, group2, group) %>%
+  arrange(time) %>%
+  rename(제출시간 = time, 학번 = id, 이름 = name, 랜덤화출석부 = group2, 구글예습퀴즈 = group) %>%
+  pander(row.names = FALSE)
 
 #> 옛 코드
 # quiz$group2 <- class_roll$group[match(quiz$id, class_roll$id)]
@@ -741,13 +746,13 @@ days_tbl %>%
 ```{r, echo = FALSE, warning = FALSE}
 days_tbl %>%
   rbind("계" = colSums(.)) %>%
-  `[`(3, 1:14) %>%
-  `names<-`(., paste0(14:1, "일")) %>%
+  `[`(3, 6:14) %>%
+  `names<-`(., paste0(9:1, "일")) %>%
   pander
 days_chisq_test <-
   days_tbl %>%
   rbind("계" = colSums(.)) %>%
-  `[`(3, 1:14) %>%
+  `[`(3, 6:14) %>%
   chisq.test(simulate.p.value = FALSE) 
 days_chisq_test %>%
   pander
@@ -773,7 +778,7 @@ b <-
   cut(breaks = c(0:14), include.lowest = TRUE) %>%
   table %>%
   rev %>%
-  barplot(space = 0, names.arg = rep(c("월", "화", "수", "목", "금", "토", "일"), 2),
+  barplot(space = 0, names.arg = rep(c("화", "수", "목", "금", "토", "일", "월"), 2),
           col = c(rep("white", 13), "pink"),
           ylim = c(0, 300)) 
 text(x = b[14, 1], y = sum(days_tbl[, 1]), 
@@ -794,12 +799,12 @@ invisible(dev.off())
 ```{r, echo = FALSE, warning = FALSE}
 days_tbl %>%
   rbind("계" = colSums(.)) %>%
-  `[`(-3, 1:14) %>%
-  `colnames<-`(., paste0(14:1, "일")) %>%
+  `[`(-3, 6:14) %>%
+  `colnames<-`(., paste0(9:1, "일")) %>%
   pander
 days_RnB_chisq_test <-
   days_tbl %>%
-  `[`(-3, 1:14) %>%
+  `[`(-3, 6:14) %>%
   chisq.test(simulate.p.value = FALSE) 
 days_RnB_chisq_test %>%
   pander
@@ -825,7 +830,7 @@ df2 <- m2_list$df
 p_df2 <- m2_list$p_df
 names(df2[, 2]) <- "Days"
 m2 + geom_text(aes(x = center, y = 1.05), 
-              label = rep(rep(c("월", "화", "수", "목", "금", "토", "일"), each = 2), times = 2)) +
+              label = rep(rep(c("화", "수", "목", "금", "토", "일", "월"), each = 2), times = 2)) +
   theme_bw() +
   labs(title = "마감일로부터 제출시간의 분포", x = "마감일로부터 일수(누적 %)", y = "인원 백분율(%)") +
   scale_fill_brewer(name = "그룹", 

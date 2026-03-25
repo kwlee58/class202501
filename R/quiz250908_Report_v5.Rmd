@@ -202,7 +202,7 @@ absentee %>%
 #> group2 생성
 quiz <- quiz %>%
   left_join(class_roll %>% select(id, group), by = "id", suffix = c("", "_class_roll")) %>%
-  rename(group2 = group_class_roll)
+  rename(group2 = group_class_roll) 
 
 #> group 과 group2가 다른 행 필터링
 wrong_group <- quiz %>%

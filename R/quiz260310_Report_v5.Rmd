@@ -158,14 +158,13 @@ quiz_wrong_ids <- quiz_wrong_ids %>%
   mutate(
     id = case_when(
       id == "20253305" ~ "20253005",
+      id == "20256356" ~ "20256357",
       id == "20243713" & name == "김지혜" ~ "20242713",
       TRUE ~ id
       ),
     name = case_when(
-      name == "chenshuaihao" ~ "CHEN SHUAIHAO",
-      name == "BIE XI" ~ "bie xi",
-      name == "박 윤" ~ "박윤",
-      name == "xuchenxing" ~ "xu chenxing",
+      name == "홍친의" ~ "홍찬의",
+      name == "Zhumabaeva Asema" ~ "ZHUMABAEVA ASEMA",
       TRUE ~ name
       )
     )
@@ -221,18 +220,26 @@ absentee %>%
 #> group2 생성
 quiz <- quiz %>%
   left_join(class_roll %>% select(id, group), by = "id", suffix = c("", "_class_roll")) %>%
-  rename(group2 = group_class_roll)
-quiz[quiz$id == "20256172", "group2"] <- "Black" #> 수강철회하고 나가서 group2가 <NA>로 잡힘.
+  rename(group2 = group_class_roll) %>%
+  mutate(
+    group2 = if_else(id == "20256172", "Black", as.character(group2)),
+    group2 = factor(group2, levels = c("Red", "Black")),
+    group  = factor(as.character(group), levels = c("Red", "Black"))
+  )
+#> 수강철회하고 나가서 group2가 <NA>로 잡힘.
+# quiz <- quiz %>%
+#   mutate(group2 = if_else(id == "20256172", "Black", group2))
+# quiz[quiz$id == "20256172", "group2"] <- "Black" 
 #> group 과 group2가 다른 행 필터링
 wrong_group <- quiz %>%
   filter(group2 != group)
 
 #> 잘못된 그룹 정보 출력
-wrong_group %>%
-  select(time, id, group2, group) %>%
-  arrange(time) %>%
-  rename(제출시간 = time, 학번 = id, 랜덤화출석부 = group2, 구글예습퀴즈 = group) %>%
-  pander(row.names = FALSE)
+# wrong_group %>%
+#   select(time, id, group2, group) %>%
+#   arrange(time) %>%
+#   rename(제출시간 = time, 학번 = id, 랜덤화출석부 = group2, 구글예습퀴즈 = group) %>%
+#   pander(row.names = FALSE)
 
 #> 옛 코드
 # quiz$group2 <- class_roll$group[match(quiz$id, class_roll$id)]
@@ -267,9 +274,9 @@ Red를 Black 이라고 한 사람이 `r wrong_tbl[1, 2]`명, Black 을 Red 라�
 
 우선 Red, Black 을 잘못 선택한 `r nrow(wrong_group)`명을 랜덤하게 둘로 나누면 어느 한 쪽 집단에 들어갈 기대인원은 `r nrow(wrong_group)`명을 둘로 나눈 `r nrow(wrong_group) / 2`(명)이고, 표준오차는 `r nrow(wrong_group)`의 제곱근에 1/2을 곱해 준 `r round(sqrt(nrow(wrong_group)) / 2, digits  = 1)`명이 됩니다. 
 
-실제로 Red를 Black 이라고 한 사람수, `r wrong_tbl[1, 2]`명이나 Black 을 Red 라고 한 사람수, `r wrong_tbl[2, 1]`명은 기대인원으로부터 표준오차 범위 안에 아주 잘 들어갑니다. 
+실제로 Red를 Black 이라고 한 사람수, `r wrong_tbl[1, 2]`명이나 Black 을 Red 라고 한 사람수, `r wrong_tbl[2, 1]`명은 기대인원으로부터 표준오차 범위 를훨씬 벗어납니다.
 
-사실 표준오차 범위 안에 들어가는 정도가 아니라 `r nrow(wrong_group)`명을 랜덤하게 둘로 나눌 때, 이 이상 닮게 나올 수 없을 정도이죠.
+사실 표준오차 범위를 벗어나는 정도가 아니라 `r nrow(wrong_group)`명을 랜덤하게 둘로 나눌 때, 가장 극단적으로 치우친 경우가 나왔습니다. 
 
 두 번째 분석 방법은 확률을 계산해 보는 것입니다. 
 
@@ -279,7 +286,7 @@ Red, Black 을 잘못 선택한 `r nrow(wrong_group)`명을 랜덤하게 둘로 
 
 시행횟수가 `r nrow(wrong_group)`이고 한 번 시행에서 성공확률이 1/2 인 이항분포에서 성공횟수가 `r min(wrong_tbl[1, 2], wrong_tbl[2, 1])`이하이거나 `r max(wrong_tbl[1, 2], wrong_tbl[2, 1])`이상을 관찰할 확률은 `r round(pbinom(min(wrong_tbl[1, 2], wrong_tbl[2, 1]), nrow(wrong_group), 1/2) * 2,  digits = 3)`입니다. 
 
-나올 수 있는 모든 경우가 포함되었다는 뜻이고 가장 닮은 경우가 나온 것입니다.
+나올 수 있는 가장 극단적으로 치우친 경우가 나온 것입니다.
 
 공평한 동전 던지기에서 앞면이 `r min(wrong_tbl[1, 2], wrong_tbl[2, 1])`개 이하 나오는 확률은 `r max(wrong_tbl[1, 2], wrong_tbl[2, 1])`개 이상 나오는 확률과 같기 때문에 사실상 한쪽만 계산해서 2배 해 주면 됩니다. 
 
@@ -291,9 +298,9 @@ Red, Black 을 잘못 선택한 `r nrow(wrong_group)`명을 랜덤하게 둘로 
 
 즉 가정이 타당하다면 나오기 힘든 결과라는 것입니다.
 
-그런데 Red, Black 을 잘못 표시한 사람들의 분포에서 관찰된 p-value 는 0.05와는 비교도 안될 정도로 큰 값입니다.
+그런데 Red, Black 을 잘못 표시한 사람들의 분포에서 관찰된 p-value 는 0.05보다 매우 작은 값입니다.
 
-따라서 두 집단이 랜덤화 효과가 작동하여 **통계적으로 유의한 차이를 보이지 않는다**고 할 수 있습니다.
+따라서 이 경우는 매우 드물게 한 쪽으로 치우친 결과 나왔고 **통계적으로 유의한 차이를 관찰하였다**고 할 수 있습니다.
 
 ### 응답인원의 Red, Black
 
@@ -767,13 +774,13 @@ days_tbl %>%
 ```{r, echo = FALSE, warning = FALSE}
 days_tbl %>%
   rbind("계" = colSums(.)) %>%
-  `[`(3, 2:14) %>%
-  `names<-`(., paste0(13:1, "일")) %>%
+  `[`(3, 1:14) %>%
+  `names<-`(., paste0(14:1, "일")) %>%
   pander
 days_chisq_test <-
   days_tbl %>%
   rbind("계" = colSums(.)) %>%
-  `[`(3, 2:14) %>%
+  `[`(3, 1:14) %>%
   chisq.test(simulate.p.value = FALSE) 
 days_chisq_test %>%
   pander
@@ -820,12 +827,12 @@ invisible(dev.off())
 ```{r, echo = FALSE, warning = FALSE}
 days_tbl %>%
   rbind("계" = colSums(.)) %>%
-  `[`(-3, 2:14) %>%
-  `colnames<-`(., paste0(13:1, "일")) %>%
+  `[`(-3, 1:14) %>%
+  `colnames<-`(., paste0(14:1, "일")) %>%
   pander
 days_RnB_chisq_test <-
   days_tbl %>%
-  `[`(-3, 2:14) %>%
+  `[`(-3, 1:14) %>%
   chisq.test(simulate.p.value = FALSE) 
 days_RnB_chisq_test %>%
   pander
@@ -853,7 +860,7 @@ df2 <- m2_list$df
 p_df2 <- m2_list$p_df
 names(df2[, 2]) <- "Days"
 m2 + geom_text(aes(x = center, y = 1.05), 
-              label = rep(rep(c("월", "화", "수", "목", "금", "토", "일"), each = 2), times = 2)) +
+              label = rep(rep(c("화", "수", "목", "금", "토", "일", "월"), each = 2), times = 2)) +
   theme_bw() +
   labs(title = "마감일로부터 제출시간의 분포", x = "마감일로부터 일수(누적 %)", y = "인원 백분율(%)") +
   scale_fill_brewer(name = "그룹", 
