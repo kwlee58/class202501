@@ -158,17 +158,12 @@ wrong_keys <- quiz_wrong_ids %>%
 quiz_wrong_ids <- quiz_wrong_ids %>%
   mutate(
     id = case_when(
-      id == "20253305" ~ "20253005",
-      id == "202221625" ~ "20221625",
-      id == "20040322" ~ "20243322",
+      id == "20223539" ~ "20223529",
       id == "20243713" & name == "김지혜" ~ "20242713",
       TRUE ~ id
       ),
     name = case_when(
-      name == "chenshuaihao" ~ "CHEN SHUAIHAO",
-      name == "BIE XI" ~ "bie xi",
-      name == "박 윤" ~ "박윤",
-      name == "xuchenxing" ~ "xu chenxing",
+      name == "Zhumabaeva Asema" ~ "ZHUMABAEVA ASEMA",
       TRUE ~ name
       )
     )
@@ -743,13 +738,13 @@ days_tbl %>%
 ```{r, echo = FALSE, warning = FALSE}
 days_tbl %>%
   rbind("계" = colSums(.)) %>%
-  `[`(3, 12:14) %>%
-  `names<-`(., paste0(3:1, "일")) %>%
+  `[`(3, 11:14) %>%
+  `names<-`(., paste0(4:1, "일")) %>%
   pander
 days_chisq_test <-
   days_tbl %>%
   rbind("계" = colSums(.)) %>%
-  `[`(3, 12:14) %>%
+  `[`(3, 11:14) %>%
   chisq.test(simulate.p.value = FALSE) 
 days_chisq_test %>%
   pander
@@ -782,7 +777,7 @@ text(x = b[14, 1], y = sum(days_tbl[, 1]),
      labels = paste0(sum(days_tbl[, 1]), "명"), pos = 3)
 text(x = b[14, 1], y = sum(days_tbl[, 1]) / 2, 
      labels = paste0(format(sum(days_tbl[, 1]) / N * 100, digits = 1, nsmall = 0), "%"))
-title(main = paste0("Quiz250922 (", N, "명 제출)"))
+title(main = paste0("Quiz260324 (", N, "명 제출)"))
 # title(main = "일 단위 퀴즈 제출 인원", sub = paste0("Quiz230925 (", N, "명 제출)"))
 dev.copy(png, file = "./pics/2601/quiz_submission_4.png", width = 640, height = 480)
 invisible(dev.off())
@@ -796,12 +791,12 @@ invisible(dev.off())
 ```{r, echo = FALSE, warning = FALSE}
 days_tbl %>%
   rbind("계" = colSums(.)) %>%
-  `[`(-3, 12:14) %>%
-  `colnames<-`(., paste0(3:1, "일")) %>%
+  `[`(-3, 11:14) %>%
+  `colnames<-`(., paste0(4:1, "일")) %>%
   pander
 days_RnB_chisq_test <-
   days_tbl %>%
-  `[`(-3, 12:14) %>%
+  `[`(-3, 11:14) %>%
   chisq.test(simulate.p.value = FALSE) 
 days_RnB_chisq_test %>%
   pander
