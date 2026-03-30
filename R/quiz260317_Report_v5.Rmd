@@ -165,6 +165,7 @@ wrong_ids <- quiz_wrong_ids$id
 quiz_wrong_ids <- quiz_wrong_ids %>%
   mutate(id = case_when(
     id == "202567145" ~ "20256715",
+    id == "20246635" ~ "20246636",
     id == "1" & name == "ㅈ" & dept == "ㅈ" ~ "20255152",
     TRUE ~ id
   ))
@@ -192,7 +193,7 @@ quiz %>%
 # which(duplicated(quiz$id)) %>%
 #   quiz[., c("id", "name")]
 quiz %>%
-  filter(id %in% c("20213320", "20241232", "20242328"))
+  filter(id %in% c("20251106"))
 # quiz[quiz$name %in% c("최재혁", "박지연"), ] #> 최재혁, 박지연이 중복 제출
 quiz <- quiz %>% 
   arrange(id, desc(time)) %>%
@@ -232,11 +233,11 @@ wrong_group <- quiz %>%
   filter(group2 != group)
 
 #> 잘못된 그룹 정보 출력
-wrong_group %>%
-  select(time, id, name, group2, group) %>%
-  arrange(time) %>%
-  rename(제출시간 = time, 학번 = id, 이름 = name, 랜덤화출석부 = group2, 구글예습퀴즈 = group) %>%
-  pander(row.names = FALSE)
+# wrong_group %>%
+#   select(time, id, name, group2, group) %>%
+#   arrange(time) %>%
+#   rename(제출시간 = time, 학번 = id, 이름 = name, 랜덤화출석부 = group2, 구글예습퀴즈 = group) %>%
+#   pander(row.names = FALSE)
 
 #> 옛 코드
 # quiz$group2 <- class_roll$group[match(quiz$id, class_roll$id)]
@@ -785,7 +786,7 @@ text(x = b[14, 1], y = sum(days_tbl[, 1]),
      labels = paste0(sum(days_tbl[, 1]), "명"), pos = 3)
 text(x = b[14, 1], y = sum(days_tbl[, 1]) / 2, 
      labels = paste0(format(sum(days_tbl[, 1]) / N * 100, digits = 1, nsmall = 0), "%"))
-title(main = paste0("Quiz250915 (", N, "명 제출)"))
+title(main = paste0("Quiz260317 (", N, "명 제출)"))
 # title(main = "일 단위 퀴즈 제출 인원", sub = paste0("Quiz230925 (", N, "명 제출)"))
 dev.copy(png, file = "./pics/2601/quiz_submission_3.png", width = 640, height = 480)
 invisible(dev.off())
