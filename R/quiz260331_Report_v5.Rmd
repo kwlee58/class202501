@@ -118,14 +118,21 @@ as.Date(quiz$time) %>%
 # table(as.Date(format(quiz$time, format = "%Y-%m-%d", tz = "Asia/Seoul")))
 ## 자정 전에 제출한 사람의 시간 수동 조정
 # 수동 조정할 ID 목록
-target_ids <- c("20266147", "20254110", "20213539", "20241604", "20245202", "20255200", "20258044")
+# target_ids <- c("20266147", "20254110", "20213539", "20241604", "20245202", "20255200", "20258044")
 
 # 시작 시간 설정 및 순차적 시간 생성 (1초씩 증가)
-start_time <- as.POSIXct("2026-03-31 00:00:01")
-new_times <- start_time + (0:(length(target_ids) - 1))
+# start_time <- as.POSIXct("2026-03-31 00:00:01")
+# new_times <- start_time + (0:(length(target_ids) - 1))
 
 # 한 번에 업데이트
-quiz[quiz$id %in% target_ids, "time"] <- format(new_times, "%Y-%m-%d %H:%M:%S")
+# quiz[quiz$id %in% target_ids, "time"] <- format(new_times, "%Y-%m-%d %H:%M:%S")
+
+# clausee AI 의 제안
+
+ids <- c("20266147", "20254110", "20213539", "20241604", "20245202", "20255200", "20258044")
+
+idx <- match(ids, quiz$id)
+quiz$time[idx] <- sprintf("2026-03-31 00:00:%02d", seq_along(ids))
 
 # quiz[quiz$id == "20266147", "time"] <- c("2026-03-31 00:00:01")
 # quiz[quiz$id == "20254110", "time"] <- c("2026-03-31 00:00:02")
@@ -157,7 +164,7 @@ wrong_keys <- quiz_wrong_ids %>%
 quiz_wrong_ids <- quiz_wrong_ids %>%
   mutate(
     id = case_when(
-      id == "29225238" ~ "20225238",
+      id == "20040525" ~ "20233064",
       id == "20237015" ~ "20237016",
       TRUE ~ id
       ),
