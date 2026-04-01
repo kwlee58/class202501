@@ -117,13 +117,23 @@ as.Date(quiz$time) %>%
 # 확인
 # table(as.Date(format(quiz$time, format = "%Y-%m-%d", tz = "Asia/Seoul")))
 ## 자정 전에 제출한 사람의 시간 수동 조정
-quiz[quiz$id == "20266147", "time"] <- c("2026-03-31 00:00:01")
-quiz[quiz$id == "20254110", "time"] <- c("2026-03-31 00:00:02")
-quiz[quiz$id == "20213539", "time"] <- c("2026-03-31 00:00:03")
-quiz[quiz$id == "20241604", "time"] <- c("2026-03-31 00:00:04")
-quiz[quiz$id == "20245202", "time"] <- c("2026-03-31 00:00:05")
-quiz[quiz$id == "20255200", "time"] <- c("2026-03-31 00:00:06")
-quiz[quiz$id == "20258044", "time"] <- c("2026-03-31 00:00:07")
+# 수동 조정할 ID 목록
+target_ids <- c("20266147", "20254110", "20213539", "20241604", "20245202", "20255200", "20258044")
+
+# 시작 시간 설정 및 순차적 시간 생성 (1초씩 증가)
+start_time <- as.POSIXct("2026-03-31 00:00:01")
+new_times <- start_time + (0:(length(target_ids) - 1))
+
+# 한 번에 업데이트
+quiz[quiz$id %in% target_ids, "time"] <- format(new_times, "%Y-%m-%d %H:%M:%S")
+
+# quiz[quiz$id == "20266147", "time"] <- c("2026-03-31 00:00:01")
+# quiz[quiz$id == "20254110", "time"] <- c("2026-03-31 00:00:02")
+# quiz[quiz$id == "20213539", "time"] <- c("2026-03-31 00:00:03")
+# quiz[quiz$id == "20241604", "time"] <- c("2026-03-31 00:00:04")
+# quiz[quiz$id == "20245202", "time"] <- c("2026-03-31 00:00:05")
+# quiz[quiz$id == "20255200", "time"] <- c("2026-03-31 00:00:06")
+# quiz[quiz$id == "20258044", "time"] <- c("2026-03-31 00:00:07")
 str(quiz)
 as.Date(quiz$time) %>%
   table
