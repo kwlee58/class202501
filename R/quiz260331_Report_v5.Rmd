@@ -65,6 +65,7 @@ str(quiz)
 class(quiz$id) <- "character"
 quiz <- data.frame(quiz)
 class(quiz$id) <- "character"
+class(quiz$dept) <- "character"
 # quiz$Q7_R[quiz$Q7_R == "대기업의 비리와 독단 경영을 견제하고, 투명성을 높일 수 있으므로 찬 성한다."] <- "찬성한다."
 # quiz$Q7_B[quiz$Q7_B == "정부가 기업에 과다하게 개입하여 경영자율권을 침해하므로 반대한다."] <- "반대한다."
 quiz$Q7 <- ifelse(is.na(quiz$Q7_R), quiz$Q7_B, quiz$Q7_R)
@@ -165,7 +166,7 @@ quiz_wrong_ids <- quiz_wrong_ids %>%
   mutate(
     id = case_when(
       id == "20040525" ~ "20233064",
-      id == "20237015" ~ "20237016",
+      id == "202525611" ~ "20252561",
       TRUE ~ id
       ),
     name = case_when(
@@ -747,13 +748,13 @@ days_tbl %>%
 ```{r, echo = FALSE, warning = FALSE}
 days_tbl %>%
   rbind("계" = colSums(.)) %>%
-  `[`(3, 11:14) %>%
-  `names<-`(., paste0(4:1, "일")) %>%
+  `[`(3, 10:14) %>%
+  `names<-`(., paste0(5:1, "일")) %>%
   pander
 days_chisq_test <-
   days_tbl %>%
   rbind("계" = colSums(.)) %>%
-  `[`(3, 11:14) %>%
+  `[`(3, 10:14) %>%
   chisq.test(simulate.p.value = FALSE) 
 days_chisq_test %>%
   pander
@@ -798,12 +799,12 @@ invisible(dev.off())
 ```{r, echo = FALSE, warning = FALSE}
 days_tbl %>%
   rbind("계" = colSums(.)) %>%
-  `[`(-3, 11:14) %>%
-  `colnames<-`(., paste0(4:1, "일")) %>%
+  `[`(-3, 10:14) %>%
+  `colnames<-`(., paste0(5:1, "일")) %>%
   pander
 days_RnB_chisq_test <-
   days_tbl %>%
-  `[`(-3, 11:14) %>%
+  `[`(-3, 10:14) %>%
   chisq.test(simulate.p.value = FALSE) 
 days_RnB_chisq_test %>%
   pander
