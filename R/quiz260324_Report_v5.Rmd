@@ -1,8 +1,8 @@
 ---
 title: "Quiz 260324 (부연설명의 효과)"
 author: "coop711"
-date: "2026-03-24"
-# date: "`r format(Sys.time(), '%Y-%m-%d %H:%M:%S')`"
+# date: "2026-03-24"
+date: "`r format(Sys.time(), '%Y-%m-%d %H:%M:%S')`"
 output: html_document
 ---
 
