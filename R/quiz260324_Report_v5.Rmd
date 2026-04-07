@@ -1,8 +1,8 @@
 ---
 title: "Quiz 260324 (부연설명의 효과)"
 author: "coop711"
-# date: "2026-03-24"
-date: "`r format(Sys.time(), '%Y-%m-%d %H:%M:%S')`"
+date: "2026-03-24"
+# date: "`r format(Sys.time(), '%Y-%m-%d %H:%M:%S')`"
 output: html_document
 ---
 
@@ -41,15 +41,14 @@ Q7에서는 부연설명을 어느 쪽에 붙이느냐에 따라서 Red 와 Blac
 class_roll0322 <- readRDS("./class_roll_260322.RDS")
 class_roll0322 <- data.frame(class_roll0322)
 ## 수강 철회 반영 새 출석부
-# class_roll1005 <- read_excel("./data/class_roll_251005.xlsx", 
-#                         range = "B1:H608")
-# names(class_roll1005) <- c("dept", "college", "id", "name", "status", "email", "cell_no")
-# str(class_roll1005)
-# class_roll1005$group <- 
-#   class_roll0928$group[match(class_roll1005$id, class_roll0928$id)]
-# class_roll_250928 저장
-# saveRDS(class_roll1005, file = "./class_roll_251005.RDS")
-class_roll <- class_roll0322
+class_roll0406 <- read_excel("./data/class_roll_260406.xlsx", 
+                        range = "B1:H608")
+names(class_roll0406) <- c("dept", "college", "id", "name", "status", "email", "cell_no")
+str(class_roll0406)
+class_roll0406$group <- 
+  class_roll0322$group[match(class_roll0406$id, class_roll0322$id)]
+saveRDS(class_roll0406, file = "./class_roll_260406.RDS")
+class_roll <- class_roll0406
 sheet_url <- "https://docs.google.com/spreadsheets/d/13UsSp5g_6MXIIVjijm6VB9a4oVBQQ2P7I_rEFfPCoXg"
 quiz <- 
   read_sheet(sheet_url)
@@ -137,15 +136,6 @@ pander(summary(quiz))
 ```
 
 ```{r, cleaning, echo = FALSE, results = 'hide'}
-#> 학번 잘못 써서 고생시키는 녀석들 찾아내는 코드
-# wrong_id <- setdiff(quiz$id, class_roll$id)
-# quiz %>%
-#   filter(id %in% wrong_id) %>%
-#   select(id, name, dept, email)
-
-## 2. 잘못된 id를 따로 저장하고 수정하기
-# wrong_ids <- quiz_wrong_ids$id
-
 # 1. 잘못된 id 또는 name 가진 행 찾기
 quiz_wrong_ids <- quiz %>%
   anti_join(class_roll, by = c("id", "name")) 
@@ -159,11 +149,16 @@ quiz_wrong_ids <- quiz_wrong_ids %>%
   mutate(
     id = case_when(
       id == "20223539" ~ "20223529",
+      id == "252362" ~ "20252362",
+      id == "220253511" ~ "20253511",
       id == "20243713" & name == "김지혜" ~ "20242713",
       TRUE ~ id
       ),
     name = case_when(
       name == "Zhumabaeva Asema" ~ "ZHUMABAEVA ASEMA",
+      name == "등시하" ~ "DENG SHIXIA",
+      name == "LIUZHOU" ~ "LIU ZHOU",
+      name == "문서여" ~ "문서영",
       TRUE ~ name
       )
     )
@@ -233,11 +228,11 @@ wrong_group <- quiz %>%
   filter(group2 != group)
 
 #> 잘못된 그룹 정보 출력
-wrong_group %>%
-  select(time, id, group2, group) %>%
-  arrange(time) %>%
-  rename("제출시간" = time, "학번" = id, "랜덤화출석부" = group2, "구글예습퀴즈" = group) %>%
-  pander(row.names = FALSE)
+# wrong_group %>%
+#   select(time, id, group2, group) %>%
+#   arrange(time) %>%
+#   rename("제출시간" = time, "학번" = id, "랜덤화출석부" = group2, "구글예습퀴즈" = group) %>%
+#   pander(row.names = FALSE)
 
 #> 옛 코드
 # quiz$group2 <- class_roll$group[match(quiz$id, class_roll$id)]
