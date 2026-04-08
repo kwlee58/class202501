@@ -1,5 +1,5 @@
 ---
-title: "Quiz 260407 (The more, the better?)"
+title: "Quiz 260407 (The more, the Better?)"
 author: "coop711"
 # date: "2026-04-07"
 date: "`r format(Sys.time(), '%Y-%m-%d %H:%M:%S')`"
@@ -175,21 +175,11 @@ wrong_keys <- quiz_wrong_ids %>%
 quiz_wrong_ids <- quiz_wrong_ids %>%
   mutate(
     id = case_when(
-      id == "2055224" ~ "20255224",
-      id == "20237015" ~ "20237016",
-      id == "20246425" ~ "20236425",
-      id == "2021348" ~ "20213348",
-      id == "20553251" ~ "20253251",
-      id == "2023108" ~ "20231088",
-      id == "2025312" ~ "20253012",
+      id == "202256770" ~ "20256770",
       TRUE ~ id
       ),
     name = case_when(
-      name == "Chenshuaihao" ~ "CHEN SHUAIHAO",
-      name == "biexi" ~ "bie xi",
-      name == "박 윤" ~ "박윤",
-      name == "WANGAOXIANG" ~ "WANG AOXIANG",
-      name == "xuchenxing" ~ "xu chenxing",
+      name == "Zhumabaeva Asema" ~ "ZHUMABAEVA ASEMA",
       TRUE ~ name
       )
     )
@@ -846,13 +836,13 @@ days_tbl %>%
 ```{r, echo = FALSE, warning = FALSE}
 days_tbl %>%
   rbind("계" = colSums(.)) %>%
-  `[`(3, 1:14) %>%
-  `names<-`(., paste0(14:1, "일")) %>%
+  `[`(3, 13:14) %>%
+  `names<-`(., paste0(2:1, "일")) %>%
   pander
 days_chisq_test <-
   days_tbl %>%
   rbind("계" = colSums(.)) %>%
-  `[`(3, 1:14) %>%
+  `[`(3, 13:14) %>%
   chisq.test(simulate.p.value = FALSE) 
 days_chisq_test %>%
   pander
@@ -879,7 +869,7 @@ b <-
   cut(breaks = c(0:14), include.lowest = TRUE) %>%
   table %>%
   rev %>%
-  barplot(space = 0, names.arg = rep(c("월", "화", "수", "목", "금", "토", "일"), 2),
+  barplot(space = 0, names.arg = rep(c("화", "수", "목", "금", "토", "일", "월"), 2),
           col = c(rep("white", 13), "pink"),
           ylim = c(0, 300)) 
 text(x = b[14, 1], y = sum(days_tbl[, 1]), 
@@ -898,12 +888,12 @@ invisible(dev.off())
 ```{r, echo = FALSE, warning = FALSE}
 days_tbl %>%
   rbind("계" = colSums(.)) %>%
-  `[`(-3, 1:14) %>%
-  `colnames<-`(., paste0(14:1, "일")) %>%
+  `[`(-3, 13:14) %>%
+  `colnames<-`(., paste0(2:1, "일")) %>%
   pander
 days_RnB_chisq_test <-
   days_tbl %>%
-  `[`(-3, 1:14) %>%
+  `[`(-3, 13:14) %>%
   chisq.test(simulate.p.value = FALSE) 
 days_RnB_chisq_test %>%
   pander
