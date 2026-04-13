@@ -180,6 +180,7 @@ quiz_wrong_ids <- quiz_wrong_ids %>%
       ),
     name = case_when(
       name == "Zhumabaeva Asema" ~ "ZHUMABAEVA ASEMA",
+      name == "041111" ~ "최원묵",
       TRUE ~ name
       )
     )
