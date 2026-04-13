@@ -1,8 +1,8 @@
 ---
 title: "Quiz 260331 (Framing Effects)"
 author: "coop711"
-# date: "2026-03-31"
-date: "`r format(Sys.time(), '%Y-%m-%d %H:%M:%S')`"
+date: "2026-03-31"
+# date: "`r format(Sys.time(), '%Y-%m-%d %H:%M:%S')`"
 output: html_document
 ---
 
@@ -42,15 +42,15 @@ class_roll0322 <- readRDS("./class_roll_260322.RDS")
 class_roll0322 %<>% 
   data.frame
 #> 출석부에 변화가 생기면 조치
-# class_roll1012 <- 
-#   read_excel("./data/class_roll_251012.xlsx", range = "B1:H608")
-# str(class_roll1012)
-# names(class_roll1012) <- 
-#   c("dept", "college", "id", "name", "status", "email", "cell_no")
-# class_roll1012$group <- 
-#   class_roll1005$group[match(class_roll1012$id, class_roll1005$id)]
-# saveRDS(class_roll1012, file = "./class_roll_251012.RDS")
-class_roll <- class_roll0322
+class_roll0413 <- 
+  read_excel("./data/class_roll_260413.xlsx", range = "B1:H608")
+str(class_roll0413)
+names(class_roll0413) <- 
+  c("dept", "college", "id", "name", "status", "email", "cell_no")
+class_roll0413$group <- 
+  class_roll0322$group[match(class_roll0413$id, class_roll0322$id)]
+saveRDS(class_roll0413, file = "./class_roll_260413.RDS")
+class_roll <- class_roll0413
 str(class_roll)
 #> googlesheets
 sheet_url <- "https://docs.google.com/spreadsheets/d/1f_BcgB-zL31d4ehB9JLX0_4xgKSCNQ6SYFBIe_zx71k"
@@ -169,6 +169,8 @@ quiz_wrong_ids <- quiz_wrong_ids %>%
       id == "202525611" ~ "20252561",
       id == "20242476" ~ "20242746",
       id == "20050223" ~ "20256165",
+      id == "070503" ~ "20263107",
+      id == "20256504" ~ "20256503",
       TRUE ~ id
       ),
     name = case_when(
@@ -236,11 +238,11 @@ wrong_group <- quiz %>%
   filter(group2 != group)
 
 #> 잘못된 그룹 정보 출력
-wrong_group %>%
-  select(time, id, group2, group) %>%
-  arrange(time) %>%
-  rename("제출시간" = time, "학번" = id, "랜덤화출석부" = group2, "구글예습퀴즈" = group) %>%
-  pander(row.names = FALSE)
+# wrong_group %>%
+#   select(time, id, group2, group) %>%
+#   arrange(time) %>%
+#   rename("제출시간" = time, "학번" = id, "랜덤화출석부" = group2, "구글예습퀴즈" = group) %>%
+#   pander(row.names = FALSE)
 
 #> 옛 코드
 # quiz$group2 <- class_roll$group[match(quiz$id, class_roll$id)]
