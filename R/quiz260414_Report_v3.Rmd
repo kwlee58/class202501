@@ -313,7 +313,7 @@ quiz %>%
 # which(duplicated(quiz$id)) %>%
 #   quiz[., c("id", "name")]
 quiz %>%
-  filter(id %in% c("20251114"))
+  filter(id %in% c("20251114", "20217187", "20252971"))
 # quiz[quiz$name %in% c("김장윤"), ] #> 김장윤이 중복 제출
 quiz <- quiz %>% 
   arrange(id, desc(time)) %>%
@@ -1207,13 +1207,13 @@ days_tbl %>%
 ```{r, echo = FALSE, warning = FALSE}
 days_tbl %>%
   rbind("계" = colSums(.)) %>%
-  `[`(3, 10:14) %>%
-  `names<-`(., paste0(5:1, "일")) %>%
+  `[`(3, 7:14) %>%
+  `names<-`(., paste0(8:1, "일")) %>%
   pander
 days_chisq_test <-
   days_tbl %>%
   rbind("계" = colSums(.)) %>%
-  `[`(3, 10:14) %>%
+  `[`(3, 7:14) %>%
   chisq.test(simulate.p.value = FALSE) 
 days_chisq_test %>%
   pander
@@ -1260,12 +1260,12 @@ invisible(dev.off())
 ```{r, echo = FALSE, warning = FALSE}
 days_tbl %>%
   rbind("계" = colSums(.)) %>%
-  `[`(-3, 10:14) %>%
-  `colnames<-`(., paste0(5:1, "일")) %>%
+  `[`(-3, 7:14) %>%
+  `colnames<-`(., paste0(8:1, "일")) %>%
   pander
 days_RnB_chisq_test <-
   days_tbl %>%
-  `[`(-3, 10:14) %>%
+  `[`(-3, 7:14) %>%
   chisq.test(simulate.p.value = FALSE) 
 days_RnB_chisq_test %>%
   pander

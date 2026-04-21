@@ -463,7 +463,7 @@ chisq_test_q3 %>%
 
 Q3의 집계 결과가 Red, Black 간에 통계적으로 유의한 차이가 있는지 알아보기 위하여 카이제곱 테스트를 수행하였습니다. 
 
-그 결과 카이제곱 통계량은 `r chisq_test_q3[1] %>% format(digits = 2, nsmall = 2)`, 자유도는 `r chisq_test_q3[2] %>% format(digits = 2, nsmall = 2)`, p-value 는 `r chisq_test_q3[3] %>% format(digits = 2, nsmall = 4)`이므로 Red, Black 간에 통계적으로 유의한 차이를 보이지 않습니다. 
+그 결과 카이제곱 통계량은 `r chisq_test_q3[1] %>% format(digits = 2, nsmall = 2)`, 자유도는 `r chisq_test_q3[2] %>% format(digits = 2, nsmall = 2)`, p-value 는 `r chisq_test_q3[3] %>% format(digits = 2, nsmall = 4)`이므로 Red, Black 간에 **통계적으로 유의한 차이**를 보이고 있습니다. 매우 드물지만 이 또한 낮은 확률로 나타날 수 있다는 것을 보여 줍니다. 스무 번에 한 번? 
 
 실제로 닮은 게 느껴집니까?
 
@@ -753,6 +753,8 @@ Mosaic Plot 은 이 집계결과를 시각적으로 잘 보여줍니다.
 선택지의 순서에 거의 무관할 정도로 응답이 비슷하기 때문에 Red, Black 이 닮았고, "내가 남보다" 많이 받아야 한다고 응답한 백분율도 닮은 것을 잘 알 수 있습니다.
 
 ### History of "The more, the better?"
+
+2016년 1학기부터 지금까지 시행한 같은 실험들은 꾸준히 "내가 남보다" 많이 받는 선택을 하고 있음을 보여 줍니다. "내가 남보다" 많이 받는 세상을 선택한 퍼센티지는 64.7%에 77.0%에 이를 정도로 압도적입니다.
 
 ```{r, echo = FALSE, fig.width = 12, fig.height = 6, message = FALSE}
 W25_2 <- c(tbl_q7_a[3, -3])
