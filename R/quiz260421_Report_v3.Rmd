@@ -146,17 +146,12 @@ wrong_keys <- quiz_wrong_ids %>%
 quiz_wrong_ids <- quiz_wrong_ids %>%
   mutate(
     id = case_when(
-      id == "202233456" ~ "20223346",
-      id == "202106511" ~ "20216511",
-      id == "202462227" ~ "20246227",
-      id == "202052326" ~ "20252326",
+      id == "20236748" ~ "20236738",
+      id == "20277147" ~ "20266147",
       TRUE ~ id
       ),
     name = case_when(
-      id == "20236155" & name == "이태" ~ "이태경",
-      id == "20238010" & name == "xuchenxing" ~ "xu chenxing",
-      id == "20178019" & name == "Chen shuaihao" ~ "CHEN SHUAIHAO",
-      id == "20218008" & name == "biexi" ~ "bie xi",
+      id == "20258044" & name == "Zhumabaeva Asema" ~ "ZHUMABAEVA ASEMA",
       )
     )
 # 3. quiz 에서 id 또는 name 틀린 행을 제거하고 옳은 id 또는 name 갖춘 행으로 교체하기
@@ -224,11 +219,11 @@ wrong_group <- quiz %>%
   filter(group2 != group)
 
 #> 잘못된 그룹 정보 출력
-# wrong_group %>%
-#   select(time, id, group2, group) %>%
-#   arrange(time) %>%
-#   rename("제출시간" = time, "학번" = id, "랜덤화출석부" = group2, "구글예습퀴즈" = group) %>%
-#   pander(row.names = FALSE)
+wrong_group %>%
+  select(time, id, group2, group) %>%
+  arrange(time) %>%
+  rename("제출시간" = time, "학번" = id, "랜덤화출석부" = group2, "구글예습퀴즈" = group) %>%
+  pander(row.names = FALSE)
 
 #> 옛 코드
 # quiz$group2 <- class_roll$group[match(quiz$id, class_roll$id)]
@@ -784,13 +779,13 @@ days_tbl %>%
 ```{r, echo = FALSE, warning = FALSE}
 days_tbl %>%
   rbind("계" = colSums(.)) %>%
-  `[`(3, 13:14) %>%
-  `names<-`(., paste0(2:1, "일")) %>%
+  `[`(3, 6:14) %>%
+  `names<-`(., paste0(9:1, "일")) %>%
   pander
 days_chisq_test <-
   days_tbl %>%
   rbind("계" = colSums(.)) %>%
-  `[`(3, 13:14) %>%
+  `[`(3, 6:14) %>%
   chisq.test(simulate.p.value = FALSE) 
 days_chisq_test %>%
   pander
@@ -835,12 +830,12 @@ invisible(dev.off())
 ```{r, echo = FALSE, warning = FALSE}
 days_tbl %>%
   rbind("계" = colSums(.)) %>%
-  `[`(-3, 13:14) %>%
-  `colnames<-`(., paste0(2:1, "일")) %>%
+  `[`(-3, 6:14) %>%
+  `colnames<-`(., paste0(9:1, "일")) %>%
   pander
 days_RnB_chisq_test <-
   days_tbl %>%
-  `[`(-3, 13:14) %>%
+  `[`(-3, 6:14) %>%
   chisq.test(simulate.p.value = FALSE) 
 days_RnB_chisq_test %>%
   pander
@@ -881,7 +876,7 @@ m2 + geom_text(aes(x = center, y = 1.05),
                                   size = 18, 
                                   face = "bold"),
         axis.text.x = element_text(angle = -90, vjust = 0.5)) 
-ggsave("./pics/Quiz251020_submission_8.png", dpi = 120, width = 960, height = 840, units = "px")
+ggsave("./pics/Quiz260421_submission_8.png", dpi = 120, width = 960, height = 840, units = "px")
 ```
 
 ```{r, save, echo = FALSE}
