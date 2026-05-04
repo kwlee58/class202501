@@ -163,7 +163,7 @@ wrong_keys <- quiz_wrong_ids %>%
 quiz_wrong_ids <- quiz_wrong_ids %>%
   mutate(
     id = case_when(
-      id == "20243920" ~ "20253920",
+      id == "020823" ~ "20217089",
       id == "20050616" ~ "20246298",
     TRUE ~ id
     ),

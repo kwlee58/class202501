@@ -149,6 +149,8 @@ quiz_wrong_ids <- quiz_wrong_ids %>%
       id == "20236748" ~ "20236738",
       id == "20277147" ~ "20266147",
       id == "2021102" ~ "20211023",
+      id == "202666163" ~ "20266163",
+      id == "201253814" ~ "20253814",
       TRUE ~ id
       ),
     name = case_when(
@@ -182,7 +184,7 @@ quiz %>%
 # which(duplicated(quiz$id)) %>%
 #   quiz[., c("id", "name")]
 quiz %>%
-  filter(id %in% c("20253208","20251105", "20252991"))
+  filter(id %in% c("20256639"))
 #> 전유빈이  정소은 id 를 갖다 쓴 상황 발생
 # quiz[quiz$name == "전유빈", "id"] <- class_roll[class_roll$name == "전유빈", "id"]
 # quiz <- quiz %>%
