@@ -151,14 +151,12 @@ wrong_keys <- quiz_wrong_ids %>%
 quiz_wrong_ids <- quiz_wrong_ids %>%
   mutate(
     id = case_when(
-      id == "20523112" ~ "20253112",
-      id == "200256709" ~ "20256709",
-      id == "2255219" ~ "20255219",
-      id == "2021300" ~ "20213000",
+      id == "202526222" ~ "20252622",
     TRUE ~ id
     ),
     name = case_when(
-      id == "20256726" & name == "박 윤" ~ "박윤",
+      id == "20258044" & name == "Zhumabaeva Asema" ~ "ZHUMABAEVA ASEMA",
+      id == "20232569" & name == "040814" ~ "임미영",
       TRUE ~ name
       )
     )
