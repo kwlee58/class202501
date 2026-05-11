@@ -151,11 +151,13 @@ wrong_keys <- quiz_wrong_ids %>%
 quiz_wrong_ids <- quiz_wrong_ids %>%
   mutate(
     id = case_when(
+      id == "202480" & name == "BAI YUANYUAN" ~ "20248012",
       id == "202526222" ~ "20252622",
     TRUE ~ id
     ),
     name = case_when(
       id == "20258044" & name == "Zhumabaeva Asema" ~ "ZHUMABAEVA ASEMA",
+      id == "20248020" & name == "유주" ~ "LIU ZHOU",
       id == "20232569" & name == "040814" ~ "임미영",
       TRUE ~ name
       )
@@ -680,13 +682,13 @@ days_tbl %>%
 ```{r, echo = FALSE, warning = FALSE}
 days_tbl %>%
   rbind("계" = colSums(.)) %>%
-  `[`(3, 10:14) %>%
-  `names<-`(., paste0(5:11, "일")) %>%
+  `[`(3, 7:14) %>%
+  `names<-`(., paste0(8:1, "일")) %>%
   pander
 days_chisq_test <-
   days_tbl %>%
   rbind("계" = colSums(.)) %>%
-  `[`(3, 10:14) %>%
+  `[`(3, 7:14) %>%
   chisq.test(simulate.p.value = FALSE) 
 days_chisq_test %>%
   pander
@@ -732,12 +734,12 @@ invisible(dev.off())
 ```{r, echo = FALSE, warning = FALSE}
 days_tbl %>%
   rbind("계" = colSums(.)) %>%
-  `[`(-3, 10:14) %>%
-  `colnames<-`(., paste0(5:11, "일")) %>%
+  `[`(-3, 7:14) %>%
+  `colnames<-`(., paste0(8:1, "일")) %>%
   pander
 days_RnB_chisq_test <-
   days_tbl %>%
-  `[`(-3, 10:14) %>%
+  `[`(-3, 7:14) %>%
   chisq.test(simulate.p.value = FALSE) 
 days_RnB_chisq_test %>%
   pander
