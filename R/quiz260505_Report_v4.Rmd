@@ -137,7 +137,7 @@ quiz %>%
   str
 ```
 
-```{r, time filter, echo = FALSE, results = 'asis'}
+```{r, time filter, echo = FALSE, results = 'hide'}
 #> 제출 가능 구간 정의 (한국시간 기준)
 #>   - 시작: 2026-05-05 00:00:00 (수업일)
 #>   - 마감: 2026-05-19 00:00:00 (다음 수업 직전)
