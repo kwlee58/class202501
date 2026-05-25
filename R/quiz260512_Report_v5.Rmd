@@ -145,7 +145,7 @@ quiz_wrong_ids <- quiz_wrong_ids %>%
     ),
     name = case_when(
        id == "20258044" & name == "Zhumabaeva Asema" ~ "ZHUMABAEVA ASEMA",
-       id == "20248020" & name == "유주" ~ "LIU ZHOU",
+       id == "20248020" & name == "LIUZHOU" ~ "LIU ZHOU",
        id == "20248012" & name == "BAIYUANYUAN" ~ "BAI YUANYUAN",
        id == "20248016" & name == "등시하" ~ "DENG SHIXIA",
       TRUE ~ name
