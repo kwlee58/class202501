@@ -1,8 +1,8 @@
 ---
 title: "Quiz 260512 (Anchor Effects)"
 author: "coop711"
-# date : "2026-05-12"
-date: "`r format(Sys.time(), '%Y-%m-%d %H:%M:%S')`"
+date : "2026-05-12"
+# date: "`r format(Sys.time(), '%Y-%m-%d %H:%M:%S')`"
 output: html_document
 ---
 
@@ -40,20 +40,19 @@ Q7에서는 Anchor Effects 를 알아 보기 위하여 Red 에서는 대학 등�
 그리고, 제출시간의 분포가 날마다 고른지, Red, Black 간에는 닮았는지 알아봅니다.
 
 ```{r, data, echo = FALSE, message = FALSE, results = 'hide'}
-class_roll <- 
-  readRDS("./class_roll_260511.RDS")
-# class_roll %<>% 
-#   data.frame
-#> 5월16일 출석부로 업데이트
-# class_roll <- 
-#   read_excel("./data/class_roll_250516.xlsx", 
-#              range = "B1:H597")
-# class_roll %<>% 
-#   data.frame
-# str(class_roll)
-# names(class_roll) <- c("dept", "colleges", "id", "name", "status", "email", "cell_no")
-# class_roll$group <- class_roll0428$group[match(class_roll$id, class_roll0428$id)]
-# saveRDS(class_roll, file = "./class_roll_250516.RDS")
+class_roll0518 <-
+  readRDS("./class_roll_260518.RDS")
+class_roll0518 %<>%
+  data.frame
+class_roll <-
+  read_excel("./data/class_roll_260525.xlsx",
+             range = "B1:H603")
+class_roll %<>%
+  data.frame
+str(class_roll)
+names(class_roll) <- c("dept", "colleges", "id", "name", "status", "email", "cell_no")
+class_roll$group <- class_roll0518$group[match(class_roll$id, class_roll0518$id)]
+saveRDS(class_roll, file = "./class_roll_260525.RDS")
 #> 
 quiz_url <-"https://docs.google.com/spreadsheets/d/1Jb27l1vxMiqZokAU4_h2x-Bhrp7HNaU-wHGY3Qle-2E"
 # gs4_deauth()
@@ -66,6 +65,7 @@ str(quiz)
 names(quiz) <- 
   c("time", "email", "dept", "id", "name", paste0("Q", 1:6),  "group", "Q7_R", "Q7_B")
 class(quiz$id) <- "character"
+class(quiz$dept) <- "character"
 quiz <- data.frame(quiz)
 str(quiz)
 quiz[c("group", "Q7_R", "Q7_B")]
@@ -139,15 +139,15 @@ wrong_keys <- quiz_wrong_ids %>%
 quiz_wrong_ids <- quiz_wrong_ids %>%
   mutate(
     id = case_when(
-      id == "2022625" ~ "20221625",
-      id == "20256178" ~ "20256718",
+      id == "29256745" ~ "20256745",
+      id == "20253014" ~ "20253104",
     TRUE ~ id
     ),
     name = case_when(
-      id == "20256726" & name == "박 윤" ~ "박윤",
-      id == "20218008" & name == "biexi" ~ "bie xi",
-      id == "20178019" & name == "cHENSHUAIHAO" ~ "CHEN SHUAIHAO",
-      id == "20238010" & name == "xuchenxing" ~ "xu chenxing",
+       id == "20258044" & name == "Zhumabaeva Asema" ~ "ZHUMABAEVA ASEMA",
+       id == "20248020" & name == "유주" ~ "LIU ZHOU",
+       id == "20248012" & name == "BAIYUANYUAN" ~ "BAI YUANYUAN",
+       id == "20248016" & name == "등시하" ~ "DENG SHIXIA",
       TRUE ~ name
       )
     )
@@ -168,7 +168,7 @@ quiz %>%
 # which(duplicated(quiz$id)) %>%
 #   quiz[., c("id", "name")]
 quiz %>%
-  filter(id %in% c("20221625"))
+  filter(id %in% c("20237093"))
 quiz <- quiz %>% 
   arrange(id, desc(time)) %>%
   distinct(id, .keep_all = TRUE)
