@@ -1,8 +1,8 @@
 ---
-title: "직관의 한계 251124 (생일문제, 매칭문제, 연비문제, 몬티 홀 문제)"
+title: "직관의 한계 260526 (생일문제, 매칭문제, 연비문제, 몬티 홀 문제)"
 author: "coop711"
-date : "2025-11-24"
-# date: "`r format(Sys.time(), '%Y-%m-%d %H:%M:%S')`"
+# date : "2026-05-26"
+date: "`r format(Sys.time(), '%Y-%m-%d %H:%M:%S')`"
 output: html_document
 ---
 
@@ -57,25 +57,25 @@ Red 와 Black 은 "고수한다"와 "바꾼다"의 순서를 바꿔 보았는데
 그리고 여러분들이 직관적으로 고른 답은 대부분 정답이 아닌 것으로 드러납니다. 
 
 ```{r, data, echo = FALSE, results = 'hide', message = FALSE}
-class_roll1026 <- 
-  readRDS("./class_roll_251026.RDS")
-class_roll1026 %<>% 
-  data.frame
 class_roll <- 
-  read_excel("./data/class_roll_251220.xlsx", 
-             range = "B1:H605")
+  readRDS("./class_roll_260525.RDS")
 class_roll %<>% 
   data.frame
-str(class_roll)
-names(class_roll) <- c("dept", "colleges", "id", "name", "status", "email", "cell_no")
-class_roll$group <- class_roll1026$group[match(class_roll$id, class_roll1026$id)]
-saveRDS(class_roll, file = "./class_roll_251220.RDS")
-quiz_url <-"https://docs.google.com/spreadsheets/d/1BC_P6QvNzNSL9wqscoy7NwxsptCYbIHqfQ7W9uKbIgs"
+# class_roll <- 
+#   read_excel("./data/class_roll_251220.xlsx", 
+#              range = "B1:H605")
+# class_roll %<>% 
+#   data.frame
+# str(class_roll)
+# names(class_roll) <- c("dept", "colleges", "id", "name", "status", "email", "cell_no")
+# class_roll$group <- class_roll1026$group[match(class_roll$id, class_roll1026$id)]
+# saveRDS(class_roll, file = "./class_roll_251220.RDS")
+quiz_url <-"https://docs.google.com/spreadsheets/d/1xUbbVEyesYgwF1KpMdO2JTYHjUEDq04R6RuP222zkdg"
 quiz <- read_sheet(quiz_url)
 # quiz <- "./data/quiz251124.xlsx" %>% 
 #   read_excel(range = "A1:N725",
 #              col_types = c("date", rep("text", 13)))
-quiz <- quiz[-15]
+# quiz <- quiz[-15]
 names(quiz) <- 
   c("time", "email", "dept", "id", "name", "Q1", paste("Q2", 1:4, sep = "_"), "Q3", "group", "Q4_R", "Q4_B")
 class(quiz$id) <- "character"
@@ -117,18 +117,15 @@ wrong_keys <- quiz_wrong_ids %>%
 quiz_wrong_ids <- quiz_wrong_ids %>%
   mutate(
     id = case_when(
-      id == "20233105" ~ "20233015",
-      id == "20245735" ~ "20246735",
-      id == "202533249" ~ "20253249",
-      id == "20353941" ~ "20253941",
-      id == "28178019" & name == "CHEN SHUAIHAO" ~ "20178019",
+      id == "2023245" ~ "20232945",
+      id == "20232832" ~ "20232833",
     TRUE ~ id
     ),
     name = case_when(
-      id == "20256726" & name == "박 윤" ~ "박윤",
-      id == "20218008" & name == "biexi" ~ "bie xi",
-      id == "28178019" & name == "CHEN SHUAIHAO" ~ "CHEN SHUAIHAO",
-      id == "20238010" & name == "xuchenxing" ~ "xu chenxing",
+      id == "20258044" & name == "Zhumabaeva Asema" ~ "ZHUMABAEVA ASEMA",
+      id == "20248020" & name == "LIUZHOU" ~ "LIU ZHOU",
+      id == "20248012" & name == "BAIYUANYUAN" ~ "BAI YUANYUAN",
+      id == "20248016" & name == "등시하" ~ "DENG SHIXIA",
     TRUE ~ name
     )
   )
@@ -360,15 +357,15 @@ quiz$time <- format(quiz$time, format = "%Y-%m-%d %H:%M:%S")
 as.Date(quiz$time) %>%
   table
 ## 자정 전에 제출한 사람의 시간 수동 조정
-quiz[quiz$id == "20253042", "time"] <- c("2025-11-24 00:00:01")
+quiz[quiz$id == "20256112", "time"] <- c("2026-05-26 00:00:01")
 ## 자정 직후 제출한 사람의 시간 수동 조정
-quiz[quiz$id == "20252998", "time"] <- c("2025-12-07 23:59:00")
+quiz[quiz$id == "20256733", "time"] <- c("2026-05-26 00:00:02")
 ## 집계시점으로부터 제출시간까지의 소요일수
 quiz$days <- 
-  as.numeric(difftime("2025-12-08 00:00:00", 
+  as.numeric(difftime("2026-06-09 00:00:00", 
                       quiz$time, tz = "Asia/Seoul",  units = 'days'))
 quiz$hours <- 
-  as.numeric(difftime("2025-12-08 00:00:00", 
+  as.numeric(difftime("2026-06-09 00:00:00", 
                       quiz$time, tz = "Asia/Seoul", units = 'hours'))
 str(quiz)
 ```
@@ -1034,7 +1031,8 @@ Red, Black을 합쳐서 계산할 때 `r ptbl_q3[2] %>% format(digits = 2, nsmal
 ### 학기별 응답 요약
 
 ```{r, MPG History, echo = FALSE, fig.width = 12, fig.height = 6, message = FALSE}
-M25_2 <- c(tbl_q3_a[3, -3])
+M26_1 <- c(tbl_q3_a[3, -3])
+M25_2 <- c(236, 314)
 M25_1 <- c(248, 320)
 M24_2 <- c(315, 404)
 M24_1 <- c(257, 445)
@@ -1048,9 +1046,9 @@ M20_2 <- c(93, 174)
 M20_1 <- c(58, 87)
 M19_2 <- c(62, 84)
 MPG <- 
-  cbind(M19_2, M20_1, M20_2, M21_1, M21_2, M22_1, M22_2, M23_1, M23_2, M24_1, M24_2, M25_1, M25_2)
+  cbind(M19_2, M20_1, M20_2, M21_1, M21_2, M22_1, M22_2, M23_1, M23_2, M24_1, M24_2, M25_1, M25_2, M26_1)
 semesters <- 
-  c("19/2", "", "20/2", "21/1", "21/2", "22/1", "22/2", "23/1", "23/2", "24/1", "24/2", "25/1", "25/2")
+  c("19/2", "", "20/2", "21/1", "21/2", "22/1", "22/2", "23/1", "23/2", "24/1", "24/2", "25/1", "25/2", "26/1")
 colnames(MPG) <- semesters
 MPG_tbl <-
   apply(MPG, MARGIN = 2, proportions) %>% 
@@ -1243,7 +1241,7 @@ m + geom_text(aes(x = center, y = 1.05),
   theme(plot.title = element_text(hjust = 0.5, 
                                   size = 18, 
                                   face = "bold")) 
-ggsave("./pics/quiz251124_Q4_RnB.png", dpi = 120, width = 960, height = 840, units = "px")
+ggsave("./pics/quiz260526_Q4_RnB.png", dpi = 120, width = 960, height = 840, units = "px")
 ```
 
 ### 학기별 응답 요약
@@ -1253,7 +1251,8 @@ ggsave("./pics/quiz251124_Q4_RnB.png", dpi = 120, width = 960, height = 840, uni
 여러분의 직관에 대해서 그리고 학기별로 꾸준히 관찰되는 거의 고정된 비율에 대해서 댓글을 올려 주세요. 
 
 ```{r, Monty Hall History, echo = FALSE, fig.width = 12, fig.height = 6, message = FALSE}
-M25_2 <- c(tbl_q4_a[3, -3])
+M26_1 <- c(tbl_q4_a[3, -3])
+M25_2 <- c(328, 222)
 M25_1 <- c(383, 185)
 M24_2 <- c(482, 237)
 M24_1 <- c(451, 251)
@@ -1274,9 +1273,9 @@ M17_1 <- c(90, 37)
 M16_2 <- c(70, 14)
 M16_1 <- c(41, 15)
 quizS <- 
-  cbind(M16_1, M16_2, M17_1, M17_2, M18_2, M18_2, M19_1, M19_2, M20_1, M20_2, M21_1, M21_2, M22_1, M22_2, M23_1, M23_2, M24_1, M24_2, M25_1, M25_2)
+  cbind(M16_1, M16_2, M17_1, M17_2, M18_2, M18_2, M19_1, M19_2, M20_1, M20_2, M21_1, M21_2, M22_1, M22_2, M23_1, M23_2, M24_1, M24_2, M25_1, M25_2, M26_1)
 semesters <- 
-  c("16/1", "16/2", "17/1", "17/2", "18/1", "18/2", "19/1", "19/2", "20/1", "20/2", "21/1", "21/2", "22/1", "22/2", "23/1", "23/2", "24/1", "24/2", "25/1", "25/2")
+  c("16/1", "16/2", "17/1", "17/2", "18/1", "18/2", "19/1", "19/2", "20/1", "20/2", "21/1", "21/2", "22/1", "22/2", "23/1", "23/2", "24/1", "24/2", "25/1", "25/2", "26/1")
 colnames(quizS) <- semesters
 quizS_tbl <- 
   apply(quizS, MARGIN = 2, proportions) %>% 
@@ -1289,7 +1288,7 @@ p_df <- m_list$p_df
 y_min <- min(p_df$y_breaks)
 y_max <- sort(unique(p_df$y_breaks[p_df$y_breaks < 0.99]), decreasing = TRUE)[1]
 custom_labels <-
-  c("16/1", "", "", "", "18/1", "", "19/1", "", "20/1", "", "21/1", "21/2", "22/1", "22/2", "23/1", "23/2", "24/1", "24/2", "25/1", "25/2")
+  c("16/1", "", "", "", "18/1", "", "19/1", "", "20/1", "", "21/1", "21/2", "22/1", "22/2", "23/1", "23/2", "24/1", "24/2", "25/1", "25/2", "26/1")
 m_list$m +
   geom_text(aes(x = center, y = 1.05),
             label = rep(custom_labels, each = 2)) + 
@@ -1323,6 +1322,7 @@ days_tbl <-
 days_tbl %>%
   cbind("계" = rowSums(.)) %>%
   rbind("계" = colSums(.)) %>%
+  `colnames<-`(., c(paste0(14:1, "일"), "계")) %>%
   pander(caption = "일 단위")
 ```
 
@@ -1372,16 +1372,16 @@ b <-
   cut(breaks = c(0:14), include.lowest = TRUE) %>%
   table %>%
   rev %>%
-  barplot(space = 0, names.arg = rep(c("월", "화", "수", "목", "금", "토", "일"), 2),
+  barplot(space = 0, names.arg = rep(c("화", "수", "목", "금", "토", "일", "월"), 2),
           col = c(rep("white", 13), "pink"),
           ylim = c(0, 300)) 
 text(x = b[14, 1], y = sum(days_tbl[, 1]), 
      labels = paste0(sum(days_tbl[, 1]), "명"), pos = 3)
 text(x = b[14, 1], y = sum(days_tbl[, 1]) / 2, 
      labels = paste0(format(sum(days_tbl[, 1]) / N * 100, digits = 1, nsmall = 0), "%"))
-title(main = paste0("quiz251124 (", N, "명 제출)"))
+title(main = paste0("quiz260526 (", N, "명 제출)"))
 # title(main = "일 단위 퀴즈 제출 인원", sub = paste0("quiz230925 (", N, "명 제출)"))
-dev.copy(png, file = "./pics/2502/quiz_submission_13.png", width = 640, height = 480)
+dev.copy(png, file = "./pics/2601/quiz_submission_13.png", width = 640, height = 480)
 invisible(dev.off())
 })
 ```
@@ -1422,7 +1422,7 @@ df2 <- m2_list$df
 p_df2 <- m2_list$p_df
 names(df2[, 2]) <- "Days"
 m2 + geom_text(aes(x = center, y = 1.05),
-              label = rep(rep(c("월", "화", "수", "목", "금", "토", "일"), each = 2), times = 2)) +
+              label = rep(rep(c("화", "수", "목", "금", "토", "일", "월"), each = 2), times = 2)) +
   theme_bw() +
   labs(title = "마감일로부터 제출시간의 분포", x = "마감일로부터 일수(누적 %)", y = "인원 백분율(%)") +
   scale_fill_brewer(name = "그룹", 
@@ -1435,14 +1435,14 @@ m2 + geom_text(aes(x = center, y = 1.05),
                                   size = 18, 
                                   face = "bold"),
         axis.text.x = element_text(angle = -90, vjust = 0.5)) 
-ggsave("./pics/quiz251124_submission_13.png", dpi = 120, width = 960, height = 840, units = "px")
+ggsave("./pics/quiz260526_submission_13.png", dpi = 120, width = 960, height = 840, units = "px")
 ```
 
 ## 제출 시간 분포의 변화
 
 ```{r, echo = FALSE, message = FALSE, eval = TRUE}
 library(magick)
-file_names <- paste0("./pics/2502/quiz_submission_", 2:13, ".png")
+file_names <- paste0("./pics/2601/quiz_submission_", 2:13, ".png")
 img <- sapply(file_names, image_read)
 img <- image_join(img)
 # img <- image_read(file_names[1])
@@ -1453,5 +1453,5 @@ image_animate(img, fps = 1, loop = 0)
 ```
 
 ```{r, save, echo = FALSE}
-saveRDS(quiz, file = "./quiz251124.RDS")
+saveRDS(quiz, file = "./quiz260526.RDS")
 ```

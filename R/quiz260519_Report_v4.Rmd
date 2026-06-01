@@ -137,7 +137,6 @@ quiz$hours <-
 str(quiz)
 ```
 
-
 ```{r, cleaning, echo = FALSE, results = 'hide'}
 #> 학번 잘못 써서 고생시키는 녀석들 찾아내는 코드
 wrong_id <- setdiff(quiz$id, class_roll$id)
@@ -150,17 +149,17 @@ quiz_wrong_ids <- quiz %>%
 # 2. 잘못된 id를 따로 저장하고 수정하기
 wrong_ids <- quiz_wrong_ids$id
 quiz_wrong_ids <- quiz_wrong_ids %>%
-  mutate(id = case_when(
-    id == "2019287" ~ "20192837",
-    id == "2021990" ~ "20212990",
-    id == "021107" ~ "20217123",
+  mutate(
+    id = case_when(
+      id == "2024564" ~ "20242564",
+      id == "20322236" ~ "20232236",
     TRUE ~ id
   ),
   name = case_when(
-    id == "20256726" & name == "박 윤" ~ "박윤",
-    id == "20218008" & name == "biexi" ~ "bie xi",
-    id == "20178019" & name == "cHENSHUAIHAO" ~ "CHEN SHUAIHAO",
-    id == "20238010" & name == "xuchenxing" ~ "xu chenxing",
+    id == "20258044" & name == "Zhumabaeva Asema" ~ "ZHUMABAEVA ASEMA",
+    id == "20248020" & name == "유주" ~ "LIU ZHOU",
+    id == "20248012" & name == "BAIYUANYUAN" ~ "BAI YUANYUAN",
+    id == "20248016" & name == "등시하" ~ "DENG SHIXIA",
     TRUE ~ name
   )
 )
@@ -693,13 +692,13 @@ days_tbl %>%
 ```{r, echo = FALSE, warning = FALSE}
 days_tbl %>%
   rbind("계" = colSums(.)) %>%
-  `[`(3, 8:14) %>%
-  `names<-`(., paste0(7:1, "일")) %>%
+  `[`(3, 1:14) %>%
+  `names<-`(., paste0(14:1, "일")) %>%
   pander
 days_chisq_test <-
   days_tbl %>%
   rbind("계" = colSums(.)) %>%
-  `[`(3, 8:14) %>%
+  `[`(3, 1:14) %>%
   chisq.test(simulate.p.value = FALSE) 
 days_chisq_test %>%
   pander
@@ -743,12 +742,12 @@ invisible(dev.off())
 ```{r, echo = FALSE, warning = FALSE}
 days_tbl %>%
   rbind("계" = colSums(.)) %>%
-  `[`(-3, 8:14) %>%
-  `colnames<-`(., paste0(7:1, "일")) %>%
+  `[`(-3, 1:14) %>%
+  `colnames<-`(., paste0(14:1, "일")) %>%
   pander
 days_RnB_chisq_test <-
   days_tbl %>%
-  `[`(-3, 8:14) %>%
+  `[`(-3, 1:14) %>%
   chisq.test(simulate.p.value = FALSE) 
 days_RnB_chisq_test %>%
   pander
