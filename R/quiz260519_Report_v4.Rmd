@@ -1,8 +1,8 @@
 ---
 title: "Quiz 260519 (Framing Effects)"
 author: "coop711"
-# date : "2026-05-19"
-date: "`r format(Sys.time(), '%Y-%m-%d %H:%M:%S')`"
+date : "2026-05-19"
+# date: "`r format(Sys.time(), '%Y-%m-%d %H:%M:%S')`"
 output: html_document
 ---
 
@@ -153,6 +153,9 @@ quiz_wrong_ids <- quiz_wrong_ids %>%
     id = case_when(
       id == "2024564" ~ "20242564",
       id == "20322236" ~ "20232236",
+      id == "2024305" ~ "20243056",
+      id == "2024816" ~ "20248016",
+      id == "20242204" ~ "20242205",
     TRUE ~ id
   ),
   name = case_when(
@@ -189,7 +192,7 @@ quiz %>%
 # which(duplicated(quiz$id)) %>%
 #   quiz[., c("id", "name")]
 quiz %>%
-  filter(id %in% c("20227051"))
+  filter(id %in% c("20252971"))
 quiz <- quiz %>% 
   arrange(id, desc(time)) %>%
   distinct(id, .keep_all = TRUE)
