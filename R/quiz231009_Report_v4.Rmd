@@ -1,7 +1,7 @@
 ---
-title: "Quiz 240412 (Wason Selection Task)"
+title: "Quiz 231009 (Wason Selection Task)"
 author: "coop711"
-date: "2024-04-12"
+date: "2023-10-09"
 # date: "`r format(Sys.time(), '%Y-%m-%d %H:%M:%S')`"
 output: html_document
 ---
