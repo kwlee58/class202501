@@ -119,6 +119,7 @@ quiz_wrong_ids <- quiz_wrong_ids %>%
       id == "2023245" ~ "20232945",
       id == "20232832" ~ "20232833",
       id == "２０２４６６２０" ~ "20246620",
+      id == "20239284" ~ "20232984",
     TRUE ~ id
     ),
     name = case_when(
@@ -157,7 +158,7 @@ quiz %>%
 # which(duplicated(quiz$id)) %>%
 #   quiz[., c("id", "name")]
 quiz %>%
-  filter(id %in% c("20242615"))
+  filter(id %in% c("20232910", "20255112"))
 quiz <- quiz %>% 
   arrange(id, desc(time)) %>%
   distinct(id, .keep_all = TRUE)
