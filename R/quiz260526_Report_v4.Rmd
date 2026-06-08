@@ -1,8 +1,8 @@
 ---
 title: "직관의 한계 260526 (생일문제, 매칭문제, 연비환상, 몬티 홀 문제)"
 author: "coop711"
-# date : "2026-05-26"
-date: "`r format(Sys.time(), '%Y-%m-%d %H:%M:%S')`"
+date : "2026-05-26"
+# date: "`r format(Sys.time(), '%Y-%m-%d %H:%M:%S')`"
 output: html_document
 ---
 
@@ -121,6 +121,9 @@ quiz_wrong_ids <- quiz_wrong_ids %>%
       id == "２０２４６６２０" ~ "20246620",
       id == "20239284" ~ "20232984",
       id == "202464616" ~ "20246416",
+      id == "ai로봇융합전공" ~ "20256744",
+      id == "20253069" ~ "20253060",
+      id == "미디어스쿨" ~ "20262526",
     TRUE ~ id
     ),
     name = case_when(
