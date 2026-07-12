@@ -157,7 +157,7 @@ Xmin
 #> Mac or Linux Version
 library(parallel)
 M1 <- 1
-M2 <- 100
+M2 <- 10000000
 
 # Number of cores on your machine
 num_cores <- detectCores() - 1
