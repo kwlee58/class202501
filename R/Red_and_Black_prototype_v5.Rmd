@@ -31,13 +31,14 @@ panderOptions('table.split.table', Inf)
 <!--## Data
 
 ```{r, data, echo = TRUE, results = 'show', warning = TRUE}
-## 2026-09-04 수정 : range = "B1:H618" 하드코딩을 걷어냈다.
-## LMS 출석부는 A열에 순번이 붙고 자료가 B열부터 시작하며, 인원은 학기마다 다르다.
+## 2026-09-04 수정 : range = "B1:H618" 지정을 걷어냈다.
+## 출석부 구조(A열 순번, B열부터 자료, 맨 끝 교수자·조교)는 그대로지만
+## 인원이 학기마다 달라 마지막 행 번호를 매번 고쳐야 했다.
 ## 머리글 이름으로 열을 찾고, 못 찾으면 예전처럼 B~H열로 물러선다.
 raw <- read_excel(paste0("./data/class_roll_", ROLL, ".xlsx"), .name_repair = "minimal")
 
 PAT <- c(dept = "학과|학부|전공", college = "단과|대학", id = "학번",
-         name = "이름|성명", status = "학적|상태|구분",
+         name = "이름|성명", status = "역할|학적|상태|구분",   ## 학생/군휴학생/교수자/조교
          email = "메일|mail", cell_no = "휴대|전화|연락처|핸드폰")
 hdr  <- names(raw)
 pick <- vapply(PAT, function(p) {
@@ -55,6 +56,20 @@ if (anyNA(pick)) {
 names(class_roll) <- c("dept", "college", "id", "name", "status", "email", "cell_no")
 class_roll$id <- as.character(class_roll$id)
 class_roll <- class_roll[!is.na(class_roll$id) & class_roll$id != "", ]
+
+## 2026-09-04 : 교수자와 조교를 제외한다.
+## LMS 출석부는 맨 끝에 교수자·조교가 붙어 나온다.
+## 종전에는 range = "B1:H618" 로 그 줄들을 잘라 냈다. 구조를 알고 지정한 범위다.
+## 다만 인원이 바뀔 때마다 마지막 행 번호를 고쳐야 했으므로, 역할 열로 거르도록 바꾼다.
+KEEP_ROLES <- c("학생", "군휴학생")
+.before <- nrow(class_roll)
+class_roll <- class_roll[class_roll$status %in% KEEP_ROLES, ]
+.dropped <- .before - nrow(class_roll)
+if (.dropped > 0) {
+  message(sprintf("역할이 %s 아닌 %d명 제외 (교수자·조교 등)",
+                  paste(KEEP_ROLES, collapse = "/"), .dropped))
+}
+if (nrow(class_roll) == 0) stop("역할 열의 값이 예상과 다릅니다. KEEP_ROLES 를 확인하십시오.")
 
 ## knit 중 RStudio 콘솔에 찍힌다. 탐색을 시작하기 전에 이것부터 확인할 것.
 message("\n[열 대응 확인]")
