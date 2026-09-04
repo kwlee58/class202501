@@ -4,3 +4,9 @@
 .Ruserdata
 .Rproj.user
 .positai
+
+# 2026-09-04 추가
+.DS_Store
+*.bak
+_백업_*/
+.claude/
