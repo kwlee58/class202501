@@ -232,11 +232,13 @@ Xmin <- names(Xsum[which(Xsum == min(Xsum))])
 -->
 
 ```{r, 표제, echo = FALSE, results = 'asis'}
+## 2026-09-04 수정 : format() 이 큰 수에 지수 표기를 써서 1e+06 으로 찍혔다.
+##                   scientific = FALSE 를 붙여 1,000,000 으로 나오게 한다.
+fmt <- function(x) format(x, big.mark = ",", scientific = FALSE, trim = TRUE)
 cat(sprintf("## Red and Black %s : %s (%s ~ %s Trials)\n\n",
-            ROLL, VARS_LABEL,
-            format(M1, big.mark = ","), format(M2, big.mark = ",")))
+            ROLL, VARS_LABEL, fmt(M1), fmt(M2)))
 cat(sprintf("*출석부 %s · %d명 · 시행 %s회*\n\n",
-            ROLL, nrow(class_roll), format(M2 - M1 + 1, big.mark = ",")))
+            ROLL, nrow(class_roll), fmt(M2 - M1 + 1)))
 ```
 
 ## Summary
