@@ -13,3 +13,8 @@ _백업_*/
 
 # RPubs 인쇄본은 언제든 다시 찍을 수 있다. 저장소에 넣지 않는다.
 R/data/RPubs*.pdf
+**/.DS_Store
+**/.Rhistory
+.Rapp.history
+**/.Rapp.history
+.RDataTmp
