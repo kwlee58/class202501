@@ -336,7 +336,7 @@ nrow(total[total$Grades %in% c("A+", "A0"), ])
 
 
 <P style = "page-break-before:always">
-<!--
+
 
 ```{r, individual scores, eval = TRUE, echo = FALSE}
 v_names_kr <- c("학번", "이름", "온라인출석", "복습퀴즈", "TED 퀴즈", "데이터실험퀴즈", "구글설문지 참여", "총점", "등급")
@@ -365,7 +365,7 @@ my_grade_print <-
       c("", "/20", "/30", "/20", "/20", "/10", "/100", ""),
       collapse = "\t")
   }
-my_grade_print("20214151") %>%
+my_grade_print("20262538") %>%
   data.frame(Grade_Report = .) %>%
   kable
 #> x at the top remove
